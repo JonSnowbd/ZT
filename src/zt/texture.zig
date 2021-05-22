@@ -72,10 +72,15 @@ pub const Texture = struct {
     }
 
     pub fn setNearestFilter(self:*Texture) void {
-        var previous = currentTexture;
-        self.bind();
+        glBindTexture(GL_TEXTURE_2D, self.id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glBindTexture(GL_TEXTURE_2D, previous);
+        glBindTexture(GL_TEXTURE_2D, currentTexture); // Jump back
+    }
+    pub fn setLinearFilter(self:*Texture) void {
+        glBindTexture(GL_TEXTURE_2D, self.id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, currentTexture); // Jump back
     }
 };
