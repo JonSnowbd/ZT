@@ -8,3 +8,4 @@ pub usingnamespace @import("zt/spritebuffer.zig");
 pub usingnamespace @import("zt/genbuf.zig");
 pub usingnamespace @import("zt/shaderprog.zig");
 pub usingnamespace @import("zt/texture.zig");
+pub usingnamespace @import("zt/rendertarget.zig");

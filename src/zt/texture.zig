@@ -49,16 +49,18 @@ pub const Texture = struct {
 
         return self;
     }
-    pub fn initBlank(width:c_uint,height:c_uint) @This() {
+    pub fn initBlank(width:c_int,height:c_int) @This() {
         var self = @This(){};
         self.width = @intToFloat(f32, width);
         self.height = @intToFloat(f32, height);
         glGenTextures(1, &self.id);
         glBindTexture(GL_TEXTURE_2D, self.id);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, currentTexture);
+
+        return self;
     }
     pub fn deinit(self:*Texture) void {
         glDeleteTextures(1, &self.id);
@@ -93,5 +95,9 @@ pub const Texture = struct {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, currentTexture); // Jump back
+    }
+
+    pub fn imguiId(self:*Texture) *c_void {
+        return  @intToPtr(*c_void, self.id);
     }
 };
