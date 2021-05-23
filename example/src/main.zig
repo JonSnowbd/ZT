@@ -15,13 +15,12 @@ var spriteBuffer: zt.SpriteBuffer = undefined;
 var offScreen: zt.RenderTarget = undefined;
 var testSprite: zt.Texture = undefined;
 var basePath: []const u8 = "";
+var customFont: *ImFont = undefined;
 
 fn init() void {
-    // Use KnownFolders to have a solid reference to the sprite location.
-    basePath = (zt.folders.getPath(std.heap.page_allocator, zt.folders.KnownFolder.executable_dir) catch unreachable).?;
-
     // Get the sprite's location from the basepath, and load a Texture with it, as well as setting the window icon.
-    var spriteLocation = std.fs.path.joinZ(std.heap.page_allocator, &[_][]const u8{basePath, "test.png"}) catch unreachable;
+    var spriteLocation = zt.app.relativePathOf(std.heap.page_allocator, "test.png");
+    var fontLocation = zt.app.relativePathOf(std.heap.page_allocator, "PublicSans-Regular.ttf");
     testSprite = zt.Texture.init(spriteLocation) catch unreachable;
     testSprite.setNearestFilter();
     config.icon = spriteLocation;
@@ -32,20 +31,23 @@ fn init() void {
     spriteBuffer.sprite(10,10,0.5,100,100, zt.math.Vec4.one);
     spriteBuffer.sprite(120,10,0.5,100,100, zt.math.Vec4.one);
 
-    // Creating a sprite buffer is interesting, you simple just create a specifically sized render target, bind it,
-    // and any glClear/glDrawElements/glDrawTriangles will automatically output to that one
+    // Creating a sprite buffer is interesting, you simply create a specifically sized render target, bind it,
+    // and any glClear/glDrawElements/glDrawTriangles will automatically output to the buffer rather than the screen.
     offScreen = zt.RenderTarget.init(300,200);
 
-    // Just flush once, it never changes so we dont need to keep updating the target.
-    offScreen.bind();
+    // Just flush once, it never changes so we dont need to keep updating the target in the update loop.
+    offScreen.bind(); // Binding a rendertarget makes any subsequent flushes empty into it rather than the screen.
     spriteBuffer.flushStatic(&testSprite);
     offScreen.unbind();
 
     // Enable docking.
     var io = igGetIO();
     io.*.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    customFont = zt.app.addImguiFont(fontLocation, 17);
 }
 fn update() void {
+    igPushFont(customFont);
     // And you can just use imgui anywhere and the app will handle updating imgui state and drawing it.
     if(igBeginMainMenuBar()) {
         if(igBeginMenu("File", true)) {
@@ -56,6 +58,7 @@ fn update() void {
         }
         igEndMainMenuBar();
     }
+    igPopFont();
 
     if(igBegin("Testing Window", null, ImGuiWindowFlags_None)) {
         igText("Below is the rendertarget!");

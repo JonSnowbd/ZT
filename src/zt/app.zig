@@ -4,6 +4,7 @@ const std = @import("std");
 const imgImpl = @import("imgui_impl.zig");
 const TimeManager = @import("timemanager.zig").TimeManager;
 const stb = @import("stb_image");
+const Folders = @import("../known_folders.zig");
 usingnamespace glfw;
 usingnamespace gl;
 usingnamespace @import("imgui");
@@ -12,7 +13,7 @@ pub var width:  f32 = 0;
 pub var height: f32 = 0;
 pub var timer: TimeManager = undefined;
 
-var allocator: *std.mem.Allocator = undefined;
+var executablePath: []const u8 = "";
 
 pub const ZTLAppConfig = struct {
     icon: ?[]const u8 = null,
@@ -28,12 +29,48 @@ pub const ZTLAppConfig = struct {
     energySaving: bool = true,
 };
 
+
+pub fn addImguiFont(path: []const u8, size: f32) *ImFont {
+    var io = igGetIO();
+    var newFont: *ImFont = ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, size, null, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
+
+    // Delete the old texture
+    var texId = @intCast(c_uint, @ptrToInt(io.*.Fonts.*.TexID));
+    glDeleteTextures(1, &texId);
+
+    // Generate new texture
+    var newTexId: c_uint = 0;
+    var pixels: [*c]u8 = undefined;
+    var fontTexWidth: i32 = undefined;
+    var fontTexHeight: i32 = undefined;
+    ImFontAtlas_GetTexDataAsRGBA32(io.*.Fonts, &pixels, &fontTexWidth, &fontTexHeight, null);
+
+    // Upload texture to graphics system
+    glGenTextures(1, &newTexId);
+    glBindTexture(GL_TEXTURE_2D, newTexId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    if (@hasDecl(gl, "GL_UNPACK_ROW_LENGTH"))
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fontTexWidth, fontTexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+    // Store our identifier
+    io.*.Fonts.*.TexID = @intToPtr(*c_void, newTexId);
+    return newFont;
+}
+
+pub fn relativePathOf(allocator: *std.mem.Allocator, subpath: []const u8) []const u8 {
+    return std.fs.path.joinZ(allocator, &[_][]const u8{executablePath, subpath}) catch unreachable;
+}
+
 /// If you are using multithreading, this can force a redraw to update state.
 pub fn forceUpdate() void {
     glfwPostEmptyEvent();
 }
 
 pub fn start(app: ZTLAppConfig) void {
+    // Use KnownFolders to have a solid reference to the sprite location.
+    executablePath = (Folders.getPath(std.heap.page_allocator, Folders.KnownFolder.executable_dir) catch unreachable).?;
     timer = TimeManager.init();
     var win: *GLFWwindow = undefined;
     if(glfwInit() < 0) { std.debug.print("Failed to init GLFW", .{}); return; }

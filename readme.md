@@ -34,3 +34,8 @@ any resistance:
 and additionally a ready to go combination of all 3 that lets you just immediately use close to the metal
 OpenGL constructs to just work on your application with convenience for use as desktop application code such as
 Energy Saving mode.
+
+## Credits
+
+Example Font - https://github.com/uswds/public-sans
+Inspiration and Code Snippets - https://github.com/digitalcreature/ube (Thanks sammy for all the help)
