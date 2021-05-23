@@ -6,9 +6,13 @@ By zig contained I mean that ZT is intended to eventually be entirely contained 
 LibC and clang compiler without any external building or dependencies. Just git submodule, link, and build for windows
 and linux.
 
+## Requirements
+
+Ubuntu: `sudo apt install build-essential xorg-dev`
+
 ## Where
 
-For now only windows, but it will be working on linux eventually when I sort out what feature set I want to include.
+Right now working on both windows and ubuntu(and anything that compatible with x11)
 
 ## How
 

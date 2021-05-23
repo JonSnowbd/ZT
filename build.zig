@@ -73,6 +73,10 @@ fn linkGl(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibE
         exe.addCSourceFile(path++ "src/gl/glad/src/glad.c", &[_][]const u8{"-D_WIN32"});
         exe.linkSystemLibrary("opengl32");
     }
+    if(target.isLinux()) {
+        exe.addCSourceFile(path++ "src/gl/glad/src/glad.c", &[_][]const u8{""});
+        exe.linkSystemLibrary("gl");
+    }
 }
 fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     exe.addIncludeDir(path ++ "src/glfw/deps");
@@ -89,15 +93,15 @@ fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
         exe.subsystem = .Windows; // Hide the Console.
         flagContainer.append("-D_GLFW_WIN32") catch unreachable;
     }
+    if(target.isLinux()) {
+        exe.subsystem = .Posix;
+        // Linux is a little too itchy to sanitize some glfw code that works but can hit UB
+        flagContainer.append("-fno-sanitize=undefined") catch unreachable;
+        flagContainer.append("-D_GLFW_X11") catch unreachable;
+    }
 
     // General shared sources:
     const flags = flagContainer.items;
-    exe.addCSourceFile(path++"src/glfw/src/context.c", flags);
-    exe.addCSourceFile(path++"src/glfw/src/init.c", flags);
-    exe.addCSourceFile(path++"src/glfw/src/input.c", flags);
-    exe.addCSourceFile(path++"src/glfw/src/monitor.c", flags);
-    exe.addCSourceFile(path++"src/glfw/src/vulkan.c", flags);
-    exe.addCSourceFile(path++"src/glfw/src/window.c", flags);
 
     if(target.isWindows()) {
         exe.linkSystemLibrary("gdi32");
@@ -113,8 +117,30 @@ fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
     }
 
     if(target.isLinux()) {
-        // todo
+        exe.addSystemIncludeDir("/usr/include/");
+        exe.linkSystemLibrary("rt");
+        exe.linkSystemLibrary("m");
+        exe.linkSystemLibrary("x11");
+
+        exe.addCSourceFile(path++"src/glfw/src/x11_init.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/x11_monitor.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/x11_window.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/xkb_unicode.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/posix_time.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/posix_thread.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/glx_context.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/egl_context.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/osmesa_context.c", flags);
+        exe.addCSourceFile(path++"src/glfw/src/linux_joystick.c", flags);
     }
+
+    exe.addCSourceFile(path++"src/glfw/src/context.c", flags);
+    exe.addCSourceFile(path++"src/glfw/src/init.c", flags);
+    exe.addCSourceFile(path++"src/glfw/src/input.c", flags);
+    exe.addCSourceFile(path++"src/glfw/src/monitor.c", flags);
+    exe.addCSourceFile(path++"src/glfw/src/vulkan.c", flags);
+    exe.addCSourceFile(path++"src/glfw/src/window.c", flags);
+
 }
 
 pub const AddContentErrors = error {

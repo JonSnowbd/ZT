@@ -64,13 +64,13 @@ pub fn start(app: ZTLAppConfig) void {
     // Load Icon
     if(app.icon != null) {
         stb.stbi_set_flip_vertically_on_load(0);
-        var images: [1]GLFWimage = .{
-            GLFWimage{.width = 0, .height = 0, .pixels = null},
+        var image = GLFWimage{
+            .width = 0, .height = 0, .pixels = null
         };
-        images[0].pixels = stb.stbi_load(app.icon.?.ptr, &images[0].width, &images[0].height, 0, 4);
-        if(images[0].width > 0 and images[0].height > 0) {
-            glfwSetWindowIcon(win, 1, &images);
-            stb.stbi_image_free(images[0].pixels);
+        image.pixels = stb.stbi_load(app.icon.?.ptr, &image.width, &image.height, 0, 4);
+        if(image.width > 0 and image.height > 0) {
+            glfwSetWindowIcon(win, 1, &image);
+            stb.stbi_image_free(image.pixels);
         } else {
             std.debug.print("Failed to load icon {s}", .{app.icon.?});
         }
