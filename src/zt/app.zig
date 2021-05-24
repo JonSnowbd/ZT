@@ -13,7 +13,8 @@ pub var width:  f32 = 0;
 pub var height: f32 = 0;
 pub var timer: TimeManager = undefined;
 
-var executablePath: []const u8 = "";
+pub var executablePath: []const u8 = "";
+var updateSeconds: f32 = 0;
 
 pub const ZTLAppConfig = struct {
     icon: ?[]const u8 = null,
@@ -29,11 +30,29 @@ pub const ZTLAppConfig = struct {
     energySaving: bool = true,
 };
 
-
-pub fn addImguiFont(path: []const u8, size: f32) *ImFont {
+/// If you have an animation that needs to play you can queue an amount of seconds that will ignore energy saving.
+pub fn queueAnimationFrames(seconds:f32) void {
+    updateSeconds = seconds;
+}
+// Adds in an imgui font via memory. config can be null and pass in the memory as given by @embedFile.
+// TODO: zig @embedFile doesnt seem to work with imgui here?
+// pub fn addImguiFontMemory(memory:[]const u8, size: f32, config: [*c]const ImFontConfig) *ImFont {
+//     var io = igGetIO();
+//     var newFont = ImFontAtlas_AddFontFromMemoryTTF(io.*.Fonts, @intToPtr(*c_void, @ptrToInt(&memory)), @intCast(c_int,memory.len), size,config, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
+//     rebuildImguiFont();
+//     return newFont;
+// }
+/// Adds in an imgui font via a file path.
+pub fn addImguiFont(path: []const u8, size: f32, config: [*c]const ImFontConfig) *ImFont {
     var io = igGetIO();
-    var newFont: *ImFont = ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, size, null, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
-
+    var newFont: *ImFont = ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, size, config, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
+    rebuildImguiFont();
+    return newFont;
+}
+/// This function is called for you when you add an imgui font, but if you manage the font atlas yourself, this
+/// will automatically delete and rebuild the font atlas for imgui.
+pub fn rebuildImguiFont() void {
+    var io = igGetIO();
     // Delete the old texture
     var texId = @intCast(c_uint, @ptrToInt(io.*.Fonts.*.TexID));
     glDeleteTextures(1, &texId);
@@ -56,7 +75,6 @@ pub fn addImguiFont(path: []const u8, size: f32) *ImFont {
 
     // Store our identifier
     io.*.Fonts.*.TexID = @intToPtr(*c_void, newTexId);
-    return newFont;
 }
 
 pub fn relativePathOf(allocator: *std.mem.Allocator, subpath: []const u8) []const u8 {
@@ -91,7 +109,9 @@ pub fn start(app: ZTLAppConfig) void {
     _ = glfwSetCharCallback(win, charCallback);
     _ = glfwSetMouseButtonCallback(win, mousebuttonCallback);
     _ = glfwSetCursorPosCallback(win, cursorCallback);
+    _ = glfwSetScrollCallback(win, mouseWheelCallback);
     
+    // Initial viewport set
     windowSizeChanged(win, app.size[0], app.size[1]);
 
     glClearColor(0.1,0.1,0.12,1.0);
@@ -134,7 +154,11 @@ pub fn start(app: ZTLAppConfig) void {
         timer.tick();
         io.*.DeltaTime = timer.dt;
         if(app.energySaving) {
-            glfwWaitEvents();
+            if(updateSeconds > 0.0) {
+                updateSeconds -= timer.dt;
+            } else {
+                glfwWaitEvents();
+            }
         }
     }
 
@@ -155,13 +179,15 @@ fn windowSizeChanged(win: ?*GLFWwindow, newWidth: c_int, newHeight: c_int) callc
 fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
     var io = igGetIO();
     io.*.KeysDown[@intCast(usize, key)] = if(action == GLFW_PRESS) true else false;
-    switch(key) {
-        GLFW_KEY_LEFT_SHIFT,
-        GLFW_KEY_RIGHT_SHIFT => {
-            io.*.KeyShift = if(action == GLFW_PRESS) true else false;
-        },
-        else => {}
-    }
+
+    io.*.KeyShift = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_SHIFT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_SHIFT)];
+    io.*.KeyCtrl = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_CONTROL)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_CONTROL)];
+    io.*.KeyAlt = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_ALT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_ALT)];
+}
+fn mouseWheelCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
+    var io = igGetIO();
+    io.*.MouseWheel = @floatCast(f32, y);
+    io.*.MouseWheelH = @floatCast(f32, x);
 }
 fn mousebuttonCallback(win: ?*GLFWwindow, key: c_int, action: c_int, mods: c_int) callconv(.C) void {
     var io = igGetIO();

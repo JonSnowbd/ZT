@@ -16,6 +16,7 @@ var offScreen: zt.RenderTarget = undefined;
 var testSprite: zt.Texture = undefined;
 var basePath: []const u8 = "";
 var customFont: *ImFont = undefined;
+var customFontThick: *ImFont = undefined;
 
 fn init() void {
     // Get the sprite's location from the basepath, and load a Texture with it, as well as setting the window icon.
@@ -44,7 +45,11 @@ fn init() void {
     var io = igGetIO();
     io.*.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    customFont = zt.app.addImguiFont(fontLocation, 17);
+    customFont = zt.app.addImguiFont(fontLocation, 17, null);
+    
+    // TODO: When add from memory works
+    // const bytes: []const u8 = @embedFile("PublicSans-BlackItalic.ttf");
+    // customFontThick = zt.app.addImguiFontMemory(bytes, 20, null);
 }
 fn update() void {
     igPushFont(customFont);
