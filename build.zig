@@ -39,7 +39,10 @@ pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
     var stbImageWrapperFlags = [_][]const u8{"-Os"};
     exe.addCSourceFile(path++"src/stb/stb_image_wrapper.c", &stbImageWrapperFlags);
 
-    var imgPkg: std.build.Pkg = imgBuild.pkg(path++"src/imgui/");
+    var imgPkg: std.build.Pkg = .{
+        .name = "imgui",
+        .path = path ++ "src/imgui.zig",
+    };
     var glfwPkg: std.build.Pkg = .{
         .name = "glfw",
         .path = path ++ "src/glfw.zig"   

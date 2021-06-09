@@ -1,8 +1,8 @@
 usingnamespace @import("std").c.builtins;
+const zlm = @import("zt/zlm/zlm.zig");
 const __builtin_va_list = [*c]u8;
 const __gnuc_va_list = __builtin_va_list;
-const va_list = __gnuc_va_list; // C:\zig\lib\zig\libc\include\any-windows-any\_mingw.h:583:3: warning: TODO implement translation of stmt class GCCAsmStmtClass
-// C:\zig\lib\zig\libc\include\any-windows-any\_mingw.h:581:36: warning: unable to translate function, demoted to extern
+const va_list = __gnuc_va_list;
 extern fn __debugbreak() callconv(.C) void;
 extern fn __mingw_get_crt_info() [*c]const u8;
 const rsize_t = usize;
@@ -519,22 +519,10 @@ pub const struct_ImGuiTableCellData = extern struct {
 };
 pub const ImGuiTableCellData = struct_ImGuiTableCellData;
 pub const ImGuiViewportFlags = c_int;
-pub const struct_ImVec2 = extern struct {
-    pub const zero = struct_ImVec2{.x=0,.y=0};
-    pub const one = struct_ImVec2{.x=1,.y=1};
-    x: f32 = 0,
-    y: f32 = 0,
-};
+
+pub const struct_ImVec2 = zlm.Vec2;
 pub const ImVec2 = struct_ImVec2;
-pub const struct_ImVec4 = extern struct {
-    pub const white = struct_ImVec4{.x=1,.y=1,.z=1,.w=1};
-    pub const black = struct_ImVec4{.x=0,.y=0,.z=0,.w=1};
-    pub const transparent = struct_ImVec4{.x=0,.y=0,.z=0,.w=0};
-    x: f32 = 0,
-    y: f32 = 0,
-    z: f32 = 0,
-    w: f32 = 0,
-};
+pub const struct_ImVec4 = zlm.Vec4;
 pub const ImVec4 = struct_ImVec4;
 pub const ImTextureID = ?*c_void;
 pub const ImDrawCallback = ?fn ([*c]const ImDrawList, [*c]const ImDrawCmd) callconv(.C) void;
@@ -939,6 +927,12 @@ pub const ImGuiItemStatusFlags = c_int;
 pub const struct_ImRect = extern struct {
     Min: ImVec2,
     Max: ImVec2,
+    pub fn init(x:f32,y:f32,w:f32,h:f32) @This() {
+        return .{
+            .Min = .{.x=x,.y=y},
+            .Max = .{.x=w,.y=h}
+        };
+    }
 };
 pub const ImRect = struct_ImRect;
 pub const struct_ImGuiMenuColumns = extern struct {
