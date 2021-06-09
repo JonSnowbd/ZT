@@ -46,35 +46,27 @@ fn init() void {
     io.*.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     customFont = zt.app.addImguiFont(fontLocation, 17, null);
-    
-    // TODO: When add from memory works
-    // const bytes: []const u8 = @embedFile("PublicSans-BlackItalic.ttf");
-    // customFontThick = zt.app.addImguiFontMemory(bytes, 20, null);
+    io.*.FontDefault = customFont;
 }
 fn update() void {
-    igPushFont(customFont);
-    // And you can just use imgui anywhere and the app will handle updating imgui state and drawing it.
-    if(igBeginMainMenuBar()) {
-        if(igBeginMenu("File", true)) {
-            igText("Thing 1");
-            igText("Thing 2");
-            igText("Thing 3");
-            igEndMenu();
-        }
-        igEndMainMenuBar();
-    }
-    igPopFont();
+    // This creates a background for docking everything onto, perfect for applications.
+    ztViewPort(0,0,0,0);
 
     if(igBegin("Testing Window", null, ImGuiWindowFlags_None)) {
-        igText("Below is the rendertarget!");
+        ztText("{s}", .{"You can use zig's built in formatting"});
+        ztTextDisabled("{s} This text is disabled!", .{"Hello!"});
+        ztTextColor("And it can be colored", .{.x=1.0,.w=1.0}, .{});
 
+        igSeparator();
         // Its a bit awkward, but render targets are upside down thanks to opengl. It's a simple matter of flipping
         // the y source vectors.
+        igText("Below is the rendertarget!");
         igImage(offScreen.target.imguiId(), .{.x=300,.y=200}, .{.x=0,.y=1}, .{.x=1,.y=0}, ImVec4.white, ImVec4.white);
     }
     igEnd();
     if(igBegin("Dock Window", null, ImGuiWindowFlags_None)) {
-        igText("Docking....");
+        igText("You can even do custom drawing easily.");
+        customDrawing();
     }
     igEnd();
 
@@ -86,4 +78,13 @@ fn deinit() void {
 
 pub fn main() void {
     zt.app.start(config);
+}
+
+pub fn customDrawing() void {
+    var draw = igGetWindowDrawList();
+    var position: ImVec2 = undefined;
+    igGetWindowPos(&position);
+    igRenderArrow(draw, position, 0xffffffff, ImGuiDir_Right, 3.0);
+    // igRenderRectFilledWithHole(draw, ImRect.init(position.x,position.y,20,20), ImRect.init(position.x+10,position.y+10,10,10), 0xffffffff, 2);
+    // igRenderFrame()
 }

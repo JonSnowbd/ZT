@@ -35,11 +35,3 @@ pub fn link(b: *Builder, exe: *std.build.LibExeObjStep, target: std.build.Target
     exe.addCSourceFile(prefix_path ++ "cimgui/imgui/imgui_widgets.cpp", flags);
     exe.addCSourceFile(prefix_path ++ "cimgui/cimgui.cpp", flags);
 }
-
-pub fn pkg(comptime prefix_path: []const u8) std.build.Pkg {
-    if (prefix_path.len > 0 and !std.mem.endsWith(u8, prefix_path, "/")) @panic("prefix-path must end with '/' if it is not empty");
-    return .{
-        .name = "imgui",
-        .path = prefix_path ++ "imgui.zig",
-    };
-}
