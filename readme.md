@@ -12,7 +12,7 @@ Ubuntu: `sudo apt install build-essential xorg-dev`
 
 ## Where
 
-Right now working on both windows and ubuntu(and anything that compatible with x11)
+Right now working on both windows and ubuntu(and anything thats compatible with x11)
 
 ## How
 
@@ -20,7 +20,7 @@ See [the example](/example/src/main.zig) that displays a few features of ZT.
 
 ## Why
 
-ZT is intended for an extremely broad group of developers in realtime graphics, as it does not railroad you into
+ZT is intended for an extremely broad group of developers in zig realtime graphics and applications, as it does not railroad you into
 using its app+windowing interface to function, and is better viewed as the following goals being accomplished without
 any resistance:
 
@@ -34,6 +34,76 @@ any resistance:
 and additionally a ready to go combination of all 3 that lets you just immediately use close to the metal
 OpenGL constructs to just work on your application with convenience for use as desktop application code such as
 Energy Saving mode.
+
+## Getting started
+
+First you'll want to clone this into your zig project's folder, and `const ztBuild = @import("path/to/zt/build.zig")` to import this
+framework's build.zig, and that will expose some important functions to link ZT into your project.
+
+- `ztBuild.link("path/to/zt", b, exe, target)` will add ZT's packages to your exe and link the source files for GLFW/GL/ImGui
+- `ztBuild.addBinaryContent("path/to/binContent")` adds binary content to your zig-out folder output, basically the folder structure
+ends up being as if `path/to/binContent` was the root folder containing your executable. This is smart and will skip older assets.
+
+So with `ztBuild` imported you just `ztBuild.link("path/to/zt", b, exe, target)` and you can start importing and using
+ZT.
+
+Then getting started is as easy as this:
+
+    const std = @import("std");
+    const zt = @import("zt");
+    usingnamespace @import("imgui");
+    usingnamespace zt.imguiComponents; // ZT has special components! Check them out
+
+    var config: zt.app.ZTLAppConfig = .{
+        .init = init,
+        .update = update,
+        .deinit = deinit,
+    };
+
+    fn init() void {
+        // Do your loading here
+    }
+    fn deinit() void {
+        // Unload here
+    }
+    fn update() void {
+        if(igBegin("Hello World", null, ImGuiWindowFlags_None)) {
+            ztTextDisabled("{s} This text is disabled!", .{"Hello!"});
+            ztTextColor("And text can be colored", .{.x=1.0,.w=1.0}, .{});
+            ztText("{s}", .{"You can use zig's built in formatting!"});
+        }
+        igEnd();
+    }
+
+    pub fn main() void {
+        zt.app.start(config);
+    }
+
+Where `zt.app.start` starts a simple statemachine that controls timing and runs the given functions for you, letting
+you just get on with the application.
+
+For a more indepth example [see the example file that shows opengl rendering mixed with imgui and more](example/src/main.zig)
+
+Note that anything related to zt.app directly is self contained, and if you so wish you can use all the abstractions without
+using the state machine loop for window management, if you just want the packages.
+
+## Where is...
+
+### ImGui
+- [ZT Custom ImGui Components](src/zt/ztImgui.zig)
+- [ImGui Bindings](src/imgui.zig)
+
+### ZT
+- [Math Source](src/zt/zlm/zlm-generic.zig) `zt.math`
+- [RenderTarget Abstraction](src/zt/rendertarget.zig) ^I
+- 1) [Shader Abstraction](src/zt/shader.zig) ^I (Takes 2 strings to generate a shader program, easy to use with @embedFile)
+- 2) [Texture Abstraction](src/zt/texture.zig) ^I (This lets you load textures from file system and bind into opengl)
+- 3) [Buffer Abstraction](src/zt/genbuf.zig) ^I (This lets you generate a buffer pair for any given struct that uses only float/vec2/vec3/vec4)
+- [Simple Spritebuffer](src/zt/spritebuffer.zig) ^I
+
+^I = This file is imported into ZT with `usingnamespace`
+
+The numbered ZT Entries are all you need to get started with close to the metal opengl.
 
 ## Credits
 

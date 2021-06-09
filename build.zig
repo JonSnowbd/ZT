@@ -45,20 +45,20 @@ pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
     };
     var glfwPkg: std.build.Pkg = .{
         .name = "glfw",
-        .path = path ++ "src/glfw.zig"   
+        .path = path ++ "src/glfw.zig"
     };
     var glPkg: std.build.Pkg = .{
         .name = "gl",
-        .path = path ++ "src/gl.zig"   
+        .path = path ++ "src/gl.zig"
     };
     var stbPkg: std.build.Pkg = .{
         .name = "stb_image",
-        .path = path ++ "src/stb_image.zig"   
+        .path = path ++ "src/stb_image.zig"
     };
     var ztPkg: std.build.Pkg = .{
         .name = "zt",
         .path = path ++ "src/zt.zig",
-        .dependencies = &[_]std.build.Pkg{glfwPkg,glPkg,imgPkg,stbPkg}   
+        .dependencies = &[_]std.build.Pkg{glfwPkg,glPkg,imgPkg,stbPkg}
     };
 
     exe.addPackage(glfwPkg);
