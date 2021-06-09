@@ -49,35 +49,37 @@ ZT.
 
 Then getting started is as easy as this:
 
-    const std = @import("std");
-    const zt = @import("zt");
-    usingnamespace @import("imgui");
-    usingnamespace zt.imguiComponents; // ZT has special components! Check them out
+```Zig
+const std = @import("std");
+const zt = @import("zt");
+usingnamespace @import("imgui");
+usingnamespace zt.imguiComponents; // ZT has special components! Check them out, they are prefixed with zt.
 
-    var config: zt.app.ZTLAppConfig = .{
-        .init = init,
-        .update = update,
-        .deinit = deinit,
-    };
+var config: zt.app.ZTLAppConfig = .{
+    .init = init,
+    .update = update,
+    .deinit = deinit,
+};
 
-    fn init() void {
-        // Do your loading here
+fn init() void {
+    // Do your loading here
+}
+fn deinit() void {
+    // Unload here
+}
+fn update() void {
+    if(igBegin("Hello World", null, ImGuiWindowFlags_None)) {
+        ztTextDisabled("{s} This text is disabled!", .{"Hello!"});
+        ztTextColor("And text can be colored", .{.x=1.0,.w=1.0}, .{});
+        ztText("{s}", .{"You can use zig's built in formatting!"});
     }
-    fn deinit() void {
-        // Unload here
-    }
-    fn update() void {
-        if(igBegin("Hello World", null, ImGuiWindowFlags_None)) {
-            ztTextDisabled("{s} This text is disabled!", .{"Hello!"});
-            ztTextColor("And text can be colored", .{.x=1.0,.w=1.0}, .{});
-            ztText("{s}", .{"You can use zig's built in formatting!"});
-        }
-        igEnd();
-    }
+    igEnd();
+}
 
-    pub fn main() void {
-        zt.app.start(config);
-    }
+pub fn main() void {
+    zt.app.start(config);
+}
+```
 
 Where `zt.app.start` starts a simple statemachine that controls timing and runs the given functions for you, letting
 you just get on with the application.
@@ -87,16 +89,28 @@ For a more indepth example [see the example file that shows opengl rendering mix
 Note that anything related to zt.app directly is self contained, and if you so wish you can use all the abstractions without
 using the state machine loop for window management, if you just want the packages.
 
+## How Do I...
+
+- Show smooth animation in powersaving mode? 
+
+`zt.app.queueAnimationFrames(seconds:f32)` will set a certain amount of seconds for powersaving to be temporarily
+disabled. Use this if you have smooth transitions that need to be displayed
+
+- Update the powersaving frame from an external source e.g threads?
+
+`zt.app.forceUpdate()` will force the application to update and redraw by inputting an empty event into glfw.
+
 ## Where is...
 
 ### ImGui
 - [ZT Custom ImGui Components](src/zt/ztImgui.zig)
 - [ImGui Bindings](src/imgui.zig)
+- [Demo](https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp)
 
 ### ZT
 - [Math Source](src/zt/zlm/zlm-generic.zig) `zt.math`
 - [RenderTarget Abstraction](src/zt/rendertarget.zig) ^I
-- 1) [Shader Abstraction](src/zt/shader.zig) ^I (Takes 2 strings to generate a shader program, easy to use with @embedFile)
+- 1) [Shader Abstraction](src/zt/shaderprog.zig) ^I (Takes 2 strings to generate a shader program, easy to use with @embedFile)
 - 2) [Texture Abstraction](src/zt/texture.zig) ^I (This lets you load textures from file system and bind into opengl)
 - 3) [Buffer Abstraction](src/zt/genbuf.zig) ^I (This lets you generate a buffer pair for any given struct that uses only float/vec2/vec3/vec4)
 - [Simple Spritebuffer](src/zt/spritebuffer.zig) ^I

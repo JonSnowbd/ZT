@@ -34,14 +34,11 @@ pub const ZTLAppConfig = struct {
 pub fn queueAnimationFrames(seconds:f32) void {
     updateSeconds = seconds;
 }
-// Adds in an imgui font via memory. config can be null and pass in the memory as given by @embedFile.
-// TODO: zig @embedFile doesnt seem to work with imgui here?
-// pub fn addImguiFontMemory(memory:[]const u8, size: f32, config: [*c]const ImFontConfig) *ImFont {
-//     var io = igGetIO();
-//     var newFont = ImFontAtlas_AddFontFromMemoryTTF(io.*.Fonts, @intToPtr(*c_void, @ptrToInt(&memory)), @intCast(c_int,memory.len), size,config, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
-//     rebuildImguiFont();
-//     return newFont;
-// }
+/// If you are using multithreading or anything that will force an update, this can force a redraw.
+pub fn forceUpdate() void {
+    glfwPostEmptyEvent();
+}
+
 /// Adds in an imgui font via a file path.
 pub fn addImguiFont(path: []const u8, size: f32, config: [*c]const ImFontConfig) *ImFont {
     var io = igGetIO();
@@ -79,11 +76,6 @@ pub fn rebuildImguiFont() void {
 
 pub fn relativePathOf(allocator: *std.mem.Allocator, subpath: []const u8) []const u8 {
     return std.fs.path.joinZ(allocator, &[_][]const u8{executablePath, subpath}) catch unreachable;
-}
-
-/// If you are using multithreading, this can force a redraw to update state.
-pub fn forceUpdate() void {
-    glfwPostEmptyEvent();
 }
 
 pub fn start(app: ZTLAppConfig) void {
