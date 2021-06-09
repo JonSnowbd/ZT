@@ -172,8 +172,8 @@ pub fn specializeOn(comptime Real: type) type {
         pub const Vec2 = extern struct {
             const Self = @This();
 
-            x: Real,
-            y: Real,
+            x: Real = 0,
+            y: Real = 0,
 
             pub const zero = Self.new(0, 0);
             pub const one = Self.new(1, 1);
@@ -216,9 +216,9 @@ pub fn specializeOn(comptime Real: type) type {
         pub const Vec3 = extern struct {
             const Self = @This();
 
-            x: Real,
-            y: Real,
-            z: Real,
+            x: Real = 0,
+            y: Real = 0,
+            z: Real = 0,
 
             pub const zero = Self.new(0, 0, 0);
             pub const one = Self.new(1, 1, 1);
@@ -320,10 +320,10 @@ pub fn specializeOn(comptime Real: type) type {
         pub const Vec4 = extern struct {
             const Self = @This();
 
-            x: Real,
-            y: Real,
-            z: Real,
-            w: Real,
+            x: Real = 0,
+            y: Real = 0,
+            z: Real = 0,
+            w: Real = 0,
 
             pub const zero = Self.new(0, 0, 0, 0);
             pub const one = Self.new(1, 1, 1, 1);
@@ -331,6 +331,10 @@ pub fn specializeOn(comptime Real: type) type {
             pub const unitY = Self.new(0, 1, 0, 0);
             pub const unitZ = Self.new(0, 0, 1, 0);
             pub const unitW = Self.new(0, 0, 0, 1);
+
+            pub const white = Self.new(1,1,1,1);
+            pub const black = Self.new(0,0,0,1);
+            pub const transparent = Self.new(0,0,0,0);
 
             usingnamespace VectorMixin(Self);
 
