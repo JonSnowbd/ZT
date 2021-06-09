@@ -16,7 +16,7 @@ pub var timer: TimeManager = undefined;
 pub var executablePath: []const u8 = "";
 var updateSeconds: f32 = 0;
 
-pub const ZTLAppConfig = struct {
+pub const ZTAppConfig = struct {
     icon: ?[]const u8 = null,
     title: []const u8 = "ZT Application",
     init: ?fn() void = null,
@@ -39,7 +39,8 @@ pub fn forceUpdate() void {
     glfwPostEmptyEvent();
 }
 
-/// Adds in an imgui font via a file path.
+/// Adds in an imgui font via a file path. The font atlas is rebuilt automatically and youre free to use the 
+/// ImFont immediately.
 pub fn addImguiFont(path: []const u8, size: f32, config: [*c]const ImFontConfig) *ImFont {
     var io = igGetIO();
     var newFont: *ImFont = ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, size, config, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
@@ -74,11 +75,17 @@ pub fn rebuildImguiFont() void {
     io.*.Fonts.*.TexID = @intToPtr(*c_void, newTexId);
 }
 
+/// Takes a relative path from the executable's cwd, and returns an absolute path to the resource. Great for making
+/// sure your application gets the right resources no matter where its launched from.
 pub fn relativePathOf(allocator: *std.mem.Allocator, subpath: []const u8) []const u8 {
     return std.fs.path.joinZ(allocator, &[_][]const u8{executablePath, subpath}) catch unreachable;
 }
 
-pub fn start(app: ZTLAppConfig) void {
+/// Takes in an application config and begins the main loop. This will block until the application closes, so make
+/// sure you're using the config's parameters to set an update function.
+/// Note: If you're in need of input functions, its recommended to use imgui's own input layer with igGetIO() instead of
+/// overwriting the given input callbacks.
+pub fn start(app: ZTAppConfig) void {
     // Use KnownFolders to have a solid reference to the sprite location.
     executablePath = (Folders.getPath(std.heap.page_allocator, Folders.KnownFolder.executable_dir) catch unreachable).?;
     timer = TimeManager.init();
@@ -94,7 +101,6 @@ pub fn start(app: ZTLAppConfig) void {
 
     if(gladLoadGL() < 0) { std.debug.print("Failed to init Glad GL Loader", .{}); return; }
     imgImpl.init("#version 330");
-
 
     _ = glfwSetFramebufferSizeCallback(win, windowSizeChanged);
     _ = glfwSetKeyCallback(win, inputCallback);

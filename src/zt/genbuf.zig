@@ -5,10 +5,11 @@ const math = @import("zlm/zlm.zig");
 
 usingnamespace gl;
 
-/// Provide a struct to represent a vertex. Compatible types inside of struct are:
+/// Provide T as a struct to represent a vertex. Compatible types inside of struct are:
 /// `f32, math.Vec2, math.Vec3, math.Vec4`
 /// and each will be mapped in order to vert shader's layout indices.
 /// The resulting buffer can contain many quads and tris together, 
+/// TODO: Matrices in generic buffers.
 pub fn Buffer(comptime T: type) type {
     return struct{
         allocator: *std.mem.Allocator = undefined,

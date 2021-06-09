@@ -5,7 +5,7 @@ usingnamespace @import("imgui");
 // zig fmt in text and math types.
 usingnamespace zt.imguiComponents;
 
-var config: zt.app.ZTLAppConfig = .{
+var config: zt.app.ZTAppConfig = .{
     .init = init,
     .update = update,
     .deinit = deinit,

@@ -1,4 +1,6 @@
-# ZT
+<p align="center">
+  <img width="200" height="100" src="/logo.png">
+</p>
 
 ZT is a zig-contained library that automatically compiles+links ImGui, OpenGL, and GLFW into typed packages.
 
@@ -10,13 +12,19 @@ and linux.
 
 Ubuntu: `sudo apt install build-essential xorg-dev`
 
+## Current Status
+
+ZT does not have deep systems to flesh out, but the API is subject to renaming and updates to the packages, and will be as production ready as
+the weakest link of the following `zig, opengl, imgui` at any given time, as all ZT really does is compile and expose the framework
+
+As for the App side, it is fine for personal projects, but there is more I want to add as I use
+it more in projects and find where it is lacking, or where it is least flexible(while maintaining its set up and go nature)
+
+See [the example](/example/src/main.zig) that displays a few features of ZT.app
+
 ## Where
 
 Right now working on both windows and ubuntu(and anything thats compatible with x11)
-
-## How
-
-See [the example](/example/src/main.zig) that displays a few features of ZT.
 
 ## Why
 
@@ -45,7 +53,7 @@ framework's build.zig, and that will expose some important functions to link ZT 
 ends up being as if `path/to/binContent` was the root folder containing your executable. This is smart and will skip older assets.
 
 So with `ztBuild` imported you just `ztBuild.link("path/to/zt", b, exe, target)` and you can start importing and using
-ZT.
+ZT, or if you so choose, completely ignore ZT and use raw opengl/glfw/imgui.
 
 Then getting started is as easy as this:
 
@@ -89,6 +97,24 @@ For a more indepth example [see the example file that shows opengl rendering mix
 Note that anything related to zt.app directly is self contained, and if you so wish you can use all the abstractions without
 using the state machine loop for window management, if you just want the packages.
 
+## Gotcha:
+
+- By linking ZT the following packages are available to your app on both windows and ubuntu: `zt`, `gl`, `glfw`, `imgui`, `stb_image`
+- ImVec2 and ImVec4 are both substituted with zlm's Vec2 and Vec4 structs respectively, you can use both interchangeably.
+- `ZTAppConfig` is initial state, it is not recommended to try and change its variables after starting it(more specifically
+after the init function.) expecting the changes to work. For changing icon and window title after init, see glfw and its documentation.
+- Disabling power saving mode will let GLFW handle buffer flip timing, so likely will be at vsync fps rather than on every
+event.
+- In update you are free to do anything you want that you'd do in any opengl/glfw loop, the only things done in the event
+loop are as follows:
+    - `glClear` to clear current buffer
+    - `igNewFrame` to set up imgui frame logic
+    - **Your applications update function**
+    - if `config.imguiVisible` imgui is rendered, otherwise draw data is discarded and the imgui frame is ended.
+    - glfw buffers are swapped and events are polled.
+    - Timing management sets the delta time, and if `config.energySaving`, an event is awaited before continuing the loop,
+    otherwise it lets glfw handle vsync timing.
+
 ## How Do I...
 
 - Show smooth animation in powersaving mode? 
@@ -121,5 +147,5 @@ The numbered ZT Entries are all you need to get started with close to the metal 
 
 ## Credits
 
-Example Font - https://github.com/uswds/public-sans
-Inspiration and Code Snippets - https://github.com/digitalcreature/ube (Thanks sammy for all the help)
+- Example Font - https://github.com/uswds/public-sans
+- Inspiration and Code Snippets - https://github.com/digitalcreature/ube (Thanks sammy for all the help!)

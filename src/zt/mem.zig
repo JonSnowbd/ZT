@@ -2,7 +2,6 @@ const std = @import("std");
 const mem = std.mem;
 
 // Credit to prime31's various zig projects, very useful allocator
-
 const ScratchAllocator = struct {
     allocator: mem.Allocator,
     backup_allocator: *mem.Allocator,
@@ -48,10 +47,8 @@ const ScratchAllocator = struct {
     }
 };
 
-/// This is a ring buffer so memory doesnt need to be freed.
 var ringBuffer: *mem.Allocator = undefined;
 var _allocInstance: ScratchAllocator = undefined;
-
 
 var initialized: bool = false;
 fn init(allocator: *std.mem.Allocator) void {
@@ -60,7 +57,8 @@ fn init(allocator: *std.mem.Allocator) void {
 }
 
 /// Returns a ring buffer that uses a page allocator in a loop of memory.
-/// Do not use this for permanent memory, but instead for throw away memory.
+/// Do not use this for permanent memory, but instead for throw away memory, no need
+/// to free anything that you use this to allocate.
 pub fn ring() *mem.Allocator {
     if(!initialized) {
         init(std.heap.page_allocator);

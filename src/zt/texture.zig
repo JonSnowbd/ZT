@@ -9,9 +9,9 @@ pub const Texture = struct {
     height: f32 = undefined,
     dead: bool = true,
 
-    /// Loads an already existing texture from a c_uint
+    /// Loads an already existing opengl texture from a c_uint
     pub fn from(id:c_uint) @This() {return .{.id=id,.dead=false};}
-    /// Takes a relative(cwd) path and loads it into 
+    /// Takes a file path and loads it into opengl using stb_image.
     pub fn init(filePath:[]const u8) !@This() {
         var w: c_int = 0;
         var h: c_int = 0;
