@@ -97,7 +97,8 @@ pub const Texture = struct {
         glBindTexture(GL_TEXTURE_2D, currentTexture); // Jump back
     }
 
+    /// Use this to get the correct Texture ID for use in imgui.
     pub fn imguiId(self:*Texture) *c_void {
-        return  @intToPtr(*c_void, self.id);
+        return @intToPtr(*c_void, self.id);
     }
 };

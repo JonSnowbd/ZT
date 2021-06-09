@@ -60,13 +60,13 @@ fn update() void {
         igSeparator();
         // Its a bit awkward, but render targets are upside down thanks to opengl. It's a simple matter of flipping
         // the y source vectors.
-        igText("Below is the rendertarget!");
+        igText("Below is the OpenGL rendertarget shown in an igImage!");
         igImage(offScreen.target.imguiId(), .{.x=300,.y=200}, .{.x=0,.y=1}, .{.x=1,.y=0}, ImVec4.white, ImVec4.white);
     }
     igEnd();
     if(igBegin("Dock Window", null, ImGuiWindowFlags_None)) {
-        igText("You can even do custom drawing easily.");
         customDrawing();
+        ztTextColor("You can even do custom drawing easily.",.{.x=1.0,.w=1.0}, .{});
     }
     igEnd();
 
@@ -84,7 +84,6 @@ pub fn customDrawing() void {
     var draw = igGetWindowDrawList();
     var position: ImVec2 = undefined;
     igGetWindowPos(&position);
-    igRenderArrow(draw, position, 0xffffffff, ImGuiDir_Right, 3.0);
-    // igRenderRectFilledWithHole(draw, ImRect.init(position.x,position.y,20,20), ImRect.init(position.x+10,position.y+10,10,10), 0xffffffff, 2);
-    // igRenderFrame()
+    igRenderFrame(position.add(ImVec2.new(20,70)), position.add(ImVec2.new(100,100)), 0xffffffff, true, 3.0);
+    // igRenderArrow(draw, position, 0xffffffff, ImGuiDir_Right, 3.0);
 }

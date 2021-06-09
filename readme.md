@@ -114,6 +114,8 @@ loop are as follows:
     - glfw buffers are swapped and events are polled.
     - Timing management sets the delta time, and if `config.energySaving`, an event is awaited before continuing the loop,
     otherwise it lets glfw handle vsync timing.
+- Don't forget when building your application for distribution, if you want it to be lean you can build with `-Drelease-small` and package
+it with UPX after building! Small binaries are cool.
 
 ## How Do I...
 
@@ -125,6 +127,11 @@ disabled. Use this if you have smooth transitions that need to be displayed
 - Update the powersaving frame from an external source e.g threads?
 
 `zt.app.forceUpdate()` will force the application to update and redraw by inputting an empty event into glfw.
+
+- Use an opengl texture in imgui?
+
+If youre using the `zt.Texture` abstraction, its as simple as passing in `texture.imguiId()` as the id, otherwise
+you can pass in the opengl [texture id converted to a pointer, as done in texture.zig](src/zt/texture.zig)
 
 ## Where is...
 
