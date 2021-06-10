@@ -57,7 +57,7 @@ fn update() void {
         ztTextDisabled("{s} This text is disabled!", .{"Hello!"});
         // For now this seems to error out linux, finding out why soon, leaving it uncommented for git issue,
         // commenting this on your build(on linux) will fix it as long as you avoid functions with signature (4*4 byte struct, [*c]u8).
-        // ztTextColor("And it can be colored", .{ .x = 1.0, .w = 1.0 }, .{});
+        ztTextColor("And it can be colored", .{ .x = 1.0, .w = 1.0 }, .{});
 
         igSeparator();
         // Its a bit awkward, but render targets are upside down thanks to opengl. It's a simple matter of flipping
