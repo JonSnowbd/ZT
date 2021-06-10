@@ -60,7 +60,7 @@ fn init(allocator: *std.mem.Allocator) void {
 /// Do not use this for permanent memory, but instead for throw away memory, no need
 /// to free anything that you use this to allocate.
 pub fn ring() *mem.Allocator {
-    if(!initialized) {
+    if (!initialized) {
         init(std.heap.page_allocator);
         initialized = true;
     }

@@ -927,11 +927,8 @@ pub const ImGuiItemStatusFlags = c_int;
 pub const struct_ImRect = extern struct {
     Min: ImVec2,
     Max: ImVec2,
-    pub fn init(x:f32,y:f32,w:f32,h:f32) @This() {
-        return .{
-            .Min = .{.x=x,.y=y},
-            .Max = .{.x=w,.y=h}
-        };
+    pub fn init(x: f32, y: f32, w: f32, h: f32) @This() {
+        return .{ .Min = .{ .x = x, .y = y }, .Max = .{ .x = w, .y = h } };
     }
 };
 pub const ImRect = struct_ImRect;
@@ -5128,7 +5125,7 @@ const __WIN64__ = @as(c_int, 1);
 const __MINGW64__ = @as(c_int, 1);
 const __MSVCRT__ = @as(c_int, 1);
 const __MINGW32__ = @as(c_int, 1);
-fn __declspec(a: anytype) callconv(.Inline) @TypeOf(__attribute__(a)) {
+inline fn __declspec(a: anytype) @TypeOf(__attribute__(a)) {
     return __attribute__(a);
 }
 const _cdecl = __attribute__(__cdecl__);
@@ -5148,7 +5145,7 @@ const __STDC_UTF_16__ = @as(c_int, 1);
 const __STDC_UTF_32__ = @as(c_int, 1);
 const _DEBUG = @as(c_int, 1);
 const CIMGUI_DEFINE_ENUMS_AND_STRUCTS = @as(c_int, 1);
-fn __MINGW64_STRINGIFY(x: anytype) callconv(.Inline) @TypeOf(__STRINGIFY(x)) {
+inline fn __MINGW64_STRINGIFY(x: anytype) @TypeOf(__STRINGIFY(x)) {
     return __STRINGIFY(x);
 }
 const __MINGW64_VERSION_MAJOR = @as(c_int, 8);
@@ -5162,13 +5159,13 @@ const _M_AMD64 = @as(c_int, 100);
 const _M_X64 = @as(c_int, 100);
 const _ = @as(c_int, 1);
 const __MINGW_USE_UNDERSCORE_PREFIX = @as(c_int, 0);
-fn __MINGW_USYMBOL(sym: anytype) callconv(.Inline) @TypeOf(sym) {
+inline fn __MINGW_USYMBOL(sym: anytype) @TypeOf(sym) {
     return sym;
 }
-fn __MINGW_ASM_CALL(func: anytype) callconv(.Inline) @TypeOf(__asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(func)))) {
+inline fn __MINGW_ASM_CALL(func: anytype) @TypeOf(__asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(func)))) {
     return __asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(func)));
 }
-fn __MINGW_ASM_CRT_CALL(func: anytype) callconv(.Inline) @TypeOf(__asm__(__STRINGIFY(func))) {
+inline fn __MINGW_ASM_CRT_CALL(func: anytype) @TypeOf(__asm__(__STRINGIFY(func))) {
     return __asm__(__STRINGIFY(func));
 }
 const __MINGW_EXTENSION = __extension__;
@@ -5179,26 +5176,26 @@ const __MINGW_HAVE_WIDE_C99_PRINTF = @as(c_int, 1);
 const __MINGW_HAVE_ANSI_C99_SCANF = @as(c_int, 1);
 const __MINGW_HAVE_WIDE_C99_SCANF = @as(c_int, 1);
 const __MINGW_GCC_VERSION = ((__GNUC__ * @as(c_int, 10000)) + (__GNUC_MINOR__ * @as(c_int, 100))) + __GNUC_PATCHLEVEL__;
-fn __MINGW_GNUC_PREREQ(major: anytype, minor: anytype) callconv(.Inline) @TypeOf((__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor))) {
+inline fn __MINGW_GNUC_PREREQ(major: anytype, minor: anytype) @TypeOf((__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor))) {
     return (__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor));
 }
-fn __MINGW_MSC_PREREQ(major: anytype, minor: anytype) callconv(.Inline) @TypeOf(@as(c_int, 0)) {
+inline fn __MINGW_MSC_PREREQ(major: anytype, minor: anytype) @TypeOf(@as(c_int, 0)) {
     return @as(c_int, 0);
 }
 const __MINGW_SEC_WARN_STR = "This function or variable may be unsafe, use _CRT_SECURE_NO_WARNINGS to disable deprecation";
 const __MINGW_MSVC2005_DEPREC_STR = "This POSIX function is deprecated beginning in Visual C++ 2005, use _CRT_NONSTDC_NO_DEPRECATE to disable deprecation";
 const __MINGW_ATTRIB_DEPRECATED_MSVC2005 = __MINGW_ATTRIB_DEPRECATED_STR(__MINGW_MSVC2005_DEPREC_STR);
 const __MINGW_ATTRIB_DEPRECATED_SEC_WARN = __MINGW_ATTRIB_DEPRECATED_STR(__MINGW_SEC_WARN_STR);
-fn __MINGW_MS_PRINTF(__format: anytype, __args: anytype) callconv(.Inline) @TypeOf(__attribute__(__format__(ms_printf, __format, __args))) {
+inline fn __MINGW_MS_PRINTF(__format: anytype, __args: anytype) @TypeOf(__attribute__(__format__(ms_printf, __format, __args))) {
     return __attribute__(__format__(ms_printf, __format, __args));
 }
-fn __MINGW_MS_SCANF(__format: anytype, __args: anytype) callconv(.Inline) @TypeOf(__attribute__(__format__(ms_scanf, __format, __args))) {
+inline fn __MINGW_MS_SCANF(__format: anytype, __args: anytype) @TypeOf(__attribute__(__format__(ms_scanf, __format, __args))) {
     return __attribute__(__format__(ms_scanf, __format, __args));
 }
-fn __MINGW_GNU_PRINTF(__format: anytype, __args: anytype) callconv(.Inline) @TypeOf(__attribute__(__format__(gnu_printf, __format, __args))) {
+inline fn __MINGW_GNU_PRINTF(__format: anytype, __args: anytype) @TypeOf(__attribute__(__format__(gnu_printf, __format, __args))) {
     return __attribute__(__format__(gnu_printf, __format, __args));
 }
-fn __MINGW_GNU_SCANF(__format: anytype, __args: anytype) callconv(.Inline) @TypeOf(__attribute__(__format__(gnu_scanf, __format, __args))) {
+inline fn __MINGW_GNU_SCANF(__format: anytype, __args: anytype) @TypeOf(__attribute__(__format__(gnu_scanf, __format, __args))) {
     return __attribute__(__format__(gnu_scanf, __format, __args));
 }
 const __mingw_static_ovr = __mingw_ovr;
@@ -5215,7 +5212,7 @@ const __USE_CRTIMP = @as(c_int, 1);
 const _CRTIMP = __attribute__(__dllimport__);
 const USE___UUIDOF = @as(c_int, 0);
 const _inline = __inline;
-fn __UNUSED_PARAM(x: anytype) callconv(.Inline) @TypeOf(x ++ __attribute__(__unused__)) {
+inline fn __UNUSED_PARAM(x: anytype) @TypeOf(x ++ __attribute__(__unused__)) {
     return x ++ __attribute__(__unused__);
 }
 const __restrict_arr = __restrict;
@@ -5223,13 +5220,13 @@ const __MINGW_ATTRIB_NORETURN = __attribute__(__noreturn__);
 const __MINGW_ATTRIB_CONST = __attribute__(__const__);
 const __MINGW_ATTRIB_MALLOC = __attribute__(__malloc__);
 const __MINGW_ATTRIB_PURE = __attribute__(__pure__);
-fn __MINGW_ATTRIB_NONNULL(arg: anytype) callconv(.Inline) @TypeOf(__attribute__(__nonnull__(arg))) {
+inline fn __MINGW_ATTRIB_NONNULL(arg: anytype) @TypeOf(__attribute__(__nonnull__(arg))) {
     return __attribute__(__nonnull__(arg));
 }
 const __MINGW_ATTRIB_UNUSED = __attribute__(__unused__);
 const __MINGW_ATTRIB_USED = __attribute__(__used__);
 const __MINGW_ATTRIB_DEPRECATED = __attribute__(__deprecated__);
-fn __MINGW_ATTRIB_DEPRECATED_MSG(x: anytype) callconv(.Inline) @TypeOf(__attribute__(__deprecated__(x))) {
+inline fn __MINGW_ATTRIB_DEPRECATED_MSG(x: anytype) @TypeOf(__attribute__(__deprecated__(x))) {
     return __attribute__(__deprecated__(x));
 }
 const __MINGW_NOTHROW = __attribute__(__nothrow__);
@@ -5242,13 +5239,13 @@ const MINGW_HAS_SECURE_API = @as(c_int, 1);
 const __STDC_SECURE_LIB__ = @as(c_long, 200411);
 const __GOT_SECURE_LIB__ = __STDC_SECURE_LIB__;
 const _CRT_PACKING = @as(c_int, 8);
-fn _ADDRESSOF(v: anytype) callconv(.Inline) @TypeOf(&v) {
+inline fn _ADDRESSOF(v: anytype) @TypeOf(&v) {
     return &v;
 }
-fn _CRT_STRINGIZE(_Value: anytype) callconv(.Inline) @TypeOf(__CRT_STRINGIZE(_Value)) {
+inline fn _CRT_STRINGIZE(_Value: anytype) @TypeOf(__CRT_STRINGIZE(_Value)) {
     return __CRT_STRINGIZE(_Value);
 }
-fn _CRT_WIDE(_String: anytype) callconv(.Inline) @TypeOf(__CRT_WIDE(_String)) {
+inline fn _CRT_WIDE(_String: anytype) @TypeOf(__CRT_WIDE(_String)) {
     return __CRT_WIDE(_String);
 }
 const _CRTIMP_NOIA64 = _CRTIMP;
@@ -5258,17 +5255,17 @@ const _MRTIMP2 = _CRTIMP;
 const _MCRTIMP = _CRTIMP;
 const _CRTIMP_PURE = _CRTIMP;
 const _SECURECRT_FILL_BUFFER_PATTERN = @as(c_int, 0xFD);
-fn _CRT_DEPRECATE_TEXT(_Text_1: anytype) callconv(.Inline) @TypeOf(__declspec(deprecated)) {
+inline fn _CRT_DEPRECATE_TEXT(_Text_1: anytype) @TypeOf(__declspec(deprecated)) {
     return __declspec(deprecated);
 }
 const UNALIGNED = __unaligned;
-fn _CRT_ALIGN(x: anytype) callconv(.Inline) @TypeOf(__attribute__(__aligned__(x))) {
+inline fn _CRT_ALIGN(x: anytype) @TypeOf(__attribute__(__aligned__(x))) {
     return __attribute__(__aligned__(x));
 }
 const __CRTDECL = __cdecl;
 const _ARGMAX = @as(c_int, 100);
 const _TRUNCATE = usize - @as(c_int, 1);
-fn _CRT_UNUSED(x: anytype) callconv(.Inline) c_void {
+inline fn _CRT_UNUSED(x: anytype) c_void {
     return @import("std").meta.cast(c_void, x);
 }
 const __USE_MINGW_ANSI_STDIO = @as(c_int, 1);
@@ -5307,7 +5304,7 @@ const _SYS_OPEN = @as(c_int, 20);
 const TMP_MAX = @as(c_int, 32767);
 const NULL = @import("std").meta.cast(?*c_void, @as(c_int, 0));
 const _iob = __iob_func();
-fn _FPOSOFF(fp: anytype) callconv(.Inline) c_long {
+inline fn _FPOSOFF(fp: anytype) c_long {
     return @import("std").meta.cast(c_long, fp);
 }
 const stdin = __acrt_iob_func(@as(c_int, 0));
@@ -5332,28 +5329,28 @@ const popen = _popen;
 const pclose = _pclose;
 const WEOF = @import("std").meta.cast(wint_t, @import("std").meta.promoteIntLiteral(c_int, 0xFFFF, .hexadecimal));
 const wpopen = _wpopen;
-fn _putwc_nolock(_c: anytype, _stm: anytype) callconv(.Inline) @TypeOf(_fputwc_nolock(_c, _stm)) {
+inline fn _putwc_nolock(_c: anytype, _stm: anytype) @TypeOf(_fputwc_nolock(_c, _stm)) {
     return _fputwc_nolock(_c, _stm);
 }
-fn _getwc_nolock(_c: anytype) callconv(.Inline) @TypeOf(_fgetwc_nolock(_c)) {
+inline fn _getwc_nolock(_c: anytype) @TypeOf(_fgetwc_nolock(_c)) {
     return _fgetwc_nolock(_c);
 }
-fn _getc_nolock(_stream: anytype) callconv(.Inline) @TypeOf(_fgetc_nolock(_stream)) {
+inline fn _getc_nolock(_stream: anytype) @TypeOf(_fgetc_nolock(_stream)) {
     return _fgetc_nolock(_stream);
 }
-fn _putc_nolock(_c: anytype, _stream: anytype) callconv(.Inline) @TypeOf(_fputc_nolock(_c, _stream)) {
+inline fn _putc_nolock(_c: anytype, _stream: anytype) @TypeOf(_fputc_nolock(_c, _stream)) {
     return _fputc_nolock(_c, _stream);
 }
-fn _getchar_nolock() callconv(.Inline) @TypeOf(_getc_nolock(stdin)) {
+inline fn _getchar_nolock() @TypeOf(_getc_nolock(stdin)) {
     return _getc_nolock(stdin);
 }
-fn _putchar_nolock(_c: anytype) callconv(.Inline) @TypeOf(_putc_nolock(_c, stdout)) {
+inline fn _putchar_nolock(_c: anytype) @TypeOf(_putc_nolock(_c, stdout)) {
     return _putc_nolock(_c, stdout);
 }
-fn _getwchar_nolock() callconv(.Inline) @TypeOf(_getwc_nolock(stdin)) {
+inline fn _getwchar_nolock() @TypeOf(_getwc_nolock(stdin)) {
     return _getwc_nolock(stdin);
 }
-fn _putwchar_nolock(_c: anytype) callconv(.Inline) @TypeOf(_putwc_nolock(_c, stdout)) {
+inline fn _putwchar_nolock(_c: anytype) @TypeOf(_putwc_nolock(_c, stdout)) {
     return _putwc_nolock(_c, stdout);
 }
 const P_tmpdir = _P_tmpdir;
@@ -5420,19 +5417,19 @@ const WCHAR_MIN = @as(c_uint, 0);
 const WCHAR_MAX = @as(c_uint, 0xffff);
 const WINT_MIN = @as(c_uint, 0);
 const WINT_MAX = @as(c_uint, 0xffff);
-fn INT8_C(val: anytype) callconv(.Inline) @TypeOf((INT_LEAST8_MAX - INT_LEAST8_MAX) + val) {
+inline fn INT8_C(val: anytype) @TypeOf((INT_LEAST8_MAX - INT_LEAST8_MAX) + val) {
     return (INT_LEAST8_MAX - INT_LEAST8_MAX) + val;
 }
-fn INT16_C(val: anytype) callconv(.Inline) @TypeOf((INT_LEAST16_MAX - INT_LEAST16_MAX) + val) {
+inline fn INT16_C(val: anytype) @TypeOf((INT_LEAST16_MAX - INT_LEAST16_MAX) + val) {
     return (INT_LEAST16_MAX - INT_LEAST16_MAX) + val;
 }
-fn INT32_C(val: anytype) callconv(.Inline) @TypeOf((INT_LEAST32_MAX - INT_LEAST32_MAX) + val) {
+inline fn INT32_C(val: anytype) @TypeOf((INT_LEAST32_MAX - INT_LEAST32_MAX) + val) {
     return (INT_LEAST32_MAX - INT_LEAST32_MAX) + val;
 }
-fn UINT8_C(val: anytype) callconv(.Inline) @TypeOf(val) {
+inline fn UINT8_C(val: anytype) @TypeOf(val) {
     return val;
 }
-fn UINT16_C(val: anytype) callconv(.Inline) @TypeOf(val) {
+inline fn UINT16_C(val: anytype) @TypeOf(val) {
     return val;
 }
 const API = __declspec(dllexport);

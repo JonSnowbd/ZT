@@ -22,8 +22,8 @@ pub const RenderTarget = struct {
         glBindFramebuffer(GL_FRAMEBUFFER, self.bufferId);
 
         // TEX
-        self.target = Texture.initBlank(width,height);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.target.id, 0); 
+        self.target = Texture.initBlank(width, height);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.target.id, 0);
 
         return self;
     }
@@ -32,7 +32,9 @@ pub const RenderTarget = struct {
     }
 
     pub fn bind(self: *@This()) void {
-        if(currentRt == self.bufferId) { return; }
+        if (currentRt == self.bufferId) {
+            return;
+        }
         glBindFramebuffer(GL_FRAMEBUFFER, self.bufferId);
         currentRt = self.bufferId;
         glGetIntegerv(GL_VIEWPORT, &self._previous_viewport);
@@ -41,6 +43,6 @@ pub const RenderTarget = struct {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         currentRt = 0;
 
-        glViewport(self._previous_viewport[0],self._previous_viewport[1],self._previous_viewport[2],self._previous_viewport[3]);
+        glViewport(self._previous_viewport[0], self._previous_viewport[1], self._previous_viewport[2], self._previous_viewport[3]);
     }
 };

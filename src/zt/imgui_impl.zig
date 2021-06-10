@@ -198,7 +198,6 @@ pub fn RenderDrawData(draw_data: *ImDrawData) void {
                     };
 
                     if (clip_rect.x < @intToFloat(f32, fb_width) and clip_rect.y < @intToFloat(f32, fb_height) and clip_rect.z >= 0.0 and clip_rect.w >= 0.0) {
-
                         glScissor(@floatToInt(c_int, clip_rect.x), fb_height - @floatToInt(c_int, clip_rect.w), @floatToInt(c_int, clip_rect.z - clip_rect.x), @floatToInt(c_int, clip_rect.w - clip_rect.y));
 
                         // Bind texture, Draw
@@ -228,7 +227,7 @@ pub fn RenderDrawData(draw_data: *ImDrawData) void {
 
     // Destroy the temporary VAO
     glDeleteVertexArrays(1, &vertex_array_object);
-    glScissor(0,0,fb_width,fb_height);
+    glScissor(0, 0, fb_width, fb_height);
 }
 
 fn CreateFontsTexture() bool {

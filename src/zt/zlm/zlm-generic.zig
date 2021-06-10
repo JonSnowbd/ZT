@@ -332,9 +332,9 @@ pub fn specializeOn(comptime Real: type) type {
             pub const unitZ = Self.new(0, 0, 1, 0);
             pub const unitW = Self.new(0, 0, 0, 1);
 
-            pub const white = Self.new(1,1,1,1);
-            pub const black = Self.new(0,0,0,1);
-            pub const transparent = Self.new(0,0,0,0);
+            pub const white = Self.new(1, 1, 1, 1);
+            pub const black = Self.new(0, 0, 0, 1);
+            pub const transparent = Self.new(0, 0, 0, 0);
 
             usingnamespace VectorMixin(Self);
 

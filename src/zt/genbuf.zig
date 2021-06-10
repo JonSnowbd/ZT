@@ -11,7 +11,7 @@ usingnamespace gl;
 /// The resulting buffer can contain many quads and tris together, 
 /// TODO: Matrices in generic buffers.
 pub fn Buffer(comptime T: type) type {
-    return struct{
+    return struct {
         allocator: *std.mem.Allocator = undefined,
 
         vaoId: c_uint = undefined,
@@ -30,7 +30,7 @@ pub fn Buffer(comptime T: type) type {
 
             self.vertices = std.ArrayList(T).init(self.allocator);
             self.indices = std.ArrayList(c_uint).init(self.allocator);
-            
+
             glGenBuffers(1, &self.vboId);
             glGenBuffers(1, &self.iboId);
 
@@ -42,10 +42,10 @@ pub fn Buffer(comptime T: type) type {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.iboId);
 
             var currentOffset: usize = 0;
-            var stride: c_int = @intCast(c_int,@sizeOf(T));
+            var stride: c_int = @intCast(c_int, @sizeOf(T));
 
-            inline for(std.meta.fields(T)) |field, i| {
-                switch(field.field_type) {
+            inline for (std.meta.fields(T)) |field, i| {
+                switch (field.field_type) {
                     f32 => {
                         glVertexAttribPointer(@intCast(c_uint, i), 1, GL_FLOAT, GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
                         glEnableVertexAttribArray(@intCast(c_uint, i));
@@ -66,7 +66,9 @@ pub fn Buffer(comptime T: type) type {
                         glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 16;
                     },
-                    else => { @compileError("Vertex Struct had types incompatible with automatic buffers."); }
+                    else => {
+                        @compileError("Vertex Struct had types incompatible with automatic buffers.");
+                    },
                 }
             }
 
@@ -99,9 +101,9 @@ pub fn Buffer(comptime T: type) type {
             try self.vertices.append(v2);
             try self.vertices.append(v3);
 
-            try self.indices.append(@intCast(c_uint,count+0));
-            try self.indices.append(@intCast(c_uint,count+1));
-            try self.indices.append(@intCast(c_uint,count+2));
+            try self.indices.append(@intCast(c_uint, count + 0));
+            try self.indices.append(@intCast(c_uint, count + 1));
+            try self.indices.append(@intCast(c_uint, count + 2));
 
             self.indCount += 3;
             self.dirty = true;
@@ -113,19 +115,21 @@ pub fn Buffer(comptime T: type) type {
             try self.vertices.append(tr);
             try self.vertices.append(br);
 
-            try self.indices.append(@intCast(c_uint,count+0));
-            try self.indices.append(@intCast(c_uint,count+1));
-            try self.indices.append(@intCast(c_uint,count+3));
-            try self.indices.append(@intCast(c_uint,count+1));
-            try self.indices.append(@intCast(c_uint,count+2));
-            try self.indices.append(@intCast(c_uint,count+3));
+            try self.indices.append(@intCast(c_uint, count + 0));
+            try self.indices.append(@intCast(c_uint, count + 1));
+            try self.indices.append(@intCast(c_uint, count + 3));
+            try self.indices.append(@intCast(c_uint, count + 1));
+            try self.indices.append(@intCast(c_uint, count + 2));
+            try self.indices.append(@intCast(c_uint, count + 3));
             self.indCount += 6;
             self.dirty = true;
         }
         /// Commits to opengl with the currently added sprites in a static memory location. Use this if you are going
         /// to very rarely push again. You can still flush as many times as needed.
         pub fn pushStatic(self: *@This()) void {
-            if(!self.dirty) {return;}
+            if (!self.dirty) {
+                return;
+            }
             self.bind();
             var vertSize: c_longlong = @intCast(c_longlong, @sizeOf(T) * self.vertices.items.len);
             var indSize: c_longlong = @intCast(c_longlong, @sizeOf(f32) * self.indCount);
@@ -137,7 +141,9 @@ pub fn Buffer(comptime T: type) type {
         /// Commits to opengl with the currently added sprites in a dynamic memory location. Use this if you are pushing
         /// and flushing once a frame.
         pub fn pushDynamic(self: *@This()) void {
-            if(!self.dirty) {return;}
+            if (!self.dirty) {
+                return;
+            }
             self.bind();
             var vertSize: c_longlong = @intCast(c_longlong, @sizeOf(T) * self.vertices.items.len);
             var indSize: c_longlong = @intCast(c_longlong, @sizeOf(f32) * self.indCount);
@@ -149,7 +155,9 @@ pub fn Buffer(comptime T: type) type {
         /// Commits to opengl with the currently added sprites in a streaming memory location. Use this if you are going
         /// to be pushing and flushing multiple times per frame.
         pub fn pushStream(self: *@This()) void {
-            if(!self.dirty) {return;}
+            if (!self.dirty) {
+                return;
+            }
             self.bind();
             var vertSize: c_longlong = @intCast(c_longlong, @sizeOf(T) * self.vertices.items.len);
             var indSize: c_longlong = @intCast(c_longlong, @sizeOf(f32) * self.indCount);
@@ -166,4 +174,4 @@ pub fn Buffer(comptime T: type) type {
             self.unbind();
         }
     };
-} 
+}

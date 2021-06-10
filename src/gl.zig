@@ -1265,7 +1265,7 @@ const __WIN64__ = @as(c_int, 1);
 const __MINGW64__ = @as(c_int, 1);
 const __MSVCRT__ = @as(c_int, 1);
 const __MINGW32__ = @as(c_int, 1);
-fn __declspec(a: anytype) callconv(.Inline) @TypeOf(__attribute__(a)) {
+inline fn __declspec(a: anytype) @TypeOf(__attribute__(a)) {
     return __attribute__(a);
 }
 const _cdecl = __attribute__(__cdecl__);
@@ -1289,7 +1289,7 @@ const APIENTRYP = [*c]APIENTRY;
 const GLAPIENTRY = APIENTRY;
 const KHRONOS_APICALL = __declspec(dllimport);
 const KHRONOS_APIENTRY = __stdcall;
-fn __MINGW64_STRINGIFY(x: anytype) callconv(.Inline) @TypeOf(__STRINGIFY(x)) {
+inline fn __MINGW64_STRINGIFY(x: anytype) @TypeOf(__STRINGIFY(x)) {
     return __STRINGIFY(x);
 }
 const __MINGW64_VERSION_MAJOR = @as(c_int, 8);
@@ -1303,13 +1303,13 @@ const _M_AMD64 = @as(c_int, 100);
 const _M_X64 = @as(c_int, 100);
 const _ = @as(c_int, 1);
 const __MINGW_USE_UNDERSCORE_PREFIX = @as(c_int, 0);
-fn __MINGW_USYMBOL(sym: anytype) callconv(.Inline) @TypeOf(sym) {
+inline fn __MINGW_USYMBOL(sym: anytype) @TypeOf(sym) {
     return sym;
 }
-fn __MINGW_ASM_CALL(func: anytype) callconv(.Inline) @TypeOf(__asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(func)))) {
+inline fn __MINGW_ASM_CALL(func: anytype) @TypeOf(__asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(func)))) {
     return __asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(func)));
 }
-fn __MINGW_ASM_CRT_CALL(func: anytype) callconv(.Inline) @TypeOf(__asm__(__STRINGIFY(func))) {
+inline fn __MINGW_ASM_CRT_CALL(func: anytype) @TypeOf(__asm__(__STRINGIFY(func))) {
     return __asm__(__STRINGIFY(func));
 }
 const __MINGW_EXTENSION = __extension__;
@@ -1320,26 +1320,26 @@ const __MINGW_HAVE_WIDE_C99_PRINTF = @as(c_int, 1);
 const __MINGW_HAVE_ANSI_C99_SCANF = @as(c_int, 1);
 const __MINGW_HAVE_WIDE_C99_SCANF = @as(c_int, 1);
 const __MINGW_GCC_VERSION = ((__GNUC__ * @as(c_int, 10000)) + (__GNUC_MINOR__ * @as(c_int, 100))) + __GNUC_PATCHLEVEL__;
-fn __MINGW_GNUC_PREREQ(major: anytype, minor: anytype) callconv(.Inline) @TypeOf((__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor))) {
+inline fn __MINGW_GNUC_PREREQ(major: anytype, minor: anytype) @TypeOf((__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor))) {
     return (__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor));
 }
-fn __MINGW_MSC_PREREQ(major: anytype, minor: anytype) callconv(.Inline) @TypeOf(@as(c_int, 0)) {
+inline fn __MINGW_MSC_PREREQ(major: anytype, minor: anytype) @TypeOf(@as(c_int, 0)) {
     return @as(c_int, 0);
 }
 const __MINGW_SEC_WARN_STR = "This function or variable may be unsafe, use _CRT_SECURE_NO_WARNINGS to disable deprecation";
 const __MINGW_MSVC2005_DEPREC_STR = "This POSIX function is deprecated beginning in Visual C++ 2005, use _CRT_NONSTDC_NO_DEPRECATE to disable deprecation";
 const __MINGW_ATTRIB_DEPRECATED_MSVC2005 = __MINGW_ATTRIB_DEPRECATED_STR(__MINGW_MSVC2005_DEPREC_STR);
 const __MINGW_ATTRIB_DEPRECATED_SEC_WARN = __MINGW_ATTRIB_DEPRECATED_STR(__MINGW_SEC_WARN_STR);
-fn __MINGW_MS_PRINTF(__format: anytype, __args: anytype) callconv(.Inline) @TypeOf(__attribute__(__format__(ms_printf, __format, __args))) {
+inline fn __MINGW_MS_PRINTF(__format: anytype, __args: anytype) @TypeOf(__attribute__(__format__(ms_printf, __format, __args))) {
     return __attribute__(__format__(ms_printf, __format, __args));
 }
-fn __MINGW_MS_SCANF(__format: anytype, __args: anytype) callconv(.Inline) @TypeOf(__attribute__(__format__(ms_scanf, __format, __args))) {
+inline fn __MINGW_MS_SCANF(__format: anytype, __args: anytype) @TypeOf(__attribute__(__format__(ms_scanf, __format, __args))) {
     return __attribute__(__format__(ms_scanf, __format, __args));
 }
-fn __MINGW_GNU_PRINTF(__format: anytype, __args: anytype) callconv(.Inline) @TypeOf(__attribute__(__format__(gnu_printf, __format, __args))) {
+inline fn __MINGW_GNU_PRINTF(__format: anytype, __args: anytype) @TypeOf(__attribute__(__format__(gnu_printf, __format, __args))) {
     return __attribute__(__format__(gnu_printf, __format, __args));
 }
-fn __MINGW_GNU_SCANF(__format: anytype, __args: anytype) callconv(.Inline) @TypeOf(__attribute__(__format__(gnu_scanf, __format, __args))) {
+inline fn __MINGW_GNU_SCANF(__format: anytype, __args: anytype) @TypeOf(__attribute__(__format__(gnu_scanf, __format, __args))) {
     return __attribute__(__format__(gnu_scanf, __format, __args));
 }
 const __mingw_static_ovr = __mingw_ovr;
@@ -1356,7 +1356,7 @@ const __USE_CRTIMP = @as(c_int, 1);
 const _CRTIMP = __attribute__(__dllimport__);
 const USE___UUIDOF = @as(c_int, 0);
 const _inline = __inline;
-fn __UNUSED_PARAM(x: anytype) callconv(.Inline) @TypeOf(x ++ __attribute__(__unused__)) {
+inline fn __UNUSED_PARAM(x: anytype) @TypeOf(x ++ __attribute__(__unused__)) {
     return x ++ __attribute__(__unused__);
 }
 const __restrict_arr = __restrict;
@@ -1364,13 +1364,13 @@ const __MINGW_ATTRIB_NORETURN = __attribute__(__noreturn__);
 const __MINGW_ATTRIB_CONST = __attribute__(__const__);
 const __MINGW_ATTRIB_MALLOC = __attribute__(__malloc__);
 const __MINGW_ATTRIB_PURE = __attribute__(__pure__);
-fn __MINGW_ATTRIB_NONNULL(arg: anytype) callconv(.Inline) @TypeOf(__attribute__(__nonnull__(arg))) {
+inline fn __MINGW_ATTRIB_NONNULL(arg: anytype) @TypeOf(__attribute__(__nonnull__(arg))) {
     return __attribute__(__nonnull__(arg));
 }
 const __MINGW_ATTRIB_UNUSED = __attribute__(__unused__);
 const __MINGW_ATTRIB_USED = __attribute__(__used__);
 const __MINGW_ATTRIB_DEPRECATED = __attribute__(__deprecated__);
-fn __MINGW_ATTRIB_DEPRECATED_MSG(x: anytype) callconv(.Inline) @TypeOf(__attribute__(__deprecated__(x))) {
+inline fn __MINGW_ATTRIB_DEPRECATED_MSG(x: anytype) @TypeOf(__attribute__(__deprecated__(x))) {
     return __attribute__(__deprecated__(x));
 }
 const __MINGW_NOTHROW = __attribute__(__nothrow__);
@@ -1383,13 +1383,13 @@ const MINGW_HAS_SECURE_API = @as(c_int, 1);
 const __STDC_SECURE_LIB__ = @as(c_long, 200411);
 const __GOT_SECURE_LIB__ = __STDC_SECURE_LIB__;
 const _CRT_PACKING = @as(c_int, 8);
-fn _ADDRESSOF(v: anytype) callconv(.Inline) @TypeOf(&v) {
+inline fn _ADDRESSOF(v: anytype) @TypeOf(&v) {
     return &v;
 }
-fn _CRT_STRINGIZE(_Value: anytype) callconv(.Inline) @TypeOf(__CRT_STRINGIZE(_Value)) {
+inline fn _CRT_STRINGIZE(_Value: anytype) @TypeOf(__CRT_STRINGIZE(_Value)) {
     return __CRT_STRINGIZE(_Value);
 }
-fn _CRT_WIDE(_String: anytype) callconv(.Inline) @TypeOf(__CRT_WIDE(_String)) {
+inline fn _CRT_WIDE(_String: anytype) @TypeOf(__CRT_WIDE(_String)) {
     return __CRT_WIDE(_String);
 }
 const _CRTIMP_NOIA64 = _CRTIMP;
@@ -1399,17 +1399,17 @@ const _MRTIMP2 = _CRTIMP;
 const _MCRTIMP = _CRTIMP;
 const _CRTIMP_PURE = _CRTIMP;
 const _SECURECRT_FILL_BUFFER_PATTERN = @as(c_int, 0xFD);
-fn _CRT_DEPRECATE_TEXT(_Text: anytype) callconv(.Inline) @TypeOf(__declspec(deprecated)) {
+inline fn _CRT_DEPRECATE_TEXT(_Text: anytype) @TypeOf(__declspec(deprecated)) {
     return __declspec(deprecated);
 }
 const UNALIGNED = __unaligned;
-fn _CRT_ALIGN(x: anytype) callconv(.Inline) @TypeOf(__attribute__(__aligned__(x))) {
+inline fn _CRT_ALIGN(x: anytype) @TypeOf(__attribute__(__aligned__(x))) {
     return __attribute__(__aligned__(x));
 }
 const __CRTDECL = __cdecl;
 const _ARGMAX = @as(c_int, 100);
 const _TRUNCATE = usize - @as(c_int, 1);
-fn _CRT_UNUSED(x: anytype) callconv(.Inline) c_void {
+inline fn _CRT_UNUSED(x: anytype) c_void {
     return @import("std").meta.cast(c_void, x);
 }
 const __USE_MINGW_ANSI_STDIO = @as(c_int, 1);
@@ -1469,19 +1469,19 @@ const WCHAR_MIN = @as(c_uint, 0);
 const WCHAR_MAX = @as(c_uint, 0xffff);
 const WINT_MIN = @as(c_uint, 0);
 const WINT_MAX = @as(c_uint, 0xffff);
-fn INT8_C(val: anytype) callconv(.Inline) @TypeOf((INT_LEAST8_MAX - INT_LEAST8_MAX) + val) {
+inline fn INT8_C(val: anytype) @TypeOf((INT_LEAST8_MAX - INT_LEAST8_MAX) + val) {
     return (INT_LEAST8_MAX - INT_LEAST8_MAX) + val;
 }
-fn INT16_C(val: anytype) callconv(.Inline) @TypeOf((INT_LEAST16_MAX - INT_LEAST16_MAX) + val) {
+inline fn INT16_C(val: anytype) @TypeOf((INT_LEAST16_MAX - INT_LEAST16_MAX) + val) {
     return (INT_LEAST16_MAX - INT_LEAST16_MAX) + val;
 }
-fn INT32_C(val: anytype) callconv(.Inline) @TypeOf((INT_LEAST32_MAX - INT_LEAST32_MAX) + val) {
+inline fn INT32_C(val: anytype) @TypeOf((INT_LEAST32_MAX - INT_LEAST32_MAX) + val) {
     return (INT_LEAST32_MAX - INT_LEAST32_MAX) + val;
 }
-fn UINT8_C(val: anytype) callconv(.Inline) @TypeOf(val) {
+inline fn UINT8_C(val: anytype) @TypeOf(val) {
     return val;
 }
-fn UINT16_C(val: anytype) callconv(.Inline) @TypeOf(val) {
+inline fn UINT16_C(val: anytype) @TypeOf(val) {
     return val;
 }
 const KHRONOS_SUPPORT_INT64 = @as(c_int, 1);
@@ -2306,1137 +2306,1137 @@ pub const GL_TIME_ELAPSED = @import("std").meta.promoteIntLiteral(c_int, 0x88BF,
 pub const GL_TIMESTAMP = @import("std").meta.promoteIntLiteral(c_int, 0x8E28, .hexadecimal);
 pub const GL_INT_2_10_10_10_REV = @import("std").meta.promoteIntLiteral(c_int, 0x8D9F, .hexadecimal);
 pub const GL_VERSION_1_0 = @as(c_int, 1);
-pub fn glCullFace(arg_2: GLenum) callconv(.Inline) void {
+pub inline fn glCullFace(arg_2: GLenum) void {
     return glad_glCullFace.?(arg_2);
 }
-pub fn glFrontFace(arg_3: GLenum) callconv(.Inline) void {
+pub inline fn glFrontFace(arg_3: GLenum) void {
     return glad_glFrontFace.?(arg_3);
 }
-pub fn glHint(arg_4: GLenum, arg_5: GLenum) callconv(.Inline) void {
+pub inline fn glHint(arg_4: GLenum, arg_5: GLenum) void {
     return glad_glHint.?(arg_4, arg_5);
 }
-pub fn glLineWidth(arg_6: GLfloat) callconv(.Inline) void {
+pub inline fn glLineWidth(arg_6: GLfloat) void {
     return glad_glLineWidth.?(arg_6);
 }
-pub fn glPointSize(arg_7: GLfloat) callconv(.Inline) void {
+pub inline fn glPointSize(arg_7: GLfloat) void {
     return glad_glPointSize.?(arg_7);
 }
-pub fn glPolygonMode(arg_8: GLenum, arg_9: GLenum) callconv(.Inline) void {
+pub inline fn glPolygonMode(arg_8: GLenum, arg_9: GLenum) void {
     return glad_glPolygonMode.?(arg_8, arg_9);
 }
-pub fn glScissor(arg_10: GLint, arg_11: GLint, arg_12: GLsizei, arg_13: GLsizei) callconv(.Inline) void {
+pub inline fn glScissor(arg_10: GLint, arg_11: GLint, arg_12: GLsizei, arg_13: GLsizei) void {
     return glad_glScissor.?(arg_10, arg_11, arg_12, arg_13);
 }
-pub fn glTexParameterf(arg_14: GLenum, arg_15: GLenum, arg_16: GLfloat) callconv(.Inline) void {
+pub inline fn glTexParameterf(arg_14: GLenum, arg_15: GLenum, arg_16: GLfloat) void {
     return glad_glTexParameterf.?(arg_14, arg_15, arg_16);
 }
-pub fn glTexParameterfv(arg_17: GLenum, arg_18: GLenum, arg_19: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glTexParameterfv(arg_17: GLenum, arg_18: GLenum, arg_19: [*c]const GLfloat) void {
     return glad_glTexParameterfv.?(arg_17, arg_18, arg_19);
 }
-pub fn glTexParameteri(arg_20: GLenum, arg_21: GLenum, arg_22: GLint) callconv(.Inline) void {
+pub inline fn glTexParameteri(arg_20: GLenum, arg_21: GLenum, arg_22: GLint) void {
     return glad_glTexParameteri.?(arg_20, arg_21, arg_22);
 }
-pub fn glTexParameteriv(arg_23: GLenum, arg_24: GLenum, arg_25: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glTexParameteriv(arg_23: GLenum, arg_24: GLenum, arg_25: [*c]const GLint) void {
     return glad_glTexParameteriv.?(arg_23, arg_24, arg_25);
 }
-pub fn glTexImage1D(arg_26: GLenum, arg_27: GLint, arg_28: GLint, arg_29: GLsizei, arg_30: GLint, arg_31: GLenum, arg_32: GLenum, arg_33: ?*const c_void) callconv(.Inline) void {
+pub inline fn glTexImage1D(arg_26: GLenum, arg_27: GLint, arg_28: GLint, arg_29: GLsizei, arg_30: GLint, arg_31: GLenum, arg_32: GLenum, arg_33: ?*const c_void) void {
     return glad_glTexImage1D.?(arg_26, arg_27, arg_28, arg_29, arg_30, arg_31, arg_32, arg_33);
 }
-pub fn glTexImage2D(arg_34: GLenum, arg_35: GLint, arg_36: GLint, arg_37: GLsizei, arg_38: GLsizei, arg_39: GLint, arg_40: GLenum, arg_41: GLenum, arg_42: ?*const c_void) callconv(.Inline) void {
+pub inline fn glTexImage2D(arg_34: GLenum, arg_35: GLint, arg_36: GLint, arg_37: GLsizei, arg_38: GLsizei, arg_39: GLint, arg_40: GLenum, arg_41: GLenum, arg_42: ?*const c_void) void {
     return glad_glTexImage2D.?(arg_34, arg_35, arg_36, arg_37, arg_38, arg_39, arg_40, arg_41, arg_42);
 }
-pub fn glDrawBuffer(arg_43: GLenum) callconv(.Inline) void {
+pub inline fn glDrawBuffer(arg_43: GLenum) void {
     return glad_glDrawBuffer.?(arg_43);
 }
-pub fn glClear(arg_44: GLbitfield) callconv(.Inline) void {
+pub inline fn glClear(arg_44: GLbitfield) void {
     return glad_glClear.?(arg_44);
 }
-pub fn glClearColor(arg_45: GLfloat, arg_46: GLfloat, arg_47: GLfloat, arg_48: GLfloat) callconv(.Inline) void {
+pub inline fn glClearColor(arg_45: GLfloat, arg_46: GLfloat, arg_47: GLfloat, arg_48: GLfloat) void {
     return glad_glClearColor.?(arg_45, arg_46, arg_47, arg_48);
 }
-pub fn glClearStencil(arg_49: GLint) callconv(.Inline) void {
+pub inline fn glClearStencil(arg_49: GLint) void {
     return glad_glClearStencil.?(arg_49);
 }
-pub fn glClearDepth(arg_50: GLdouble) callconv(.Inline) void {
+pub inline fn glClearDepth(arg_50: GLdouble) void {
     return glad_glClearDepth.?(arg_50);
 }
-pub fn glStencilMask(arg_51: GLuint) callconv(.Inline) void {
+pub inline fn glStencilMask(arg_51: GLuint) void {
     return glad_glStencilMask.?(arg_51);
 }
-pub fn glColorMask(arg_52: GLboolean, arg_53: GLboolean, arg_54: GLboolean, arg_55: GLboolean) callconv(.Inline) void {
+pub inline fn glColorMask(arg_52: GLboolean, arg_53: GLboolean, arg_54: GLboolean, arg_55: GLboolean) void {
     return glad_glColorMask.?(arg_52, arg_53, arg_54, arg_55);
 }
-pub fn glDepthMask(arg_56: GLboolean) callconv(.Inline) void {
+pub inline fn glDepthMask(arg_56: GLboolean) void {
     return glad_glDepthMask.?(arg_56);
 }
-pub fn glDisable(arg_57: GLenum) callconv(.Inline) void {
+pub inline fn glDisable(arg_57: GLenum) void {
     return glad_glDisable.?(arg_57);
 }
-pub fn glEnable(arg_58: GLenum) callconv(.Inline) void {
+pub inline fn glEnable(arg_58: GLenum) void {
     return glad_glEnable.?(arg_58);
 }
-pub fn glFinish() callconv(.Inline) void {
+pub inline fn glFinish() void {
     return glad_glFinish.?();
 }
-pub fn glFlush() callconv(.Inline) void {
+pub inline fn glFlush() void {
     return glad_glFlush.?();
 }
-pub fn glBlendFunc(arg_59: GLenum, arg_60: GLenum) callconv(.Inline) void {
+pub inline fn glBlendFunc(arg_59: GLenum, arg_60: GLenum) void {
     return glad_glBlendFunc.?(arg_59, arg_60);
 }
-pub fn glLogicOp(arg_61: GLenum) callconv(.Inline) void {
+pub inline fn glLogicOp(arg_61: GLenum) void {
     return glad_glLogicOp.?(arg_61);
 }
-pub fn glStencilFunc(arg_62: GLenum, arg_63: GLint, arg_64: GLuint) callconv(.Inline) void {
+pub inline fn glStencilFunc(arg_62: GLenum, arg_63: GLint, arg_64: GLuint) void {
     return glad_glStencilFunc.?(arg_62, arg_63, arg_64);
 }
-pub fn glStencilOp(arg_65: GLenum, arg_66: GLenum, arg_67: GLenum) callconv(.Inline) void {
+pub inline fn glStencilOp(arg_65: GLenum, arg_66: GLenum, arg_67: GLenum) void {
     return glad_glStencilOp.?(arg_65, arg_66, arg_67);
 }
-pub fn glDepthFunc(arg_68: GLenum) callconv(.Inline) void {
+pub inline fn glDepthFunc(arg_68: GLenum) void {
     return glad_glDepthFunc.?(arg_68);
 }
-pub fn glPixelStoref(arg_69: GLenum, arg_70: GLfloat) callconv(.Inline) void {
+pub inline fn glPixelStoref(arg_69: GLenum, arg_70: GLfloat) void {
     return glad_glPixelStoref.?(arg_69, arg_70);
 }
-pub fn glPixelStorei(arg_71: GLenum, arg_72: GLint) callconv(.Inline) void {
+pub inline fn glPixelStorei(arg_71: GLenum, arg_72: GLint) void {
     return glad_glPixelStorei.?(arg_71, arg_72);
 }
-pub fn glReadBuffer(arg_73: GLenum) callconv(.Inline) void {
+pub inline fn glReadBuffer(arg_73: GLenum) void {
     return glad_glReadBuffer.?(arg_73);
 }
-pub fn glReadPixels(arg_74: GLint, arg_75: GLint, arg_76: GLsizei, arg_77: GLsizei, arg_78: GLenum, arg_79: GLenum, arg_80: ?*c_void) callconv(.Inline) void {
+pub inline fn glReadPixels(arg_74: GLint, arg_75: GLint, arg_76: GLsizei, arg_77: GLsizei, arg_78: GLenum, arg_79: GLenum, arg_80: ?*c_void) void {
     return glad_glReadPixels.?(arg_74, arg_75, arg_76, arg_77, arg_78, arg_79, arg_80);
 }
-pub fn glGetBooleanv(arg_81: GLenum, arg_82: [*c]GLboolean) callconv(.Inline) void {
+pub inline fn glGetBooleanv(arg_81: GLenum, arg_82: [*c]GLboolean) void {
     return glad_glGetBooleanv.?(arg_81, arg_82);
 }
-pub fn glGetDoublev(arg_83: GLenum, arg_84: [*c]GLdouble) callconv(.Inline) void {
+pub inline fn glGetDoublev(arg_83: GLenum, arg_84: [*c]GLdouble) void {
     return glad_glGetDoublev.?(arg_83, arg_84);
 }
-pub fn glGetError() callconv(.Inline) GLenum {
+pub inline fn glGetError() GLenum {
     return glad_glGetError.?();
 }
-pub fn glGetFloatv(arg_85: GLenum, arg_86: [*c]GLfloat) callconv(.Inline) void {
+pub inline fn glGetFloatv(arg_85: GLenum, arg_86: [*c]GLfloat) void {
     return glad_glGetFloatv.?(arg_85, arg_86);
 }
-pub fn glGetIntegerv(arg_87: GLenum, arg_88: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetIntegerv(arg_87: GLenum, arg_88: [*c]GLint) void {
     return glad_glGetIntegerv.?(arg_87, arg_88);
 }
-pub fn glGetString(arg_89: GLenum) callconv(.Inline) [*c]const GLubyte {
+pub inline fn glGetString(arg_89: GLenum) [*c]const GLubyte {
     return glad_glGetString.?(arg_89);
 }
-pub fn glGetTexImage(arg_90: GLenum, arg_91: GLint, arg_92: GLenum, arg_93: GLenum, arg_94: ?*c_void) callconv(.Inline) void {
+pub inline fn glGetTexImage(arg_90: GLenum, arg_91: GLint, arg_92: GLenum, arg_93: GLenum, arg_94: ?*c_void) void {
     return glad_glGetTexImage.?(arg_90, arg_91, arg_92, arg_93, arg_94);
 }
-pub fn glGetTexParameterfv(arg_95: GLenum, arg_96: GLenum, arg_97: [*c]GLfloat) callconv(.Inline) void {
+pub inline fn glGetTexParameterfv(arg_95: GLenum, arg_96: GLenum, arg_97: [*c]GLfloat) void {
     return glad_glGetTexParameterfv.?(arg_95, arg_96, arg_97);
 }
-pub fn glGetTexParameteriv(arg_98: GLenum, arg_99: GLenum, arg_100: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetTexParameteriv(arg_98: GLenum, arg_99: GLenum, arg_100: [*c]GLint) void {
     return glad_glGetTexParameteriv.?(arg_98, arg_99, arg_100);
 }
-pub fn glGetTexLevelParameterfv(arg_101: GLenum, arg_102: GLint, arg_103: GLenum, arg_104: [*c]GLfloat) callconv(.Inline) void {
+pub inline fn glGetTexLevelParameterfv(arg_101: GLenum, arg_102: GLint, arg_103: GLenum, arg_104: [*c]GLfloat) void {
     return glad_glGetTexLevelParameterfv.?(arg_101, arg_102, arg_103, arg_104);
 }
-pub fn glGetTexLevelParameteriv(arg_105: GLenum, arg_106: GLint, arg_107: GLenum, arg_108: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetTexLevelParameteriv(arg_105: GLenum, arg_106: GLint, arg_107: GLenum, arg_108: [*c]GLint) void {
     return glad_glGetTexLevelParameteriv.?(arg_105, arg_106, arg_107, arg_108);
 }
-pub fn glIsEnabled(arg_109: GLenum) callconv(.Inline) GLboolean {
+pub inline fn glIsEnabled(arg_109: GLenum) GLboolean {
     return glad_glIsEnabled.?(arg_109);
 }
-pub fn glDepthRange(arg_110: GLdouble, arg_111: GLdouble) callconv(.Inline) void {
+pub inline fn glDepthRange(arg_110: GLdouble, arg_111: GLdouble) void {
     return glad_glDepthRange.?(arg_110, arg_111);
 }
-pub fn glViewport(x: GLint, y: GLint, w: GLsizei, h: GLsizei) callconv(.Inline) void {
+pub inline fn glViewport(x: GLint, y: GLint, w: GLsizei, h: GLsizei) void {
     return glad_glViewport.?(x, y, w, h);
 }
 pub const GL_VERSION_1_1 = @as(c_int, 1);
-pub fn glDrawArrays(arg_116: GLenum, arg_117: GLint, arg_118: GLsizei) callconv(.Inline) void {
+pub inline fn glDrawArrays(arg_116: GLenum, arg_117: GLint, arg_118: GLsizei) void {
     return glad_glDrawArrays.?(arg_116, arg_117, arg_118);
 }
-pub fn glDrawElements(arg_119: GLenum, arg_120: GLsizei, arg_121: GLenum, arg_122: ?*const c_void) callconv(.Inline) void {
+pub inline fn glDrawElements(arg_119: GLenum, arg_120: GLsizei, arg_121: GLenum, arg_122: ?*const c_void) void {
     return glad_glDrawElements.?(arg_119, arg_120, arg_121, arg_122);
 }
-pub fn glPolygonOffset(arg_123: GLfloat, arg_124: GLfloat) callconv(.Inline) void {
+pub inline fn glPolygonOffset(arg_123: GLfloat, arg_124: GLfloat) void {
     return glad_glPolygonOffset.?(arg_123, arg_124);
 }
-pub fn glCopyTexImage1D(arg_125: GLenum, arg_126: GLint, arg_127: GLenum, arg_128: GLint, arg_129: GLint, arg_130: GLsizei, arg_131: GLint) callconv(.Inline) void {
+pub inline fn glCopyTexImage1D(arg_125: GLenum, arg_126: GLint, arg_127: GLenum, arg_128: GLint, arg_129: GLint, arg_130: GLsizei, arg_131: GLint) void {
     return glad_glCopyTexImage1D.?(arg_125, arg_126, arg_127, arg_128, arg_129, arg_130, arg_131);
 }
-pub fn glCopyTexImage2D(arg_132: GLenum, arg_133: GLint, arg_134: GLenum, arg_135: GLint, arg_136: GLint, arg_137: GLsizei, arg_138: GLsizei, arg_139: GLint) callconv(.Inline) void {
+pub inline fn glCopyTexImage2D(arg_132: GLenum, arg_133: GLint, arg_134: GLenum, arg_135: GLint, arg_136: GLint, arg_137: GLsizei, arg_138: GLsizei, arg_139: GLint) void {
     return glad_glCopyTexImage2D.?(arg_132, arg_133, arg_134, arg_135, arg_136, arg_137, arg_138, arg_139);
 }
-pub fn glCopyTexSubImage1D(arg_140: GLenum, arg_141: GLint, arg_142: GLint, arg_143: GLint, arg_144: GLint, arg_145: GLsizei) callconv(.Inline) void {
+pub inline fn glCopyTexSubImage1D(arg_140: GLenum, arg_141: GLint, arg_142: GLint, arg_143: GLint, arg_144: GLint, arg_145: GLsizei) void {
     return glad_glCopyTexSubImage1D.?(arg_140, arg_141, arg_142, arg_143, arg_144, arg_145);
 }
-pub fn glCopyTexSubImage2D(arg_146: GLenum, arg_147: GLint, arg_148: GLint, arg_149: GLint, arg_150: GLint, arg_151: GLint, arg_152: GLsizei, arg_153: GLsizei) callconv(.Inline) void {
+pub inline fn glCopyTexSubImage2D(arg_146: GLenum, arg_147: GLint, arg_148: GLint, arg_149: GLint, arg_150: GLint, arg_151: GLint, arg_152: GLsizei, arg_153: GLsizei) void {
     return glad_glCopyTexSubImage2D.?(arg_146, arg_147, arg_148, arg_149, arg_150, arg_151, arg_152, arg_153);
 }
-pub fn glTexSubImage1D(arg_154: GLenum, arg_155: GLint, arg_156: GLint, arg_157: GLsizei, arg_158: GLenum, arg_159: GLenum, arg_160: ?*const c_void) callconv(.Inline) void {
+pub inline fn glTexSubImage1D(arg_154: GLenum, arg_155: GLint, arg_156: GLint, arg_157: GLsizei, arg_158: GLenum, arg_159: GLenum, arg_160: ?*const c_void) void {
     return glad_glTexSubImage1D.?(arg_154, arg_155, arg_156, arg_157, arg_158, arg_159, arg_160);
 }
-pub fn glTexSubImage2D(arg_161: GLenum, arg_162: GLint, arg_163: GLint, arg_164: GLint, arg_165: GLsizei, arg_166: GLsizei, arg_167: GLenum, arg_168: GLenum, arg_169: ?*const c_void) callconv(.Inline) void {
+pub inline fn glTexSubImage2D(arg_161: GLenum, arg_162: GLint, arg_163: GLint, arg_164: GLint, arg_165: GLsizei, arg_166: GLsizei, arg_167: GLenum, arg_168: GLenum, arg_169: ?*const c_void) void {
     return glad_glTexSubImage2D.?(arg_161, arg_162, arg_163, arg_164, arg_165, arg_166, arg_167, arg_168, arg_169);
 }
-pub fn glBindTexture(arg_170: GLenum, arg_171: GLuint) callconv(.Inline) void {
+pub inline fn glBindTexture(arg_170: GLenum, arg_171: GLuint) void {
     return glad_glBindTexture.?(arg_170, arg_171);
 }
-pub fn glDeleteTextures(arg_172: GLsizei, arg_173: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glDeleteTextures(arg_172: GLsizei, arg_173: [*c]const GLuint) void {
     return glad_glDeleteTextures.?(arg_172, arg_173);
 }
-pub fn glGenTextures(arg_174: GLsizei, arg_175: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGenTextures(arg_174: GLsizei, arg_175: [*c]GLuint) void {
     return glad_glGenTextures.?(arg_174, arg_175);
 }
-pub fn glIsTexture(arg_176: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsTexture(arg_176: GLuint) GLboolean {
     return glad_glIsTexture.?(arg_176);
 }
 pub const GL_VERSION_1_2 = @as(c_int, 1);
-pub fn glDrawRangeElements(arg_177: GLenum, arg_178: GLuint, arg_179: GLuint, arg_180: GLsizei, arg_181: GLenum, arg_182: ?*const c_void) callconv(.Inline) void {
+pub inline fn glDrawRangeElements(arg_177: GLenum, arg_178: GLuint, arg_179: GLuint, arg_180: GLsizei, arg_181: GLenum, arg_182: ?*const c_void) void {
     return glad_glDrawRangeElements.?(arg_177, arg_178, arg_179, arg_180, arg_181, arg_182);
 }
-pub fn glTexImage3D(arg_183: GLenum, arg_184: GLint, arg_185: GLint, arg_186: GLsizei, arg_187: GLsizei, arg_188: GLsizei, arg_189: GLint, arg_190: GLenum, arg_191: GLenum, arg_192: ?*const c_void) callconv(.Inline) void {
+pub inline fn glTexImage3D(arg_183: GLenum, arg_184: GLint, arg_185: GLint, arg_186: GLsizei, arg_187: GLsizei, arg_188: GLsizei, arg_189: GLint, arg_190: GLenum, arg_191: GLenum, arg_192: ?*const c_void) void {
     return glad_glTexImage3D.?(arg_183, arg_184, arg_185, arg_186, arg_187, arg_188, arg_189, arg_190, arg_191, arg_192);
 }
-pub fn glTexSubImage3D(arg_193: GLenum, arg_194: GLint, arg_195: GLint, arg_196: GLint, arg_197: GLint, arg_198: GLsizei, arg_199: GLsizei, arg_200: GLsizei, arg_201: GLenum, arg_202: GLenum, arg_203: ?*const c_void) callconv(.Inline) void {
+pub inline fn glTexSubImage3D(arg_193: GLenum, arg_194: GLint, arg_195: GLint, arg_196: GLint, arg_197: GLint, arg_198: GLsizei, arg_199: GLsizei, arg_200: GLsizei, arg_201: GLenum, arg_202: GLenum, arg_203: ?*const c_void) void {
     return glad_glTexSubImage3D.?(arg_193, arg_194, arg_195, arg_196, arg_197, arg_198, arg_199, arg_200, arg_201, arg_202, arg_203);
 }
-pub fn glCopyTexSubImage3D(arg_204: GLenum, arg_205: GLint, arg_206: GLint, arg_207: GLint, arg_208: GLint, arg_209: GLint, arg_210: GLint, arg_211: GLsizei, arg_212: GLsizei) callconv(.Inline) void {
+pub inline fn glCopyTexSubImage3D(arg_204: GLenum, arg_205: GLint, arg_206: GLint, arg_207: GLint, arg_208: GLint, arg_209: GLint, arg_210: GLint, arg_211: GLsizei, arg_212: GLsizei) void {
     return glad_glCopyTexSubImage3D.?(arg_204, arg_205, arg_206, arg_207, arg_208, arg_209, arg_210, arg_211, arg_212);
 }
 pub const GL_VERSION_1_3 = @as(c_int, 1);
-pub fn glActiveTexture(arg_213: GLenum) callconv(.Inline) void {
+pub inline fn glActiveTexture(arg_213: GLenum) void {
     return glad_glActiveTexture.?(arg_213);
 }
-pub fn glSampleCoverage(arg_214: GLfloat, arg_215: GLboolean) callconv(.Inline) void {
+pub inline fn glSampleCoverage(arg_214: GLfloat, arg_215: GLboolean) void {
     return glad_glSampleCoverage.?(arg_214, arg_215);
 }
-pub fn glCompressedTexImage3D(arg_216: GLenum, arg_217: GLint, arg_218: GLenum, arg_219: GLsizei, arg_220: GLsizei, arg_221: GLsizei, arg_222: GLint, arg_223: GLsizei, arg_224: ?*const c_void) callconv(.Inline) void {
+pub inline fn glCompressedTexImage3D(arg_216: GLenum, arg_217: GLint, arg_218: GLenum, arg_219: GLsizei, arg_220: GLsizei, arg_221: GLsizei, arg_222: GLint, arg_223: GLsizei, arg_224: ?*const c_void) void {
     return glad_glCompressedTexImage3D.?(arg_216, arg_217, arg_218, arg_219, arg_220, arg_221, arg_222, arg_223, arg_224);
 }
-pub fn glCompressedTexImage2D(arg_225: GLenum, arg_226: GLint, arg_227: GLenum, arg_228: GLsizei, arg_229: GLsizei, arg_230: GLint, arg_231: GLsizei, arg_232: ?*const c_void) callconv(.Inline) void {
+pub inline fn glCompressedTexImage2D(arg_225: GLenum, arg_226: GLint, arg_227: GLenum, arg_228: GLsizei, arg_229: GLsizei, arg_230: GLint, arg_231: GLsizei, arg_232: ?*const c_void) void {
     return glad_glCompressedTexImage2D.?(arg_225, arg_226, arg_227, arg_228, arg_229, arg_230, arg_231, arg_232);
 }
-pub fn glCompressedTexImage1D(arg_233: GLenum, arg_234: GLint, arg_235: GLenum, arg_236: GLsizei, arg_237: GLint, arg_238: GLsizei, arg_239: ?*const c_void) callconv(.Inline) void {
+pub inline fn glCompressedTexImage1D(arg_233: GLenum, arg_234: GLint, arg_235: GLenum, arg_236: GLsizei, arg_237: GLint, arg_238: GLsizei, arg_239: ?*const c_void) void {
     return glad_glCompressedTexImage1D.?(arg_233, arg_234, arg_235, arg_236, arg_237, arg_238, arg_239);
 }
-pub fn glCompressedTexSubImage3D(arg_240: GLenum, arg_241: GLint, arg_242: GLint, arg_243: GLint, arg_244: GLint, arg_245: GLsizei, arg_246: GLsizei, arg_247: GLsizei, arg_248: GLenum, arg_249: GLsizei, arg_250: ?*const c_void) callconv(.Inline) void {
+pub inline fn glCompressedTexSubImage3D(arg_240: GLenum, arg_241: GLint, arg_242: GLint, arg_243: GLint, arg_244: GLint, arg_245: GLsizei, arg_246: GLsizei, arg_247: GLsizei, arg_248: GLenum, arg_249: GLsizei, arg_250: ?*const c_void) void {
     return glad_glCompressedTexSubImage3D.?(arg_240, arg_241, arg_242, arg_243, arg_244, arg_245, arg_246, arg_247, arg_248, arg_249, arg_250);
 }
-pub fn glCompressedTexSubImage2D(arg_251: GLenum, arg_252: GLint, arg_253: GLint, arg_254: GLint, arg_255: GLsizei, arg_256: GLsizei, arg_257: GLenum, arg_258: GLsizei, arg_259: ?*const c_void) callconv(.Inline) void {
+pub inline fn glCompressedTexSubImage2D(arg_251: GLenum, arg_252: GLint, arg_253: GLint, arg_254: GLint, arg_255: GLsizei, arg_256: GLsizei, arg_257: GLenum, arg_258: GLsizei, arg_259: ?*const c_void) void {
     return glad_glCompressedTexSubImage2D.?(arg_251, arg_252, arg_253, arg_254, arg_255, arg_256, arg_257, arg_258, arg_259);
 }
-pub fn glCompressedTexSubImage1D(arg_260: GLenum, arg_261: GLint, arg_262: GLint, arg_263: GLsizei, arg_264: GLenum, arg_265: GLsizei, arg_266: ?*const c_void) callconv(.Inline) void {
+pub inline fn glCompressedTexSubImage1D(arg_260: GLenum, arg_261: GLint, arg_262: GLint, arg_263: GLsizei, arg_264: GLenum, arg_265: GLsizei, arg_266: ?*const c_void) void {
     return glad_glCompressedTexSubImage1D.?(arg_260, arg_261, arg_262, arg_263, arg_264, arg_265, arg_266);
 }
-pub fn glGetCompressedTexImage(arg_267: GLenum, arg_268: GLint, arg_269: ?*c_void) callconv(.Inline) void {
+pub inline fn glGetCompressedTexImage(arg_267: GLenum, arg_268: GLint, arg_269: ?*c_void) void {
     return glad_glGetCompressedTexImage.?(arg_267, arg_268, arg_269);
 }
 pub const GL_VERSION_1_4 = @as(c_int, 1);
-pub fn glBlendFuncSeparate(arg_270: GLenum, arg_271: GLenum, arg_272: GLenum, arg_273: GLenum) callconv(.Inline) void {
+pub inline fn glBlendFuncSeparate(arg_270: GLenum, arg_271: GLenum, arg_272: GLenum, arg_273: GLenum) void {
     return glad_glBlendFuncSeparate.?(arg_270, arg_271, arg_272, arg_273);
 }
-pub fn glMultiDrawArrays(arg_274: GLenum, arg_275: [*c]const GLint, arg_276: [*c]const GLsizei, arg_277: GLsizei) callconv(.Inline) void {
+pub inline fn glMultiDrawArrays(arg_274: GLenum, arg_275: [*c]const GLint, arg_276: [*c]const GLsizei, arg_277: GLsizei) void {
     return glad_glMultiDrawArrays.?(arg_274, arg_275, arg_276, arg_277);
 }
-pub fn glMultiDrawElements(arg_278: GLenum, arg_279: [*c]const GLsizei, arg_280: GLenum, arg_281: [*c]const ?*const c_void, arg_282: GLsizei) callconv(.Inline) void {
+pub inline fn glMultiDrawElements(arg_278: GLenum, arg_279: [*c]const GLsizei, arg_280: GLenum, arg_281: [*c]const ?*const c_void, arg_282: GLsizei) void {
     return glad_glMultiDrawElements.?(arg_278, arg_279, arg_280, arg_281, arg_282);
 }
-pub fn glPointParameterf(arg_283: GLenum, arg_284: GLfloat) callconv(.Inline) void {
+pub inline fn glPointParameterf(arg_283: GLenum, arg_284: GLfloat) void {
     return glad_glPointParameterf.?(arg_283, arg_284);
 }
-pub fn glPointParameterfv(arg_285: GLenum, arg_286: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glPointParameterfv(arg_285: GLenum, arg_286: [*c]const GLfloat) void {
     return glad_glPointParameterfv.?(arg_285, arg_286);
 }
-pub fn glPointParameteri(arg_287: GLenum, arg_288: GLint) callconv(.Inline) void {
+pub inline fn glPointParameteri(arg_287: GLenum, arg_288: GLint) void {
     return glad_glPointParameteri.?(arg_287, arg_288);
 }
-pub fn glPointParameteriv(arg_289: GLenum, arg_290: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glPointParameteriv(arg_289: GLenum, arg_290: [*c]const GLint) void {
     return glad_glPointParameteriv.?(arg_289, arg_290);
 }
-pub fn glBlendColor(arg_291: GLfloat, arg_292: GLfloat, arg_293: GLfloat, arg_294: GLfloat) callconv(.Inline) void {
+pub inline fn glBlendColor(arg_291: GLfloat, arg_292: GLfloat, arg_293: GLfloat, arg_294: GLfloat) void {
     return glad_glBlendColor.?(arg_291, arg_292, arg_293, arg_294);
 }
-pub fn glBlendEquation(arg_295: GLenum) callconv(.Inline) void {
+pub inline fn glBlendEquation(arg_295: GLenum) void {
     return glad_glBlendEquation.?(arg_295);
 }
 pub const GL_VERSION_1_5 = @as(c_int, 1);
-pub fn glGenQueries(arg_296: GLsizei, arg_297: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGenQueries(arg_296: GLsizei, arg_297: [*c]GLuint) void {
     return glad_glGenQueries.?(arg_296, arg_297);
 }
-pub fn glDeleteQueries(arg_298: GLsizei, arg_299: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glDeleteQueries(arg_298: GLsizei, arg_299: [*c]const GLuint) void {
     return glad_glDeleteQueries.?(arg_298, arg_299);
 }
-pub fn glIsQuery(arg_300: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsQuery(arg_300: GLuint) GLboolean {
     return glad_glIsQuery.?(arg_300);
 }
-pub fn glBeginQuery(arg_301: GLenum, arg_302: GLuint) callconv(.Inline) void {
+pub inline fn glBeginQuery(arg_301: GLenum, arg_302: GLuint) void {
     return glad_glBeginQuery.?(arg_301, arg_302);
 }
-pub fn glEndQuery(arg_303: GLenum) callconv(.Inline) void {
+pub inline fn glEndQuery(arg_303: GLenum) void {
     return glad_glEndQuery.?(arg_303);
 }
-pub fn glGetQueryiv(arg_304: GLenum, arg_305: GLenum, arg_306: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetQueryiv(arg_304: GLenum, arg_305: GLenum, arg_306: [*c]GLint) void {
     return glad_glGetQueryiv.?(arg_304, arg_305, arg_306);
 }
-pub fn glGetQueryObjectiv(arg_307: GLuint, arg_308: GLenum, arg_309: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetQueryObjectiv(arg_307: GLuint, arg_308: GLenum, arg_309: [*c]GLint) void {
     return glad_glGetQueryObjectiv.?(arg_307, arg_308, arg_309);
 }
-pub fn glGetQueryObjectuiv(arg_310: GLuint, arg_311: GLenum, arg_312: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGetQueryObjectuiv(arg_310: GLuint, arg_311: GLenum, arg_312: [*c]GLuint) void {
     return glad_glGetQueryObjectuiv.?(arg_310, arg_311, arg_312);
 }
-pub fn glBindBuffer(arg_313: GLenum, arg_314: GLuint) callconv(.Inline) void {
+pub inline fn glBindBuffer(arg_313: GLenum, arg_314: GLuint) void {
     return glad_glBindBuffer.?(arg_313, arg_314);
 }
-pub fn glDeleteBuffers(arg_315: GLsizei, arg_316: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glDeleteBuffers(arg_315: GLsizei, arg_316: [*c]const GLuint) void {
     return glad_glDeleteBuffers.?(arg_315, arg_316);
 }
-pub fn glGenBuffers(arg_317: GLsizei, arg_318: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGenBuffers(arg_317: GLsizei, arg_318: [*c]GLuint) void {
     return glad_glGenBuffers.?(arg_317, arg_318);
 }
-pub fn glIsBuffer(arg_319: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsBuffer(arg_319: GLuint) GLboolean {
     return glad_glIsBuffer.?(arg_319);
 }
-pub fn glBufferData(arg_320: GLenum, arg_321: GLsizeiptr, arg_322: ?*const c_void, arg_323: GLenum) callconv(.Inline) void {
+pub inline fn glBufferData(arg_320: GLenum, arg_321: GLsizeiptr, arg_322: ?*const c_void, arg_323: GLenum) void {
     return glad_glBufferData.?(arg_320, arg_321, arg_322, arg_323);
 }
-pub fn glBufferSubData(arg_324: GLenum, arg_325: GLintptr, arg_326: GLsizeiptr, arg_327: ?*const c_void) callconv(.Inline) void {
+pub inline fn glBufferSubData(arg_324: GLenum, arg_325: GLintptr, arg_326: GLsizeiptr, arg_327: ?*const c_void) void {
     return glad_glBufferSubData.?(arg_324, arg_325, arg_326, arg_327);
 }
-pub fn glGetBufferSubData(arg_328: GLenum, arg_329: GLintptr, arg_330: GLsizeiptr, arg_331: ?*c_void) callconv(.Inline) void {
+pub inline fn glGetBufferSubData(arg_328: GLenum, arg_329: GLintptr, arg_330: GLsizeiptr, arg_331: ?*c_void) void {
     return glad_glGetBufferSubData.?(arg_328, arg_329, arg_330, arg_331);
 }
-pub fn glMapBuffer(arg_332: GLenum, arg_333: GLenum) callconv(.Inline) ?*c_void {
+pub inline fn glMapBuffer(arg_332: GLenum, arg_333: GLenum) ?*c_void {
     return glad_glMapBuffer.?(arg_332, arg_333);
 }
-pub fn glUnmapBuffer(arg_334: GLenum) callconv(.Inline) GLboolean {
+pub inline fn glUnmapBuffer(arg_334: GLenum) GLboolean {
     return glad_glUnmapBuffer.?(arg_334);
 }
-pub fn glGetBufferParameteriv(arg_335: GLenum, arg_336: GLenum, arg_337: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetBufferParameteriv(arg_335: GLenum, arg_336: GLenum, arg_337: [*c]GLint) void {
     return glad_glGetBufferParameteriv.?(arg_335, arg_336, arg_337);
 }
-pub fn glGetBufferPointerv(arg_338: GLenum, arg_339: GLenum, arg_340: [*c]?*c_void) callconv(.Inline) void {
+pub inline fn glGetBufferPointerv(arg_338: GLenum, arg_339: GLenum, arg_340: [*c]?*c_void) void {
     return glad_glGetBufferPointerv.?(arg_338, arg_339, arg_340);
 }
 pub const GL_VERSION_2_0 = @as(c_int, 1);
-pub fn glBlendEquationSeparate(arg_341: GLenum, arg_342: GLenum) callconv(.Inline) void {
+pub inline fn glBlendEquationSeparate(arg_341: GLenum, arg_342: GLenum) void {
     return glad_glBlendEquationSeparate.?(arg_341, arg_342);
 }
-pub fn glDrawBuffers(arg_343: GLsizei, arg_344: [*c]const GLenum) callconv(.Inline) void {
+pub inline fn glDrawBuffers(arg_343: GLsizei, arg_344: [*c]const GLenum) void {
     return glad_glDrawBuffers.?(arg_343, arg_344);
 }
-pub fn glStencilOpSeparate(arg_345: GLenum, arg_346: GLenum, arg_347: GLenum, arg_348: GLenum) callconv(.Inline) void {
+pub inline fn glStencilOpSeparate(arg_345: GLenum, arg_346: GLenum, arg_347: GLenum, arg_348: GLenum) void {
     return glad_glStencilOpSeparate.?(arg_345, arg_346, arg_347, arg_348);
 }
-pub fn glStencilFuncSeparate(arg_349: GLenum, arg_350: GLenum, arg_351: GLint, arg_352: GLuint) callconv(.Inline) void {
+pub inline fn glStencilFuncSeparate(arg_349: GLenum, arg_350: GLenum, arg_351: GLint, arg_352: GLuint) void {
     return glad_glStencilFuncSeparate.?(arg_349, arg_350, arg_351, arg_352);
 }
-pub fn glStencilMaskSeparate(arg_353: GLenum, arg_354: GLuint) callconv(.Inline) void {
+pub inline fn glStencilMaskSeparate(arg_353: GLenum, arg_354: GLuint) void {
     return glad_glStencilMaskSeparate.?(arg_353, arg_354);
 }
-pub fn glAttachShader(arg_355: GLuint, arg_356: GLuint) callconv(.Inline) void {
+pub inline fn glAttachShader(arg_355: GLuint, arg_356: GLuint) void {
     return glad_glAttachShader.?(arg_355, arg_356);
 }
-pub fn glBindAttribLocation(arg_357: GLuint, arg_358: GLuint, arg_359: [*c]const GLchar) callconv(.Inline) void {
+pub inline fn glBindAttribLocation(arg_357: GLuint, arg_358: GLuint, arg_359: [*c]const GLchar) void {
     return glad_glBindAttribLocation.?(arg_357, arg_358, arg_359);
 }
-pub fn glCompileShader(arg_360: GLuint) callconv(.Inline) void {
+pub inline fn glCompileShader(arg_360: GLuint) void {
     return glad_glCompileShader.?(arg_360);
 }
-pub fn glCreateProgram() callconv(.Inline) GLuint {
+pub inline fn glCreateProgram() GLuint {
     return glad_glCreateProgram.?();
 }
-pub fn glCreateShader(arg_361: GLenum) callconv(.Inline) GLuint {
+pub inline fn glCreateShader(arg_361: GLenum) GLuint {
     return glad_glCreateShader.?(arg_361);
 }
-pub fn glDeleteProgram(arg_362: GLuint) callconv(.Inline) void {
+pub inline fn glDeleteProgram(arg_362: GLuint) void {
     return glad_glDeleteProgram.?(arg_362);
 }
-pub fn glDeleteShader(arg_363: GLuint) callconv(.Inline) void {
+pub inline fn glDeleteShader(arg_363: GLuint) void {
     return glad_glDeleteShader.?(arg_363);
 }
-pub fn glDetachShader(arg_364: GLuint, arg_365: GLuint) callconv(.Inline) void {
+pub inline fn glDetachShader(arg_364: GLuint, arg_365: GLuint) void {
     return glad_glDetachShader.?(arg_364, arg_365);
 }
-pub fn glDisableVertexAttribArray(arg_366: GLuint) callconv(.Inline) void {
+pub inline fn glDisableVertexAttribArray(arg_366: GLuint) void {
     return glad_glDisableVertexAttribArray.?(arg_366);
 }
-pub fn glEnableVertexAttribArray(arg_367: GLuint) callconv(.Inline) void {
+pub inline fn glEnableVertexAttribArray(arg_367: GLuint) void {
     return glad_glEnableVertexAttribArray.?(arg_367);
 }
-pub fn glGetActiveAttrib(arg_368: GLuint, arg_369: GLuint, arg_370: GLsizei, arg_371: [*c]GLsizei, arg_372: [*c]GLint, arg_373: [*c]GLenum, arg_374: [*c]GLchar) callconv(.Inline) void {
+pub inline fn glGetActiveAttrib(arg_368: GLuint, arg_369: GLuint, arg_370: GLsizei, arg_371: [*c]GLsizei, arg_372: [*c]GLint, arg_373: [*c]GLenum, arg_374: [*c]GLchar) void {
     return glad_glGetActiveAttrib.?(arg_368, arg_369, arg_370, arg_371, arg_372, arg_373, arg_374);
 }
-pub fn glGetActiveUniform(arg_375: GLuint, arg_376: GLuint, arg_377: GLsizei, arg_378: [*c]GLsizei, arg_379: [*c]GLint, arg_380: [*c]GLenum, arg_381: [*c]GLchar) callconv(.Inline) void {
+pub inline fn glGetActiveUniform(arg_375: GLuint, arg_376: GLuint, arg_377: GLsizei, arg_378: [*c]GLsizei, arg_379: [*c]GLint, arg_380: [*c]GLenum, arg_381: [*c]GLchar) void {
     return glad_glGetActiveUniform.?(arg_375, arg_376, arg_377, arg_378, arg_379, arg_380, arg_381);
 }
-pub fn glGetAttachedShaders(arg_382: GLuint, arg_383: GLsizei, arg_384: [*c]GLsizei, arg_385: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGetAttachedShaders(arg_382: GLuint, arg_383: GLsizei, arg_384: [*c]GLsizei, arg_385: [*c]GLuint) void {
     return glad_glGetAttachedShaders.?(arg_382, arg_383, arg_384, arg_385);
 }
-pub fn glGetAttribLocation(arg_386: GLuint, arg_387: [*c]const GLchar) callconv(.Inline) GLint {
+pub inline fn glGetAttribLocation(arg_386: GLuint, arg_387: [*c]const GLchar) GLint {
     return glad_glGetAttribLocation.?(arg_386, arg_387);
 }
-pub fn glGetProgramiv(arg_388: GLuint, arg_389: GLenum, arg_390: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetProgramiv(arg_388: GLuint, arg_389: GLenum, arg_390: [*c]GLint) void {
     return glad_glGetProgramiv.?(arg_388, arg_389, arg_390);
 }
-pub fn glGetProgramInfoLog(arg_391: GLuint, arg_392: GLsizei, arg_393: [*c]GLsizei, arg_394: [*c]GLchar) callconv(.Inline) void {
+pub inline fn glGetProgramInfoLog(arg_391: GLuint, arg_392: GLsizei, arg_393: [*c]GLsizei, arg_394: [*c]GLchar) void {
     return glad_glGetProgramInfoLog.?(arg_391, arg_392, arg_393, arg_394);
 }
-pub fn glGetShaderiv(arg_395: GLuint, arg_396: GLenum, arg_397: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetShaderiv(arg_395: GLuint, arg_396: GLenum, arg_397: [*c]GLint) void {
     return glad_glGetShaderiv.?(arg_395, arg_396, arg_397);
 }
-pub fn glGetShaderInfoLog(arg_398: GLuint, arg_399: GLsizei, arg_400: [*c]GLsizei, arg_401: [*c]GLchar) callconv(.Inline) void {
+pub inline fn glGetShaderInfoLog(arg_398: GLuint, arg_399: GLsizei, arg_400: [*c]GLsizei, arg_401: [*c]GLchar) void {
     return glad_glGetShaderInfoLog.?(arg_398, arg_399, arg_400, arg_401);
 }
-pub fn glGetShaderSource(arg_402: GLuint, arg_403: GLsizei, arg_404: [*c]GLsizei, arg_405: [*c]GLchar) callconv(.Inline) void {
+pub inline fn glGetShaderSource(arg_402: GLuint, arg_403: GLsizei, arg_404: [*c]GLsizei, arg_405: [*c]GLchar) void {
     return glad_glGetShaderSource.?(arg_402, arg_403, arg_404, arg_405);
 }
-pub fn glGetUniformLocation(arg_406: GLuint, arg_407: [*c]const GLchar) callconv(.Inline) GLint {
+pub inline fn glGetUniformLocation(arg_406: GLuint, arg_407: [*c]const GLchar) GLint {
     return glad_glGetUniformLocation.?(arg_406, arg_407);
 }
-pub fn glGetUniformfv(arg_408: GLuint, arg_409: GLint, arg_410: [*c]GLfloat) callconv(.Inline) void {
+pub inline fn glGetUniformfv(arg_408: GLuint, arg_409: GLint, arg_410: [*c]GLfloat) void {
     return glad_glGetUniformfv.?(arg_408, arg_409, arg_410);
 }
-pub fn glGetUniformiv(arg_411: GLuint, arg_412: GLint, arg_413: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetUniformiv(arg_411: GLuint, arg_412: GLint, arg_413: [*c]GLint) void {
     return glad_glGetUniformiv.?(arg_411, arg_412, arg_413);
 }
-pub fn glGetVertexAttribdv(arg_414: GLuint, arg_415: GLenum, arg_416: [*c]GLdouble) callconv(.Inline) void {
+pub inline fn glGetVertexAttribdv(arg_414: GLuint, arg_415: GLenum, arg_416: [*c]GLdouble) void {
     return glad_glGetVertexAttribdv.?(arg_414, arg_415, arg_416);
 }
-pub fn glGetVertexAttribfv(arg_417: GLuint, arg_418: GLenum, arg_419: [*c]GLfloat) callconv(.Inline) void {
+pub inline fn glGetVertexAttribfv(arg_417: GLuint, arg_418: GLenum, arg_419: [*c]GLfloat) void {
     return glad_glGetVertexAttribfv.?(arg_417, arg_418, arg_419);
 }
-pub fn glGetVertexAttribiv(arg_420: GLuint, arg_421: GLenum, arg_422: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetVertexAttribiv(arg_420: GLuint, arg_421: GLenum, arg_422: [*c]GLint) void {
     return glad_glGetVertexAttribiv.?(arg_420, arg_421, arg_422);
 }
-pub fn glGetVertexAttribPointerv(arg_423: GLuint, arg_424: GLenum, arg_425: [*c]?*c_void) callconv(.Inline) void {
+pub inline fn glGetVertexAttribPointerv(arg_423: GLuint, arg_424: GLenum, arg_425: [*c]?*c_void) void {
     return glad_glGetVertexAttribPointerv.?(arg_423, arg_424, arg_425);
 }
-pub fn glIsProgram(arg_426: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsProgram(arg_426: GLuint) GLboolean {
     return glad_glIsProgram.?(arg_426);
 }
-pub fn glIsShader(arg_427: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsShader(arg_427: GLuint) GLboolean {
     return glad_glIsShader.?(arg_427);
 }
-pub fn glLinkProgram(arg_428: GLuint) callconv(.Inline) void {
+pub inline fn glLinkProgram(arg_428: GLuint) void {
     return glad_glLinkProgram.?(arg_428);
 }
-pub fn glShaderSource(arg_429: GLuint, arg_430: GLsizei, arg_431: [*c]const [*c]const GLchar, arg_432: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glShaderSource(arg_429: GLuint, arg_430: GLsizei, arg_431: [*c]const [*c]const GLchar, arg_432: [*c]const GLint) void {
     return glad_glShaderSource.?(arg_429, arg_430, arg_431, arg_432);
 }
-pub fn glUseProgram(arg_433: GLuint) callconv(.Inline) void {
+pub inline fn glUseProgram(arg_433: GLuint) void {
     return glad_glUseProgram.?(arg_433);
 }
-pub fn glUniform1f(arg_434: GLint, arg_435: GLfloat) callconv(.Inline) void {
+pub inline fn glUniform1f(arg_434: GLint, arg_435: GLfloat) void {
     return glad_glUniform1f.?(arg_434, arg_435);
 }
-pub fn glUniform2f(arg_436: GLint, arg_437: GLfloat, arg_438: GLfloat) callconv(.Inline) void {
+pub inline fn glUniform2f(arg_436: GLint, arg_437: GLfloat, arg_438: GLfloat) void {
     return glad_glUniform2f.?(arg_436, arg_437, arg_438);
 }
-pub fn glUniform3f(arg_439: GLint, arg_440: GLfloat, arg_441: GLfloat, arg_442: GLfloat) callconv(.Inline) void {
+pub inline fn glUniform3f(arg_439: GLint, arg_440: GLfloat, arg_441: GLfloat, arg_442: GLfloat) void {
     return glad_glUniform3f.?(arg_439, arg_440, arg_441, arg_442);
 }
-pub fn glUniform4f(arg_443: GLint, arg_444: GLfloat, arg_445: GLfloat, arg_446: GLfloat, arg_447: GLfloat) callconv(.Inline) void {
+pub inline fn glUniform4f(arg_443: GLint, arg_444: GLfloat, arg_445: GLfloat, arg_446: GLfloat, arg_447: GLfloat) void {
     return glad_glUniform4f.?(arg_443, arg_444, arg_445, arg_446, arg_447);
 }
-pub fn glUniform1i(arg_448: GLint, arg_449: GLint) callconv(.Inline) void {
+pub inline fn glUniform1i(arg_448: GLint, arg_449: GLint) void {
     return glad_glUniform1i.?(arg_448, arg_449);
 }
-pub fn glUniform2i(arg_450: GLint, arg_451: GLint, arg_452: GLint) callconv(.Inline) void {
+pub inline fn glUniform2i(arg_450: GLint, arg_451: GLint, arg_452: GLint) void {
     return glad_glUniform2i.?(arg_450, arg_451, arg_452);
 }
-pub fn glUniform3i(arg_453: GLint, arg_454: GLint, arg_455: GLint, arg_456: GLint) callconv(.Inline) void {
+pub inline fn glUniform3i(arg_453: GLint, arg_454: GLint, arg_455: GLint, arg_456: GLint) void {
     return glad_glUniform3i.?(arg_453, arg_454, arg_455, arg_456);
 }
-pub fn glUniform4i(arg_457: GLint, arg_458: GLint, arg_459: GLint, arg_460: GLint, arg_461: GLint) callconv(.Inline) void {
+pub inline fn glUniform4i(arg_457: GLint, arg_458: GLint, arg_459: GLint, arg_460: GLint, arg_461: GLint) void {
     return glad_glUniform4i.?(arg_457, arg_458, arg_459, arg_460, arg_461);
 }
-pub fn glUniform1fv(arg_462: GLint, arg_463: GLsizei, arg_464: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniform1fv(arg_462: GLint, arg_463: GLsizei, arg_464: [*c]const GLfloat) void {
     return glad_glUniform1fv.?(arg_462, arg_463, arg_464);
 }
-pub fn glUniform2fv(arg_465: GLint, arg_466: GLsizei, arg_467: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniform2fv(arg_465: GLint, arg_466: GLsizei, arg_467: [*c]const GLfloat) void {
     return glad_glUniform2fv.?(arg_465, arg_466, arg_467);
 }
-pub fn glUniform3fv(arg_468: GLint, arg_469: GLsizei, arg_470: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniform3fv(arg_468: GLint, arg_469: GLsizei, arg_470: [*c]const GLfloat) void {
     return glad_glUniform3fv.?(arg_468, arg_469, arg_470);
 }
-pub fn glUniform4fv(arg_471: GLint, arg_472: GLsizei, arg_473: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniform4fv(arg_471: GLint, arg_472: GLsizei, arg_473: [*c]const GLfloat) void {
     return glad_glUniform4fv.?(arg_471, arg_472, arg_473);
 }
-pub fn glUniform1iv(arg_474: GLint, arg_475: GLsizei, arg_476: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glUniform1iv(arg_474: GLint, arg_475: GLsizei, arg_476: [*c]const GLint) void {
     return glad_glUniform1iv.?(arg_474, arg_475, arg_476);
 }
-pub fn glUniform2iv(arg_477: GLint, arg_478: GLsizei, arg_479: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glUniform2iv(arg_477: GLint, arg_478: GLsizei, arg_479: [*c]const GLint) void {
     return glad_glUniform2iv.?(arg_477, arg_478, arg_479);
 }
-pub fn glUniform3iv(arg_480: GLint, arg_481: GLsizei, arg_482: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glUniform3iv(arg_480: GLint, arg_481: GLsizei, arg_482: [*c]const GLint) void {
     return glad_glUniform3iv.?(arg_480, arg_481, arg_482);
 }
-pub fn glUniform4iv(arg_483: GLint, arg_484: GLsizei, arg_485: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glUniform4iv(arg_483: GLint, arg_484: GLsizei, arg_485: [*c]const GLint) void {
     return glad_glUniform4iv.?(arg_483, arg_484, arg_485);
 }
-pub fn glUniformMatrix2fv(arg_486: GLint, arg_487: GLsizei, arg_488: GLboolean, arg_489: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix2fv(arg_486: GLint, arg_487: GLsizei, arg_488: GLboolean, arg_489: [*c]const GLfloat) void {
     return glad_glUniformMatrix2fv.?(arg_486, arg_487, arg_488, arg_489);
 }
-pub fn glUniformMatrix3fv(arg_490: GLint, arg_491: GLsizei, arg_492: GLboolean, arg_493: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix3fv(arg_490: GLint, arg_491: GLsizei, arg_492: GLboolean, arg_493: [*c]const GLfloat) void {
     return glad_glUniformMatrix3fv.?(arg_490, arg_491, arg_492, arg_493);
 }
-pub fn glUniformMatrix4fv(arg_494: GLint, arg_495: GLsizei, arg_496: GLboolean, arg_497: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix4fv(arg_494: GLint, arg_495: GLsizei, arg_496: GLboolean, arg_497: [*c]const GLfloat) void {
     return glad_glUniformMatrix4fv.?(arg_494, arg_495, arg_496, arg_497);
 }
-pub fn glValidateProgram(arg_498: GLuint) callconv(.Inline) void {
+pub inline fn glValidateProgram(arg_498: GLuint) void {
     return glad_glValidateProgram.?(arg_498);
 }
-pub fn glVertexAttrib1d(arg_499: GLuint, arg_500: GLdouble) callconv(.Inline) void {
+pub inline fn glVertexAttrib1d(arg_499: GLuint, arg_500: GLdouble) void {
     return glad_glVertexAttrib1d.?(arg_499, arg_500);
 }
-pub fn glVertexAttrib1dv(arg_501: GLuint, arg_502: [*c]const GLdouble) callconv(.Inline) void {
+pub inline fn glVertexAttrib1dv(arg_501: GLuint, arg_502: [*c]const GLdouble) void {
     return glad_glVertexAttrib1dv.?(arg_501, arg_502);
 }
-pub fn glVertexAttrib1f(arg_503: GLuint, arg_504: GLfloat) callconv(.Inline) void {
+pub inline fn glVertexAttrib1f(arg_503: GLuint, arg_504: GLfloat) void {
     return glad_glVertexAttrib1f.?(arg_503, arg_504);
 }
-pub fn glVertexAttrib1fv(arg_505: GLuint, arg_506: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glVertexAttrib1fv(arg_505: GLuint, arg_506: [*c]const GLfloat) void {
     return glad_glVertexAttrib1fv.?(arg_505, arg_506);
 }
-pub fn glVertexAttrib1s(arg_507: GLuint, arg_508: GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib1s(arg_507: GLuint, arg_508: GLshort) void {
     return glad_glVertexAttrib1s.?(arg_507, arg_508);
 }
-pub fn glVertexAttrib1sv(arg_509: GLuint, arg_510: [*c]const GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib1sv(arg_509: GLuint, arg_510: [*c]const GLshort) void {
     return glad_glVertexAttrib1sv.?(arg_509, arg_510);
 }
-pub fn glVertexAttrib2d(arg_511: GLuint, arg_512: GLdouble, arg_513: GLdouble) callconv(.Inline) void {
+pub inline fn glVertexAttrib2d(arg_511: GLuint, arg_512: GLdouble, arg_513: GLdouble) void {
     return glad_glVertexAttrib2d.?(arg_511, arg_512, arg_513);
 }
-pub fn glVertexAttrib2dv(arg_514: GLuint, arg_515: [*c]const GLdouble) callconv(.Inline) void {
+pub inline fn glVertexAttrib2dv(arg_514: GLuint, arg_515: [*c]const GLdouble) void {
     return glad_glVertexAttrib2dv.?(arg_514, arg_515);
 }
-pub fn glVertexAttrib2f(arg_516: GLuint, arg_517: GLfloat, arg_518: GLfloat) callconv(.Inline) void {
+pub inline fn glVertexAttrib2f(arg_516: GLuint, arg_517: GLfloat, arg_518: GLfloat) void {
     return glad_glVertexAttrib2f.?(arg_516, arg_517, arg_518);
 }
-pub fn glVertexAttrib2fv(arg_519: GLuint, arg_520: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glVertexAttrib2fv(arg_519: GLuint, arg_520: [*c]const GLfloat) void {
     return glad_glVertexAttrib2fv.?(arg_519, arg_520);
 }
-pub fn glVertexAttrib2s(arg_521: GLuint, arg_522: GLshort, arg_523: GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib2s(arg_521: GLuint, arg_522: GLshort, arg_523: GLshort) void {
     return glad_glVertexAttrib2s.?(arg_521, arg_522, arg_523);
 }
-pub fn glVertexAttrib2sv(arg_524: GLuint, arg_525: [*c]const GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib2sv(arg_524: GLuint, arg_525: [*c]const GLshort) void {
     return glad_glVertexAttrib2sv.?(arg_524, arg_525);
 }
-pub fn glVertexAttrib3d(arg_526: GLuint, arg_527: GLdouble, arg_528: GLdouble, arg_529: GLdouble) callconv(.Inline) void {
+pub inline fn glVertexAttrib3d(arg_526: GLuint, arg_527: GLdouble, arg_528: GLdouble, arg_529: GLdouble) void {
     return glad_glVertexAttrib3d.?(arg_526, arg_527, arg_528, arg_529);
 }
-pub fn glVertexAttrib3dv(arg_530: GLuint, arg_531: [*c]const GLdouble) callconv(.Inline) void {
+pub inline fn glVertexAttrib3dv(arg_530: GLuint, arg_531: [*c]const GLdouble) void {
     return glad_glVertexAttrib3dv.?(arg_530, arg_531);
 }
-pub fn glVertexAttrib3f(arg_532: GLuint, arg_533: GLfloat, arg_534: GLfloat, arg_535: GLfloat) callconv(.Inline) void {
+pub inline fn glVertexAttrib3f(arg_532: GLuint, arg_533: GLfloat, arg_534: GLfloat, arg_535: GLfloat) void {
     return glad_glVertexAttrib3f.?(arg_532, arg_533, arg_534, arg_535);
 }
-pub fn glVertexAttrib3fv(arg_536: GLuint, arg_537: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glVertexAttrib3fv(arg_536: GLuint, arg_537: [*c]const GLfloat) void {
     return glad_glVertexAttrib3fv.?(arg_536, arg_537);
 }
-pub fn glVertexAttrib3s(arg_538: GLuint, arg_539: GLshort, arg_540: GLshort, arg_541: GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib3s(arg_538: GLuint, arg_539: GLshort, arg_540: GLshort, arg_541: GLshort) void {
     return glad_glVertexAttrib3s.?(arg_538, arg_539, arg_540, arg_541);
 }
-pub fn glVertexAttrib3sv(arg_542: GLuint, arg_543: [*c]const GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib3sv(arg_542: GLuint, arg_543: [*c]const GLshort) void {
     return glad_glVertexAttrib3sv.?(arg_542, arg_543);
 }
-pub fn glVertexAttrib4Nbv(arg_544: GLuint, arg_545: [*c]const GLbyte) callconv(.Inline) void {
+pub inline fn glVertexAttrib4Nbv(arg_544: GLuint, arg_545: [*c]const GLbyte) void {
     return glad_glVertexAttrib4Nbv.?(arg_544, arg_545);
 }
-pub fn glVertexAttrib4Niv(arg_546: GLuint, arg_547: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glVertexAttrib4Niv(arg_546: GLuint, arg_547: [*c]const GLint) void {
     return glad_glVertexAttrib4Niv.?(arg_546, arg_547);
 }
-pub fn glVertexAttrib4Nsv(arg_548: GLuint, arg_549: [*c]const GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib4Nsv(arg_548: GLuint, arg_549: [*c]const GLshort) void {
     return glad_glVertexAttrib4Nsv.?(arg_548, arg_549);
 }
-pub fn glVertexAttrib4Nub(arg_550: GLuint, arg_551: GLubyte, arg_552: GLubyte, arg_553: GLubyte, arg_554: GLubyte) callconv(.Inline) void {
+pub inline fn glVertexAttrib4Nub(arg_550: GLuint, arg_551: GLubyte, arg_552: GLubyte, arg_553: GLubyte, arg_554: GLubyte) void {
     return glad_glVertexAttrib4Nub.?(arg_550, arg_551, arg_552, arg_553, arg_554);
 }
-pub fn glVertexAttrib4Nubv(arg_555: GLuint, arg_556: [*c]const GLubyte) callconv(.Inline) void {
+pub inline fn glVertexAttrib4Nubv(arg_555: GLuint, arg_556: [*c]const GLubyte) void {
     return glad_glVertexAttrib4Nubv.?(arg_555, arg_556);
 }
-pub fn glVertexAttrib4Nuiv(arg_557: GLuint, arg_558: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttrib4Nuiv(arg_557: GLuint, arg_558: [*c]const GLuint) void {
     return glad_glVertexAttrib4Nuiv.?(arg_557, arg_558);
 }
-pub fn glVertexAttrib4Nusv(arg_559: GLuint, arg_560: [*c]const GLushort) callconv(.Inline) void {
+pub inline fn glVertexAttrib4Nusv(arg_559: GLuint, arg_560: [*c]const GLushort) void {
     return glad_glVertexAttrib4Nusv.?(arg_559, arg_560);
 }
-pub fn glVertexAttrib4bv(arg_561: GLuint, arg_562: [*c]const GLbyte) callconv(.Inline) void {
+pub inline fn glVertexAttrib4bv(arg_561: GLuint, arg_562: [*c]const GLbyte) void {
     return glad_glVertexAttrib4bv.?(arg_561, arg_562);
 }
-pub fn glVertexAttrib4d(arg_563: GLuint, arg_564: GLdouble, arg_565: GLdouble, arg_566: GLdouble, arg_567: GLdouble) callconv(.Inline) void {
+pub inline fn glVertexAttrib4d(arg_563: GLuint, arg_564: GLdouble, arg_565: GLdouble, arg_566: GLdouble, arg_567: GLdouble) void {
     return glad_glVertexAttrib4d.?(arg_563, arg_564, arg_565, arg_566, arg_567);
 }
-pub fn glVertexAttrib4dv(arg_568: GLuint, arg_569: [*c]const GLdouble) callconv(.Inline) void {
+pub inline fn glVertexAttrib4dv(arg_568: GLuint, arg_569: [*c]const GLdouble) void {
     return glad_glVertexAttrib4dv.?(arg_568, arg_569);
 }
-pub fn glVertexAttrib4f(arg_570: GLuint, arg_571: GLfloat, arg_572: GLfloat, arg_573: GLfloat, arg_574: GLfloat) callconv(.Inline) void {
+pub inline fn glVertexAttrib4f(arg_570: GLuint, arg_571: GLfloat, arg_572: GLfloat, arg_573: GLfloat, arg_574: GLfloat) void {
     return glad_glVertexAttrib4f.?(arg_570, arg_571, arg_572, arg_573, arg_574);
 }
-pub fn glVertexAttrib4fv(arg_575: GLuint, arg_576: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glVertexAttrib4fv(arg_575: GLuint, arg_576: [*c]const GLfloat) void {
     return glad_glVertexAttrib4fv.?(arg_575, arg_576);
 }
-pub fn glVertexAttrib4iv(arg_577: GLuint, arg_578: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glVertexAttrib4iv(arg_577: GLuint, arg_578: [*c]const GLint) void {
     return glad_glVertexAttrib4iv.?(arg_577, arg_578);
 }
-pub fn glVertexAttrib4s(arg_579: GLuint, arg_580: GLshort, arg_581: GLshort, arg_582: GLshort, arg_583: GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib4s(arg_579: GLuint, arg_580: GLshort, arg_581: GLshort, arg_582: GLshort, arg_583: GLshort) void {
     return glad_glVertexAttrib4s.?(arg_579, arg_580, arg_581, arg_582, arg_583);
 }
-pub fn glVertexAttrib4sv(arg_584: GLuint, arg_585: [*c]const GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttrib4sv(arg_584: GLuint, arg_585: [*c]const GLshort) void {
     return glad_glVertexAttrib4sv.?(arg_584, arg_585);
 }
-pub fn glVertexAttrib4ubv(arg_586: GLuint, arg_587: [*c]const GLubyte) callconv(.Inline) void {
+pub inline fn glVertexAttrib4ubv(arg_586: GLuint, arg_587: [*c]const GLubyte) void {
     return glad_glVertexAttrib4ubv.?(arg_586, arg_587);
 }
-pub fn glVertexAttrib4uiv(arg_588: GLuint, arg_589: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttrib4uiv(arg_588: GLuint, arg_589: [*c]const GLuint) void {
     return glad_glVertexAttrib4uiv.?(arg_588, arg_589);
 }
-pub fn glVertexAttrib4usv(arg_590: GLuint, arg_591: [*c]const GLushort) callconv(.Inline) void {
+pub inline fn glVertexAttrib4usv(arg_590: GLuint, arg_591: [*c]const GLushort) void {
     return glad_glVertexAttrib4usv.?(arg_590, arg_591);
 }
-pub fn glVertexAttribPointer(arg_592: GLuint, arg_593: GLint, arg_594: GLenum, arg_595: GLboolean, arg_596: GLsizei, arg_597: ?*const c_void) callconv(.Inline) void {
+pub inline fn glVertexAttribPointer(arg_592: GLuint, arg_593: GLint, arg_594: GLenum, arg_595: GLboolean, arg_596: GLsizei, arg_597: ?*const c_void) void {
     return glad_glVertexAttribPointer.?(arg_592, arg_593, arg_594, arg_595, arg_596, arg_597);
 }
 pub const GL_VERSION_2_1 = @as(c_int, 1);
-pub fn glUniformMatrix2x3fv(arg_598: GLint, arg_599: GLsizei, arg_600: GLboolean, arg_601: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix2x3fv(arg_598: GLint, arg_599: GLsizei, arg_600: GLboolean, arg_601: [*c]const GLfloat) void {
     return glad_glUniformMatrix2x3fv.?(arg_598, arg_599, arg_600, arg_601);
 }
-pub fn glUniformMatrix3x2fv(arg_602: GLint, arg_603: GLsizei, arg_604: GLboolean, arg_605: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix3x2fv(arg_602: GLint, arg_603: GLsizei, arg_604: GLboolean, arg_605: [*c]const GLfloat) void {
     return glad_glUniformMatrix3x2fv.?(arg_602, arg_603, arg_604, arg_605);
 }
-pub fn glUniformMatrix2x4fv(arg_606: GLint, arg_607: GLsizei, arg_608: GLboolean, arg_609: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix2x4fv(arg_606: GLint, arg_607: GLsizei, arg_608: GLboolean, arg_609: [*c]const GLfloat) void {
     return glad_glUniformMatrix2x4fv.?(arg_606, arg_607, arg_608, arg_609);
 }
-pub fn glUniformMatrix4x2fv(arg_610: GLint, arg_611: GLsizei, arg_612: GLboolean, arg_613: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix4x2fv(arg_610: GLint, arg_611: GLsizei, arg_612: GLboolean, arg_613: [*c]const GLfloat) void {
     return glad_glUniformMatrix4x2fv.?(arg_610, arg_611, arg_612, arg_613);
 }
-pub fn glUniformMatrix3x4fv(arg_614: GLint, arg_615: GLsizei, arg_616: GLboolean, arg_617: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix3x4fv(arg_614: GLint, arg_615: GLsizei, arg_616: GLboolean, arg_617: [*c]const GLfloat) void {
     return glad_glUniformMatrix3x4fv.?(arg_614, arg_615, arg_616, arg_617);
 }
-pub fn glUniformMatrix4x3fv(arg_618: GLint, arg_619: GLsizei, arg_620: GLboolean, arg_621: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glUniformMatrix4x3fv(arg_618: GLint, arg_619: GLsizei, arg_620: GLboolean, arg_621: [*c]const GLfloat) void {
     return glad_glUniformMatrix4x3fv.?(arg_618, arg_619, arg_620, arg_621);
 }
 pub const GL_VERSION_3_0 = @as(c_int, 1);
-pub fn glColorMaski(arg_622: GLuint, arg_623: GLboolean, arg_624: GLboolean, arg_625: GLboolean, arg_626: GLboolean) callconv(.Inline) void {
+pub inline fn glColorMaski(arg_622: GLuint, arg_623: GLboolean, arg_624: GLboolean, arg_625: GLboolean, arg_626: GLboolean) void {
     return glad_glColorMaski.?(arg_622, arg_623, arg_624, arg_625, arg_626);
 }
-pub fn glGetBooleani_v(arg_627: GLenum, arg_628: GLuint, arg_629: [*c]GLboolean) callconv(.Inline) void {
+pub inline fn glGetBooleani_v(arg_627: GLenum, arg_628: GLuint, arg_629: [*c]GLboolean) void {
     return glad_glGetBooleani_v.?(arg_627, arg_628, arg_629);
 }
-pub fn glGetIntegeri_v(arg_630: GLenum, arg_631: GLuint, arg_632: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetIntegeri_v(arg_630: GLenum, arg_631: GLuint, arg_632: [*c]GLint) void {
     return glad_glGetIntegeri_v.?(arg_630, arg_631, arg_632);
 }
-pub fn glEnablei(arg_633: GLenum, arg_634: GLuint) callconv(.Inline) void {
+pub inline fn glEnablei(arg_633: GLenum, arg_634: GLuint) void {
     return glad_glEnablei.?(arg_633, arg_634);
 }
-pub fn glDisablei(arg_635: GLenum, arg_636: GLuint) callconv(.Inline) void {
+pub inline fn glDisablei(arg_635: GLenum, arg_636: GLuint) void {
     return glad_glDisablei.?(arg_635, arg_636);
 }
-pub fn glIsEnabledi(arg_637: GLenum, arg_638: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsEnabledi(arg_637: GLenum, arg_638: GLuint) GLboolean {
     return glad_glIsEnabledi.?(arg_637, arg_638);
 }
-pub fn glBeginTransformFeedback(arg_639: GLenum) callconv(.Inline) void {
+pub inline fn glBeginTransformFeedback(arg_639: GLenum) void {
     return glad_glBeginTransformFeedback.?(arg_639);
 }
-pub fn glEndTransformFeedback() callconv(.Inline) void {
+pub inline fn glEndTransformFeedback() void {
     return glad_glEndTransformFeedback.?();
 }
-pub fn glBindBufferRange(arg_640: GLenum, arg_641: GLuint, arg_642: GLuint, arg_643: GLintptr, arg_644: GLsizeiptr) callconv(.Inline) void {
+pub inline fn glBindBufferRange(arg_640: GLenum, arg_641: GLuint, arg_642: GLuint, arg_643: GLintptr, arg_644: GLsizeiptr) void {
     return glad_glBindBufferRange.?(arg_640, arg_641, arg_642, arg_643, arg_644);
 }
-pub fn glBindBufferBase(arg_645: GLenum, arg_646: GLuint, arg_647: GLuint) callconv(.Inline) void {
+pub inline fn glBindBufferBase(arg_645: GLenum, arg_646: GLuint, arg_647: GLuint) void {
     return glad_glBindBufferBase.?(arg_645, arg_646, arg_647);
 }
-pub fn glTransformFeedbackVaryings(arg_648: GLuint, arg_649: GLsizei, arg_650: [*c]const [*c]const GLchar, arg_651: GLenum) callconv(.Inline) void {
+pub inline fn glTransformFeedbackVaryings(arg_648: GLuint, arg_649: GLsizei, arg_650: [*c]const [*c]const GLchar, arg_651: GLenum) void {
     return glad_glTransformFeedbackVaryings.?(arg_648, arg_649, arg_650, arg_651);
 }
-pub fn glGetTransformFeedbackVarying(arg_652: GLuint, arg_653: GLuint, arg_654: GLsizei, arg_655: [*c]GLsizei, arg_656: [*c]GLsizei, arg_657: [*c]GLenum, arg_658: [*c]GLchar) callconv(.Inline) void {
+pub inline fn glGetTransformFeedbackVarying(arg_652: GLuint, arg_653: GLuint, arg_654: GLsizei, arg_655: [*c]GLsizei, arg_656: [*c]GLsizei, arg_657: [*c]GLenum, arg_658: [*c]GLchar) void {
     return glad_glGetTransformFeedbackVarying.?(arg_652, arg_653, arg_654, arg_655, arg_656, arg_657, arg_658);
 }
-pub fn glClampColor(arg_659: GLenum, arg_660: GLenum) callconv(.Inline) void {
+pub inline fn glClampColor(arg_659: GLenum, arg_660: GLenum) void {
     return glad_glClampColor.?(arg_659, arg_660);
 }
-pub fn glBeginConditionalRender(arg_661: GLuint, arg_662: GLenum) callconv(.Inline) void {
+pub inline fn glBeginConditionalRender(arg_661: GLuint, arg_662: GLenum) void {
     return glad_glBeginConditionalRender.?(arg_661, arg_662);
 }
-pub fn glEndConditionalRender() callconv(.Inline) void {
+pub inline fn glEndConditionalRender() void {
     return glad_glEndConditionalRender.?();
 }
-pub fn glVertexAttribIPointer(arg_663: GLuint, arg_664: GLint, arg_665: GLenum, arg_666: GLsizei, arg_667: ?*const c_void) callconv(.Inline) void {
+pub inline fn glVertexAttribIPointer(arg_663: GLuint, arg_664: GLint, arg_665: GLenum, arg_666: GLsizei, arg_667: ?*const c_void) void {
     return glad_glVertexAttribIPointer.?(arg_663, arg_664, arg_665, arg_666, arg_667);
 }
-pub fn glGetVertexAttribIiv(arg_668: GLuint, arg_669: GLenum, arg_670: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetVertexAttribIiv(arg_668: GLuint, arg_669: GLenum, arg_670: [*c]GLint) void {
     return glad_glGetVertexAttribIiv.?(arg_668, arg_669, arg_670);
 }
-pub fn glGetVertexAttribIuiv(arg_671: GLuint, arg_672: GLenum, arg_673: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGetVertexAttribIuiv(arg_671: GLuint, arg_672: GLenum, arg_673: [*c]GLuint) void {
     return glad_glGetVertexAttribIuiv.?(arg_671, arg_672, arg_673);
 }
-pub fn glVertexAttribI1i(arg_674: GLuint, arg_675: GLint) callconv(.Inline) void {
+pub inline fn glVertexAttribI1i(arg_674: GLuint, arg_675: GLint) void {
     return glad_glVertexAttribI1i.?(arg_674, arg_675);
 }
-pub fn glVertexAttribI2i(arg_676: GLuint, arg_677: GLint, arg_678: GLint) callconv(.Inline) void {
+pub inline fn glVertexAttribI2i(arg_676: GLuint, arg_677: GLint, arg_678: GLint) void {
     return glad_glVertexAttribI2i.?(arg_676, arg_677, arg_678);
 }
-pub fn glVertexAttribI3i(arg_679: GLuint, arg_680: GLint, arg_681: GLint, arg_682: GLint) callconv(.Inline) void {
+pub inline fn glVertexAttribI3i(arg_679: GLuint, arg_680: GLint, arg_681: GLint, arg_682: GLint) void {
     return glad_glVertexAttribI3i.?(arg_679, arg_680, arg_681, arg_682);
 }
-pub fn glVertexAttribI4i(arg_683: GLuint, arg_684: GLint, arg_685: GLint, arg_686: GLint, arg_687: GLint) callconv(.Inline) void {
+pub inline fn glVertexAttribI4i(arg_683: GLuint, arg_684: GLint, arg_685: GLint, arg_686: GLint, arg_687: GLint) void {
     return glad_glVertexAttribI4i.?(arg_683, arg_684, arg_685, arg_686, arg_687);
 }
-pub fn glVertexAttribI1ui(arg_688: GLuint, arg_689: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribI1ui(arg_688: GLuint, arg_689: GLuint) void {
     return glad_glVertexAttribI1ui.?(arg_688, arg_689);
 }
-pub fn glVertexAttribI2ui(arg_690: GLuint, arg_691: GLuint, arg_692: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribI2ui(arg_690: GLuint, arg_691: GLuint, arg_692: GLuint) void {
     return glad_glVertexAttribI2ui.?(arg_690, arg_691, arg_692);
 }
-pub fn glVertexAttribI3ui(arg_693: GLuint, arg_694: GLuint, arg_695: GLuint, arg_696: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribI3ui(arg_693: GLuint, arg_694: GLuint, arg_695: GLuint, arg_696: GLuint) void {
     return glad_glVertexAttribI3ui.?(arg_693, arg_694, arg_695, arg_696);
 }
-pub fn glVertexAttribI4ui(arg_697: GLuint, arg_698: GLuint, arg_699: GLuint, arg_700: GLuint, arg_701: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribI4ui(arg_697: GLuint, arg_698: GLuint, arg_699: GLuint, arg_700: GLuint, arg_701: GLuint) void {
     return glad_glVertexAttribI4ui.?(arg_697, arg_698, arg_699, arg_700, arg_701);
 }
-pub fn glVertexAttribI1iv(arg_702: GLuint, arg_703: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glVertexAttribI1iv(arg_702: GLuint, arg_703: [*c]const GLint) void {
     return glad_glVertexAttribI1iv.?(arg_702, arg_703);
 }
-pub fn glVertexAttribI2iv(arg_704: GLuint, arg_705: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glVertexAttribI2iv(arg_704: GLuint, arg_705: [*c]const GLint) void {
     return glad_glVertexAttribI2iv.?(arg_704, arg_705);
 }
-pub fn glVertexAttribI3iv(arg_706: GLuint, arg_707: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glVertexAttribI3iv(arg_706: GLuint, arg_707: [*c]const GLint) void {
     return glad_glVertexAttribI3iv.?(arg_706, arg_707);
 }
-pub fn glVertexAttribI4iv(arg_708: GLuint, arg_709: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glVertexAttribI4iv(arg_708: GLuint, arg_709: [*c]const GLint) void {
     return glad_glVertexAttribI4iv.?(arg_708, arg_709);
 }
-pub fn glVertexAttribI1uiv(arg_710: GLuint, arg_711: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribI1uiv(arg_710: GLuint, arg_711: [*c]const GLuint) void {
     return glad_glVertexAttribI1uiv.?(arg_710, arg_711);
 }
-pub fn glVertexAttribI2uiv(arg_712: GLuint, arg_713: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribI2uiv(arg_712: GLuint, arg_713: [*c]const GLuint) void {
     return glad_glVertexAttribI2uiv.?(arg_712, arg_713);
 }
-pub fn glVertexAttribI3uiv(arg_714: GLuint, arg_715: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribI3uiv(arg_714: GLuint, arg_715: [*c]const GLuint) void {
     return glad_glVertexAttribI3uiv.?(arg_714, arg_715);
 }
-pub fn glVertexAttribI4uiv(arg_716: GLuint, arg_717: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribI4uiv(arg_716: GLuint, arg_717: [*c]const GLuint) void {
     return glad_glVertexAttribI4uiv.?(arg_716, arg_717);
 }
-pub fn glVertexAttribI4bv(arg_718: GLuint, arg_719: [*c]const GLbyte) callconv(.Inline) void {
+pub inline fn glVertexAttribI4bv(arg_718: GLuint, arg_719: [*c]const GLbyte) void {
     return glad_glVertexAttribI4bv.?(arg_718, arg_719);
 }
-pub fn glVertexAttribI4sv(arg_720: GLuint, arg_721: [*c]const GLshort) callconv(.Inline) void {
+pub inline fn glVertexAttribI4sv(arg_720: GLuint, arg_721: [*c]const GLshort) void {
     return glad_glVertexAttribI4sv.?(arg_720, arg_721);
 }
-pub fn glVertexAttribI4ubv(arg_722: GLuint, arg_723: [*c]const GLubyte) callconv(.Inline) void {
+pub inline fn glVertexAttribI4ubv(arg_722: GLuint, arg_723: [*c]const GLubyte) void {
     return glad_glVertexAttribI4ubv.?(arg_722, arg_723);
 }
-pub fn glVertexAttribI4usv(arg_724: GLuint, arg_725: [*c]const GLushort) callconv(.Inline) void {
+pub inline fn glVertexAttribI4usv(arg_724: GLuint, arg_725: [*c]const GLushort) void {
     return glad_glVertexAttribI4usv.?(arg_724, arg_725);
 }
-pub fn glGetUniformuiv(arg_726: GLuint, arg_727: GLint, arg_728: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGetUniformuiv(arg_726: GLuint, arg_727: GLint, arg_728: [*c]GLuint) void {
     return glad_glGetUniformuiv.?(arg_726, arg_727, arg_728);
 }
-pub fn glBindFragDataLocation(arg_729: GLuint, arg_730: GLuint, arg_731: [*c]const GLchar) callconv(.Inline) void {
+pub inline fn glBindFragDataLocation(arg_729: GLuint, arg_730: GLuint, arg_731: [*c]const GLchar) void {
     return glad_glBindFragDataLocation.?(arg_729, arg_730, arg_731);
 }
-pub fn glGetFragDataLocation(arg_732: GLuint, arg_733: [*c]const GLchar) callconv(.Inline) GLint {
+pub inline fn glGetFragDataLocation(arg_732: GLuint, arg_733: [*c]const GLchar) GLint {
     return glad_glGetFragDataLocation.?(arg_732, arg_733);
 }
-pub fn glUniform1ui(arg_734: GLint, arg_735: GLuint) callconv(.Inline) void {
+pub inline fn glUniform1ui(arg_734: GLint, arg_735: GLuint) void {
     return glad_glUniform1ui.?(arg_734, arg_735);
 }
-pub fn glUniform2ui(arg_736: GLint, arg_737: GLuint, arg_738: GLuint) callconv(.Inline) void {
+pub inline fn glUniform2ui(arg_736: GLint, arg_737: GLuint, arg_738: GLuint) void {
     return glad_glUniform2ui.?(arg_736, arg_737, arg_738);
 }
-pub fn glUniform3ui(arg_739: GLint, arg_740: GLuint, arg_741: GLuint, arg_742: GLuint) callconv(.Inline) void {
+pub inline fn glUniform3ui(arg_739: GLint, arg_740: GLuint, arg_741: GLuint, arg_742: GLuint) void {
     return glad_glUniform3ui.?(arg_739, arg_740, arg_741, arg_742);
 }
-pub fn glUniform4ui(arg_743: GLint, arg_744: GLuint, arg_745: GLuint, arg_746: GLuint, arg_747: GLuint) callconv(.Inline) void {
+pub inline fn glUniform4ui(arg_743: GLint, arg_744: GLuint, arg_745: GLuint, arg_746: GLuint, arg_747: GLuint) void {
     return glad_glUniform4ui.?(arg_743, arg_744, arg_745, arg_746, arg_747);
 }
-pub fn glUniform1uiv(arg_748: GLint, arg_749: GLsizei, arg_750: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glUniform1uiv(arg_748: GLint, arg_749: GLsizei, arg_750: [*c]const GLuint) void {
     return glad_glUniform1uiv.?(arg_748, arg_749, arg_750);
 }
-pub fn glUniform2uiv(arg_751: GLint, arg_752: GLsizei, arg_753: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glUniform2uiv(arg_751: GLint, arg_752: GLsizei, arg_753: [*c]const GLuint) void {
     return glad_glUniform2uiv.?(arg_751, arg_752, arg_753);
 }
-pub fn glUniform3uiv(arg_754: GLint, arg_755: GLsizei, arg_756: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glUniform3uiv(arg_754: GLint, arg_755: GLsizei, arg_756: [*c]const GLuint) void {
     return glad_glUniform3uiv.?(arg_754, arg_755, arg_756);
 }
-pub fn glUniform4uiv(arg_757: GLint, arg_758: GLsizei, arg_759: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glUniform4uiv(arg_757: GLint, arg_758: GLsizei, arg_759: [*c]const GLuint) void {
     return glad_glUniform4uiv.?(arg_757, arg_758, arg_759);
 }
-pub fn glTexParameterIiv(arg_760: GLenum, arg_761: GLenum, arg_762: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glTexParameterIiv(arg_760: GLenum, arg_761: GLenum, arg_762: [*c]const GLint) void {
     return glad_glTexParameterIiv.?(arg_760, arg_761, arg_762);
 }
-pub fn glTexParameterIuiv(arg_763: GLenum, arg_764: GLenum, arg_765: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glTexParameterIuiv(arg_763: GLenum, arg_764: GLenum, arg_765: [*c]const GLuint) void {
     return glad_glTexParameterIuiv.?(arg_763, arg_764, arg_765);
 }
-pub fn glGetTexParameterIiv(arg_766: GLenum, arg_767: GLenum, arg_768: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetTexParameterIiv(arg_766: GLenum, arg_767: GLenum, arg_768: [*c]GLint) void {
     return glad_glGetTexParameterIiv.?(arg_766, arg_767, arg_768);
 }
-pub fn glGetTexParameterIuiv(arg_769: GLenum, arg_770: GLenum, arg_771: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGetTexParameterIuiv(arg_769: GLenum, arg_770: GLenum, arg_771: [*c]GLuint) void {
     return glad_glGetTexParameterIuiv.?(arg_769, arg_770, arg_771);
 }
-pub fn glClearBufferiv(arg_772: GLenum, arg_773: GLint, arg_774: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glClearBufferiv(arg_772: GLenum, arg_773: GLint, arg_774: [*c]const GLint) void {
     return glad_glClearBufferiv.?(arg_772, arg_773, arg_774);
 }
-pub fn glClearBufferuiv(arg_775: GLenum, arg_776: GLint, arg_777: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glClearBufferuiv(arg_775: GLenum, arg_776: GLint, arg_777: [*c]const GLuint) void {
     return glad_glClearBufferuiv.?(arg_775, arg_776, arg_777);
 }
-pub fn glClearBufferfv(arg_778: GLenum, arg_779: GLint, arg_780: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glClearBufferfv(arg_778: GLenum, arg_779: GLint, arg_780: [*c]const GLfloat) void {
     return glad_glClearBufferfv.?(arg_778, arg_779, arg_780);
 }
-pub fn glClearBufferfi(arg_781: GLenum, arg_782: GLint, arg_783: GLfloat, arg_784: GLint) callconv(.Inline) void {
+pub inline fn glClearBufferfi(arg_781: GLenum, arg_782: GLint, arg_783: GLfloat, arg_784: GLint) void {
     return glad_glClearBufferfi.?(arg_781, arg_782, arg_783, arg_784);
 }
-pub fn glGetStringi(arg_785: GLenum, arg_786: GLuint) callconv(.Inline) [*c]const GLubyte {
+pub inline fn glGetStringi(arg_785: GLenum, arg_786: GLuint) [*c]const GLubyte {
     return glad_glGetStringi.?(arg_785, arg_786);
 }
-pub fn glIsRenderbuffer(arg_787: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsRenderbuffer(arg_787: GLuint) GLboolean {
     return glad_glIsRenderbuffer.?(arg_787);
 }
-pub fn glBindRenderbuffer(arg_788: GLenum, arg_789: GLuint) callconv(.Inline) void {
+pub inline fn glBindRenderbuffer(arg_788: GLenum, arg_789: GLuint) void {
     return glad_glBindRenderbuffer.?(arg_788, arg_789);
 }
-pub fn glDeleteRenderbuffers(arg_790: GLsizei, arg_791: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glDeleteRenderbuffers(arg_790: GLsizei, arg_791: [*c]const GLuint) void {
     return glad_glDeleteRenderbuffers.?(arg_790, arg_791);
 }
-pub fn glGenRenderbuffers(arg_792: GLsizei, arg_793: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGenRenderbuffers(arg_792: GLsizei, arg_793: [*c]GLuint) void {
     return glad_glGenRenderbuffers.?(arg_792, arg_793);
 }
-pub fn glRenderbufferStorage(arg_794: GLenum, arg_795: GLenum, arg_796: GLsizei, arg_797: GLsizei) callconv(.Inline) void {
+pub inline fn glRenderbufferStorage(arg_794: GLenum, arg_795: GLenum, arg_796: GLsizei, arg_797: GLsizei) void {
     return glad_glRenderbufferStorage.?(arg_794, arg_795, arg_796, arg_797);
 }
-pub fn glGetRenderbufferParameteriv(arg_798: GLenum, arg_799: GLenum, arg_800: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetRenderbufferParameteriv(arg_798: GLenum, arg_799: GLenum, arg_800: [*c]GLint) void {
     return glad_glGetRenderbufferParameteriv.?(arg_798, arg_799, arg_800);
 }
-pub fn glIsFramebuffer(arg_801: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsFramebuffer(arg_801: GLuint) GLboolean {
     return glad_glIsFramebuffer.?(arg_801);
 }
-pub fn glBindFramebuffer(arg_802: GLenum, arg_803: GLuint) callconv(.Inline) void {
+pub inline fn glBindFramebuffer(arg_802: GLenum, arg_803: GLuint) void {
     return glad_glBindFramebuffer.?(arg_802, arg_803);
 }
-pub fn glDeleteFramebuffers(arg_804: GLsizei, arg_805: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glDeleteFramebuffers(arg_804: GLsizei, arg_805: [*c]const GLuint) void {
     return glad_glDeleteFramebuffers.?(arg_804, arg_805);
 }
-pub fn glGenFramebuffers(arg_806: GLsizei, arg_807: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGenFramebuffers(arg_806: GLsizei, arg_807: [*c]GLuint) void {
     return glad_glGenFramebuffers.?(arg_806, arg_807);
 }
-pub fn glCheckFramebufferStatus(arg_808: GLenum) callconv(.Inline) GLenum {
+pub inline fn glCheckFramebufferStatus(arg_808: GLenum) GLenum {
     return glad_glCheckFramebufferStatus.?(arg_808);
 }
-pub fn glFramebufferTexture1D(arg_809: GLenum, arg_810: GLenum, arg_811: GLenum, arg_812: GLuint, arg_813: GLint) callconv(.Inline) void {
+pub inline fn glFramebufferTexture1D(arg_809: GLenum, arg_810: GLenum, arg_811: GLenum, arg_812: GLuint, arg_813: GLint) void {
     return glad_glFramebufferTexture1D.?(arg_809, arg_810, arg_811, arg_812, arg_813);
 }
-pub fn glFramebufferTexture2D(arg_814: GLenum, arg_815: GLenum, arg_816: GLenum, arg_817: GLuint, arg_818: GLint) callconv(.Inline) void {
+pub inline fn glFramebufferTexture2D(arg_814: GLenum, arg_815: GLenum, arg_816: GLenum, arg_817: GLuint, arg_818: GLint) void {
     return glad_glFramebufferTexture2D.?(arg_814, arg_815, arg_816, arg_817, arg_818);
 }
-pub fn glFramebufferTexture3D(arg_819: GLenum, arg_820: GLenum, arg_821: GLenum, arg_822: GLuint, arg_823: GLint, arg_824: GLint) callconv(.Inline) void {
+pub inline fn glFramebufferTexture3D(arg_819: GLenum, arg_820: GLenum, arg_821: GLenum, arg_822: GLuint, arg_823: GLint, arg_824: GLint) void {
     return glad_glFramebufferTexture3D.?(arg_819, arg_820, arg_821, arg_822, arg_823, arg_824);
 }
-pub fn glFramebufferRenderbuffer(arg_825: GLenum, arg_826: GLenum, arg_827: GLenum, arg_828: GLuint) callconv(.Inline) void {
+pub inline fn glFramebufferRenderbuffer(arg_825: GLenum, arg_826: GLenum, arg_827: GLenum, arg_828: GLuint) void {
     return glad_glFramebufferRenderbuffer.?(arg_825, arg_826, arg_827, arg_828);
 }
-pub fn glGetFramebufferAttachmentParameteriv(arg_829: GLenum, arg_830: GLenum, arg_831: GLenum, arg_832: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetFramebufferAttachmentParameteriv(arg_829: GLenum, arg_830: GLenum, arg_831: GLenum, arg_832: [*c]GLint) void {
     return glad_glGetFramebufferAttachmentParameteriv.?(arg_829, arg_830, arg_831, arg_832);
 }
-pub fn glGenerateMipmap(arg_833: GLenum) callconv(.Inline) void {
+pub inline fn glGenerateMipmap(arg_833: GLenum) void {
     return glad_glGenerateMipmap.?(arg_833);
 }
-pub fn glBlitFramebuffer(arg_834: GLint, arg_835: GLint, arg_836: GLint, arg_837: GLint, arg_838: GLint, arg_839: GLint, arg_840: GLint, arg_841: GLint, arg_842: GLbitfield, arg_843: GLenum) callconv(.Inline) void {
+pub inline fn glBlitFramebuffer(arg_834: GLint, arg_835: GLint, arg_836: GLint, arg_837: GLint, arg_838: GLint, arg_839: GLint, arg_840: GLint, arg_841: GLint, arg_842: GLbitfield, arg_843: GLenum) void {
     return glad_glBlitFramebuffer.?(arg_834, arg_835, arg_836, arg_837, arg_838, arg_839, arg_840, arg_841, arg_842, arg_843);
 }
-pub fn glRenderbufferStorageMultisample(arg_844: GLenum, arg_845: GLsizei, arg_846: GLenum, arg_847: GLsizei, arg_848: GLsizei) callconv(.Inline) void {
+pub inline fn glRenderbufferStorageMultisample(arg_844: GLenum, arg_845: GLsizei, arg_846: GLenum, arg_847: GLsizei, arg_848: GLsizei) void {
     return glad_glRenderbufferStorageMultisample.?(arg_844, arg_845, arg_846, arg_847, arg_848);
 }
-pub fn glFramebufferTextureLayer(arg_849: GLenum, arg_850: GLenum, arg_851: GLuint, arg_852: GLint, arg_853: GLint) callconv(.Inline) void {
+pub inline fn glFramebufferTextureLayer(arg_849: GLenum, arg_850: GLenum, arg_851: GLuint, arg_852: GLint, arg_853: GLint) void {
     return glad_glFramebufferTextureLayer.?(arg_849, arg_850, arg_851, arg_852, arg_853);
 }
-pub fn glMapBufferRange(arg_854: GLenum, arg_855: GLintptr, arg_856: GLsizeiptr, arg_857: GLbitfield) callconv(.Inline) ?*c_void {
+pub inline fn glMapBufferRange(arg_854: GLenum, arg_855: GLintptr, arg_856: GLsizeiptr, arg_857: GLbitfield) ?*c_void {
     return glad_glMapBufferRange.?(arg_854, arg_855, arg_856, arg_857);
 }
-pub fn glFlushMappedBufferRange(arg_858: GLenum, arg_859: GLintptr, arg_860: GLsizeiptr) callconv(.Inline) void {
+pub inline fn glFlushMappedBufferRange(arg_858: GLenum, arg_859: GLintptr, arg_860: GLsizeiptr) void {
     return glad_glFlushMappedBufferRange.?(arg_858, arg_859, arg_860);
 }
-pub fn glBindVertexArray(arg_861: GLuint) callconv(.Inline) void {
+pub inline fn glBindVertexArray(arg_861: GLuint) void {
     return glad_glBindVertexArray.?(arg_861);
 }
-pub fn glDeleteVertexArrays(arg_862: GLsizei, arg_863: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glDeleteVertexArrays(arg_862: GLsizei, arg_863: [*c]const GLuint) void {
     return glad_glDeleteVertexArrays.?(arg_862, arg_863);
 }
-pub fn glGenVertexArrays(arg_864: GLsizei, arg_865: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGenVertexArrays(arg_864: GLsizei, arg_865: [*c]GLuint) void {
     return glad_glGenVertexArrays.?(arg_864, arg_865);
 }
-pub fn glIsVertexArray(arg_866: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsVertexArray(arg_866: GLuint) GLboolean {
     return glad_glIsVertexArray.?(arg_866);
 }
 pub const GL_VERSION_3_1 = @as(c_int, 1);
-pub fn glDrawArraysInstanced(arg_867: GLenum, arg_868: GLint, arg_869: GLsizei, arg_870: GLsizei) callconv(.Inline) void {
+pub inline fn glDrawArraysInstanced(arg_867: GLenum, arg_868: GLint, arg_869: GLsizei, arg_870: GLsizei) void {
     return glad_glDrawArraysInstanced.?(arg_867, arg_868, arg_869, arg_870);
 }
-pub fn glDrawElementsInstanced(arg_871: GLenum, arg_872: GLsizei, arg_873: GLenum, arg_874: ?*const c_void, arg_875: GLsizei) callconv(.Inline) void {
+pub inline fn glDrawElementsInstanced(arg_871: GLenum, arg_872: GLsizei, arg_873: GLenum, arg_874: ?*const c_void, arg_875: GLsizei) void {
     return glad_glDrawElementsInstanced.?(arg_871, arg_872, arg_873, arg_874, arg_875);
 }
-pub fn glTexBuffer(arg_876: GLenum, arg_877: GLenum, arg_878: GLuint) callconv(.Inline) void {
+pub inline fn glTexBuffer(arg_876: GLenum, arg_877: GLenum, arg_878: GLuint) void {
     return glad_glTexBuffer.?(arg_876, arg_877, arg_878);
 }
-pub fn glPrimitiveRestartIndex(arg_879: GLuint) callconv(.Inline) void {
+pub inline fn glPrimitiveRestartIndex(arg_879: GLuint) void {
     return glad_glPrimitiveRestartIndex.?(arg_879);
 }
-pub fn glCopyBufferSubData(arg_880: GLenum, arg_881: GLenum, arg_882: GLintptr, arg_883: GLintptr, arg_884: GLsizeiptr) callconv(.Inline) void {
+pub inline fn glCopyBufferSubData(arg_880: GLenum, arg_881: GLenum, arg_882: GLintptr, arg_883: GLintptr, arg_884: GLsizeiptr) void {
     return glad_glCopyBufferSubData.?(arg_880, arg_881, arg_882, arg_883, arg_884);
 }
-pub fn glGetUniformIndices(arg_885: GLuint, arg_886: GLsizei, arg_887: [*c]const [*c]const GLchar, arg_888: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGetUniformIndices(arg_885: GLuint, arg_886: GLsizei, arg_887: [*c]const [*c]const GLchar, arg_888: [*c]GLuint) void {
     return glad_glGetUniformIndices.?(arg_885, arg_886, arg_887, arg_888);
 }
-pub fn glGetActiveUniformsiv(arg_889: GLuint, arg_890: GLsizei, arg_891: [*c]const GLuint, arg_892: GLenum, arg_893: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetActiveUniformsiv(arg_889: GLuint, arg_890: GLsizei, arg_891: [*c]const GLuint, arg_892: GLenum, arg_893: [*c]GLint) void {
     return glad_glGetActiveUniformsiv.?(arg_889, arg_890, arg_891, arg_892, arg_893);
 }
-pub fn glGetActiveUniformName(arg_894: GLuint, arg_895: GLuint, arg_896: GLsizei, arg_897: [*c]GLsizei, arg_898: [*c]GLchar) callconv(.Inline) void {
+pub inline fn glGetActiveUniformName(arg_894: GLuint, arg_895: GLuint, arg_896: GLsizei, arg_897: [*c]GLsizei, arg_898: [*c]GLchar) void {
     return glad_glGetActiveUniformName.?(arg_894, arg_895, arg_896, arg_897, arg_898);
 }
-pub fn glGetUniformBlockIndex(arg_899: GLuint, arg_900: [*c]const GLchar) callconv(.Inline) GLuint {
+pub inline fn glGetUniformBlockIndex(arg_899: GLuint, arg_900: [*c]const GLchar) GLuint {
     return glad_glGetUniformBlockIndex.?(arg_899, arg_900);
 }
-pub fn glGetActiveUniformBlockiv(arg_901: GLuint, arg_902: GLuint, arg_903: GLenum, arg_904: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetActiveUniformBlockiv(arg_901: GLuint, arg_902: GLuint, arg_903: GLenum, arg_904: [*c]GLint) void {
     return glad_glGetActiveUniformBlockiv.?(arg_901, arg_902, arg_903, arg_904);
 }
-pub fn glGetActiveUniformBlockName(arg_905: GLuint, arg_906: GLuint, arg_907: GLsizei, arg_908: [*c]GLsizei, arg_909: [*c]GLchar) callconv(.Inline) void {
+pub inline fn glGetActiveUniformBlockName(arg_905: GLuint, arg_906: GLuint, arg_907: GLsizei, arg_908: [*c]GLsizei, arg_909: [*c]GLchar) void {
     return glad_glGetActiveUniformBlockName.?(arg_905, arg_906, arg_907, arg_908, arg_909);
 }
-pub fn glUniformBlockBinding(arg_910: GLuint, arg_911: GLuint, arg_912: GLuint) callconv(.Inline) void {
+pub inline fn glUniformBlockBinding(arg_910: GLuint, arg_911: GLuint, arg_912: GLuint) void {
     return glad_glUniformBlockBinding.?(arg_910, arg_911, arg_912);
 }
 pub const GL_VERSION_3_2 = @as(c_int, 1);
-pub fn glDrawElementsBaseVertex(arg_913: GLenum, arg_914: GLsizei, arg_915: GLenum, arg_916: ?*const c_void, arg_917: GLint) callconv(.Inline) void {
+pub inline fn glDrawElementsBaseVertex(arg_913: GLenum, arg_914: GLsizei, arg_915: GLenum, arg_916: ?*const c_void, arg_917: GLint) void {
     return glad_glDrawElementsBaseVertex.?(arg_913, arg_914, arg_915, arg_916, arg_917);
 }
-pub fn glDrawRangeElementsBaseVertex(arg_918: GLenum, arg_919: GLuint, arg_920: GLuint, arg_921: GLsizei, arg_922: GLenum, arg_923: ?*const c_void, arg_924: GLint) callconv(.Inline) void {
+pub inline fn glDrawRangeElementsBaseVertex(arg_918: GLenum, arg_919: GLuint, arg_920: GLuint, arg_921: GLsizei, arg_922: GLenum, arg_923: ?*const c_void, arg_924: GLint) void {
     return glad_glDrawRangeElementsBaseVertex.?(arg_918, arg_919, arg_920, arg_921, arg_922, arg_923, arg_924);
 }
-pub fn glDrawElementsInstancedBaseVertex(arg_925: GLenum, arg_926: GLsizei, arg_927: GLenum, arg_928: ?*const c_void, arg_929: GLsizei, arg_930: GLint) callconv(.Inline) void {
+pub inline fn glDrawElementsInstancedBaseVertex(arg_925: GLenum, arg_926: GLsizei, arg_927: GLenum, arg_928: ?*const c_void, arg_929: GLsizei, arg_930: GLint) void {
     return glad_glDrawElementsInstancedBaseVertex.?(arg_925, arg_926, arg_927, arg_928, arg_929, arg_930);
 }
-pub fn glMultiDrawElementsBaseVertex(arg_931: GLenum, arg_932: [*c]const GLsizei, arg_933: GLenum, arg_934: [*c]const ?*const c_void, arg_935: GLsizei, arg_936: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glMultiDrawElementsBaseVertex(arg_931: GLenum, arg_932: [*c]const GLsizei, arg_933: GLenum, arg_934: [*c]const ?*const c_void, arg_935: GLsizei, arg_936: [*c]const GLint) void {
     return glad_glMultiDrawElementsBaseVertex.?(arg_931, arg_932, arg_933, arg_934, arg_935, arg_936);
 }
-pub fn glProvokingVertex(arg_937: GLenum) callconv(.Inline) void {
+pub inline fn glProvokingVertex(arg_937: GLenum) void {
     return glad_glProvokingVertex.?(arg_937);
 }
-pub fn glFenceSync(arg_938: GLenum, arg_939: GLbitfield) callconv(.Inline) GLsync {
+pub inline fn glFenceSync(arg_938: GLenum, arg_939: GLbitfield) GLsync {
     return glad_glFenceSync.?(arg_938, arg_939);
 }
-pub fn glIsSync(arg_940: GLsync) callconv(.Inline) GLboolean {
+pub inline fn glIsSync(arg_940: GLsync) GLboolean {
     return glad_glIsSync.?(arg_940);
 }
-pub fn glDeleteSync(arg_941: GLsync) callconv(.Inline) void {
+pub inline fn glDeleteSync(arg_941: GLsync) void {
     return glad_glDeleteSync.?(arg_941);
 }
-pub fn glClientWaitSync(arg_942: GLsync, arg_943: GLbitfield, arg_944: GLuint64) callconv(.Inline) GLenum {
+pub inline fn glClientWaitSync(arg_942: GLsync, arg_943: GLbitfield, arg_944: GLuint64) GLenum {
     return glad_glClientWaitSync.?(arg_942, arg_943, arg_944);
 }
-pub fn glWaitSync(arg_945: GLsync, arg_946: GLbitfield, arg_947: GLuint64) callconv(.Inline) void {
+pub inline fn glWaitSync(arg_945: GLsync, arg_946: GLbitfield, arg_947: GLuint64) void {
     return glad_glWaitSync.?(arg_945, arg_946, arg_947);
 }
-pub fn glGetInteger64v(arg_948: GLenum, arg_949: [*c]GLint64) callconv(.Inline) void {
+pub inline fn glGetInteger64v(arg_948: GLenum, arg_949: [*c]GLint64) void {
     return glad_glGetInteger64v.?(arg_948, arg_949);
 }
-pub fn glGetSynciv(arg_950: GLsync, arg_951: GLenum, arg_952: GLsizei, arg_953: [*c]GLsizei, arg_954: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetSynciv(arg_950: GLsync, arg_951: GLenum, arg_952: GLsizei, arg_953: [*c]GLsizei, arg_954: [*c]GLint) void {
     return glad_glGetSynciv.?(arg_950, arg_951, arg_952, arg_953, arg_954);
 }
-pub fn glGetInteger64i_v(arg_955: GLenum, arg_956: GLuint, arg_957: [*c]GLint64) callconv(.Inline) void {
+pub inline fn glGetInteger64i_v(arg_955: GLenum, arg_956: GLuint, arg_957: [*c]GLint64) void {
     return glad_glGetInteger64i_v.?(arg_955, arg_956, arg_957);
 }
-pub fn glGetBufferParameteri64v(arg_958: GLenum, arg_959: GLenum, arg_960: [*c]GLint64) callconv(.Inline) void {
+pub inline fn glGetBufferParameteri64v(arg_958: GLenum, arg_959: GLenum, arg_960: [*c]GLint64) void {
     return glad_glGetBufferParameteri64v.?(arg_958, arg_959, arg_960);
 }
-pub fn glFramebufferTexture(arg_961: GLenum, arg_962: GLenum, arg_963: GLuint, arg_964: GLint) callconv(.Inline) void {
+pub inline fn glFramebufferTexture(arg_961: GLenum, arg_962: GLenum, arg_963: GLuint, arg_964: GLint) void {
     return glad_glFramebufferTexture.?(arg_961, arg_962, arg_963, arg_964);
 }
-pub fn glTexImage2DMultisample(arg_965: GLenum, arg_966: GLsizei, arg_967: GLenum, arg_968: GLsizei, arg_969: GLsizei, arg_970: GLboolean) callconv(.Inline) void {
+pub inline fn glTexImage2DMultisample(arg_965: GLenum, arg_966: GLsizei, arg_967: GLenum, arg_968: GLsizei, arg_969: GLsizei, arg_970: GLboolean) void {
     return glad_glTexImage2DMultisample.?(arg_965, arg_966, arg_967, arg_968, arg_969, arg_970);
 }
-pub fn glTexImage3DMultisample(arg_971: GLenum, arg_972: GLsizei, arg_973: GLenum, arg_974: GLsizei, arg_975: GLsizei, arg_976: GLsizei, arg_977: GLboolean) callconv(.Inline) void {
+pub inline fn glTexImage3DMultisample(arg_971: GLenum, arg_972: GLsizei, arg_973: GLenum, arg_974: GLsizei, arg_975: GLsizei, arg_976: GLsizei, arg_977: GLboolean) void {
     return glad_glTexImage3DMultisample.?(arg_971, arg_972, arg_973, arg_974, arg_975, arg_976, arg_977);
 }
-pub fn glGetMultisamplefv(arg_978: GLenum, arg_979: GLuint, arg_980: [*c]GLfloat) callconv(.Inline) void {
+pub inline fn glGetMultisamplefv(arg_978: GLenum, arg_979: GLuint, arg_980: [*c]GLfloat) void {
     return glad_glGetMultisamplefv.?(arg_978, arg_979, arg_980);
 }
-pub fn glSampleMaski(arg_981: GLuint, arg_982: GLbitfield) callconv(.Inline) void {
+pub inline fn glSampleMaski(arg_981: GLuint, arg_982: GLbitfield) void {
     return glad_glSampleMaski.?(arg_981, arg_982);
 }
 pub const GL_VERSION_3_3 = @as(c_int, 1);
-pub fn glBindFragDataLocationIndexed(arg_983: GLuint, arg_984: GLuint, arg_985: GLuint, arg_986: [*c]const GLchar) callconv(.Inline) void {
+pub inline fn glBindFragDataLocationIndexed(arg_983: GLuint, arg_984: GLuint, arg_985: GLuint, arg_986: [*c]const GLchar) void {
     return glad_glBindFragDataLocationIndexed.?(arg_983, arg_984, arg_985, arg_986);
 }
-pub fn glGetFragDataIndex(arg_987: GLuint, arg_988: [*c]const GLchar) callconv(.Inline) GLint {
+pub inline fn glGetFragDataIndex(arg_987: GLuint, arg_988: [*c]const GLchar) GLint {
     return glad_glGetFragDataIndex.?(arg_987, arg_988);
 }
-pub fn glGenSamplers(arg_989: GLsizei, arg_990: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGenSamplers(arg_989: GLsizei, arg_990: [*c]GLuint) void {
     return glad_glGenSamplers.?(arg_989, arg_990);
 }
-pub fn glDeleteSamplers(arg_991: GLsizei, arg_992: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glDeleteSamplers(arg_991: GLsizei, arg_992: [*c]const GLuint) void {
     return glad_glDeleteSamplers.?(arg_991, arg_992);
 }
-pub fn glIsSampler(arg_993: GLuint) callconv(.Inline) GLboolean {
+pub inline fn glIsSampler(arg_993: GLuint) GLboolean {
     return glad_glIsSampler.?(arg_993);
 }
-pub fn glBindSampler(arg_994: GLuint, arg_995: GLuint) callconv(.Inline) void {
+pub inline fn glBindSampler(arg_994: GLuint, arg_995: GLuint) void {
     return glad_glBindSampler.?(arg_994, arg_995);
 }
-pub fn glSamplerParameteri(arg_996: GLuint, arg_997: GLenum, arg_998: GLint) callconv(.Inline) void {
+pub inline fn glSamplerParameteri(arg_996: GLuint, arg_997: GLenum, arg_998: GLint) void {
     return glad_glSamplerParameteri.?(arg_996, arg_997, arg_998);
 }
-pub fn glSamplerParameteriv(arg_999: GLuint, arg_1000: GLenum, arg_1001: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glSamplerParameteriv(arg_999: GLuint, arg_1000: GLenum, arg_1001: [*c]const GLint) void {
     return glad_glSamplerParameteriv.?(arg_999, arg_1000, arg_1001);
 }
-pub fn glSamplerParameterf(arg_1002: GLuint, arg_1003: GLenum, arg_1004: GLfloat) callconv(.Inline) void {
+pub inline fn glSamplerParameterf(arg_1002: GLuint, arg_1003: GLenum, arg_1004: GLfloat) void {
     return glad_glSamplerParameterf.?(arg_1002, arg_1003, arg_1004);
 }
-pub fn glSamplerParameterfv(arg_1005: GLuint, arg_1006: GLenum, arg_1007: [*c]const GLfloat) callconv(.Inline) void {
+pub inline fn glSamplerParameterfv(arg_1005: GLuint, arg_1006: GLenum, arg_1007: [*c]const GLfloat) void {
     return glad_glSamplerParameterfv.?(arg_1005, arg_1006, arg_1007);
 }
-pub fn glSamplerParameterIiv(arg_1008: GLuint, arg_1009: GLenum, arg_1010: [*c]const GLint) callconv(.Inline) void {
+pub inline fn glSamplerParameterIiv(arg_1008: GLuint, arg_1009: GLenum, arg_1010: [*c]const GLint) void {
     return glad_glSamplerParameterIiv.?(arg_1008, arg_1009, arg_1010);
 }
-pub fn glSamplerParameterIuiv(arg_1011: GLuint, arg_1012: GLenum, arg_1013: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glSamplerParameterIuiv(arg_1011: GLuint, arg_1012: GLenum, arg_1013: [*c]const GLuint) void {
     return glad_glSamplerParameterIuiv.?(arg_1011, arg_1012, arg_1013);
 }
-pub fn glGetSamplerParameteriv(arg_1014: GLuint, arg_1015: GLenum, arg_1016: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetSamplerParameteriv(arg_1014: GLuint, arg_1015: GLenum, arg_1016: [*c]GLint) void {
     return glad_glGetSamplerParameteriv.?(arg_1014, arg_1015, arg_1016);
 }
-pub fn glGetSamplerParameterIiv(arg_1017: GLuint, arg_1018: GLenum, arg_1019: [*c]GLint) callconv(.Inline) void {
+pub inline fn glGetSamplerParameterIiv(arg_1017: GLuint, arg_1018: GLenum, arg_1019: [*c]GLint) void {
     return glad_glGetSamplerParameterIiv.?(arg_1017, arg_1018, arg_1019);
 }
-pub fn glGetSamplerParameterfv(arg_1020: GLuint, arg_1021: GLenum, arg_1022: [*c]GLfloat) callconv(.Inline) void {
+pub inline fn glGetSamplerParameterfv(arg_1020: GLuint, arg_1021: GLenum, arg_1022: [*c]GLfloat) void {
     return glad_glGetSamplerParameterfv.?(arg_1020, arg_1021, arg_1022);
 }
-pub fn glGetSamplerParameterIuiv(arg_1023: GLuint, arg_1024: GLenum, arg_1025: [*c]GLuint) callconv(.Inline) void {
+pub inline fn glGetSamplerParameterIuiv(arg_1023: GLuint, arg_1024: GLenum, arg_1025: [*c]GLuint) void {
     return glad_glGetSamplerParameterIuiv.?(arg_1023, arg_1024, arg_1025);
 }
-pub fn glQueryCounter(arg_1026: GLuint, arg_1027: GLenum) callconv(.Inline) void {
+pub inline fn glQueryCounter(arg_1026: GLuint, arg_1027: GLenum) void {
     return glad_glQueryCounter.?(arg_1026, arg_1027);
 }
-pub fn glGetQueryObjecti64v(arg_1028: GLuint, arg_1029: GLenum, arg_1030: [*c]GLint64) callconv(.Inline) void {
+pub inline fn glGetQueryObjecti64v(arg_1028: GLuint, arg_1029: GLenum, arg_1030: [*c]GLint64) void {
     return glad_glGetQueryObjecti64v.?(arg_1028, arg_1029, arg_1030);
 }
-pub fn glGetQueryObjectui64v(arg_1031: GLuint, arg_1032: GLenum, arg_1033: [*c]GLuint64) callconv(.Inline) void {
+pub inline fn glGetQueryObjectui64v(arg_1031: GLuint, arg_1032: GLenum, arg_1033: [*c]GLuint64) void {
     return glad_glGetQueryObjectui64v.?(arg_1031, arg_1032, arg_1033);
 }
-pub fn glVertexAttribDivisor(arg_1034: GLuint, arg_1035: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribDivisor(arg_1034: GLuint, arg_1035: GLuint) void {
     return glad_glVertexAttribDivisor.?(arg_1034, arg_1035);
 }
-pub fn glVertexAttribP1ui(arg_1036: GLuint, arg_1037: GLenum, arg_1038: GLboolean, arg_1039: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribP1ui(arg_1036: GLuint, arg_1037: GLenum, arg_1038: GLboolean, arg_1039: GLuint) void {
     return glad_glVertexAttribP1ui.?(arg_1036, arg_1037, arg_1038, arg_1039);
 }
-pub fn glVertexAttribP1uiv(arg_1040: GLuint, arg_1041: GLenum, arg_1042: GLboolean, arg_1043: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribP1uiv(arg_1040: GLuint, arg_1041: GLenum, arg_1042: GLboolean, arg_1043: [*c]const GLuint) void {
     return glad_glVertexAttribP1uiv.?(arg_1040, arg_1041, arg_1042, arg_1043);
 }
-pub fn glVertexAttribP2ui(arg_1044: GLuint, arg_1045: GLenum, arg_1046: GLboolean, arg_1047: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribP2ui(arg_1044: GLuint, arg_1045: GLenum, arg_1046: GLboolean, arg_1047: GLuint) void {
     return glad_glVertexAttribP2ui.?(arg_1044, arg_1045, arg_1046, arg_1047);
 }
-pub fn glVertexAttribP2uiv(arg_1048: GLuint, arg_1049: GLenum, arg_1050: GLboolean, arg_1051: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribP2uiv(arg_1048: GLuint, arg_1049: GLenum, arg_1050: GLboolean, arg_1051: [*c]const GLuint) void {
     return glad_glVertexAttribP2uiv.?(arg_1048, arg_1049, arg_1050, arg_1051);
 }
-pub fn glVertexAttribP3ui(arg_1052: GLuint, arg_1053: GLenum, arg_1054: GLboolean, arg_1055: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribP3ui(arg_1052: GLuint, arg_1053: GLenum, arg_1054: GLboolean, arg_1055: GLuint) void {
     return glad_glVertexAttribP3ui.?(arg_1052, arg_1053, arg_1054, arg_1055);
 }
-pub fn glVertexAttribP3uiv(arg_1056: GLuint, arg_1057: GLenum, arg_1058: GLboolean, arg_1059: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribP3uiv(arg_1056: GLuint, arg_1057: GLenum, arg_1058: GLboolean, arg_1059: [*c]const GLuint) void {
     return glad_glVertexAttribP3uiv.?(arg_1056, arg_1057, arg_1058, arg_1059);
 }
-pub fn glVertexAttribP4ui(arg_1060: GLuint, arg_1061: GLenum, arg_1062: GLboolean, arg_1063: GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribP4ui(arg_1060: GLuint, arg_1061: GLenum, arg_1062: GLboolean, arg_1063: GLuint) void {
     return glad_glVertexAttribP4ui.?(arg_1060, arg_1061, arg_1062, arg_1063);
 }
-pub fn glVertexAttribP4uiv(arg_1064: GLuint, arg_1065: GLenum, arg_1066: GLboolean, arg_1067: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexAttribP4uiv(arg_1064: GLuint, arg_1065: GLenum, arg_1066: GLboolean, arg_1067: [*c]const GLuint) void {
     return glad_glVertexAttribP4uiv.?(arg_1064, arg_1065, arg_1066, arg_1067);
 }
-pub fn glVertexP2ui(arg_1068: GLenum, arg_1069: GLuint) callconv(.Inline) void {
+pub inline fn glVertexP2ui(arg_1068: GLenum, arg_1069: GLuint) void {
     return glad_glVertexP2ui.?(arg_1068, arg_1069);
 }
-pub fn glVertexP2uiv(arg_1070: GLenum, arg_1071: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexP2uiv(arg_1070: GLenum, arg_1071: [*c]const GLuint) void {
     return glad_glVertexP2uiv.?(arg_1070, arg_1071);
 }
-pub fn glVertexP3ui(arg_1072: GLenum, arg_1073: GLuint) callconv(.Inline) void {
+pub inline fn glVertexP3ui(arg_1072: GLenum, arg_1073: GLuint) void {
     return glad_glVertexP3ui.?(arg_1072, arg_1073);
 }
-pub fn glVertexP3uiv(arg_1074: GLenum, arg_1075: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexP3uiv(arg_1074: GLenum, arg_1075: [*c]const GLuint) void {
     return glad_glVertexP3uiv.?(arg_1074, arg_1075);
 }
-pub fn glVertexP4ui(arg_1076: GLenum, arg_1077: GLuint) callconv(.Inline) void {
+pub inline fn glVertexP4ui(arg_1076: GLenum, arg_1077: GLuint) void {
     return glad_glVertexP4ui.?(arg_1076, arg_1077);
 }
-pub fn glVertexP4uiv(arg_1078: GLenum, arg_1079: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glVertexP4uiv(arg_1078: GLenum, arg_1079: [*c]const GLuint) void {
     return glad_glVertexP4uiv.?(arg_1078, arg_1079);
 }
-pub fn glTexCoordP1ui(arg_1080: GLenum, arg_1081: GLuint) callconv(.Inline) void {
+pub inline fn glTexCoordP1ui(arg_1080: GLenum, arg_1081: GLuint) void {
     return glad_glTexCoordP1ui.?(arg_1080, arg_1081);
 }
-pub fn glTexCoordP1uiv(arg_1082: GLenum, arg_1083: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glTexCoordP1uiv(arg_1082: GLenum, arg_1083: [*c]const GLuint) void {
     return glad_glTexCoordP1uiv.?(arg_1082, arg_1083);
 }
-pub fn glTexCoordP2ui(arg_1084: GLenum, arg_1085: GLuint) callconv(.Inline) void {
+pub inline fn glTexCoordP2ui(arg_1084: GLenum, arg_1085: GLuint) void {
     return glad_glTexCoordP2ui.?(arg_1084, arg_1085);
 }
-pub fn glTexCoordP2uiv(arg_1086: GLenum, arg_1087: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glTexCoordP2uiv(arg_1086: GLenum, arg_1087: [*c]const GLuint) void {
     return glad_glTexCoordP2uiv.?(arg_1086, arg_1087);
 }
-pub fn glTexCoordP3ui(arg_1088: GLenum, arg_1089: GLuint) callconv(.Inline) void {
+pub inline fn glTexCoordP3ui(arg_1088: GLenum, arg_1089: GLuint) void {
     return glad_glTexCoordP3ui.?(arg_1088, arg_1089);
 }
-pub fn glTexCoordP3uiv(arg_1090: GLenum, arg_1091: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glTexCoordP3uiv(arg_1090: GLenum, arg_1091: [*c]const GLuint) void {
     return glad_glTexCoordP3uiv.?(arg_1090, arg_1091);
 }
-pub fn glTexCoordP4ui(arg_1092: GLenum, arg_1093: GLuint) callconv(.Inline) void {
+pub inline fn glTexCoordP4ui(arg_1092: GLenum, arg_1093: GLuint) void {
     return glad_glTexCoordP4ui.?(arg_1092, arg_1093);
 }
-pub fn glTexCoordP4uiv(arg_1094: GLenum, arg_1095: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glTexCoordP4uiv(arg_1094: GLenum, arg_1095: [*c]const GLuint) void {
     return glad_glTexCoordP4uiv.?(arg_1094, arg_1095);
 }
-pub fn glMultiTexCoordP1ui(arg_1096: GLenum, arg_1097: GLenum, arg_1098: GLuint) callconv(.Inline) void {
+pub inline fn glMultiTexCoordP1ui(arg_1096: GLenum, arg_1097: GLenum, arg_1098: GLuint) void {
     return glad_glMultiTexCoordP1ui.?(arg_1096, arg_1097, arg_1098);
 }
-pub fn glMultiTexCoordP1uiv(arg_1099: GLenum, arg_1100: GLenum, arg_1101: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glMultiTexCoordP1uiv(arg_1099: GLenum, arg_1100: GLenum, arg_1101: [*c]const GLuint) void {
     return glad_glMultiTexCoordP1uiv.?(arg_1099, arg_1100, arg_1101);
 }
-pub fn glMultiTexCoordP2ui(arg_1102: GLenum, arg_1103: GLenum, arg_1104: GLuint) callconv(.Inline) void {
+pub inline fn glMultiTexCoordP2ui(arg_1102: GLenum, arg_1103: GLenum, arg_1104: GLuint) void {
     return glad_glMultiTexCoordP2ui.?(arg_1102, arg_1103, arg_1104);
 }
-pub fn glMultiTexCoordP2uiv(arg_1105: GLenum, arg_1106: GLenum, arg_1107: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glMultiTexCoordP2uiv(arg_1105: GLenum, arg_1106: GLenum, arg_1107: [*c]const GLuint) void {
     return glad_glMultiTexCoordP2uiv.?(arg_1105, arg_1106, arg_1107);
 }
-pub fn glMultiTexCoordP3ui(arg_1108: GLenum, arg_1109: GLenum, arg_1110: GLuint) callconv(.Inline) void {
+pub inline fn glMultiTexCoordP3ui(arg_1108: GLenum, arg_1109: GLenum, arg_1110: GLuint) void {
     return glad_glMultiTexCoordP3ui.?(arg_1108, arg_1109, arg_1110);
 }
-pub fn glMultiTexCoordP3uiv(arg_1111: GLenum, arg_1112: GLenum, arg_1113: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glMultiTexCoordP3uiv(arg_1111: GLenum, arg_1112: GLenum, arg_1113: [*c]const GLuint) void {
     return glad_glMultiTexCoordP3uiv.?(arg_1111, arg_1112, arg_1113);
 }
-pub fn glMultiTexCoordP4ui(arg_1114: GLenum, arg_1115: GLenum, arg_1116: GLuint) callconv(.Inline) void {
+pub inline fn glMultiTexCoordP4ui(arg_1114: GLenum, arg_1115: GLenum, arg_1116: GLuint) void {
     return glad_glMultiTexCoordP4ui.?(arg_1114, arg_1115, arg_1116);
 }
-pub fn glMultiTexCoordP4uiv(arg_1117: GLenum, arg_1118: GLenum, arg_1119: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glMultiTexCoordP4uiv(arg_1117: GLenum, arg_1118: GLenum, arg_1119: [*c]const GLuint) void {
     return glad_glMultiTexCoordP4uiv.?(arg_1117, arg_1118, arg_1119);
 }
-pub fn glNormalP3ui(arg_1120: GLenum, arg_1121: GLuint) callconv(.Inline) void {
+pub inline fn glNormalP3ui(arg_1120: GLenum, arg_1121: GLuint) void {
     return glad_glNormalP3ui.?(arg_1120, arg_1121);
 }
-pub fn glNormalP3uiv(arg_1122: GLenum, arg_1123: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glNormalP3uiv(arg_1122: GLenum, arg_1123: [*c]const GLuint) void {
     return glad_glNormalP3uiv.?(arg_1122, arg_1123);
 }
-pub fn glColorP3ui(arg_1124: GLenum, arg_1125: GLuint) callconv(.Inline) void {
+pub inline fn glColorP3ui(arg_1124: GLenum, arg_1125: GLuint) void {
     return glad_glColorP3ui.?(arg_1124, arg_1125);
 }
-pub fn glColorP3uiv(arg_1126: GLenum, arg_1127: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glColorP3uiv(arg_1126: GLenum, arg_1127: [*c]const GLuint) void {
     return glad_glColorP3uiv.?(arg_1126, arg_1127);
 }
-pub fn glColorP4ui(arg_1128: GLenum, arg_1129: GLuint) callconv(.Inline) void {
+pub inline fn glColorP4ui(arg_1128: GLenum, arg_1129: GLuint) void {
     return glad_glColorP4ui.?(arg_1128, arg_1129);
 }
-pub fn glColorP4uiv(arg_1130: GLenum, arg_1131: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glColorP4uiv(arg_1130: GLenum, arg_1131: [*c]const GLuint) void {
     return glad_glColorP4uiv.?(arg_1130, arg_1131);
 }
-pub fn glSecondaryColorP3ui(arg_1132: GLenum, arg_1133: GLuint) callconv(.Inline) void {
+pub inline fn glSecondaryColorP3ui(arg_1132: GLenum, arg_1133: GLuint) void {
     return glad_glSecondaryColorP3ui.?(arg_1132, arg_1133);
 }
-pub fn glSecondaryColorP3uiv(arg_1134: GLenum, arg_1135: [*c]const GLuint) callconv(.Inline) void {
+pub inline fn glSecondaryColorP3uiv(arg_1134: GLenum, arg_1135: [*c]const GLuint) void {
     return glad_glSecondaryColorP3uiv.?(arg_1134, arg_1135);
 }
 const gladGLversionStruct = struct_gladGLversionStruct;

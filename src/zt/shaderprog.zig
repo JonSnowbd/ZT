@@ -2,13 +2,12 @@ usingnamespace @import("gl");
 
 pub var currentShader: c_uint = 0;
 pub const Shader = struct {
-
     id: c_uint = 0,
     dead: bool = true,
 
-    pub fn from(shaderID:c_uint) @This() {
+    pub fn from(shaderID: c_uint) @This() {
         return .{
-            .id=shaderID,
+            .id = shaderID,
         };
     }
     pub fn init(vert: [*:0]const u8, frag: [*:0]const u8) @This() {
@@ -36,17 +35,19 @@ pub const Shader = struct {
 
         return self;
     }
-    pub fn deinit(self:*Shader) void {
+    pub fn deinit(self: *Shader) void {
         glDeleteProgram(self.id);
         self.dead = true;
     }
 
     pub fn bind(self: *Shader) void {
-        if(currentShader == self.id) {return;}
+        if (currentShader == self.id) {
+            return;
+        }
         glUseProgram(self.id);
         currentShader = self.id;
     }
-    pub fn unbind(self:*Shader) void {
+    pub fn unbind(self: *Shader) void {
         currentShader = 0;
         glUseProgram(0);
     }
