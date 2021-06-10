@@ -26,6 +26,9 @@ See [the example](/example/src/main.zig) that displays a few features of ZT.app
 
 Right now working on both windows and ubuntu(and anything thats compatible with x11)
 
+**NOTE:** For now due to a [really specific issue](https://github.com/ziglang/zig/issues/9061) in zig for linux there are a few ig calls that will error. avoid
+using `ztTextColor` and `igTextColored` and things will work fine.
+
 ## Why
 
 ZT is intended for an extremely broad group of developers in zig realtime graphics and applications, as it does not railroad you into
