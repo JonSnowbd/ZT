@@ -79,7 +79,9 @@ fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
         flagContainer.append("-Os") catch unreachable;
     }
     if (target.isWindows()) {
-        exe.subsystem = .Windows; // Hide the Console.
+        if (b.is_release) {
+            exe.subsystem = .Windows; // Hide the Console on release.
+        }
         flagContainer.append("-D_GLFW_WIN32") catch unreachable;
     }
     if (target.isLinux()) {
