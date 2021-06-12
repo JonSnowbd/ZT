@@ -38,21 +38,31 @@ pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
     var stbImageWrapperFlags = [_][]const u8{"-Os"};
     exe.addCSourceFile(path ++ "src/stb/stb_image_wrapper.c", &stbImageWrapperFlags);
 
-    var imgPkg: std.build.Pkg = .{
-        .name = "imgui",
-        .path = path ++ "src/imgui.zig",
-    };
-    var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = path ++ "src/glfw.zig" };
-    var glPkg: std.build.Pkg = .{ .name = "gl", .path = path ++ "src/gl.zig" };
-    var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = path ++ "src/stb_image.zig" };
-    var ztPkg: std.build.Pkg = .{ .name = "zt", .path = path ++ "src/zt.zig", .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
 
-    exe.addPackage(glfwPkg);
-    exe.addPackage(glPkg);
-    exe.addPackage(stbPkg);
-    exe.addPackage(imgPkg);
+    if(@hasDecl(std.build, "FileSource")) {
+        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = std.build.FileSource{.path = path ++ "src/imgui.zig"}};
+        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = std.build.FileSource{.path = path ++ "src/glfw.zig"} };
+        var glPkg: std.build.Pkg = .{ .name = "gl", .path = std.build.FileSource{.path = path ++ "src/gl.zig"} };
+        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = std.build.FileSource{.path = path ++ "src/stb_image.zig"} };
+        var ztPkg: std.build.Pkg = .{ .name = "zt", .path = std.build.FileSource{.path = path ++ "src/zt.zig"}, .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
+        exe.addPackage(glfwPkg);
+        exe.addPackage(glPkg);
+        exe.addPackage(stbPkg);
+        exe.addPackage(imgPkg);
+        exe.addPackage(ztPkg);
+    } else {
+        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = path ++ "src/imgui.zig"};
+        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = path ++ "src/glfw.zig" };
+        var glPkg: std.build.Pkg = .{ .name = "gl", .path = path ++ "src/gl.zig" };
+        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = path ++ "src/stb_image.zig" };
+        var ztPkg: std.build.Pkg = .{ .name = "zt", .path = path ++ "src/zt.zig", .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
+        exe.addPackage(glfwPkg);
+        exe.addPackage(glPkg);
+        exe.addPackage(stbPkg);
+        exe.addPackage(imgPkg);
+        exe.addPackage(ztPkg);
+    }
 
-    exe.addPackage(ztPkg);
 }
 fn linkGl(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     exe.addIncludeDir(path ++ "src/gl/glad/include");

@@ -55,8 +55,6 @@ fn update() void {
     if (igBegin("Testing Window", null, ImGuiWindowFlags_None)) {
         ztText("{s}", .{"You can use zig's built in formatting"});
         ztTextDisabled("{s} This text is disabled!", .{"Hello!"});
-        // For now this seems to error out linux, finding out why soon, leaving it uncommented for git issue,
-        // commenting this on your build(on linux) will fix it as long as you avoid functions with signature (4*4 byte struct, [*c]u8).
         ztTextColor("And it can be colored", .{ .x = 1.0, .w = 1.0 }, .{});
 
         igSeparator();
@@ -68,7 +66,7 @@ fn update() void {
     igEnd();
     if (igBegin("Dock Window", null, ImGuiWindowFlags_None)) {
         customDrawing();
-        // ztTextColor("You can even do custom drawing easily.", .{ .x = 1.0, .w = 1.0 }, .{});
+        ztTextColor("You can even do custom drawing easily.", .{ .x = 1.0, .w = 1.0 }, .{});
     }
     igEnd();
 }
