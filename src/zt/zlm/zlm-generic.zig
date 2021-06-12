@@ -539,6 +539,19 @@ pub fn specializeOn(comptime Real: type) type {
                 };
             }
 
+            pub fn createZRotation(radians: f32) Self {
+                var result = Self.identity;
+
+                var val1 = @cos(radians);
+                var val2 = @sin(radians);
+                result.fields[0][0] = val1;
+                result.fields[0][1] = val2;
+                result.fields[1][0] = -val2;
+                result.fields[1][1] = val1;
+
+                return result;
+            }
+
             /// creates matrix that will scale a homogeneous matrix.
             pub fn createUniformScale(scale: Real) Self {
                 return createScale(scale, scale, scale);
@@ -592,6 +605,30 @@ pub fn specializeOn(comptime Real: type) type {
                 result.fields[3][1] = -(top + bottom) / (top - bottom);
                 result.fields[3][2] = -near / (far - near);
                 return result;
+            }
+
+            pub fn inlined(self: Self) [16]f32 {
+                return .{
+                    self.fields[0][0],
+                    self.fields[0][1],
+                    self.fields[0][2],
+                    self.fields[0][3],
+
+                    self.fields[1][0],
+                    self.fields[1][1],
+                    self.fields[1][2],
+                    self.fields[1][3],
+
+                    self.fields[2][0],
+                    self.fields[2][1],
+                    self.fields[2][2],
+                    self.fields[2][3],
+
+                    self.fields[3][0],
+                    self.fields[3][1],
+                    self.fields[3][2],
+                    self.fields[3][3],
+                };
             }
 
             /// Batch matrix multiplication. Will multiply all matrices from "first" to "last".
