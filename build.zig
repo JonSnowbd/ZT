@@ -37,9 +37,8 @@ pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
 
     var stbImageWrapperFlags = [_][]const u8{"-Os"};
     exe.addCSourceFile(path ++ "src/stb/stb_image_wrapper.c", &stbImageWrapperFlags);
-
-
-    if(@hasDecl(std.build, "FileSource")) {
+    
+    if(std.meta.fieldInfo(std.build.Pkg, .path).field_type == std.build.FileSource) {
         var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = std.build.FileSource{.path = path ++ "src/imgui.zig"}};
         var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = std.build.FileSource{.path = path ++ "src/glfw.zig"} };
         var glPkg: std.build.Pkg = .{ .name = "gl", .path = std.build.FileSource{.path = path ++ "src/gl.zig"} };
