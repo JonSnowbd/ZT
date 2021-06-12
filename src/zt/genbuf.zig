@@ -84,9 +84,13 @@ pub fn Buffer(comptime T: type) type {
         }
         pub fn bind(self: *@This()) void {
             glBindVertexArray(self.vaoId);
+            glBindBuffer(GL_ARRAY_BUFFER, self.vboId);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.iboId);
         }
         pub fn unbind(self: *@This()) void {
             glBindVertexArray(0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         }
         pub fn clear(self: *@This()) void {
             self.vertices.items.len = 0;
