@@ -210,6 +210,15 @@ pub fn specializeOn(comptime Real: type) type {
                 }
                 return result;
             }
+            /// multiplies the vector with a matrix4.
+            pub fn transform4(vec: Self, mat: Mat4) Self {
+                return Self.new(
+                    // (position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41
+                    (vec.x * mat.fields[0][0]) + (vec.y * mat.fields[1][0]) + mat.fields[3][0],
+                    // (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42
+                    (vec.x * mat.fields[0][1]) + (vec.y * mat.fields[1][1]) + mat.fields[3][1],
+                );
+            }
         };
 
         /// 3-dimensional vector type.
