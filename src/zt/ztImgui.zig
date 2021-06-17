@@ -43,6 +43,10 @@ pub fn ztViewPortPro(paddings: ImVec4) void {
     igPopStyleVar(1);
 }
 
+pub fn fmtTextForImgui(comptime fmt: []const u8, args: anytype) []const u8 {
+    var alloc = allocators.ring();
+    return alloc.dupeZ(u8, std.fmt.allocPrint(alloc, fmt, args) catch unreachable) catch unreachable;
+}
 /// Uses a ring allocator to spit out imgui text using zig's formatting library.
 pub fn ztText(comptime fmt: []const u8, args: anytype) void {
     var alloc = allocators.ring();
