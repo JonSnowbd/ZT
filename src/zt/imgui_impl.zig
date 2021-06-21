@@ -134,7 +134,7 @@ fn SetupRenderState(draw_data: *ImDrawData, fb_width: c_int, fb_height: c_int, v
         GL_FLOAT,
         GL_FALSE,
         @sizeOf(ImDrawVert),
-        @intToPtr(?*c_void, @byteOffsetOf(ImDrawVert, "pos")),
+        @intToPtr(?*c_void, @offsetOf(ImDrawVert, "pos")),
     );
     glVertexAttribPointer(
         @intCast(c_uint, g_AttribLocationVtxUV),
@@ -142,7 +142,7 @@ fn SetupRenderState(draw_data: *ImDrawData, fb_width: c_int, fb_height: c_int, v
         GL_FLOAT,
         GL_FALSE,
         @sizeOf(ImDrawVert),
-        @intToPtr(?*c_void, @byteOffsetOf(ImDrawVert, "uv")),
+        @intToPtr(?*c_void, @offsetOf(ImDrawVert, "uv")),
     );
     glVertexAttribPointer(
         @intCast(c_uint, g_AttribLocationVtxColor),
@@ -150,7 +150,7 @@ fn SetupRenderState(draw_data: *ImDrawData, fb_width: c_int, fb_height: c_int, v
         GL_UNSIGNED_BYTE,
         GL_TRUE,
         @sizeOf(ImDrawVert),
-        @intToPtr(?*c_void, @byteOffsetOf(ImDrawVert, "col")),
+        @intToPtr(?*c_void, @offsetOf(ImDrawVert, "col")),
     );
 }
 
