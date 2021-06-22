@@ -10,6 +10,8 @@ and linux.
 
 ## Requirements
 
+Zig 0.9.* Main branch build (See [zig-0.8.0 branch](https://github.com/JonSnowbd/ZT/tree/zig-0.8.0) for the last 0.8 compatible build.)
+
 Ubuntu: `sudo apt install build-essential xorg-dev`
 
 ## Current Status
