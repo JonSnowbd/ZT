@@ -1,7 +1,6 @@
 const std = @import("std");
 const glfw = @import("glfw");
-const Texture = @import("texture.zig").Texture;
-const Shader = @import("shaderprog.zig").Shader;
+const zt = @import("../zt.zig");
 const gl = @import("gl");
 usingnamespace gl;
 usingnamespace @import("imgui");
@@ -38,7 +37,7 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
     io.*.BackendRendererName = "imgui_impl_opengl3";
     io.*.IniFilename = "workspace";
     // Sensible memory-friendly initial mouse position.
-    io.*.MousePos = .{.x=0,.y=0};
+    io.*.MousePos = .{ .x = 0, .y = 0 };
 
     // Store GLSL version string so we can refer to it later in case we recreate shaders.
     // Note: GLSL version is NOT the same as GL version. Leave this to NULL if unsure.
@@ -116,7 +115,7 @@ fn SetupRenderState(draw_data: *ImDrawData, fb_width: c_int, fb_height: c_int, v
         [4]f32{ 0.0, 0.0, -1.0, 0.0 },
         [4]f32{ (R + L) / (L - R), (T + B) / (B - T), 0.0, 1.0 },
     };
-    var shader = Shader.from(g_ShaderHandle);
+    var shader = zt.Shader.from(g_ShaderHandle);
     shader.bind();
     glUniform1i(g_AttribLocationTex, 0);
     glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
@@ -203,7 +202,7 @@ pub fn RenderDrawData(draw_data: *ImDrawData) void {
                         glScissor(@floatToInt(c_int, clip_rect.x), fb_height - @floatToInt(c_int, clip_rect.w), @floatToInt(c_int, clip_rect.z - clip_rect.x), @floatToInt(c_int, clip_rect.w - clip_rect.y));
 
                         // Bind texture, Draw
-                        var texture = Texture.from(@intCast(GLuint, @ptrToInt(pcmd.TextureId)));
+                        var texture = zt.Texture.from(@intCast(GLuint, @ptrToInt(pcmd.TextureId)), false);
                         texture.bind();
                         if (g_GlVersion >= 3200) {
                             glDrawElementsBaseVertex(

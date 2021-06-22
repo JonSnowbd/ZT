@@ -3,9 +3,10 @@ const zt = @import("zt");
 usingnamespace @import("imgui");
 // ZT includes several custom components to draw/use native types such as
 // zig fmt in text and math types.
-usingnamespace zt.imguiComponents;
+usingnamespace zt.custom_components;
+usingnamespace @import("gl");
 
-var config: zt.app.ZTAppConfig = .{
+var config: zt.App.Config = .{
     .init = init,
     .update = update,
     .deinit = deinit,
@@ -14,75 +15,95 @@ var config: zt.app.ZTAppConfig = .{
 var spriteBuffer: zt.SpriteBuffer = undefined;
 var offScreen: zt.RenderTarget = undefined;
 var testSprite: zt.Texture = undefined;
-var basePath: []const u8 = "";
+var logoSprite: zt.Texture = undefined;
 var customFont: *ImFont = undefined;
 var customFontThick: *ImFont = undefined;
 
-fn init() void {
+fn init(context: *zt.App) void {
+    // Doing this means the application will update at any given oppurtunity within reason (listening to vsync, etc)
+    // You want to leave this on true if your application doesnt make use of many animations.
+    context.energySaving = false;
     // Get the sprite's location from the basepath, and load a Texture with it, as well as setting the window icon.
-    var spriteLocation = zt.app.relativePathOf(std.heap.page_allocator, "test.png");
-    var fontLocation = zt.app.relativePathOf(std.heap.page_allocator, "PublicSans-Regular.ttf");
+    var fontLocation = zt.App.path("PublicSans-Regular.ttf");
+
+    var spriteLocation = zt.App.path("test.png");
     testSprite = zt.Texture.init(spriteLocation) catch unreachable;
     testSprite.setNearestFilter();
+
+    var logoLocation = zt.App.path("logo.png");
+    logoSprite = zt.Texture.init(logoLocation) catch unreachable;
+
+    // Init is your last chance to change config.icon.
     config.icon = spriteLocation;
 
-    // ZT offers a simple sprite buffer to draw batched sprites efficiently.
+    // ZT offers a simple sprite buffer to draw batched sprites efficiently and easily.
     spriteBuffer = zt.SpriteBuffer.init(std.heap.page_allocator);
-    // We don't specify a texture because you decide that on flush by passing a texture into the flush.
-    spriteBuffer.sprite(10, 10, 0.5, 100, 100, zt.math.Vec4.one);
-    spriteBuffer.sprite(120, 10, 0.5, 100, 100, zt.math.Vec4.one);
-
-    // Creating a sprite buffer is interesting, you simply create a specifically sized render target, bind it,
+    // Creating an fbo is interesting, you simply create a specifically sized render target, bind it,
     // and any glClear/glDrawElements/glDrawTriangles will automatically output to the buffer rather than the screen.
     offScreen = zt.RenderTarget.init(300, 200);
-
-    // Just flush once, it never changes so we dont need to keep updating the target in the update loop.
-    offScreen.bind(); // Binding a rendertarget makes any subsequent flushes empty into it rather than the screen.
-    spriteBuffer.flushStatic(&testSprite);
-    offScreen.unbind();
 
     // Enable docking.
     var io = igGetIO();
     io.*.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    customFont = zt.app.addImguiFont(fontLocation, 17, null);
+    customFont = context.addImguiFont(fontLocation, 17, null);
     io.*.FontDefault = customFont;
+
+    // Lets get crazy with a view transformation
+    spriteBuffer.updateRenderSize(zt.math.Vec2.new(context.width, context.height));
+
+    // The ztViewPort covers the screen with a window, this makes the background of it completely transparent
+    // to see the opengl rendering underneath.
+    var style = igGetStyle();
+    style.*.Colors[ImGuiCol_DockingEmptyBg] = .{ .x = 0.0, .y = 0.0, .z = 0.0, .w = 0.0 };
 }
-fn update() void {
+fn update(context: *zt.App) void {
     // This creates a background for docking everything onto, perfect for applications.
     ztViewPort(0, 0, 0, 0);
 
+    offScreen.bind(); // Binding a rendertarget makes any subsequent flushes empty into it rather than the screen.
+    glClear(GL_COLOR_BUFFER_BIT);
+    spriteBuffer.updateRenderSize(zt.math.Vec2.new(offScreen.target.width, offScreen.target.height));
+    spriteBuffer.updateCamera(.{}, 1.0, 0.0);
+    spriteBuffer.sprite(testSprite, -100, -50, 0.5, 100, 100, zt.math.Vec4.white);
+    spriteBuffer.sprite(testSprite, 0, -50, 0.5, 100, 100, zt.math.Vec4.white);
+    spriteBuffer.flush(); // If there is no sprites to flush, nothing bad happens, so always do it at the end of every render run!
+    offScreen.unbind();
+
+    // You can use updateCamera to have full control over the underlying view matrix (or you can set it yourself!)
+    spriteBuffer.updateRenderSize(zt.math.Vec2.new(context.width, context.height));
+    spriteBuffer.updateCamera(.{}, 1.0, @sin(context.timer.lifetime) * 0.5);
+    spriteBuffer.sprite(logoSprite, -200, -50, 0.5, 200, 100, zt.math.Vec4.white);
+    spriteBuffer.sprite(testSprite, 0, -100, 0.5, 200, 200, zt.math.Vec4.white);
+    spriteBuffer.sprite(testSprite, 200, -100, 0.5, 200, 200, zt.math.Vec4.white);
+    spriteBuffer.flush();
+
+    // You can just use imgui functions wherever you want in update and it'll just work.
     if (igBegin("Testing Window", null, ImGuiWindowFlags_None)) {
         ztText("{s}", .{"You can use zig's built in formatting"});
         ztTextDisabled("{s} This text is disabled!", .{"Hello!"});
         ztTextColor("And it can be colored", .{ .x = 1.0, .w = 1.0 }, .{});
+        ztText("Sprite Buffer has made {any} draw calls.", .{spriteBuffer.drawCalls});
+        spriteBuffer.drawCalls = 0; // Since there is no defined universal way of detecting frame end in every usecase, its required to just 0 this out yourself.
 
         igSeparator();
+        igText("Below is the OpenGL rendertarget shown in an igImage!");
         // Its a bit awkward, but render targets are upside down thanks to opengl. It's a simple matter of flipping
         // the y source vectors.
-        igText("Below is the OpenGL rendertarget shown in an igImage!");
-        igImage(offScreen.target.imguiId(), .{ .x = 300, .y = 200 }, .{ .x = 0, .y = 1 }, .{ .x = 1, .y = 0 }, ImVec4.white, ImVec4.white);
+        igImage(offScreen.target.imguiId(), .{ .x = offScreen.target.width, .y = offScreen.target.height }, .{ .x = 0, .y = 1 }, .{ .x = 1, .y = 0 }, ImVec4.white, ImVec4.white);
     }
     igEnd();
-    if (igBegin("Dock Window", null, ImGuiWindowFlags_None)) {
-        customDrawing();
-        ztTextColor("You can even do custom drawing easily.", .{ .x = 1.0, .w = 1.0 }, .{});
-    }
-    igEnd();
+
+    // Add imgui to the hot code path to expose any imgui bugs.
+    igShowDemoWindow(null);
 }
-fn deinit() void {
+fn deinit(context: *zt.App) void {
     testSprite.deinit();
+    logoSprite.deinit();
     spriteBuffer.deinit();
+    offScreen.deinit();
 }
 
 pub fn main() void {
-    zt.app.start(config);
-}
-
-pub fn customDrawing() void {
-    var draw = igGetWindowDrawList();
-    var position: ImVec2 = undefined;
-    igGetWindowPos(&position);
-    igRenderFrame(position.add(ImVec2.new(20, 70)), position.add(ImVec2.new(100, 100)), 0xffffffff, true, 3.0);
-    // igRenderArrow(draw, position, 0xffffffff, ImGuiDir_Right, 3.0);
+    zt.App.start(config);
 }

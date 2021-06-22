@@ -4,6 +4,9 @@ layout (location = 0) in vec3 vertPos;
 layout (location = 1) in vec4 vertCol;
 layout (location = 2) in vec2 texPos;
 
+uniform mat4 View;
+uniform mat4 Projection;
+
 out vec4 VertexColor;
 out vec2 VertexTexPos;
 
@@ -11,5 +14,5 @@ void main()
 {
     VertexTexPos = texPos;
     VertexColor = vertCol;
-    gl_Position = vec4(vertPos, 1.0);
+    gl_Position = Projection * View * vec4(vertPos, 1.0);
 }

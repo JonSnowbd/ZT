@@ -1,55 +1,57 @@
-const glfw = @import("glfw");
-const gl = @import("gl");
 const std = @import("std");
-const imgImpl = @import("imgui_impl.zig");
-const TimeManager = @import("timemanager.zig").TimeManager;
 const stb = @import("stb_image");
+const ImGuiImplementation = @import("imguiImplementation.zig");
+const TimeManager = @import("timeManager.zig");
 const Folders = @import("../known_folders.zig");
-usingnamespace glfw;
-usingnamespace gl;
+
+const zt = @import("../zt.zig");
+const gl = @import("gl");
+usingnamespace @import("glfw");
+usingnamespace @import("gl");
 usingnamespace @import("imgui");
 
-pub var width: f32 = 0;
-pub var height: f32 = 0;
-pub var timer: TimeManager = undefined;
+const Self = @This();
 
-pub var executablePath: []const u8 = "";
-var updateSeconds: f32 = 0;
+window: *GLFWwindow = undefined,
+width: f32 = 0,
+height: f32 = 0,
+timer: TimeManager = undefined,
+updateSeconds: f32 = 0,
+imguiVisible: bool = true,
+/// If enabled, the application will not update if it is not receiving
+/// events from GLFW. Recommended for applications.
+energySaving: bool = true,
 
-pub const ZTAppConfig = struct {
+pub const Config = struct {
     icon: ?[]const u8 = null,
     title: []const u8 = "ZT Application",
-    init: ?fn () void = null,
-    update: ?fn () void = null,
-    deinit: ?fn () void = null,
-    imguiVisible: bool = true,
+    init: ?fn (*Self) void = null,
+    update: ?fn (*Self) void = null,
+    deinit: ?fn (*Self) void = null,
     /// The initial size of the window.
     size: [2]c_int = .{ 1280, 720 },
-    /// If enabled, the application will not update if it is not receiving
-    /// events from GLFW. Recommended for applications.
-    energySaving: bool = true,
 };
 
 /// If you have an animation that needs to play you can queue an amount of seconds that will ignore energy saving.
-pub fn queueAnimationFrames(seconds: f32) void {
-    updateSeconds = seconds;
+pub fn queueAnimationFrames(self: *Self, seconds: f32) void {
+    self.updateSeconds = seconds;
 }
 /// If you are using multithreading or anything that will force an update, this can force a redraw.
-pub fn forceUpdate() void {
+pub fn forceUpdate(self: *Self) void {
     glfwPostEmptyEvent();
 }
 
 /// Adds in an imgui font via a file path. The font atlas is rebuilt automatically and youre free to use the 
 /// ImFont immediately.
-pub fn addImguiFont(path: []const u8, size: f32, config: [*c]const ImFontConfig) *ImFont {
+pub fn addImguiFont(self: *Self, fontPath: []const u8, size: f32, config: [*c]const ImFontConfig) *ImFont {
     var io = igGetIO();
-    var newFont: *ImFont = ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, size, config, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
-    rebuildImguiFont();
+    var newFont: *ImFont = ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, fontPath.ptr, size, config, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
+    self.rebuildImguiFont();
     return newFont;
 }
 /// This function is called for you when you add an imgui font, but if you manage the font atlas yourself, this
 /// will automatically delete and rebuild the font atlas for imgui.
-pub fn rebuildImguiFont() void {
+pub fn rebuildImguiFont(self: *Self) void {
     var io = igGetIO();
     // Delete the old texture
     var texId = @intCast(c_uint, @ptrToInt(io.*.Fonts.*.TexID));
@@ -77,19 +79,22 @@ pub fn rebuildImguiFont() void {
 
 /// Takes a relative path from the executable's cwd, and returns an absolute path to the resource. Great for making
 /// sure your application gets the right resources no matter where its launched from.
-pub fn relativePathOf(allocator: *std.mem.Allocator, subpath: []const u8) []const u8 {
-    return std.fs.path.joinZ(allocator, &[_][]const u8{ executablePath, subpath }) catch unreachable;
+pub inline fn path(subpath: []const u8) []const u8 {
+    return pathEx(zt.Allocators.ring(), subpath);
+}
+pub fn pathEx(allocator: *std.mem.Allocator, subpath: []const u8) []const u8 {
+    var executablePath = zt.known_folders.getPath(allocator, .executable_dir) catch unreachable;
+    return std.fs.path.joinZ(allocator, &[_][]const u8{ executablePath.?, subpath }) catch unreachable;
 }
 
 /// Takes in an application config and begins the main loop. This will block until the application closes, so make
 /// sure you're using the config's parameters to set an update function.
 /// Note: If you're in need of input functions, its recommended to use imgui's own input layer with igGetIO() instead of
 /// overwriting the given input callbacks.
-pub fn start(app: ZTAppConfig) void {
-    // Use KnownFolders to have a solid reference to the sprite location.
-    executablePath = (Folders.getPath(std.heap.page_allocator, Folders.KnownFolder.executable_dir) catch unreachable).?;
-    timer = TimeManager.init();
-    var win: *GLFWwindow = undefined;
+pub fn start(app: Config) void {
+    var context: Self = .{};
+    context.timer = TimeManager.init();
+    context.window = undefined;
     if (glfwInit() < 0) {
         std.debug.print("Failed to init GLFW", .{});
         return;
@@ -99,29 +104,30 @@ pub fn start(app: ZTAppConfig) void {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    win = glfwCreateWindow(app.size[0], app.size[1], app.title.ptr, null, null).?;
-    glfwMakeContextCurrent(win);
+    context.window = glfwCreateWindow(app.size[0], app.size[1], app.title.ptr, null, null).?;
+    glfwMakeContextCurrent(context.window);
 
     if (gladLoadGL() < 0) {
         std.debug.print("Failed to init Glad GL Loader", .{});
         return;
     }
-    imgImpl.init("#version 330");
+    ImGuiImplementation.init("#version 330");
 
-    _ = glfwSetFramebufferSizeCallback(win, windowSizeChanged);
-    _ = glfwSetKeyCallback(win, inputCallback);
-    _ = glfwSetCharCallback(win, charCallback);
-    _ = glfwSetMouseButtonCallback(win, mousebuttonCallback);
-    _ = glfwSetCursorPosCallback(win, cursorCallback);
-    _ = glfwSetScrollCallback(win, mouseWheelCallback);
+    glfwSetWindowUserPointer(context.window, &context);
+    _ = glfwSetFramebufferSizeCallback(context.window, windowSizeChanged);
+    _ = glfwSetKeyCallback(context.window, inputCallback);
+    _ = glfwSetCharCallback(context.window, charCallback);
+    _ = glfwSetMouseButtonCallback(context.window, mousebuttonCallback);
+    _ = glfwSetCursorPosCallback(context.window, cursorCallback);
+    _ = glfwSetScrollCallback(context.window, mouseWheelCallback);
 
     // Initial viewport set
-    windowSizeChanged(win, app.size[0], app.size[1]);
+    windowSizeChanged(context.window, app.size[0], app.size[1]);
 
     glClearColor(0.1, 0.1, 0.12, 1.0);
 
     if (app.init != null) {
-        app.init.?();
+        app.init.?(&context);
     }
 
     // Load Icon
@@ -130,38 +136,38 @@ pub fn start(app: ZTAppConfig) void {
         var image = GLFWimage{ .width = 0, .height = 0, .pixels = null };
         image.pixels = stb.stbi_load(app.icon.?.ptr, &image.width, &image.height, 0, 4);
         if (image.width > 0 and image.height > 0) {
-            glfwSetWindowIcon(win, 1, &image);
+            glfwSetWindowIcon(context.window, 1, &image);
             stb.stbi_image_free(image.pixels);
         } else {
             std.debug.print("Failed to load icon {s}", .{app.icon.?});
         }
     }
     var io = igGetIO();
-    while (glfwWindowShouldClose(win) == 0) {
+    while (glfwWindowShouldClose(context.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Application update/draw
         igNewFrame();
         if (app.update != null) {
-            app.update.?();
+            app.update.?(&context);
         }
-        if (app.imguiVisible) {
+        if (context.imguiVisible) {
             igRender();
             var dd = igGetDrawData();
-            imgImpl.RenderDrawData(dd);
+            ImGuiImplementation.RenderDrawData(dd);
         } else {
             igEndFrame();
         }
 
-        glfwSwapBuffers(win);
+        glfwSwapBuffers(context.window);
         glfwPollEvents();
 
         // Timing Management.
-        timer.tick();
-        io.*.DeltaTime = timer.dt;
-        if (app.energySaving) {
-            if (updateSeconds > 0.0) {
-                updateSeconds -= timer.dt;
+        context.timer.tick();
+        io.*.DeltaTime = context.timer.dt;
+        if (context.energySaving) {
+            if (context.updateSeconds > 0.0) {
+                context.updateSeconds -= context.timer.dt;
             } else {
                 glfwWaitEvents();
             }
@@ -170,19 +176,20 @@ pub fn start(app: ZTAppConfig) void {
 
     // Shutdown
     if (app.deinit != null) {
-        app.deinit.?();
+        app.deinit.?(&context);
     }
-    imgImpl.Shutdown();
+    ImGuiImplementation.Shutdown();
 
     glfwTerminate();
 }
 
 fn windowSizeChanged(win: ?*GLFWwindow, newWidth: c_int, newHeight: c_int) callconv(.C) void {
+    var context: *Self = @ptrCast(*Self, @alignCast(@alignOf(*Self), glfwGetWindowUserPointer(win).?));
     glViewport(0, 0, newWidth, newHeight);
     var io = igGetIO();
-    width = @intToFloat(f32, newWidth);
-    height = @intToFloat(f32, newHeight);
-    io.*.DisplaySize = .{ .x = width, .y = height };
+    context.width = @intToFloat(f32, newWidth);
+    context.height = @intToFloat(f32, newHeight);
+    io.*.DisplaySize = .{ .x = context.width, .y = context.height };
 }
 fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
     var io = igGetIO();

@@ -1,5 +1,4 @@
 const std = @import("std");
-const imgBuild = @import("src/imgui/build.zig");
 
 // Build here only exists to build the example. to use ZT you'll want to import this file and use the link function in
 // your build.zig
@@ -33,24 +32,24 @@ pub fn build(b: *std.build.Builder) void {
 pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     linkGlfw(path, b, exe, target);
     linkGl(path, b, exe, target);
-    imgBuild.link(b, exe, target, path ++ "src/imgui/");
+    linkImgui(path, b, exe, target);
 
     var stbImageWrapperFlags = [_][]const u8{"-Os"};
     exe.addCSourceFile(path ++ "src/stb/stb_image_wrapper.c", &stbImageWrapperFlags);
-    
-    if(std.meta.fieldInfo(std.build.Pkg, .path).field_type == std.build.FileSource) {
-        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = std.build.FileSource{.path = path ++ "src/imgui.zig"}};
-        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = std.build.FileSource{.path = path ++ "src/glfw.zig"} };
-        var glPkg: std.build.Pkg = .{ .name = "gl", .path = std.build.FileSource{.path = path ++ "src/gl.zig"} };
-        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = std.build.FileSource{.path = path ++ "src/stb_image.zig"} };
-        var ztPkg: std.build.Pkg = .{ .name = "zt", .path = std.build.FileSource{.path = path ++ "src/zt.zig"}, .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
+
+    if (std.meta.fieldInfo(std.build.Pkg, .path).field_type == std.build.FileSource) {
+        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = std.build.FileSource{ .path = path ++ "src/imgui.zig" } };
+        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = std.build.FileSource{ .path = path ++ "src/glfw.zig" } };
+        var glPkg: std.build.Pkg = .{ .name = "gl", .path = std.build.FileSource{ .path = path ++ "src/gl.zig" } };
+        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = std.build.FileSource{ .path = path ++ "src/stb_image.zig" } };
+        var ztPkg: std.build.Pkg = .{ .name = "zt", .path = std.build.FileSource{ .path = path ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
         exe.addPackage(glfwPkg);
         exe.addPackage(glPkg);
         exe.addPackage(stbPkg);
         exe.addPackage(imgPkg);
         exe.addPackage(ztPkg);
     } else {
-        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = path ++ "src/imgui.zig"};
+        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = path ++ "src/imgui.zig" };
         var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = path ++ "src/glfw.zig" };
         var glPkg: std.build.Pkg = .{ .name = "gl", .path = path ++ "src/gl.zig" };
         var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = path ++ "src/stb_image.zig" };
@@ -61,7 +60,6 @@ pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
         exe.addPackage(imgPkg);
         exe.addPackage(ztPkg);
     }
-
 }
 fn linkGl(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     exe.addIncludeDir(path ++ "src/gl/glad/include");
@@ -76,6 +74,38 @@ fn linkGl(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibE
         exe.linkSystemLibrary("gl");
     }
 }
+pub fn linkImgui(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
+    if (path.len > 0 and !std.mem.endsWith(u8, path, "/")) @panic("prefix-path must end with '/' if it is not empty");
+
+    exe.linkLibC();
+    exe.linkSystemLibrary("c++");
+
+    if (target.isWindows()) {
+        exe.linkSystemLibrary("winmm");
+        exe.linkSystemLibrary("user32");
+        exe.linkSystemLibrary("imm32");
+        exe.linkSystemLibrary("gdi32");
+    }
+    // Linux needs no additionals.
+
+    exe.addIncludeDir(path ++ "src/cimgui/imgui");
+    exe.addIncludeDir(path ++ "src/cimgui");
+
+    var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
+    flagContainer.append("-Wno-return-type-c-linkage") catch unreachable;
+
+    if (b.is_release) {
+        flagContainer.append("-Os") catch unreachable;
+    }
+
+    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui_demo.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui_draw.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui_tables.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui_widgets.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/cimgui/cimgui.cpp", flagContainer.items);
+}
+
 fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     exe.addIncludeDir(path ++ "src/glfw/deps");
     exe.addIncludeDir(path ++ "src/glfw/include");
@@ -90,11 +120,12 @@ fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
     if (target.isWindows()) {
         if (b.is_release) {
             exe.subsystem = .Windows; // Hide the Console on release.
+            exe.want_lto = false; // TODO: When _tls_index is no longer lost on lto, undo this.
         }
         flagContainer.append("-D_GLFW_WIN32") catch unreachable;
     }
     if (target.isLinux()) {
-        // exe.subsystem = .Posix;
+        exe.subsystem = .Posix;
         // Linux is a little too itchy to sanitize some glfw code that works but can hit UB
         flagContainer.append("-fno-sanitize=undefined") catch unreachable;
         flagContainer.append("-D_GLFW_X11") catch unreachable;

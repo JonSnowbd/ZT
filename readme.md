@@ -19,10 +19,10 @@ Ubuntu: `sudo apt install build-essential xorg-dev`
 ZT does not have deep systems to flesh out, but the API is subject to renaming and updates to the packages, and will be as production ready as
 the weakest link of the following `zig, opengl, imgui` at any given time, as all ZT really does is compile and expose the framework
 
-As for the App side, it is fine for personal projects, but there is more I want to add as I use
-it more in projects and find where it is lacking, or where it is least flexible(while maintaining its set up and go nature)
+As for the App side, it is now very close to its finalized api, and is being used to develop a non-trivial project to expose
+any issues with the project and api. I recommend using it anywhere but high stability productions.
 
-See [the example](/example/src/main.zig) that displays a few features of ZT.app
+See [the example](/example/src/main.zig) that displays a few features of `zt.App`
 
 ## Where
 
@@ -52,7 +52,7 @@ in your own `build.zig` to import this framework's build.zig, and that will expo
 to link ZT into your project.
 
 - `ztBuild.link("path/to/ZT/", b, exe, target)` will add ZT's packages to your exe and link the source files for GLFW/GL/ImGui
-- `ztBuild.addBinaryContent("path/to/binContent")` adds binary content to your zig-out folder output, basically the folder structure
+- (optional) `ztBuild.addBinaryContent("path/to/binContent")` adds binary content to your zig-out folder output, basically the folder structure
 ends up being as if `path/to/binContent` was the root folder containing your executable. This is smart and will skip older assets.
 
 So with `ztBuild` imported you just `ztBuild.link("path/to/ZT/", b, exe, target)` and you can start importing and using
@@ -64,21 +64,21 @@ Then getting started is as easy as this:
 const std = @import("std");
 const zt = @import("zt");
 usingnamespace @import("imgui");
-usingnamespace zt.imguiComponents; // ZT has special components! Check them out, they are prefixed with zt.
+usingnamespace zt.custom_components; // ZT has special components! Check them out, they are prefixed with zt.
 
-var config: zt.app.ZTLAppConfig = .{
+var config: zt.App.Config = .{
     .init = init,
     .update = update,
     .deinit = deinit,
 };
 
-fn init() void {
+fn init(context: *zt.App) void {
     // Do your loading here
 }
-fn deinit() void {
+fn deinit(context: *zt.App) void {
     // Unload here
 }
-fn update() void {
+fn update(context: *zt.App) void {
     if(igBegin("Hello World", null, ImGuiWindowFlags_None)) {
         ztTextDisabled("{s} This text is disabled!", .{"Hello!"});
         ztTextColor("And text can be colored", .{.x=1.0,.w=1.0}, .{});
@@ -88,23 +88,23 @@ fn update() void {
 }
 
 pub fn main() void {
-    zt.app.start(config);
+    zt.App.start(config);
 }
 ```
 
-Where `zt.app.start` starts a simple statemachine that controls timing and runs the given functions for you, letting
+Where `zt.App.start` starts a simple statemachine that controls timing and runs the given functions for you, letting
 you just get on with the application.
 
 For a more indepth example [see the example file that shows opengl rendering mixed with imgui and more](example/src/main.zig)
 
-Note that anything related to zt.app directly is self contained, and if you so wish you can use all the abstractions without
+Note that anything related to zt.App directly is self contained, and if you so wish you can use all the abstractions without
 using the state machine loop for window management, if you just want the packages.
 
 ## Gotcha:
 
 - By linking ZT the following packages are available to your app on both windows and ubuntu: `zt`, `gl`, `glfw`, `imgui`, `stb_image`
 - ImVec2 and ImVec4 are both substituted with zlm's Vec2 and Vec4 structs respectively, you can use both interchangeably.
-- `ZTAppConfig` is initial state, it is not recommended to try and change its variables after starting it(more specifically
+- `zt.App.Config` is initial state, it is not recommended to try and change its variables after starting it(more specifically
 after the init function.) expecting the changes to work. For changing icon and window title after init, see glfw and its documentation.
 - Disabling power saving mode will let GLFW handle buffer flip timing, so likely will be at vsync fps rather than on every
 event.
@@ -113,23 +113,24 @@ loop are as follows:
     - `glClear` to clear current buffer
     - `igNewFrame` to set up imgui frame logic
     - **Your applications update function**
-    - if `config.imguiVisible` imgui is rendered, otherwise draw data is discarded and the imgui frame is ended.
+    - if `context.imguiVisible` imgui is rendered, otherwise draw data is discarded and the imgui frame is ended.
     - glfw buffers are swapped and events are polled.
-    - Timing management sets the delta time, and if `config.energySaving`, an event is awaited before continuing the loop,
+    - Timing management sets the delta time, and if `context.energySaving`, an event is awaited before continuing the loop,
     otherwise it lets glfw handle vsync timing.
 - Don't forget when building your application for distribution, if you want it to be lean you can build with `-Drelease-small` and package
 it with UPX after building! Small binaries are cool.
+- Windows release builds currently do not use LTO as it is currently dropping `_tls_index` for ZT.
 
 ## How Do I...
 
 - Show smooth animation in powersaving mode? 
 
-`zt.app.queueAnimationFrames(seconds:f32)` will set a certain amount of seconds for powersaving to be temporarily
+`context.queueAnimationFrames(seconds:f32)` will set a certain amount of seconds for powersaving to be temporarily
 disabled. Use this if you have smooth transitions that need to be displayed
 
 - Update the powersaving frame from an external source e.g threads?
 
-`zt.app.forceUpdate()` will force the application to update and redraw by inputting an empty event into glfw.
+`context.forceUpdate()` will force the application to update and redraw by inputting an empty event into glfw.
 
 - Use an opengl texture in imgui?
 
@@ -139,19 +140,18 @@ you can pass in the opengl [texture id converted to a pointer, as done in textur
 ## Where is...
 
 ### ImGui
-- [ZT Custom ImGui Components](src/zt/ztImgui.zig)
+- [ZT Custom ImGui Components](src/zt/customComponents.zig)
 - [ImGui Bindings](src/imgui.zig)
 - [Demo](https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp)
 
 ### ZT
 - [Math Source](src/zt/zlm/zlm-generic.zig) `zt.math`
-- [RenderTarget Abstraction](src/zt/rendertarget.zig) ^I
-- 1) [Shader Abstraction](src/zt/shaderprog.zig) ^I (Takes 2 strings to generate a shader program, easy to use with @embedFile)
-- 2) [Texture Abstraction](src/zt/texture.zig) ^I (This lets you load textures from file system and bind into opengl)
-- 3) [Buffer Abstraction](src/zt/genbuf.zig) ^I (This lets you generate a buffer pair for any given struct that uses only float/vec2/vec3/vec4)
-- [Simple Spritebuffer](src/zt/spritebuffer.zig) ^I
+- [RenderTarget Abstraction](src/zt/renderTarget.zig)
+- [Shader Abstraction](src/zt/shader.zig) (Takes 2 strings to generate a shader program, easy to use with @embedFile)
+- [Texture Abstraction](src/zt/texture.zig) (This lets you load textures from file system and bind into opengl)
+- [Buffer Abstraction](src/zt/generateBuffer.zig) (This lets you generate a buffer pair for any given struct that uses only float/vec2/vec3/vec4)
+- [Simple Spritebuffer](src/zt/spriteBuffer.zig)
 
-^I = This file is imported into ZT with `usingnamespace`
 
 The numbered ZT Entries are all you need to get started with close to the metal opengl.
 

@@ -2,15 +2,16 @@ const gl = @import("gl");
 const std = @import("std");
 
 const math = @import("zlm/zlm.zig");
+const zt = @import("../zt.zig");
 
 usingnamespace gl;
 
 /// Provide T as a struct to represent a vertex. Compatible types inside of struct are:
-/// `f32, math.Vec2, math.Vec3, math.Vec4`
+/// `f32, zt.math.Vec2, zt.math.Vec3, zt.math.Vec4`
 /// and each will be mapped in order to vert shader's layout indices.
 /// The resulting buffer can contain many quads and tris together, 
 /// TODO: Matrices in generic buffers.
-pub fn Buffer(comptime T: type) type {
+pub fn GenerateBuffer(comptime T: type) type {
     return struct {
         allocator: *std.mem.Allocator = undefined,
 
@@ -51,17 +52,17 @@ pub fn Buffer(comptime T: type) type {
                         glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 4;
                     },
-                    math.Vec2 => {
+                    zt.math.Vec2 => {
                         glVertexAttribPointer(@intCast(c_uint, i), 2, GL_FLOAT, GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
                         glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 8;
                     },
-                    math.Vec3 => {
+                    zt.math.Vec3 => {
                         glVertexAttribPointer(@intCast(c_uint, i), 3, GL_FLOAT, GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
                         glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 12;
                     },
-                    math.Vec4 => {
+                    zt.math.Vec4 => {
                         glVertexAttribPointer(@intCast(c_uint, i), 4, GL_FLOAT, GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
                         glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 16;
@@ -171,11 +172,38 @@ pub fn Buffer(comptime T: type) type {
             self.dirty = false;
         }
 
-        /// Draws the currently pushed data to the screen.
+        /// Draws the currently pushed data to the screen. Note the data is not cleared, leaving you the option to maintain
+        /// the current vertices every frame if so desired.
         pub fn flush(self: *@This()) void {
             self.bind();
             glDrawElements(GL_TRIANGLES, self.indCount, GL_UNSIGNED_INT, null);
             self.unbind();
+        }
+
+        pub fn setUniform(self: *@This(), comptime uniName: []const u8, targetProgram: *zt.Shader, uniform: anytype) void {
+            var loc: c_int = glGetUniformLocation(targetProgram.id, uniName.ptr);
+            if (loc != -1) {
+                switch (@TypeOf(uniform)) {
+                    f32 => {
+                        glUniform1f(loc, uniform);
+                    },
+                    zt.math.Vec2 => {
+                        glUniform2f(loc, uniform.x, uniform.y);
+                    },
+                    zt.math.Vec3 => {
+                        glUniform3f(loc, uniform.x, uniform.y, uniform.z);
+                    },
+                    zt.math.Vec4 => {
+                        glUniform4f(loc, uniform.x, uniform.y, uniform.z, uniform.w);
+                    },
+                    zt.math.Mat4 => {
+                        glUniformMatrix4fv(loc, 1, 0, &uniform.inlined());
+                    },
+                    else => {
+                        @compileError("You cannot use that type in a genbuffer's uniform.");
+                    },
+                }
+            }
         }
     };
 }
