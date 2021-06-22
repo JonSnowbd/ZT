@@ -37,6 +37,8 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
     var io = igGetIO();
     io.*.BackendRendererName = "imgui_impl_opengl3";
     io.*.IniFilename = "workspace";
+    // Sensible memory-friendly initial mouse position.
+    io.*.MousePos = .{.x=0,.y=0};
 
     // Store GLSL version string so we can refer to it later in case we recreate shaders.
     // Note: GLSL version is NOT the same as GL version. Leave this to NULL if unsure.
