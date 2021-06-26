@@ -78,6 +78,31 @@ fn update(context: *zt.App) void {
     spriteBuffer.sprite(testSprite, 200, -100, 0.5, 200, 200, zt.math.Vec4.white);
     spriteBuffer.flush();
 
+    // These will be too quick to read, but provide a good idea of how the inputs are used/examined.
+    if(igBegin("Input Window", null, ImGuiWindowFlags_None)) {
+        for(context.inputQueue.items) |item| {
+            switch(item) {
+                .keyboard => |data| {
+                    ztText("Event KB: {any}", .{data.key});
+                },
+                .mouseWheel => |data| {
+                    ztText("Event MW: {d:.1}", .{data.y});
+                },
+                .mouseButton => |data| {
+                    ztText("MouseButton: {any}", .{data.key});
+                },
+                .mousePosition => |data| {
+                    ztText("Moved Mouse to: {d:.1}x{d:.1}", .{data.x,data.y});
+                },
+                .character => |data| {
+                    var byte = @intCast(u8, data.value);
+                    ztText("Pressed '{c}'", .{byte});
+                }
+            }
+        } 
+    }
+    igEnd();
+    
     // You can just use imgui functions wherever you want in update and it'll just work.
     if (igBegin("Testing Window", null, ImGuiWindowFlags_None)) {
         ztText("{s}", .{"You can use zig's built in formatting"});

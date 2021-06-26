@@ -2,13 +2,44 @@ const std = @import("std");
 const stb = @import("stb_image");
 const ImGuiImplementation = @import("imguiImplementation.zig");
 const TimeManager = @import("timeManager.zig");
-const Folders = @import("../known_folders.zig");
 
 const zt = @import("../zt.zig");
 const gl = @import("gl");
 usingnamespace @import("glfw");
 usingnamespace @import("gl");
 usingnamespace @import("imgui");
+
+
+// fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
+// fn mouseWheelCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
+// fn mousebuttonCallback(win: ?*GLFWwindow, key: c_int, action: c_int, mods: c_int) callconv(.C) void {
+// fn cursorCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
+// fn charCallback(win: ?*GLFWwindow, char: c_uint) callconv(.C) void {
+
+pub const InputEvent = union(enum) {
+    keyboard: struct {
+        key:c_int,
+        scan:c_int,
+        action:c_int,
+        mods:c_int,
+    },
+    mouseWheel: struct {
+        x:f64,
+        y:f64,
+    },
+    mouseButton: struct {
+        key:c_int,
+        action:c_int,
+        mods:c_int,
+    },
+    mousePosition: struct {
+        x:f64,
+        y:f64,
+    },
+    character: struct {
+        value:c_uint,
+    },
+};
 
 const Self = @This();
 
@@ -21,6 +52,8 @@ imguiVisible: bool = true,
 /// If enabled, the application will not update if it is not receiving
 /// events from GLFW. Recommended for applications.
 energySaving: bool = true,
+config: Config = undefined,
+inputQueue: std.ArrayList(InputEvent) = undefined,
 
 pub const Config = struct {
     icon: ?[]const u8 = null,
@@ -28,6 +61,7 @@ pub const Config = struct {
     init: ?fn (*Self) void = null,
     update: ?fn (*Self) void = null,
     deinit: ?fn (*Self) void = null,
+    windowSizeChanged: ?fn(*Self) void = null,
     /// The initial size of the window.
     size: [2]c_int = .{ 1280, 720 },
 };
@@ -95,6 +129,8 @@ pub fn pathEx(allocator: *std.mem.Allocator, subpath: []const u8) []const u8 {
 /// overwriting the given input callbacks.
 pub fn start(app: Config) void {
     var context: Self = .{};
+    context.inputQueue = std.ArrayList(InputEvent).init(std.heap.c_allocator);
+    context.config = app;
     context.timer = TimeManager.init();
     context.window = undefined;
     if (glfwInit() < 0) {
@@ -160,7 +196,7 @@ pub fn start(app: Config) void {
         } else {
             igEndFrame();
         }
-
+        context.inputQueue.items.len = 0;
         glfwSwapBuffers(context.window);
         glfwPollEvents();
 
@@ -192,27 +228,41 @@ fn windowSizeChanged(win: ?*GLFWwindow, newWidth: c_int, newHeight: c_int) callc
     context.width = @intToFloat(f32, newWidth);
     context.height = @intToFloat(f32, newHeight);
     io.*.DisplaySize = .{ .x = context.width, .y = context.height };
+
+    if(context.config.windowSizeChanged) |func| {
+        func(context);
+    }
 }
 fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
-    _ = win;
-    _ = scan;
-    _ = mods;
+    var context: *Self = @ptrCast(*Self, @alignCast(@alignOf(*Self), glfwGetWindowUserPointer(win).?));
     var io = igGetIO();
     io.*.KeysDown[@intCast(usize, key)] = if (action == GLFW_PRESS) true else false;
-
     io.*.KeyShift = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_SHIFT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_SHIFT)];
     io.*.KeyCtrl = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_CONTROL)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_CONTROL)];
     io.*.KeyAlt = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_ALT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_ALT)];
+    context.inputQueue.append(.{
+        .keyboard = .{
+            .key = key,
+            .scan = scan,
+            .action = action,
+            .mods = mods,
+        }
+    }) catch unreachable;
 }
 fn mouseWheelCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
-    _ = win;
+    var context: *Self = @ptrCast(*Self, @alignCast(@alignOf(*Self), glfwGetWindowUserPointer(win).?));
     var io = igGetIO();
     io.*.MouseWheel = @floatCast(f32, y);
     io.*.MouseWheelH = @floatCast(f32, x);
+    context.inputQueue.append(.{
+        .mouseWheel = .{
+            .x=x,
+            .y=y,
+        }
+    }) catch unreachable;
 }
 fn mousebuttonCallback(win: ?*GLFWwindow, key: c_int, action: c_int, mods: c_int) callconv(.C) void {
-    _ = mods;
-    _ = win;
+    var context: *Self = @ptrCast(*Self, @alignCast(@alignOf(*Self), glfwGetWindowUserPointer(win).?));
     var io = igGetIO();
     switch (key) {
         GLFW_MOUSE_BUTTON_LEFT => {
@@ -226,14 +276,32 @@ fn mousebuttonCallback(win: ?*GLFWwindow, key: c_int, action: c_int, mods: c_int
         },
         else => {},
     }
+    context.inputQueue.append(.{
+        .mouseButton = .{
+            .key = key,
+            .action = action,
+            .mods = mods,
+        }
+    }) catch unreachable;
 }
 fn cursorCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
-    _ = win;
+    var context: *Self = @ptrCast(*Self, @alignCast(@alignOf(*Self), glfwGetWindowUserPointer(win).?));
     var io = igGetIO();
     io.*.MousePos = .{ .x = @floatCast(f32, x), .y = @floatCast(f32, y) };
+    context.inputQueue.append(.{
+        .mousePosition = .{
+            .x=x,
+            .y=y,
+        }
+    }) catch unreachable;
 }
 fn charCallback(win: ?*GLFWwindow, char: c_uint) callconv(.C) void {
-    _ = win;
+    var context: *Self = @ptrCast(*Self, @alignCast(@alignOf(*Self), glfwGetWindowUserPointer(win).?));
     var io = igGetIO();
     ImGuiIO_AddInputCharacter(io, char);
+    context.inputQueue.append(.{
+        .character = .{
+            .value = char,
+        }
+    }) catch unreachable;
 }

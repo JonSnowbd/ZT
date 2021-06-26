@@ -102,6 +102,8 @@ using the state machine loop for window management, if you just want the package
 
 ## Gotcha:
 
+- ZT.App sets its own user pointer! Its important too, so use something else for your storage, or if you really want the functionality,
+let me know and I'll see how I can enable your usecase within ZT.
 - By linking ZT the following packages are available to your app on both windows and ubuntu: `zt`, `gl`, `glfw`, `imgui`, `stb_image`
 - ImVec2 and ImVec4 are both substituted with zlm's Vec2 and Vec4 structs respectively, you can use both interchangeably.
 - `zt.App.Config` is initial state, it is not recommended to try and change its variables after starting it(more specifically
@@ -152,8 +154,6 @@ you can pass in the opengl [texture id converted to a pointer, as done in textur
 - [Buffer Abstraction](src/zt/generateBuffer.zig) (This lets you generate a buffer pair for any given struct that uses only float/vec2/vec3/vec4)
 - [Simple Spritebuffer](src/zt/spriteBuffer.zig)
 
-
-The numbered ZT Entries are all you need to get started with close to the metal opengl.
 
 ## Credits
 
