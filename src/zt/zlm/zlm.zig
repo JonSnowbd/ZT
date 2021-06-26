@@ -189,7 +189,7 @@ test "mat4 arithmetics" {
 // zig fmt: on
 
 test "vec4 transform" {
-    const id = Mat4.identity;
+    //const id = Mat4.identity;
 
     const mat = Mat4{
         .fields = [4][4]f32{

@@ -31,7 +31,7 @@ pub fn build(b: *std.build.Builder) void {
 
 pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     linkGlfw(path, b, exe, target);
-    linkGl(path, b, exe, target);
+    linkGl(path, exe, target);
     linkImgui(path, b, exe, target);
 
     var stbImageWrapperFlags = [_][]const u8{"-Os"};
@@ -61,7 +61,7 @@ pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
         exe.addPackage(ztPkg);
     }
 }
-fn linkGl(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
+fn linkGl(comptime path: []const u8, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     exe.addIncludeDir(path ++ "src/gl/glad/include");
     exe.linkLibC();
 
@@ -198,7 +198,7 @@ pub fn addBinaryContent(comptime baseContentPath: []const u8) AddContentErrors!v
             try innerAddContent(&gpa.allocator, source, targetFolder);
         }
         if (x.kind == .File) {
-            try copy(&gpa.allocator, baseContentPath, zigBin, x.name);
+            try copy(baseContentPath, zigBin, x.name);
         }
     }
 }
@@ -217,11 +217,11 @@ fn innerAddContent(allocator: *std.mem.Allocator, folder: []const u8, dest: []co
             try innerAddContent(allocator, source, targetFolder);
         }
         if (x.kind == .File) {
-            try copy(allocator, folder, dest, x.name);
+            try copy(folder, dest, x.name);
         }
     }
 }
-fn copy(allocator: *std.mem.Allocator, from: []const u8, to: []const u8, filename: []const u8) AddContentErrors!void {
+fn copy(from: []const u8, to: []const u8, filename: []const u8) AddContentErrors!void {
     fs.cwd().makePath(to) catch return error.FolderError;
     var source = fs.cwd().openDir(from, .{}) catch return error.FileError;
     var dest = fs.cwd().openDir(to, .{}) catch return error.FileError;

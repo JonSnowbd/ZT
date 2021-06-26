@@ -93,6 +93,7 @@ pub fn bind(self: *Self) void {
     glBindTexture(GL_TEXTURE_2D, self.id);
 }
 pub fn unbind(self: *Self) void {
+    _ = self;
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 pub fn setNearestFilter(self: *Self) void {

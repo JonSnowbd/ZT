@@ -268,9 +268,10 @@ fn CreateDeviceObjects() void {
     var glsl_version: u32 = 130;
 
     const numberPart = g_GlslVersionStringMem["#version ".len..g_GlslVersionString.len];
+
     if (std.fmt.parseInt(u32, numberPart, 10)) |value| {
         glsl_version = value;
-    } else |err| {
+    } else |_| {
         std.debug.warn("Couldn't parse glsl version from '{any}', '{any}'\n", .{ g_GlslVersionString, numberPart });
     }
 

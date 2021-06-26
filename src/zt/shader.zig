@@ -44,5 +44,6 @@ pub fn bind(self: *Self) void {
     glUseProgram(self.id);
 }
 pub fn unbind(self: *Self) void {
+    _ = self;
     glUseProgram(0);
 }

@@ -89,6 +89,7 @@ pub fn GenerateBuffer(comptime T: type) type {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.iboId);
         }
         pub fn unbind(self: *@This()) void {
+            _ = self;
             glBindVertexArray(0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -181,6 +182,7 @@ pub fn GenerateBuffer(comptime T: type) type {
         }
 
         pub fn setUniform(self: *@This(), comptime uniName: []const u8, targetProgram: *zt.Shader, uniform: anytype) void {
+            _ = self;
             var loc: c_int = glGetUniformLocation(targetProgram.id, uniName.ptr);
             if (loc != -1) {
                 switch (@TypeOf(uniform)) {

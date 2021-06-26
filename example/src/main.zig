@@ -98,6 +98,7 @@ fn update(context: *zt.App) void {
     igShowDemoWindow(null);
 }
 fn deinit(context: *zt.App) void {
+    _ = context;
     testSprite.deinit();
     logoSprite.deinit();
     spriteBuffer.deinit();

@@ -659,6 +659,8 @@ inline fn __MINGW_GNUC_PREREQ(major: anytype, minor: anytype) @TypeOf((__GNUC__ 
     return (__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor));
 }
 inline fn __MINGW_MSC_PREREQ(major: anytype, minor: anytype) @TypeOf(@as(c_int, 0)) {
+    _ = major;
+    _ = minor;
     return @as(c_int, 0);
 }
 const __MINGW_SEC_WARN_STR = "This function or variable may be unsafe, use _CRT_SECURE_NO_WARNINGS to disable deprecation";
@@ -735,6 +737,7 @@ const _MCRTIMP = _CRTIMP;
 const _CRTIMP_PURE = _CRTIMP;
 const _SECURECRT_FILL_BUFFER_PATTERN = @as(c_int, 0xFD);
 inline fn _CRT_DEPRECATE_TEXT(_Text: anytype) @TypeOf(__declspec(deprecated)) {
+    _ = _Text;
     return __declspec(deprecated);
 }
 const UNALIGNED = __unaligned;

@@ -38,6 +38,7 @@ pub fn queueAnimationFrames(self: *Self, seconds: f32) void {
 }
 /// If you are using multithreading or anything that will force an update, this can force a redraw.
 pub fn forceUpdate(self: *Self) void {
+    _ = self;
     glfwPostEmptyEvent();
 }
 
@@ -52,6 +53,7 @@ pub fn addImguiFont(self: *Self, fontPath: []const u8, size: f32, config: [*c]co
 /// This function is called for you when you add an imgui font, but if you manage the font atlas yourself, this
 /// will automatically delete and rebuild the font atlas for imgui.
 pub fn rebuildImguiFont(self: *Self) void {
+    _ = self;
     var io = igGetIO();
     // Delete the old texture
     var texId = @intCast(c_uint, @ptrToInt(io.*.Fonts.*.TexID));
@@ -192,6 +194,9 @@ fn windowSizeChanged(win: ?*GLFWwindow, newWidth: c_int, newHeight: c_int) callc
     io.*.DisplaySize = .{ .x = context.width, .y = context.height };
 }
 fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
+    _ = win;
+    _ = scan;
+    _ = mods;
     var io = igGetIO();
     io.*.KeysDown[@intCast(usize, key)] = if (action == GLFW_PRESS) true else false;
 
@@ -200,11 +205,14 @@ fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods
     io.*.KeyAlt = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_ALT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_ALT)];
 }
 fn mouseWheelCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
+    _ = win;
     var io = igGetIO();
     io.*.MouseWheel = @floatCast(f32, y);
     io.*.MouseWheelH = @floatCast(f32, x);
 }
 fn mousebuttonCallback(win: ?*GLFWwindow, key: c_int, action: c_int, mods: c_int) callconv(.C) void {
+    _ = mods;
+    _ = win;
     var io = igGetIO();
     switch (key) {
         GLFW_MOUSE_BUTTON_LEFT => {
@@ -220,10 +228,12 @@ fn mousebuttonCallback(win: ?*GLFWwindow, key: c_int, action: c_int, mods: c_int
     }
 }
 fn cursorCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
+    _ = win;
     var io = igGetIO();
     io.*.MousePos = .{ .x = @floatCast(f32, x), .y = @floatCast(f32, y) };
 }
 fn charCallback(win: ?*GLFWwindow, char: c_uint) callconv(.C) void {
+    _ = win;
     var io = igGetIO();
     ImGuiIO_AddInputCharacter(io, char);
 }
