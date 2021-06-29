@@ -20,9 +20,9 @@ pub fn from(id: c_uint, inDepth: bool) @This() {
 }
 /// Takes a file path and loads it into opengl using stb_image.
 pub fn init(filePath: []const u8) !@This() {
-    var ownedFp:[:0]const u8 = try std.heap.c_allocator.dupeZ(u8, filePath);
+    var ownedFp: [:0]const u8 = try std.heap.c_allocator.dupeZ(u8, filePath);
     defer std.heap.c_allocator.free(ownedFp);
-    
+
     var w: c_int = 0;
     var h: c_int = 0;
     var numChannels: c_int = 0;

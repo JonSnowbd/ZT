@@ -73,6 +73,15 @@ test "vec3 arithmetics" {
     assert(std.meta.eql(Vec3.cross(vec3(1, 2, 3), vec3(-7, 8, 9)), vec3(-6, -30, 22)));
 }
 
+test "vec hashing" {
+    const a = vec2(10, 10);
+    const b = vec2(10, 10);
+    const c = vec2(15, 10);
+
+    assert(a.hash() == b.hash());
+    assert(a.hash() != c.hash());
+}
+
 test "vec4 arithmetics" {
     const a = vec4(2, 1, 4, 3);
     const b = vec4(1, 2, 3, 4);

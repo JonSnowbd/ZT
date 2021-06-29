@@ -27,6 +27,23 @@ pub fn specializeOn(comptime Real: type) type {
                     return result;
                 }
 
+                pub fn hash(self: Self) u32 {
+                    const itemCount = @typeInfo(Self).Struct.fields.len;
+                    const byteLength = itemCount * @sizeOf(Real);
+
+                    var bytes: [byteLength]u8 = undefined;
+                    var index: usize = 0;
+                    inline for (@typeInfo(Self).Struct.fields) |fld| {
+                        const realBytes = std.mem.toBytes(@field(self, fld.name));
+                        for (realBytes) |value| {
+                            bytes[index] = value;
+                            index += 1;
+                        }
+                    }
+                    // std.hash.Adler32.hash();
+                    return std.hash.Adler32.hash(&bytes);
+                }
+
                 /// subtracts all components from `a` with the components of `b`.
                 pub fn sub(a: Self, b: Self) Self {
                     var result: Self = undefined;
@@ -170,27 +187,27 @@ pub fn specializeOn(comptime Real: type) type {
         }
 
         pub const Rect = extern struct {
-            position:Vec2 = .{},
-            size:Vec2 = .{},
+            position: Vec2 = .{},
+            size: Vec2 = .{},
 
-            pub inline fn newVec(pos:Vec2,size:Vec2) Rect {
+            pub inline fn newVec(pos: Vec2, size: Vec2) Rect {
                 return new(pos.x, pos.y, size.x, size.y);
             }
-            pub fn new(x:Real,y:Real,width:Real,height:Real) Rect {
-                return .{.position=.{.x=x,.y=y},.size=.{.x=width,.y=height}};
+            pub fn new(x: Real, y: Real, width: Real, height: Real) Rect {
+                return .{ .position = .{ .x = x, .y = y }, .size = .{ .x = width, .y = height } };
             }
-            pub fn containsPoint(self:Rect, point:Vec2) bool {
+            pub fn containsPoint(self: Rect, point: Vec2) bool {
                 return point.x >= self.position.x and point.y >= self.position.y and
-                       point.x <= self.position.x+self.size.x and point.y <= self.position.y+self.size.y;
+                    point.x <= self.position.x + self.size.x and point.y <= self.position.y + self.size.y;
             }
-            pub fn containsRect(self:Rect,other:Rect) bool {
+            pub fn containsRect(self: Rect, other: Rect) bool {
                 return ((((self.position.x <= other.position.x) and ((other.position.x + other.size.x) <= (self.position.x + self.size.x))) and (self.position.y <= other.position.y)) and ((other.position.y + other.size.y) <= (self.position.y + self.size.y)));
             }
-            pub fn intersectsRect(self:Rect,other:Rect) bool {
-                return other.position.x <= self.position.x+self.size.x and
-                       self.position.x <= other.position.x+other.size.x and
-                       other.position.y <= self.position.y+self.size.y and
-                       self.position.y <= other.position.y+other.size.y;
+            pub fn intersectsRect(self: Rect, other: Rect) bool {
+                return other.position.x <= self.position.x + self.size.x and
+                    self.position.x <= other.position.x + other.size.x and
+                    other.position.y <= self.position.y + self.size.y and
+                    self.position.y <= other.position.y + other.size.y;
             }
         };
 
