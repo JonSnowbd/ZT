@@ -42,7 +42,7 @@ pub const InputEvent = union(enum) {
 
 const Self = @This();
 
-window: *GLFWwindow = undefined,
+window: ?*GLFWwindow = undefined,
 width: f32 = 0,
 height: f32 = 0,
 timer: TimeManager = undefined,

@@ -1702,12 +1702,10 @@ pub const ImGuiTreeNodeFlags_SpanFullWidth = @enumToInt(ImGuiTreeNodeFlags_.Span
 pub const ImGuiTreeNodeFlags_NavLeftJumpsBackHere = @enumToInt(ImGuiTreeNodeFlags_.NavLeftJumpsBackHere);
 pub const ImGuiTreeNodeFlags_CollapsingHeader = @enumToInt(ImGuiTreeNodeFlags_.CollapsingHeader);
 pub const ImGuiPopupFlags_ = enum(c_int) {
-    None = 0,
     MouseButtonLeft = 0,
     MouseButtonRight = 1,
     MouseButtonMiddle = 2,
     MouseButtonMask_ = 31,
-    MouseButtonDefault_ = 1,
     NoOpenOverExistingPopup = 32,
     NoOpenOverItems = 64,
     AnyPopupId = 128,
@@ -1715,12 +1713,12 @@ pub const ImGuiPopupFlags_ = enum(c_int) {
     AnyPopup = 384,
     _,
 };
-pub const ImGuiPopupFlags_None = @enumToInt(ImGuiPopupFlags_.None);
+pub const ImGuiPopupFlags_None: c_int = 0;
 pub const ImGuiPopupFlags_MouseButtonLeft = @enumToInt(ImGuiPopupFlags_.MouseButtonLeft);
 pub const ImGuiPopupFlags_MouseButtonRight = @enumToInt(ImGuiPopupFlags_.MouseButtonRight);
 pub const ImGuiPopupFlags_MouseButtonMiddle = @enumToInt(ImGuiPopupFlags_.MouseButtonMiddle);
 pub const ImGuiPopupFlags_MouseButtonMask_ = @enumToInt(ImGuiPopupFlags_.MouseButtonMask_);
-pub const ImGuiPopupFlags_MouseButtonDefault_ = @enumToInt(ImGuiPopupFlags_.MouseButtonDefault_);
+pub const ImGuiPopupFlags_MouseButtonDefault_: c_int = 1;
 pub const ImGuiPopupFlags_NoOpenOverExistingPopup = @enumToInt(ImGuiPopupFlags_.NoOpenOverExistingPopup);
 pub const ImGuiPopupFlags_NoOpenOverItems = @enumToInt(ImGuiPopupFlags_.NoOpenOverItems);
 pub const ImGuiPopupFlags_AnyPopupId = @enumToInt(ImGuiPopupFlags_.AnyPopupId);
@@ -2414,7 +2412,6 @@ pub const ImGuiButtonFlags_ = enum(c_int) {
     MouseButtonRight = 2,
     MouseButtonMiddle = 4,
     MouseButtonMask_ = 7,
-    MouseButtonDefault_ = 1,
     _,
 };
 pub const ImGuiButtonFlags_None = @enumToInt(ImGuiButtonFlags_.None);
@@ -2422,7 +2419,7 @@ pub const ImGuiButtonFlags_MouseButtonLeft = @enumToInt(ImGuiButtonFlags_.MouseB
 pub const ImGuiButtonFlags_MouseButtonRight = @enumToInt(ImGuiButtonFlags_.MouseButtonRight);
 pub const ImGuiButtonFlags_MouseButtonMiddle = @enumToInt(ImGuiButtonFlags_.MouseButtonMiddle);
 pub const ImGuiButtonFlags_MouseButtonMask_ = @enumToInt(ImGuiButtonFlags_.MouseButtonMask_);
-pub const ImGuiButtonFlags_MouseButtonDefault_ = @enumToInt(ImGuiButtonFlags_.MouseButtonDefault_);
+pub const ImGuiButtonFlags_MouseButtonDefault_: c_int = 1;
 pub const ImGuiColorEditFlags_ = enum(c_int) {
     None = 0,
     NoAlpha = 2,
