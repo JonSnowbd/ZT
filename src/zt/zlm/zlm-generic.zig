@@ -14,7 +14,6 @@ pub fn specializeOn(comptime Real: type) type {
                 else => @compileError("Swizzle can take up to 4 elements!"),
             };
         }
-
         /// Returns a type mixin for a vector type implementing all component-wise operations.
         /// Reduces the amount of duplicated code by a lot
         fn VectorMixin(comptime Self: type) type {
@@ -169,6 +168,31 @@ pub fn specializeOn(comptime Real: type) type {
                 }
             };
         }
+
+        pub const Rect = extern struct {
+            position:Vec2 = .{},
+            size:Vec2 = .{},
+
+            pub inline fn newVec(pos:Vec2,size:Vec2) Rect {
+                return new(pos.x, pos.y, size.x, size.y);
+            }
+            pub fn new(x:Real,y:Real,width:Real,height:Real) Rect {
+                return .{.position=.{.x=x,.y=y},.size=.{.x=width,.y=height}};
+            }
+            pub fn containsPoint(self:Rect, point:Vec2) bool {
+                return point.x >= self.position.x and point.y >= self.position.y and
+                       point.x <= self.position.x+self.size.x and point.y <= self.position.y+self.size.y;
+            }
+            pub fn containsRect(self:Rect,other:Rect) bool {
+                return ((((self.position.x <= other.position.x) and ((other.position.x + other.size.x) <= (self.position.x + self.size.x))) and (self.position.y <= other.position.y)) and ((other.position.y + other.size.y) <= (self.position.y + self.size.y)));
+            }
+            pub fn intersectsRect(self:Rect,other:Rect) bool {
+                return other.position.x <= self.position.x+self.size.x and
+                       self.position.x <= other.position.x+other.size.x and
+                       other.position.y <= self.position.y+self.size.y and
+                       self.position.y <= other.position.y+other.size.y;
+            }
+        };
 
         /// 2-dimensional vector type.
         pub const Vec2 = extern struct {
