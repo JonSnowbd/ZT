@@ -6,7 +6,19 @@ ZT is a zig-contained library that automatically compiles+links ImGui, OpenGL, a
 
 By zig contained I mean that ZT is intended to eventually be entirely contained and built by Zig and its built in
 LibC and clang compiler without any external building or dependencies. Just git submodule, link, and build for windows
-and linux.
+and Linux.
+
+The entirety of ZT's dependencies are inlined into the repo, and as such updates to zig will not disrupt this library by
+hardlocking ZT until other packages get updated, or if any dependency later decides to support stable rather than nightly,
+etc.
+
+As a result this library will always(when I notice a breakage, I will fix it! I might be late to recognize breaking changes in zig) be
+working on its intended platforms with the latest development branch of zig.
+
+## Help!
+
+If you're in need of help with ZT feel free to ping `PySnow#8836` on the [zig discord](https://discord.gg/WQ2HWkuxVJ), or leave an issue here and I will
+get back to you as soon as I can.
 
 ## Requirements
 
@@ -16,11 +28,16 @@ Ubuntu: `sudo apt install build-essential xorg-dev`
 
 ## Current Status
 
-ZT does not have deep systems to flesh out, but the API is subject to renaming and updates to the packages, and will be as production ready as
-the weakest link of the following `zig, opengl, imgui` at any given time, as all ZT really does is compile and expose the framework
+Theres not much to be buggy in the general application of this as it just links GLFW+GL+ImGui to your artifact, and as such
+using it for this purpose is very stable.
 
-As for the App side, it is now very close to its finalized api, and is being used to develop a non-trivial project to expose
-any issues with the project and api. I recommend using it anywhere but high stability productions.
+On the `zt.App` side, it is very close to its finalized api, and is being used to develop a non-trivial project to expose
+any issues with the project and api. I recommend using it anywhere but productions that require high stability.
+
+Development for ZT is focused on the following items in order of importance:
+- Providing an easy to use (and optional) audio api.
+- Smoothing out Generic Buffer performance and api
+- Utility items such as spatial hashing. (Game oriented, but due to zig's lazy build nature, wont inflate non-gaming oriented binaries.)
 
 See [the example](/example/src/main.zig) that displays a few features of `zt.App`
 
@@ -102,7 +119,7 @@ using the state machine loop for window management, if you just want the package
 
 ## Gotcha:
 
-- ZT.App sets its own user pointer! Its important too, so use something else for your storage, or if you really want the functionality,
+- ZT.App sets its own GLFW user pointer! Its important too, so use something else for your storage, or if you really want the functionality,
 let me know and I'll see how I can enable your usecase within ZT.
 - By linking ZT the following packages are available to your app on both windows and ubuntu: `zt`, `gl`, `glfw`, `imgui`, `stb_image`
 - ImVec2 and ImVec4 are both substituted with zlm's Vec2 and Vec4 structs respectively, you can use both interchangeably.
@@ -110,12 +127,15 @@ let me know and I'll see how I can enable your usecase within ZT.
 after the init function.) expecting the changes to work. For changing icon and window title after init, see glfw and its documentation.
 - Disabling power saving mode will let GLFW handle buffer flip timing, so likely will be at vsync fps rather than on every
 event.
+- Need direct access to the input queue? `ZT.App` contains an ArrayList of a tagged unions that summarizes every input event.
+Try to use this instead of overriding GLFW event callbacks.
 - In update you are free to do anything you want that you'd do in any opengl/glfw loop, the only things done in the event
 loop are as follows:
     - `glClear` to clear current buffer
     - `igNewFrame` to set up imgui frame logic
     - **Your applications update function**
     - if `context.imguiVisible` imgui is rendered, otherwise draw data is discarded and the imgui frame is ended.
+    - ZT.App.inputQueue is cleared
     - glfw buffers are swapped and events are polled.
     - Timing management sets the delta time, and if `context.energySaving`, an event is awaited before continuing the loop,
     otherwise it lets glfw handle vsync timing.
@@ -139,6 +159,11 @@ disabled. Use this if you have smooth transitions that need to be displayed
 If youre using the `zt.Texture` abstraction, its as simple as passing in `texture.imguiId()` as the id, otherwise
 you can pass in the opengl [texture id converted to a pointer, as done in texture.zig](src/zt/texture.zig)
 
+- Read inputs in zt.app?
+
+Inputs are forwarded into your `zt.App` context fields as `.inputQueue` which is an array list of inputs represented as
+a tagged union of all possible input types.
+
 ## Where is...
 
 ### ImGui
@@ -151,9 +176,8 @@ you can pass in the opengl [texture id converted to a pointer, as done in textur
 - [RenderTarget Abstraction](src/zt/renderTarget.zig)
 - [Shader Abstraction](src/zt/shader.zig) (Takes 2 strings to generate a shader program, easy to use with @embedFile)
 - [Texture Abstraction](src/zt/texture.zig) (This lets you load textures from file system and bind into opengl)
-- [Buffer Abstraction](src/zt/generateBuffer.zig) (This lets you generate a buffer pair for any given struct that uses only float/vec2/vec3/vec4)
+- [Buffer Abstraction](src/zt/generateBuffer.zig) (This lets you generate a buffer pair for any given vertex struct that uses only float/vec2/vec3/vec4)
 - [Simple Spritebuffer](src/zt/spriteBuffer.zig)
-
 
 ## Credits
 
