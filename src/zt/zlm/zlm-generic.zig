@@ -28,20 +28,10 @@ pub fn specializeOn(comptime Real: type) type {
                 }
 
                 pub fn hash(self: Self) u32 {
-                    const itemCount = @typeInfo(Self).Struct.fields.len;
-                    const byteLength = itemCount * @sizeOf(Real);
-
-                    var bytes: [byteLength]u8 = undefined;
-                    var index: usize = 0;
-                    inline for (@typeInfo(Self).Struct.fields) |fld| {
-                        const realBytes = std.mem.toBytes(@field(self, fld.name));
-                        for (realBytes) |value| {
-                            bytes[index] = value;
-                            index += 1;
-                        }
-                    }
-                    // std.hash.Adler32.hash();
-                    return std.hash.Adler32.hash(&bytes);
+                    return std.hash.Adler32.hash(&std.mem.toBytes(self));
+                }
+                pub fn hash64(self: Self) u64 {
+                    return std.hash.Wyhash.hash(34837813,&std.mem.toBytes(self));
                 }
 
                 /// subtracts all components from `a` with the components of `b`.
