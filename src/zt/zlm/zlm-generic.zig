@@ -69,6 +69,13 @@ pub fn specializeOn(comptime Real: type) type {
                     }
                     return result;
                 }
+                pub fn scaleDiv(a: Self, b: Real) Self {
+                    var result: Self = undefined;
+                    inline for (@typeInfo(Self).Struct.fields) |fld| {
+                        @field(result, fld.name) = @field(a, fld.name) / b;
+                    }
+                    return result;
+                }
 
                 /// returns the dot product of two vectors.
                 /// This is the sum of products of all components.
