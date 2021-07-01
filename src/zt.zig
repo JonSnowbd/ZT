@@ -9,3 +9,7 @@ pub const GenerateBuffer = @import("zt/generateBuffer.zig").GenerateBuffer;
 pub const Shader = @import("zt/shader.zig");
 pub const Texture = @import("zt/texture.zig");
 pub const RenderTarget = @import("zt/renderTarget.zig");
+
+pub const Util = struct {
+    pub const SpatialHash = @import("zt/spatialHash.zig");
+};
