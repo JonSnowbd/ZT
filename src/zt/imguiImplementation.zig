@@ -9,7 +9,7 @@ usingnamespace @import("imgui");
 var g_GlVersion: GLuint = 0; // Extracted at runtime using GL_MAJOR_VERSION, GL_MINOR_VERSION queries.
 var g_GlslVersionStringMem: [32]u8 = undefined; // Specified by user or detected based on compile time GL settings.
 var g_GlslVersionString: []u8 = &g_GlslVersionStringMem; // slice of g_GlslVersionStringMem
-var g_FontTexture: c_uint = 0;
+pub var g_FontTexture: c_uint = 0;
 var g_ShaderHandle: c_uint = 0;
 var g_VertHandle: c_uint = 0;
 var g_FragHandle: c_uint = 0;
@@ -115,7 +115,7 @@ fn SetupRenderState(draw_data: *ImDrawData, fb_width: c_int, fb_height: c_int, v
         [4]f32{ 0.0, 0.0, -1.0, 0.0 },
         [4]f32{ (R + L) / (L - R), (T + B) / (B - T), 0.0, 1.0 },
     };
-    var shader = zt.Shader.from(g_ShaderHandle);
+    var shader = zt.gl.Shader.from(g_ShaderHandle);
     shader.bind();
     glUniform1i(g_AttribLocationTex, 0);
     glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
@@ -202,7 +202,7 @@ pub fn RenderDrawData(draw_data: *ImDrawData) void {
                         glScissor(@floatToInt(c_int, clip_rect.x), fb_height - @floatToInt(c_int, clip_rect.w), @floatToInt(c_int, clip_rect.z - clip_rect.x), @floatToInt(c_int, clip_rect.w - clip_rect.y));
 
                         // Bind texture, Draw
-                        var texture = zt.Texture.from(@intCast(GLuint, @ptrToInt(pcmd.TextureId)), false);
+                        var texture = zt.gl.Texture.from(@intCast(GLuint, @ptrToInt(pcmd.TextureId)), false);
                         texture.bind();
                         if (g_GlVersion >= 3200) {
                             glDrawElementsBaseVertex(

@@ -2,10 +2,7 @@ const std = @import("std");
 const zt = @import("../zt.zig");
 usingnamespace @import("gl");
 
-/// A collection of an FBO and its relevant texture that gets drawn to.
-/// Calling bind will direct all subsequent opengl rendering into this target, and unbind
-/// to resume drawing to directly to the screen buffer.
-target: zt.Texture = undefined,
+target: zt.gl.Texture = undefined,
 bufferId: c_uint = undefined,
 
 /// Do not modify, this is handled internally to restore previous viewports.
@@ -21,7 +18,7 @@ pub fn init(width: c_int, height: c_int) @This() {
     glBindFramebuffer(GL_FRAMEBUFFER, self.bufferId);
 
     // TEX
-    self.target = zt.Texture.initBlank(width, height);
+    self.target = zt.gl.Texture.initBlank(width, height);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, self.target.id, 0);
     self._current_size[0] = width;
     self._current_size[1] = height;

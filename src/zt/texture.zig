@@ -22,11 +22,9 @@ pub fn from(id: c_uint, inDepth: bool) @This() {
 pub fn init(filePath: []const u8) !@This() {
     var ownedFp: [:0]const u8 = try std.heap.c_allocator.dupeZ(u8, filePath);
     defer std.heap.c_allocator.free(ownedFp);
-
     var w: c_int = 0;
     var h: c_int = 0;
     var numChannels: c_int = 0;
-    stb.stbi_set_flip_vertically_on_load(1);
     var data = stb.stbi_load(ownedFp.ptr, &w, &h, &numChannels, 0);
     var self = @This(){};
 

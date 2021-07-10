@@ -39,7 +39,6 @@ pub fn deinit(self: *Self) void {
     glDeleteProgram(self.id);
     self.dead = true;
 }
-
 pub fn bind(self: *Self) void {
     glUseProgram(self.id);
 }

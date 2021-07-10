@@ -17,7 +17,7 @@ pub fn build(b: *std.build.Builder) void {
     link("", b, exe, target);
     exe.install();
 
-    addBinaryContent("example/binAssets") catch unreachable;
+    addBinaryContent("example/assets") catch unreachable;
 
     // Run cmd
     const run_cmd = exe.run();
@@ -30,18 +30,20 @@ pub fn build(b: *std.build.Builder) void {
 }
 
 pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
+    if (path.len > 0 and !std.mem.endsWith(u8, path, "/")) @panic("prefix-path must end with '/' if it is not empty");
+
     linkGlfw(path, b, exe, target);
     linkGl(path, exe, target);
     linkImgui(path, b, exe, target);
 
     var stbImageWrapperFlags = [_][]const u8{"-Os"};
-    exe.addCSourceFile(path ++ "src/stb/stb_image_wrapper.c", &stbImageWrapperFlags);
+    exe.addCSourceFile(path ++ "src/dep/stb/stb_image_wrapper.c", &stbImageWrapperFlags);
 
     if (std.meta.fieldInfo(std.build.Pkg, .path).field_type == std.build.FileSource) {
-        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = std.build.FileSource{ .path = path ++ "src/imgui.zig" } };
-        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = std.build.FileSource{ .path = path ++ "src/glfw.zig" } };
-        var glPkg: std.build.Pkg = .{ .name = "gl", .path = std.build.FileSource{ .path = path ++ "src/gl.zig" } };
-        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = std.build.FileSource{ .path = path ++ "src/stb_image.zig" } };
+        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = std.build.FileSource{ .path = path ++ "src/pkg/imgui.zig" } };
+        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = std.build.FileSource{ .path = path ++ "src/pkg/glfw.zig" } };
+        var glPkg: std.build.Pkg = .{ .name = "gl", .path = std.build.FileSource{ .path = path ++ "src/pkg/gl.zig" } };
+        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = std.build.FileSource{ .path = path ++ "src/pkg/stb_image.zig" } };
         var ztPkg: std.build.Pkg = .{ .name = "zt", .path = std.build.FileSource{ .path = path ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
         exe.addPackage(glfwPkg);
         exe.addPackage(glPkg);
@@ -49,10 +51,10 @@ pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
         exe.addPackage(imgPkg);
         exe.addPackage(ztPkg);
     } else {
-        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = path ++ "src/imgui.zig" };
-        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = path ++ "src/glfw.zig" };
-        var glPkg: std.build.Pkg = .{ .name = "gl", .path = path ++ "src/gl.zig" };
-        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = path ++ "src/stb_image.zig" };
+        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = path ++ "src/pkg/imgui.zig" };
+        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = path ++ "src/pkg/glfw.zig" };
+        var glPkg: std.build.Pkg = .{ .name = "gl", .path = path ++ "src/pkg/gl.zig" };
+        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = path ++ "src/pkg/stb_image.zig" };
         var ztPkg: std.build.Pkg = .{ .name = "zt", .path = path ++ "src/zt.zig", .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
         exe.addPackage(glfwPkg);
         exe.addPackage(glPkg);
@@ -62,21 +64,19 @@ pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
     }
 }
 fn linkGl(comptime path: []const u8, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
-    exe.addIncludeDir(path ++ "src/gl/glad/include");
+    exe.addIncludeDir(path ++ "src/dep/gl/glad/include");
     exe.linkLibC();
 
     if (target.isWindows()) {
-        exe.addCSourceFile(path ++ "src/gl/glad/src/glad.c", &[_][]const u8{"-D_WIN32"});
+        exe.addCSourceFile(path ++ "src/dep/gl/glad/src/glad.c", &[_][]const u8{"-D_WIN32"});
         exe.linkSystemLibrary("opengl32");
     }
     if (target.isLinux()) {
-        exe.addCSourceFile(path ++ "src/gl/glad/src/glad.c", &[_][]const u8{""});
+        exe.addCSourceFile(path ++ "src/dep/gl/glad/src/glad.c", &[_][]const u8{""});
         exe.linkSystemLibrary("gl");
     }
 }
 pub fn linkImgui(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
-    if (path.len > 0 and !std.mem.endsWith(u8, path, "/")) @panic("prefix-path must end with '/' if it is not empty");
-
     exe.linkLibC();
     exe.linkSystemLibrary("c++");
 
@@ -88,8 +88,8 @@ pub fn linkImgui(comptime path: []const u8, b: *std.build.Builder, exe: *std.bui
     }
     // Linux needs no additionals.
 
-    exe.addIncludeDir(path ++ "src/cimgui/imgui");
-    exe.addIncludeDir(path ++ "src/cimgui");
+    exe.addIncludeDir(path ++ "src/dep/cimgui/imgui");
+    exe.addIncludeDir(path ++ "src/dep/cimgui");
 
     var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
     flagContainer.append("-Wno-return-type-c-linkage") catch unreachable;
@@ -98,17 +98,17 @@ pub fn linkImgui(comptime path: []const u8, b: *std.build.Builder, exe: *std.bui
         flagContainer.append("-Os") catch unreachable;
     }
 
-    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui_demo.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui_draw.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui_tables.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/cimgui/imgui/imgui_widgets.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/cimgui/cimgui.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui_demo.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui_draw.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui_tables.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui_widgets.cpp", flagContainer.items);
+    exe.addCSourceFile(path ++ "src/dep/cimgui/cimgui.cpp", flagContainer.items);
 }
 
 fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
-    exe.addIncludeDir(path ++ "src/glfw/deps");
-    exe.addIncludeDir(path ++ "src/glfw/include");
+    exe.addIncludeDir(path ++ "src/dep/glfw/deps");
+    exe.addIncludeDir(path ++ "src/dep/glfw/include");
     exe.linkLibC();
 
     var flagContainer: std.ArrayList([]const u8) = std.ArrayList([]const u8).init(std.heap.page_allocator);
@@ -136,15 +136,15 @@ fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
 
     if (target.isWindows()) {
         exe.linkSystemLibrary("gdi32");
-        exe.addCSourceFile(path ++ "src/glfw/src/win32_init.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/win32_joystick.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/win32_monitor.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/win32_time.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/win32_thread.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/win32_window.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/wgl_context.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/egl_context.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/osmesa_context.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_init.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_joystick.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_monitor.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_time.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_thread.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_window.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/wgl_context.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/egl_context.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/osmesa_context.c", flags);
     }
 
     if (target.isLinux()) {
@@ -153,24 +153,24 @@ fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.Li
         exe.linkSystemLibrary("m");
         exe.linkSystemLibrary("x11");
 
-        exe.addCSourceFile(path ++ "src/glfw/src/x11_init.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/x11_monitor.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/x11_window.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/xkb_unicode.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/posix_time.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/posix_thread.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/glx_context.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/egl_context.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/osmesa_context.c", flags);
-        exe.addCSourceFile(path ++ "src/glfw/src/linux_joystick.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/x11_init.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/x11_monitor.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/x11_window.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/xkb_unicode.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/posix_time.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/posix_thread.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/glx_context.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/egl_context.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/osmesa_context.c", flags);
+        exe.addCSourceFile(path ++ "src/dep/glfw/src/linux_joystick.c", flags);
     }
 
-    exe.addCSourceFile(path ++ "src/glfw/src/context.c", flags);
-    exe.addCSourceFile(path ++ "src/glfw/src/init.c", flags);
-    exe.addCSourceFile(path ++ "src/glfw/src/input.c", flags);
-    exe.addCSourceFile(path ++ "src/glfw/src/monitor.c", flags);
-    exe.addCSourceFile(path ++ "src/glfw/src/vulkan.c", flags);
-    exe.addCSourceFile(path ++ "src/glfw/src/window.c", flags);
+    exe.addCSourceFile(path ++ "src/dep/glfw/src/context.c", flags);
+    exe.addCSourceFile(path ++ "src/dep/glfw/src/init.c", flags);
+    exe.addCSourceFile(path ++ "src/dep/glfw/src/input.c", flags);
+    exe.addCSourceFile(path ++ "src/dep/glfw/src/monitor.c", flags);
+    exe.addCSourceFile(path ++ "src/dep/glfw/src/vulkan.c", flags);
+    exe.addCSourceFile(path ++ "src/dep/glfw/src/window.c", flags);
 }
 
 pub const AddContentErrors = error{ PermissionError, WriteError, FileError, FolderError, RecursionError };

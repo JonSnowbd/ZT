@@ -1,38 +1,28 @@
 const std = @import("std");
+usingnamespace @import("glfw");
 
 const Self = @This();
 
-_startupInit: bool = false,
-_internalTimer: std.time.Timer = undefined,
-_fpsLogTick: f32 = 0.0,
+_previous: f64 = 0.0,
 lifetime: f32 = 0.0,
+/// Do not use this for calculations! It is for display, as it is smoothed for easy viewing.
 fps: f32 = 0.0,
 dt: f32 = 0.0,
-logFps: bool = false,
-logInterval: f32 = 1.0,
 
 pub fn init() @This() {
-    return .{
-        ._internalTimer = std.time.Timer.start() catch unreachable,
-    };
+    return .{};
 }
 pub fn tick(self: *Self) void {
-    var lap = self._internalTimer.lap();
-    self.dt = @floatCast(f32, @intToFloat(f64, lap) / 1000000000.0);
-    self.lifetime += self.dt;
-    self.fps = 1.0 / self.dt;
+    var lap = glfwGetTime();
 
-    if (self._startupInit == false) {
-        self._startupInit = true;
-        if (self.logFps) {
-            std.debug.print("STARTUP: {d:.3}s\n", .{self.dt});
-        }
-    }
-    if (self.logFps) {
-        self._fpsLogTick += self.dt;
-        if (self._fpsLogTick >= self.logInterval) {
-            std.debug.print("FPS: {d:>8.3}\n", .{1.0 / self.dt});
-            self._fpsLogTick -= self.logInterval;
-        }
-    }
+    // No need to worry about overflow, unless a frame intends to last for over a month.
+    self.dt = @floatCast(f32, lap - self._previous);
+    self.lifetime += self.dt;
+
+    // Smoothly introduce new fps measurements.
+    const smoothing: f32 = 0.99;
+    var newFps = 1.0 / self.dt;
+    self.fps = (self.fps * smoothing) + (newFps * (1.0 - smoothing));
+
+    self._previous = lap;
 }
