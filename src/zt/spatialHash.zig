@@ -75,12 +75,12 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
 
         /// Adds the target to the spatial hash, into every bucket that it spans.
         pub fn addAABB(self: *Self, target: T, position: math.Vec2, size: math.Vec2) void {
-            var start = vecToIndex(position).add(.{.x=settings.bucketSize*0.5,.y=settings.bucketSize*0.5});
-            var stop = vecToIndex(position.add(size)).add(.{.x=settings.bucketSize*0.5,.y=settings.bucketSize*0.5});
+            var start = vecToIndex(position).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
+            var stop = vecToIndex(position.add(size)).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
             var current = start;
 
-            while(current.x <= stop.x) {
-                while(current.y <= stop.y) {
+            while (current.x <= stop.x) {
+                while (current.y <= stop.y) {
                     var bin = self.getBin(current);
                     bin.put(target, {}) catch unreachable;
                     current.y += settings.bucketSize;
@@ -124,12 +124,12 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
         /// what *could* be a possible collision.
         pub fn queryAABB(self: *Self, position: math.Vec2, size: math.Vec2) []T {
             self.holding.unmanaged.clearRetainingCapacity();
-            var start = vecToIndex(position).add(.{.x=settings.bucketSize*0.5,.y=settings.bucketSize*0.5});
-            var stop = vecToIndex(position.add(size)).add(.{.x=settings.bucketSize*0.5,.y=settings.bucketSize*0.5});
+            var start = vecToIndex(position).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
+            var stop = vecToIndex(position.add(size)).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
             var current = start;
 
-            while(current.x <= stop.x) {
-                while(current.y <= stop.y) {
+            while (current.x <= stop.x) {
+                while (current.y <= stop.y) {
                     var bin = self.getBin(current);
                     for (bin.keys()) |value| {
                         self.holding.put(value, {}) catch unreachable;

@@ -74,7 +74,7 @@ pub fn spriteManual(self: *Self, texture: zt.gl.Texture, tl: Vertex, tr: Vertex,
         self.currentTexture = texture;
     }
     self.internal.addQuad(bl, tl, tr, br) catch |err| {
-        if(err == error.NeedsFlush) {
+        if (err == error.NeedsFlush) {
             self.flush();
             self.internal.addQuad(bl, tl, tr, br) catch unreachable;
             return;
@@ -115,7 +115,7 @@ pub fn spriteEx(self: *Self, texture: zt.gl.Texture, x: f32, y: f32, z: f32, w: 
     };
 
     self.internal.addQuad(bl, tl, tr, br) catch |err| {
-        if(err == error.NeedsFlush) {
+        if (err == error.NeedsFlush) {
             self.flush();
             self.internal.addQuad(bl, tl, tr, br) catch unreachable;
             return;
@@ -165,7 +165,7 @@ pub fn line(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, star
     };
 
     self.internal.addQuad(bl, tl, tr, br) catch |err| {
-        if(err == error.NeedsFlush) {
+        if (err == error.NeedsFlush) {
             self.flush();
             self.internal.addQuad(bl, tl, tr, br) catch unreachable;
             return;
@@ -177,8 +177,8 @@ pub fn line(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, star
 pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, target: zt.math.Vec2, radius: f32, z: f32, col: zt.math.Vec4) void {
     const twoPi: f32 = 2.0 * std.math.pi;
 
-    const addition: i32 = std.math.clamp(@floatToInt(i32, std.math.round(radius/100.0)) * 10, 0, 20);
-    const triCount: i32 = (@floatToInt(i32, twoPi) * self.resolution)+addition;
+    const addition: i32 = std.math.clamp(@floatToInt(i32, std.math.round(radius / 100.0)) * 10, 0, 20);
+    const triCount: i32 = (@floatToInt(i32, twoPi) * self.resolution) + addition;
     var i: i32 = 0;
 
     const source: zt.math.Rect =
@@ -187,34 +187,26 @@ pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, ta
     else
         zt.math.rect(0, 0, 1, 1);
 
-    while(i < triCount) : (i += 1) {
+    while (i < triCount) : (i += 1) {
         var c = Vertex{
             .pos = zt.math.vec3(target.x, target.y, z),
             .col = col,
             .tex = .{ .x = source.position.x, .y = source.position.y },
         };
         var l = Vertex{
-            .pos = zt.math.vec3(
-                target.x+(radius * @cos(@intToFloat(f32,i) * twoPi / @intToFloat(f32,triCount))), 
-                target.y+(radius * @sin(@intToFloat(f32,i) * twoPi / @intToFloat(f32,triCount))),
-                z
-            ),
+            .pos = zt.math.vec3(target.x + (radius * @cos(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * @sin(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), z),
             .col = col,
             .tex = .{ .x = source.position.x + source.size.x, .y = source.position.y },
         };
         var r = Vertex{
-            .pos = zt.math.vec3(
-                target.x+(radius * @cos(@intToFloat(f32,i+1) * twoPi / @intToFloat(f32,triCount))), 
-                target.y+(radius * @sin(@intToFloat(f32,i+1) * twoPi / @intToFloat(f32,triCount))),
-                z
-            ),
+            .pos = zt.math.vec3(target.x + (radius * @cos(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * @sin(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), z),
             .col = col,
             .tex = .{ .x = source.position.x, .y = source.position.y + source.size.y },
         };
-        self.internal.addTri(c,l,r) catch |err| {
-            if(err == error.NeedsFlush) {
+        self.internal.addTri(c, l, r) catch |err| {
+            if (err == error.NeedsFlush) {
                 self.flush();
-                self.internal.addTri(c,l,r) catch unreachable;
+                self.internal.addTri(c, l, r) catch unreachable;
                 return;
             }
             std.debug.panic("Rendering error: {s}", .{@errorName(err)});
@@ -235,16 +227,16 @@ pub fn rectangleHollow(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math
     self.line(texture, sourceRect, bl, tl.add(.{ .y = -thickness * 0.5 }), z, thickness, col, col);
 }
 
-pub fn text(self:*Self, pos:zt.math.Vec2, string:[]const u8, col: zt.math.Vec4) void {
+pub fn text(self: *Self, pos: zt.math.Vec2, string: []const u8, col: zt.math.Vec4) void {
     _ = self;
     const ig = @import("imgui");
     var drawlist = ig.igGetBackgroundDrawList_Nil();
 
     var colCast: [4]u8 = .{
-        @floatToInt(u8,255*col.x),
-        @floatToInt(u8,255*col.y),
-        @floatToInt(u8,255*col.z),
-        @floatToInt(u8,255*col.w),
+        @floatToInt(u8, 255 * col.x),
+        @floatToInt(u8, 255 * col.y),
+        @floatToInt(u8, 255 * col.z),
+        @floatToInt(u8, 255 * col.w),
     };
     ig.ImDrawList_AddText_Vec2(drawlist, pos, @bitCast(ig.ImU32, colCast), string.ptr, null);
 }

@@ -40,54 +40,53 @@ pub fn isPointInPolygon(point: math.Vec2, polyPoint: math.Vec2, vertices: []math
     }
     return inside;
 }
-pub fn isCircleInPolygon(circlePos: math.Vec2, radius:f32, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
-    for(vertices) |vert, i| {
-        var next = if(i+1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i+1]);
-        if(isLineInCircle(vert.add(polygonPos), next, circlePos, radius)) return true;
+pub fn isCircleInPolygon(circlePos: math.Vec2, radius: f32, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
+    for (vertices) |vert, i| {
+        var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
+        if (isLineInCircle(vert.add(polygonPos), next, circlePos, radius)) return true;
     }
     return isPointInPolygon(circlePos, polygonPos, vertices);
 }
 pub fn isLineInPolygon(lineStart: math.Vec2, lineEnd: math.Vec2, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
-    for(vertices) |vert, i| {
-        var next = if(i+1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i+1]);
-        if(isLineInLine(lineStart, lineEnd, vert.add(polygonPos), next)) return true;
+    for (vertices) |vert, i| {
+        var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
+        if (isLineInLine(lineStart, lineEnd, vert.add(polygonPos), next)) return true;
     }
     return false;
 }
 pub fn isPolygonInPolygon(polygonPos: math.Vec2, vertices: []math.Vec2, polygon2Pos: math.Vec2, vertices2: []math.Vec2) bool {
-    for(vertices) |vert, i| {
-        var next = if(i+1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i+1]);
-        if(isLineInPolygon(vert.add(polygonPos), next, polygon2Pos, vertices2)) return true;
+    for (vertices) |vert, i| {
+        var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
+        if (isLineInPolygon(vert.add(polygonPos), next, polygon2Pos, vertices2)) return true;
     }
     return isPointInPolygon(polygonPos, polygon2Pos, vertices2);
 }
 pub fn isRectInPolygon(rectangle: math.Rect, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
-    for(vertices) |vert, i| {
-        var next = if(i+1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i+1]);
-        if(isLineInRect(vert.add(polygonPos), next, rectangle.position, rectangle.size)) return true;
+    for (vertices) |vert, i| {
+        var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
+        if (isLineInRect(vert.add(polygonPos), next, rectangle.position, rectangle.size)) return true;
     }
     return isPointInPolygon(rectangle.position, polygonPos, vertices);
 }
-pub fn isLineInLine(l1Start:math.Vec2, l1End:math.Vec2, l2Start:math.Vec2, l2End:math.Vec2) bool {
-    var uA: f32 = ((l2End.x-l2Start.x)*(l1Start.y-l2Start.y) - (l2End.y-l2Start.y)*(l1Start.x-l2Start.x)) / ((l2End.y-l2Start.y)*(l1End.x-l1Start.x) - (l2End.x-l2Start.x)*(l1End.y-l1Start.y));
-    var uB: f32 = ((l1End.x-l1Start.x)*(l1Start.y-l2Start.y) - (l1End.y-l1Start.y)*(l1Start.x-l2Start.x)) / ((l2End.y-l2Start.y)*(l1End.x-l1Start.x) - (l2End.x-l2Start.x)*(l1End.y-l1Start.y));
+pub fn isLineInLine(l1Start: math.Vec2, l1End: math.Vec2, l2Start: math.Vec2, l2End: math.Vec2) bool {
+    var uA: f32 = ((l2End.x - l2Start.x) * (l1Start.y - l2Start.y) - (l2End.y - l2Start.y) * (l1Start.x - l2Start.x)) / ((l2End.y - l2Start.y) * (l1End.x - l1Start.x) - (l2End.x - l2Start.x) * (l1End.y - l1Start.y));
+    var uB: f32 = ((l1End.x - l1Start.x) * (l1Start.y - l2Start.y) - (l1End.y - l1Start.y) * (l1Start.x - l2Start.x)) / ((l2End.y - l2Start.y) * (l1End.x - l1Start.x) - (l2End.x - l2Start.x) * (l1End.y - l1Start.y));
     return (uA >= 0 and uA <= 1 and uB >= 0 and uB <= 1);
 }
-pub fn isLineInRect(line1:math.Vec2, line2:math.Vec2, aabbPos: math.Vec2, aabbSize: math.Vec2) bool {
+pub fn isLineInRect(line1: math.Vec2, line2: math.Vec2, aabbPos: math.Vec2, aabbSize: math.Vec2) bool {
     const tl = aabbPos;
-    const tr = aabbPos.add(.{.x=aabbSize.x});
+    const tr = aabbPos.add(.{ .x = aabbSize.x });
     const br = aabbPos.add(aabbSize);
-    const bl = aabbPos.add(.{.y=aabbSize.y});
-    return 
-        isLineInLine(line1, line2, tl, tr) or
+    const bl = aabbPos.add(.{ .y = aabbSize.y });
+    return isLineInLine(line1, line2, tl, tr) or
         isLineInLine(line1, line2, tl, bl) or
         isLineInLine(line1, line2, bl, br) or
         isLineInLine(line1, line2, tr, br);
 }
-pub fn isRectInRect(rect1Pos:math.Vec2, rect1Size:math.Vec2, rect2Pos:math.Vec2, rect2Size:math.Vec2) bool {
-    return math.Rect.intersectsRect(.{.position=rect1Pos,.size=rect1Size},.{.position=rect2Pos,.size=rect2Size});
+pub fn isRectInRect(rect1Pos: math.Vec2, rect1Size: math.Vec2, rect2Pos: math.Vec2, rect2Size: math.Vec2) bool {
+    return math.Rect.intersectsRect(.{ .position = rect1Pos, .size = rect1Size }, .{ .position = rect2Pos, .size = rect2Size });
 }
-pub fn isCircleInRect(circPos:math.Vec2, radius:f32, rectPos: math.Vec2, rectSize: math.Vec2) bool {
+pub fn isCircleInRect(circPos: math.Vec2, radius: f32, rectPos: math.Vec2, rectSize: math.Vec2) bool {
     var testX = circPos.x;
     var testY = circPos.y;
 
@@ -108,8 +107,8 @@ pub fn isCircleInRect(circPos:math.Vec2, radius:f32, rectPos: math.Vec2, rectSiz
 
     return dist <= radius;
 }
-pub fn isLineInCircle(lineStart:math.Vec2, lineEnd:math.Vec2, circlePos: math.Vec2, radius:f32) bool {
-        // Early out
+pub fn isLineInCircle(lineStart: math.Vec2, lineEnd: math.Vec2, circlePos: math.Vec2, radius: f32) bool {
+    // Early out
     if (isPointInCircle(lineStart, circlePos, radius)) {
         return true;
     }
@@ -123,10 +122,10 @@ pub fn isLineInCircle(lineStart:math.Vec2, lineEnd:math.Vec2, circlePos: math.Ve
     const closestX = lineStart.x + (dot * (lineEnd.x - lineStart.x));
     const closestY = lineStart.y + (dot * (lineEnd.y - lineStart.y));
 
-    var onSegment = isPointInLine(.{.x=closestX, .y=closestY}, lineStart, lineEnd);
-    if(!onSegment) return false;
+    var onSegment = isPointInLine(.{ .x = closestX, .y = closestY }, lineStart, lineEnd);
+    if (!onSegment) return false;
 
-    var closest = math.vec2(closestX-circlePos.x, closestY-circlePos.y);
+    var closest = math.vec2(closestX - circlePos.x, closestY - circlePos.y);
 
     return closest.length() <= radius;
 }
@@ -155,7 +154,7 @@ inline fn pointInLine(point: Shape, pointPos: math.Vec2, line: Shape, linePos: m
 
     return isPointInLine(pointPos.add(point.Point), start, end);
 }
-inline fn lineInLine(line: Shape, linePos: math.Vec2,line2: Shape, line2Pos: math.Vec2) bool {
+inline fn lineInLine(line: Shape, linePos: math.Vec2, line2: Shape, line2Pos: math.Vec2) bool {
     assert(line == .Line);
     assert(line2 == .Line);
 
@@ -268,8 +267,8 @@ pub const Shape = union(enum) {
     pub fn circle(radius: f32) Shape {
         return .{ .Circle = .{ .radius = radius } };
     }
-    pub fn line(from:math.Vec2, to:math.Vec2) Shape {
-        return .{.Line=.{.start=from,.end=to}};
+    pub fn line(from: math.Vec2, to: math.Vec2) Shape {
+        return .{ .Line = .{ .start = from, .end = to } };
     }
     pub fn point(pos: math.Vec2) Shape {
         return .{ .Point = pos };
@@ -315,7 +314,7 @@ pub const Shape = union(enum) {
                     },
                     .Polygon => {
                         return circleInPoly(self, selfPos, other, otherPos);
-                    }
+                    },
                 }
             },
             .Rectangle => {
@@ -334,7 +333,7 @@ pub const Shape = union(enum) {
                     },
                     .Polygon => {
                         return rectInPoly(self, selfPos, other, otherPos);
-                    }
+                    },
                 }
             },
             .Line => {
@@ -353,7 +352,7 @@ pub const Shape = union(enum) {
                     },
                     .Polygon => {
                         return lineInPolygon(self, selfPos, other, otherPos);
-                    }
+                    },
                 }
             },
             .Polygon => {
@@ -374,7 +373,7 @@ pub const Shape = union(enum) {
                         return polyInPoly(other, otherPos, self, selfPos);
                     },
                 }
-            }
+            },
         }
     }
 };

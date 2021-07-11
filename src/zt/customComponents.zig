@@ -69,7 +69,7 @@ pub fn ztTextColor(comptime fmt: []const u8, color: ImVec4, args: anytype) void 
 
 /// Attempts to create a general editor for most structs, including math structs. This isnt always what you want, and in
 /// those cases its always better to layout your own editor. This is biased towards creating drag inputs.
-pub fn ztEditDrag(label: []const u8, speed:f32, ptr: anytype) bool {
+pub fn ztEditDrag(label: []const u8, speed: f32, ptr: anytype) bool {
     const fmax = std.math.f32_max;
     switch (@TypeOf(ptr)) {
         *bool => {
@@ -78,7 +78,7 @@ pub fn ztEditDrag(label: []const u8, speed:f32, ptr: anytype) bool {
         *i32 => {
             const imin = std.math.minInt(i32);
             const imax = std.math.maxInt(i32);
-            return igDragInt(label.ptr, ptr, speed, @intCast(c_int,imin), @intCast(c_int,imax), "%i", ImGuiSliderFlags_NoRoundToFormat);
+            return igDragInt(label.ptr, ptr, speed, @intCast(c_int, imin), @intCast(c_int, imax), "%i", ImGuiSliderFlags_NoRoundToFormat);
         },
         *f32 => {
             return igDragFloat(label.ptr, ptr, speed, -fmax, fmax, "%.2f", ImGuiSliderFlags_NoRoundToFormat);
@@ -86,7 +86,7 @@ pub fn ztEditDrag(label: []const u8, speed:f32, ptr: anytype) bool {
         *usize => {
             var cast = @intCast(c_int, ptr.*);
             var result = igInputInt(label.ptr, &cast, 1, 5, ImGuiInputTextFlags_None);
-            if(result) {
+            if (result) {
                 ptr.* = @intCast(usize, std.math.max(0, cast));
             }
             return result;
@@ -94,7 +94,7 @@ pub fn ztEditDrag(label: []const u8, speed:f32, ptr: anytype) bool {
         *zt.math.Vec2 => {
             var cast: [2]f32 = .{ ptr.*.x, ptr.*.y };
             var result = igDragFloat2(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ImGuiSliderFlags_NoRoundToFormat);
-            if(result) {
+            if (result) {
                 ptr.* = zt.math.vec2(cast[0], cast[1]);
             }
             return result;
@@ -102,7 +102,7 @@ pub fn ztEditDrag(label: []const u8, speed:f32, ptr: anytype) bool {
         *zt.math.Vec3 => {
             var cast: [3]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z };
             var result = igDragFloat3(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ImGuiSliderFlags_NoRoundToFormat);
-            if(result) {
+            if (result) {
                 ptr.* = zt.math.vec3(cast[0], cast[1], cast[2]);
             }
             return result;
@@ -110,7 +110,7 @@ pub fn ztEditDrag(label: []const u8, speed:f32, ptr: anytype) bool {
         *zt.math.Vec4 => {
             var cast: [4]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z, ptr.*.w };
             var result = igColorEdit4(label.ptr, &cast, ImGuiColorEditFlags_Float);
-            if(result) {
+            if (result) {
                 ptr.* = zt.math.vec4(cast[0], cast[1], cast[2], cast[3]);
             }
             return result;
@@ -118,7 +118,7 @@ pub fn ztEditDrag(label: []const u8, speed:f32, ptr: anytype) bool {
         *zt.math.Rect => {
             var cast: [4]f32 = .{ ptr.*.position.x, ptr.*.position.y, ptr.*.size.x, ptr.*.size.y };
             var result = igDragFloat4(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ImGuiSliderFlags_NoRoundToFormat);
-            if(result) {
+            if (result) {
                 ptr.* = zt.math.rect(cast[0], cast[1], cast[2], cast[3]);
             }
             return result;
@@ -144,7 +144,7 @@ pub fn ztEdit(label: []const u8, ptr: anytype) bool {
         *usize => {
             var cast = @intCast(c_int, ptr.*);
             var result = igInputInt(label.ptr, &cast, 1, 5, ImGuiInputTextFlags_None);
-            if(result) {
+            if (result) {
                 ptr.* = @intCast(usize, std.math.max(0, cast));
             }
             return result;
@@ -152,7 +152,7 @@ pub fn ztEdit(label: []const u8, ptr: anytype) bool {
         *zt.math.Vec2 => {
             var cast: [2]f32 = .{ ptr.*.x, ptr.*.y };
             var result = igInputFloat2(label.ptr, &cast, "%.2f", ImGuiInputTextFlags_None);
-            if(result) {
+            if (result) {
                 ptr.* = zt.math.vec2(cast[0], cast[1]);
             }
             return result;
@@ -160,7 +160,7 @@ pub fn ztEdit(label: []const u8, ptr: anytype) bool {
         *zt.math.Vec3 => {
             var cast: [3]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z };
             var result = igInputFloat3(label.ptr, &cast, "%.2f", ImGuiInputTextFlags_None);
-            if(result) {
+            if (result) {
                 ptr.* = zt.math.vec3(cast[0], cast[1], cast[2]);
             }
             return result;
@@ -168,7 +168,7 @@ pub fn ztEdit(label: []const u8, ptr: anytype) bool {
         *zt.math.Vec4 => {
             var cast: [4]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z, ptr.*.w };
             var result = igColorEdit4(label.ptr, &cast, ImGuiColorEditFlags_Float);
-            if(result) {
+            if (result) {
                 ptr.* = zt.math.vec4(cast[0], cast[1], cast[2], cast[3]);
             }
             return result;
@@ -176,7 +176,7 @@ pub fn ztEdit(label: []const u8, ptr: anytype) bool {
         *zt.math.Rect => {
             var cast: [4]f32 = .{ ptr.*.position.x, ptr.*.position.y, ptr.*.size.x, ptr.*.size.y };
             var result = igInputFloat4(label.ptr, &cast, "%.2f", ImGuiInputTextFlags_None);
-            if(result) {
+            if (result) {
                 ptr.* = zt.math.rect(cast[0], cast[1], cast[2], cast[3]);
             }
             return result;

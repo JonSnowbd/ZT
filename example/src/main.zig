@@ -3,7 +3,7 @@ const zt = @import("zt");
 usingnamespace @import("imgui");
 usingnamespace zt.custom_components;
 
-const scenes_n = [_][]const u8 {
+const scenes_n = [_][]const u8{
     "2D Rendering",
     "2D Render Targets",
     "2D Spatial Hash (Squares)",
@@ -75,10 +75,10 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
     if (igBegin("Context Inspection", null, flags)) {
         igText("Data Settings");
         // ztEdit("Current Scene", &ctx.data.currentScene);
-        if(igBeginListBox("##Listbox pog", .{})) {
+        if (igBeginListBox("##Listbox pog", .{})) {
             var i: usize = 0;
             while (i < scenes.len) : (i += 1) {
-                if(igSelectable_Bool(scenes_n[i].ptr, i == ctx.data.currentScene, ImGuiSelectableFlags_SpanAvailWidth, .{})) {
+                if (igSelectable_Bool(scenes_n[i].ptr, i == ctx.data.currentScene, ImGuiSelectableFlags_SpanAvailWidth, .{})) {
                     ctx.data.currentScene = i;
                 }
             }
@@ -88,10 +88,10 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
 
         igText("Settings");
         _ = ztEdit("Energy Saving", &ctx.settings.energySaving);
-        if(igCheckbox("V Sync", &ctx.settings.vsync)) {
+        if (igCheckbox("V Sync", &ctx.settings.vsync)) {
             // The vsync setting is only a getter, setting it does nothing.
             // So on change, we follow through with the real call that changes it.
-            ctx.setVsync(ctx.settings.vsync); 
+            ctx.setVsync(ctx.settings.vsync);
         }
         _ = ztEdit("ImGui Active (Warning!!)", &ctx.settings.imguiActive);
         igSeparator();

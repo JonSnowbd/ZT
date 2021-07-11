@@ -98,7 +98,7 @@ pub fn App(comptime Data: type) type {
             pub fn setWindowTitle(self: *Context, string: []const u8) void {
                 glfwSetWindowTitle(self.window, string.ptr);
             }
-            pub fn setVsync(self:*Context, on:bool) void {
+            pub fn setVsync(self: *Context, on: bool) void {
                 if (on) {
                     glfwSwapInterval(1);
                 } else {

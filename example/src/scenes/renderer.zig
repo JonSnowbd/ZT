@@ -12,7 +12,7 @@ var startColor: zt.math.Vec4 = zt.math.Vec4.white;
 var endColor: zt.math.Vec4 = zt.math.Vec4.white;
 var thickness: f32 = 2;
 
-var radius:f32 = 10;
+var radius: f32 = 10;
 
 pub fn update(ctx: *main.SampleApplication.Context) void {
     control(ctx);
@@ -36,11 +36,12 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 
     // Text in the renderer is very rudimentary and not really intended for ingame use in world space.
     // All renderer does is add text to imgui's background drawlist. As such you should transform world to screenspace.
-    const message = \\Sadly, text is forwarded by imgui and not affected by matrices.
-                    \\Note this also means nothing but imgui itself can be infront of this text.
-                    \\But fear not! It wouldn't be difficult to implement your own text if needed.
+    const message = 
+        \\Sadly, text is forwarded by imgui and not affected by matrices.
+        \\Note this also means nothing but imgui itself can be infront of this text.
+        \\But fear not! It wouldn't be difficult to implement your own text if needed.
     ;
-    render.text(render.worldToScreen(.{.x=-128-16,.y=-190}), message, zt.math.Vec4.white);
+    render.text(render.worldToScreen(.{ .x = -128 - 16, .y = -190 }), message, zt.math.Vec4.white);
 
     // You can also draw lines. In this example I want a solid white line, so the source rect is somewhere on the sheet
     // that is pure white.
@@ -50,7 +51,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
     render.rectangleHollow(ctx.data.sheet, zt.math.rect(131, 84, 2, 2), zt.math.rect(-128, -128, 256, 256), 0, 2.0, zt.math.vec4(0.0, 1.0, 0.0, 1.0));
 
     // Surround the grid with a hollow rect.
-    render.circle(ctx.data.sheet, zt.math.rect(131, 84, 2, 2), zt.math.vec2(0,200), radius, 0, zt.math.vec4(0.0, 1.0, 0.0, 1.0));
+    render.circle(ctx.data.sheet, zt.math.rect(131, 84, 2, 2), zt.math.vec2(0, 200), radius, 0, zt.math.vec4(0.0, 1.0, 0.0, 1.0));
 
     // Renderer also has no clue when a frame ends, so you must manually flush at the end of every render cycle.
     // It is not required to do this between texture changes, as this is handled internally.

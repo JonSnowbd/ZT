@@ -6,22 +6,31 @@ const zt = @import("../zt.zig");
 usingnamespace gl;
 
 fn glErr(msg: []const u8) void {
-    if(std.builtin.mode == .Debug) {
+    if (std.builtin.mode == .Debug) {
         var err = glGetError();
-        while(err != GL_NO_ERROR) {
-            switch(err) {
-                GL_INVALID_ENUM => {std.debug.print("{s}\nOPENGL ERROR: INVALID ENUM\n",.{msg});},
-                GL_INVALID_VALUE => {std.debug.print("{s}\nOPENGL ERROR: INVALID VALUE\n",.{msg});},
-                GL_INVALID_OPERATION => {std.debug.print("{s}\nOPENGL ERROR: INVALID OPERATION\n",.{msg});},
-                GL_OUT_OF_MEMORY => {std.debug.print("{s}\nOPENGL ERROR: OUT OF MEMORY\n",.{msg});},
-                else => {std.debug.print("{s}\nOPENGL ERROR: UNKNOWN ERROR\n",.{msg});},
+        while (err != GL_NO_ERROR) {
+            switch (err) {
+                GL_INVALID_ENUM => {
+                    std.debug.print("{s}\nOPENGL ERROR: INVALID ENUM\n", .{msg});
+                },
+                GL_INVALID_VALUE => {
+                    std.debug.print("{s}\nOPENGL ERROR: INVALID VALUE\n", .{msg});
+                },
+                GL_INVALID_OPERATION => {
+                    std.debug.print("{s}\nOPENGL ERROR: INVALID OPERATION\n", .{msg});
+                },
+                GL_OUT_OF_MEMORY => {
+                    std.debug.print("{s}\nOPENGL ERROR: OUT OF MEMORY\n", .{msg});
+                },
+                else => {
+                    std.debug.print("{s}\nOPENGL ERROR: UNKNOWN ERROR\n", .{msg});
+                },
             }
-            
+
             err = glGetError();
         }
     }
 }
-
 
 /// Provide T as a struct to represent a vertex. Compatible types inside of struct are:
 /// `f32, zt.math.Vec2, zt.math.Vec3, zt.math.Vec4`
@@ -37,7 +46,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
         vertices: [V]T = undefined,
         vertCount: usize = 0,
         // Worst case scenario every single draw is a quad, so * 6.
-        indices: [V*6]c_uint = undefined,
+        indices: [V * 6]c_uint = undefined,
         indCount: usize = 0,
         shader: zt.gl.Shader = undefined,
 
@@ -96,7 +105,6 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             glDeleteBuffers(1, &self.vboId);
             glDeleteBuffers(1, &self.iboId);
             glErr("Deleting the buffers:");
-
         }
         pub fn bind(self: *@This()) void {
             glBindVertexArray(self.vaoId);
@@ -112,7 +120,6 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             glErr("Unbinding the buffers:");
-
         }
         pub fn clear(self: *@This()) void {
             self.vertCount = 0;
@@ -121,7 +128,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
         }
 
         pub fn addTri(self: *@This(), v1: T, v2: T, v3: T) !void {
-            if(self.vertCount+3 >= V) {
+            if (self.vertCount + 3 >= V) {
                 return error.NeedsFlush;
             }
             self.vertices[self.vertCount + 0] = v1;
@@ -137,7 +144,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.dirty = true;
         }
         pub fn addQuad(self: *@This(), bl: T, tl: T, tr: T, br: T) !void {
-            if(self.vertCount+4 >= V) {
+            if (self.vertCount + 4 >= V) {
                 return error.NeedsFlush;
             }
             self.vertices[self.vertCount + 0] = bl;
@@ -204,7 +211,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
         /// the current vertices every frame if so desired.
         pub fn flush(self: *@This()) void {
             self.bind();
-            glDrawElements(GL_TRIANGLES, @intCast(c_int,self.indCount), GL_UNSIGNED_INT, null);
+            glDrawElements(GL_TRIANGLES, @intCast(c_int, self.indCount), GL_UNSIGNED_INT, null);
             self.unbind();
             glErr("Flushing the buffers:");
         }
@@ -242,7 +249,6 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             }
             self.shader.unbind();
             glErr("Setting a uniform (location not found):");
-            
         }
     };
 }
