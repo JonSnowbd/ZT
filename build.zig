@@ -153,7 +153,17 @@ pub fn glfwLibrary(comptime path: []const u8, b: *std.build.Builder, target: std
         }
         flagContainer.append("-D_GLFW_WIN32") catch unreachable;
         glfw.linkSystemLibrary("gdi32");
-        glfw.addCSourceFiles(&.{ path ++ "src/dep/glfw/src/win32_init.c", path ++ "src/dep/glfw/src/win32_joystick.c", path ++ "src/dep/glfw/src/win32_monitor.c", path ++ "src/dep/glfw/src/win32_time.c", path ++ "src/dep/glfw/src/win32_thread.c", path ++ "src/dep/glfw/src/win32_window.c", path ++ "src/dep/glfw/src/wgl_context.c", path ++ "src/dep/glfw/src/egl_context.c", path ++ "src/dep/glfw/src/osmesa_context.c" }, flagContainer.items);
+        glfw.addCSourceFiles(&.{
+            path ++ "src/dep/glfw/src/win32_init.c",
+            path ++ "src/dep/glfw/src/win32_joystick.c",
+            path ++ "src/dep/glfw/src/win32_monitor.c",
+            path ++ "src/dep/glfw/src/win32_time.c",
+            path ++ "src/dep/glfw/src/win32_thread.c",
+            path ++ "src/dep/glfw/src/win32_window.c",
+            path ++ "src/dep/glfw/src/wgl_context.c",
+            path ++ "src/dep/glfw/src/egl_context.c",
+            path ++ "src/dep/glfw/src/osmesa_context.c",
+        }, flagContainer.items);
     }
 
     // For linux targets, link/add c.
