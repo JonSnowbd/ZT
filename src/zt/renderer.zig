@@ -13,17 +13,23 @@ viewMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
 inverseViewMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
 projectionMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
 currentTexture: ?zt.gl.Texture = null,
+defaultShader: zt.gl.Shader = undefined,
 /// Internal render size, do not edit. Is set by `updateRenderSize`.
 buildSize: zt.math.Vec2 = .{},
-/// In triangles per radian.
 resolution: i32 = 2,
 
+pub fn createShader(fragment:[*:0]const u8) zt.gl.Shader {
+    return zt.gl.Shader.init(VertShaderSource, fragment);
+}
+
 pub fn init() @This() {
-    return .{
-        .internal = zt.gl.GenerateBuffer(Vertex, 4086).init(zt.gl.Shader.init(VertShaderSource, FragShaderSource)),
+    var renderer = Self{
+        .defaultShader = zt.gl.Shader.init(VertShaderSource, FragShaderSource),
         .projectionMatrix = zt.math.Mat4.createOrthogonal(0, 1280, 720, 0, -128, 128),
         .viewMatrix = zt.math.Mat4.identity,
     };
+    renderer.internal = zt.gl.GenerateBuffer(Vertex, 4086).init(renderer.defaultShader);
+    return renderer;
 }
 pub fn deinit(self: *Self) void {
     self.internal.deinit();
@@ -49,6 +55,16 @@ pub fn updateCamera(self: *Self, position: zt.math.Vec2, zoom: f32, rotation: f3
 pub fn updateCameraScreenSpace(self: *Self) void {
     self.viewMatrix = zt.math.Mat4.identity;
     self.inverseViewMatrix = self.viewMatrix.invert().?;
+}
+
+/// Sets the shader used by the internal buffer. Pass in null to revert to the default shader.
+pub fn updateShader(self:*Self, shader:?*zt.gl.Shader) void {
+    self.flush();
+    if(shader) |realShader| {
+        self.internal.shader = realShader.*;
+    } else {
+        self.internal.shader = self.defaultShader;
+    }
 }
 
 /// The simplest sprite method. Passing null to normalized origin will draw top-left based. Passing null to source will

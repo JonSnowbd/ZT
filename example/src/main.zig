@@ -5,6 +5,7 @@ usingnamespace zt.custom_components;
 
 const scenes_n = [_][]const u8{
     "2D Rendering",
+    "2D Shaders",
     "2D Render Targets",
     "2D Spatial Hash (Squares)",
     "2D Collider Support",
@@ -12,6 +13,7 @@ const scenes_n = [_][]const u8{
 };
 const scenes = [_]fn (*SampleApplication.Context) void{
     @import("scenes/renderer.zig").update,
+    @import("scenes/shaders.zig").update,
     @import("scenes/rendertarget.zig").update,
     @import("scenes/spatialhash_squares.zig").update,
     @import("scenes/colliders.zig").update,
@@ -23,6 +25,7 @@ pub const SampleData = struct {
     currentScene: usize = 0,
     render: zt.game.Renderer = undefined,
     sheet: zt.gl.Texture = undefined,
+    redShader: zt.gl.Shader = undefined,
 };
 pub const SampleApplication = zt.App(SampleData);
 
@@ -39,6 +42,10 @@ pub fn main() !void {
     context.data.render = zt.game.Renderer.init();
     context.data.sheet = try zt.gl.Texture.init(zt.path("texture/sheet.png"));
     context.data.sheet.setNearestFilter(); // Pixel art looks better with nearest filters.
+    // Creating a shader from `zt.game.Renderer` only needs a fragment shader's source as the vertex shader
+    // will be provided by `zt.game.Renderer`. If you need more flexibility than this you'll want to
+    // edit ZT itself, or create your own buffer type.
+    context.data.redShader = zt.game.Renderer.createShader(@embedFile("scenes/shader/red.fragment"));
 
     context.setWindowSize(1280, 720);
     context.setWindowTitle("ZT Demo");
