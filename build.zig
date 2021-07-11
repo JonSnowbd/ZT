@@ -167,25 +167,29 @@ pub fn glfwLibrary(comptime path: []const u8, b: *std.build.Builder, target: std
         glfw.linkSystemLibrary("m");
         glfw.linkSystemLibrary("x11");
 
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/x11_init.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/x11_monitor.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/x11_window.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/xkb_unicode.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/posix_time.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/posix_thread.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/glx_context.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/egl_context.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/osmesa_context.c", flagContainer.items);
-        glfw.addCSourceFile(path ++ "src/dep/glfw/src/linux_joystick.c", flagContainer.items);
+        glfw.addCSourceFiles(&.{
+            path ++ "src/dep/glfw/src/x11_init.c",
+            path ++ "src/dep/glfw/src/x11_monitor.c",
+            path ++ "src/dep/glfw/src/x11_window.c",
+            path ++ "src/dep/glfw/src/xkb_unicode.c",
+            path ++ "src/dep/glfw/src/posix_time.c",
+            path ++ "src/dep/glfw/src/posix_thread.c",
+            path ++ "src/dep/glfw/src/glx_context.c",
+            path ++ "src/dep/glfw/src/egl_context.c",
+            path ++ "src/dep/glfw/src/osmesa_context.c",
+            path ++ "src/dep/glfw/src/linux_joystick.c",
+        }, flagContainer.items);
     }
 
     // Shared C.
-    glfw.addCSourceFile(path ++ "src/dep/glfw/src/context.c", flagContainer.items);
-    glfw.addCSourceFile(path ++ "src/dep/glfw/src/init.c", flagContainer.items);
-    glfw.addCSourceFile(path ++ "src/dep/glfw/src/input.c", flagContainer.items);
-    glfw.addCSourceFile(path ++ "src/dep/glfw/src/monitor.c", flagContainer.items);
-    glfw.addCSourceFile(path ++ "src/dep/glfw/src/vulkan.c", flagContainer.items);
-    glfw.addCSourceFile(path ++ "src/dep/glfw/src/window.c", flagContainer.items);
+    glfw.addCSourceFiles(&.{
+        path ++ "src/dep/glfw/src/context.c",
+        path ++ "src/dep/glfw/src/init.c",
+        path ++ "src/dep/glfw/src/input.c",
+        path ++ "src/dep/glfw/src/monitor.c",
+        path ++ "src/dep/glfw/src/vulkan.c",
+        path ++ "src/dep/glfw/src/window.c",
+    }, flagContainer.items);
 
     return glfw;
 }
