@@ -16,8 +16,8 @@ As a result this library will always(when I notice a breakage, I will fix it! I 
 working on its intended platforms with the latest development branch of zig.
 
 
+<h1 align=center>For Applications</h1>
 <p align="center">
-  <h1 align=center>For Applications</h1>
   <img width="90%" src="https://cdn.discordapp.com/attachments/602279341371424780/863453053700014080/unknown.png">
 </p>
 
@@ -27,8 +27,8 @@ by a bunch of applications for its convenience and power.
 Using ImGui is as simple as calling the functions! ZT will render
 everything for you without ever needing to touch gamedev code.
 
+<h1 align=center>For Games</h1>
 <p align="center">
-  <h1 align=center>For Games</h1>
   <img width="90%" src="https://cdn.discordapp.com/attachments/602279341371424780/863422653951639562/unknown.png">
 </p>
 
