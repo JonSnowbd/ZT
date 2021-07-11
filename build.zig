@@ -32,145 +32,165 @@ pub fn build(b: *std.build.Builder) void {
 pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     if (path.len > 0 and !std.mem.endsWith(u8, path, "/")) @panic("prefix-path must end with '/' if it is not empty");
 
-    linkGlfw(path, b, exe, target);
-    linkGl(path, exe, target);
-    linkImgui(path, b, exe, target);
+    // Link step
+    var imgui = imguiLibrary(path, b, target);
+    exe.linkLibrary(imgui);
 
-    var stbImageWrapperFlags = [_][]const u8{"-Os"};
-    exe.addCSourceFile(path ++ "src/dep/stb/stb_image_wrapper.c", &stbImageWrapperFlags);
+    var glfw = glfwLibrary(path, b, target);
+    exe.linkLibrary(glfw);
 
-    if (std.meta.fieldInfo(std.build.Pkg, .path).field_type == std.build.FileSource) {
-        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = std.build.FileSource{ .path = path ++ "src/pkg/imgui.zig" } };
-        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = std.build.FileSource{ .path = path ++ "src/pkg/glfw.zig" } };
-        var glPkg: std.build.Pkg = .{ .name = "gl", .path = std.build.FileSource{ .path = path ++ "src/pkg/gl.zig" } };
-        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = std.build.FileSource{ .path = path ++ "src/pkg/stb_image.zig" } };
-        var ztPkg: std.build.Pkg = .{ .name = "zt", .path = std.build.FileSource{ .path = path ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
-        exe.addPackage(glfwPkg);
-        exe.addPackage(glPkg);
-        exe.addPackage(stbPkg);
-        exe.addPackage(imgPkg);
-        exe.addPackage(ztPkg);
-    } else {
-        var imgPkg: std.build.Pkg = .{ .name = "imgui", .path = path ++ "src/pkg/imgui.zig" };
-        var glfwPkg: std.build.Pkg = .{ .name = "glfw", .path = path ++ "src/pkg/glfw.zig" };
-        var glPkg: std.build.Pkg = .{ .name = "gl", .path = path ++ "src/pkg/gl.zig" };
-        var stbPkg: std.build.Pkg = .{ .name = "stb_image", .path = path ++ "src/pkg/stb_image.zig" };
-        var ztPkg: std.build.Pkg = .{ .name = "zt", .path = path ++ "src/zt.zig", .dependencies = &[_]std.build.Pkg{ glfwPkg, glPkg, imgPkg, stbPkg } };
-        exe.addPackage(glfwPkg);
-        exe.addPackage(glPkg);
-        exe.addPackage(stbPkg);
-        exe.addPackage(imgPkg);
-        exe.addPackage(ztPkg);
-    }
+    var gl = glLibrary(path, b, target);
+    exe.linkLibrary(gl);
+
+    var stb = stbLibrary(path, b, target);
+    exe.linkLibrary(stb);
+
+    exe.addPackage(glfwPackage(path));
+    exe.addPackage(glPackage(path));
+    exe.addPackage(stbPackage(path));
+    exe.addPackage(imguiPackage(path));
+    exe.addPackage(ztPackage(path));
 }
-fn linkGl(comptime path: []const u8, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
-    exe.addIncludeDir(path ++ "src/dep/gl/glad/include");
-    exe.linkLibC();
-
-    if (target.isWindows()) {
-        exe.addCSourceFile(path ++ "src/dep/gl/glad/src/glad.c", &[_][]const u8{"-D_WIN32"});
-        exe.linkSystemLibrary("opengl32");
-    }
-    if (target.isLinux()) {
-        exe.addCSourceFile(path ++ "src/dep/gl/glad/src/glad.c", &[_][]const u8{""});
-        exe.linkSystemLibrary("gl");
-    }
-}
-pub fn linkImgui(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
-    exe.linkLibC();
-    exe.linkSystemLibrary("c++");
-
-    if (target.isWindows()) {
-        exe.linkSystemLibrary("winmm");
-        exe.linkSystemLibrary("user32");
-        exe.linkSystemLibrary("imm32");
-        exe.linkSystemLibrary("gdi32");
-    }
-    // Linux needs no additionals.
-
-    exe.addIncludeDir(path ++ "src/dep/cimgui/imgui");
-    exe.addIncludeDir(path ++ "src/dep/cimgui");
+pub fn stbLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+    _ = target;
+    var stb = b.addStaticLibrary("stb", null);
+    stb.linkLibC();
 
     var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
-    flagContainer.append("-Wno-return-type-c-linkage") catch unreachable;
+    if (b.is_release) flagContainer.append("-Os") catch unreachable;
 
-    if (b.is_release) {
-        flagContainer.append("-Os") catch unreachable;
-    }
+    stb.addCSourceFile(path ++ "src/dep/stb/stb_image_wrapper.c", flagContainer.items);
 
-    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui_demo.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui_draw.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui_tables.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/dep/cimgui/imgui/imgui_widgets.cpp", flagContainer.items);
-    exe.addCSourceFile(path ++ "src/dep/cimgui/cimgui.cpp", flagContainer.items);
+    return stb;
+}
+pub fn stbPackage(comptime path: []const u8) std.build.Pkg {
+    return .{ .name = "stb_image", .path = std.build.FileSource{ .path = path ++ "src/pkg/stb_image.zig" } };
+}
+pub fn ztPackage(comptime path: []const u8) std.build.Pkg {
+    return .{ .name = "zt", .path = std.build.FileSource{ .path = path ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{
+        glfwPackage(path),
+        glPackage(path),
+        imguiPackage(path),
+        stbPackage(path),
+    } };
 }
 
-fn linkGlfw(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
-    exe.addIncludeDir(path ++ "src/dep/glfw/deps");
-    exe.addIncludeDir(path ++ "src/dep/glfw/include");
-    exe.linkLibC();
+pub fn glLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+    var gl = b.addStaticLibrary("gl", null);
+    gl.linkLibC();
 
-    var flagContainer: std.ArrayList([]const u8) = std.ArrayList([]const u8).init(std.heap.page_allocator);
-    defer flagContainer.deinit();
+    // Generate flags.
+    var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
+    if (b.is_release) flagContainer.append("-Os") catch unreachable;
 
-    if (b.is_release) {
-        flagContainer.append("-Os") catch unreachable;
-    }
+    // Link libraries.
     if (target.isWindows()) {
-        if (b.is_release) {
-            exe.subsystem = .Windows; // Hide the Console on release.
-            exe.want_lto = false; // TODO: When _tls_index is no longer lost on lto, undo this.
-        }
-        flagContainer.append("-D_GLFW_WIN32") catch unreachable;
+        gl.linkSystemLibrary("opengl32");
     }
     if (target.isLinux()) {
-        exe.subsystem = .Posix;
+        gl.linkSystemLibrary("gl");
+    }
+
+    // Include dirs.
+    gl.addIncludeDir(path ++ "src/dep/gl/glad/include");
+
+    // Add c.
+    gl.addCSourceFile(path ++ "src/dep/gl/glad/src/glad.c", flagContainer.items);
+
+    return gl;
+}
+pub fn glPackage(comptime path: []const u8) std.build.Pkg {
+    return .{ .name = "gl", .path = std.build.FileSource{ .path = path ++ "src/pkg/gl.zig" } };
+}
+
+pub fn imguiLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+    var imgui = b.addStaticLibrary("imgui", null);
+    imgui.linkLibC();
+    imgui.linkSystemLibrary("c++");
+
+    // Generate flags.
+    var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
+    if (b.is_release) flagContainer.append("-Os") catch unreachable;
+    flagContainer.append("-Wno-return-type-c-linkage") catch unreachable;
+
+    // Link libraries.
+    if (target.isWindows()) {
+        imgui.linkSystemLibrary("winmm");
+        imgui.linkSystemLibrary("user32");
+        imgui.linkSystemLibrary("imm32");
+        imgui.linkSystemLibrary("gdi32");
+    }
+
+    // Include dirs.
+    imgui.addIncludeDir(path ++ "src/dep/cimgui/imgui");
+    imgui.addIncludeDir(path ++ "src/dep/cimgui");
+
+    // Add C
+    imgui.addCSourceFiles(&.{ path ++ "src/dep/cimgui/imgui/imgui.cpp", path ++ "src/dep/cimgui/imgui/imgui_demo.cpp", path ++ "src/dep/cimgui/imgui/imgui_draw.cpp", path ++ "src/dep/cimgui/imgui/imgui_tables.cpp", path ++ "src/dep/cimgui/imgui/imgui_widgets.cpp", path ++ "src/dep/cimgui/cimgui.cpp" }, flagContainer.items);
+
+    return imgui;
+}
+pub fn imguiPackage(comptime path: []const u8) std.build.Pkg {
+    return .{ .name = "imgui", .path = std.build.FileSource{ .path = path ++ "src/pkg/imgui.zig" } };
+}
+
+pub fn glfwLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+    var glfw = b.addStaticLibrary("glfw", null);
+    glfw.linkLibC();
+
+    var flagContainer: std.ArrayList([]const u8) = std.ArrayList([]const u8).init(std.heap.page_allocator);
+    if (b.is_release) flagContainer.append("-Os") catch unreachable;
+
+    // Include dirs.
+    glfw.addIncludeDir(path ++ "src/dep/glfw/deps");
+    glfw.addIncludeDir(path ++ "src/dep/glfw/include");
+
+    // For windows targets, link/add c.
+    if (target.isWindows()) {
+        if (b.is_release) {
+            glfw.subsystem = .Windows; // Hide the Console on release.
+            glfw.want_lto = false; // TODO: When _tls_index is no longer lost on lto, undo this.
+        }
+        flagContainer.append("-D_GLFW_WIN32") catch unreachable;
+        glfw.linkSystemLibrary("gdi32");
+        glfw.addCSourceFiles(&.{ path ++ "src/dep/glfw/src/win32_init.c", path ++ "src/dep/glfw/src/win32_joystick.c", path ++ "src/dep/glfw/src/win32_monitor.c", path ++ "src/dep/glfw/src/win32_time.c", path ++ "src/dep/glfw/src/win32_thread.c", path ++ "src/dep/glfw/src/win32_window.c", path ++ "src/dep/glfw/src/wgl_context.c", path ++ "src/dep/glfw/src/egl_context.c", path ++ "src/dep/glfw/src/osmesa_context.c" }, flagContainer.items);
+    }
+
+    // For linux targets, link/add c.
+    if (target.isLinux()) {
+        glfw.subsystem = .Posix;
         // Linux is a little too itchy to sanitize some glfw code that works but can hit UB
         flagContainer.append("-fno-sanitize=undefined") catch unreachable;
         flagContainer.append("-D_GLFW_X11") catch unreachable;
+        glfw.addSystemIncludeDir("/usr/include/");
+        glfw.linkSystemLibrary("rt");
+        glfw.linkSystemLibrary("m");
+        glfw.linkSystemLibrary("x11");
+
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/x11_init.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/x11_monitor.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/x11_window.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/xkb_unicode.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/posix_time.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/posix_thread.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/glx_context.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/egl_context.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/osmesa_context.c", flagContainer.items);
+        glfw.addCSourceFile(path ++ "src/dep/glfw/src/linux_joystick.c", flagContainer.items);
     }
 
-    // General shared sources:
-    const flags = flagContainer.items;
+    // Shared C.
+    glfw.addCSourceFile(path ++ "src/dep/glfw/src/context.c", flagContainer.items);
+    glfw.addCSourceFile(path ++ "src/dep/glfw/src/init.c", flagContainer.items);
+    glfw.addCSourceFile(path ++ "src/dep/glfw/src/input.c", flagContainer.items);
+    glfw.addCSourceFile(path ++ "src/dep/glfw/src/monitor.c", flagContainer.items);
+    glfw.addCSourceFile(path ++ "src/dep/glfw/src/vulkan.c", flagContainer.items);
+    glfw.addCSourceFile(path ++ "src/dep/glfw/src/window.c", flagContainer.items);
 
-    if (target.isWindows()) {
-        exe.linkSystemLibrary("gdi32");
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_init.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_joystick.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_monitor.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_time.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_thread.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/win32_window.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/wgl_context.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/egl_context.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/osmesa_context.c", flags);
-    }
-
-    if (target.isLinux()) {
-        exe.addSystemIncludeDir("/usr/include/");
-        exe.linkSystemLibrary("rt");
-        exe.linkSystemLibrary("m");
-        exe.linkSystemLibrary("x11");
-
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/x11_init.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/x11_monitor.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/x11_window.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/xkb_unicode.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/posix_time.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/posix_thread.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/glx_context.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/egl_context.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/osmesa_context.c", flags);
-        exe.addCSourceFile(path ++ "src/dep/glfw/src/linux_joystick.c", flags);
-    }
-
-    exe.addCSourceFile(path ++ "src/dep/glfw/src/context.c", flags);
-    exe.addCSourceFile(path ++ "src/dep/glfw/src/init.c", flags);
-    exe.addCSourceFile(path ++ "src/dep/glfw/src/input.c", flags);
-    exe.addCSourceFile(path ++ "src/dep/glfw/src/monitor.c", flags);
-    exe.addCSourceFile(path ++ "src/dep/glfw/src/vulkan.c", flags);
-    exe.addCSourceFile(path ++ "src/dep/glfw/src/window.c", flags);
+    return glfw;
+}
+pub fn glfwPackage(comptime path: []const u8) std.build.Pkg {
+    return .{ .name = "glfw", .path = std.build.FileSource{ .path = path ++ "src/pkg/glfw.zig" } };
 }
 
 pub const AddContentErrors = error{ PermissionError, WriteError, FileError, FolderError, RecursionError };
