@@ -46,7 +46,7 @@ pub fn App(comptime Data: type) type {
         pub const Context = struct {
             _updateSeconds: f32 = -1.0,
             allocator: *std.mem.Allocator = undefined,
-            data: Data = .{},
+            data: Data = undefined,
             settings: Settings = .{},
             window: ?*GLFWwindow = undefined,
             input: std.ArrayList(InputEvent) = undefined,
@@ -166,9 +166,13 @@ pub fn App(comptime Data: type) type {
         pub fn begin(applicationAllocator: *std.mem.Allocator) *Context {
             var self: *Context = applicationAllocator.create(Context) catch unreachable;
             self.* = .{};
+            if(Data != void) {
+                self.data = .{};
+            }
             self.allocator = applicationAllocator;
             self.input = std.ArrayList(InputEvent).init(applicationAllocator);
             self.time = TimeManager.init();
+
             if (glfwInit() < 0) {
                 std.debug.panic("Failed to init GLFW", .{});
             }
@@ -176,10 +180,9 @@ pub fn App(comptime Data: type) type {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
             self.window = glfwCreateWindow(800, 600, "ZT Application", null, null).?;
-            glfwMakeContextCurrent(self.window);
             self.open = true;
+            glfwMakeContextCurrent(self.window);
 
             if (gladLoadGL() < 0) {
                 std.debug.panic("Failed to init Glad GL Loader", .{});
