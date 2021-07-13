@@ -1,5 +1,13 @@
 const std = @import("std");
 
+pub var linkAudio: bool = false;
+pub var linkNet: bool = false;
+
+fn getRelativePath() []const u8 {
+    comptime var src: std.builtin.SourceLocation = @src();
+    return std.fs.path.dirname(src.file).? ++ std.fs.path.sep_str;
+}
+
 // Build here only exists to build the example. to use ZT you'll want to import this file and use the link function in
 // your build.zig
 pub fn build(b: *std.build.Builder) void {
@@ -8,13 +16,12 @@ pub fn build(b: *std.build.Builder) void {
     });
     const mode = b.standardReleaseOptions();
 
+    std.debug.print("{s}\n", .{getRelativePath()});
+
     const exe = b.addExecutable("example", "example/src/main.zig");
+    link(b, exe, target);
     exe.setTarget(target);
     exe.setBuildMode(mode);
-    if (b.is_release) {
-        exe.strip = true;
-    }
-    link("", b, exe, target);
     exe.install();
 
     addBinaryContent("example/assets") catch unreachable;
@@ -29,29 +36,32 @@ pub fn build(b: *std.build.Builder) void {
     run_step.dependOn(&run_cmd.step);
 }
 
-pub fn link(comptime path: []const u8, b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
-    if (path.len > 0 and !std.mem.endsWith(u8, path, "/")) @panic("prefix-path must end with '/' if it is not empty");
-
+pub fn link(b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
     // Link step
-    var imgui = imguiLibrary(path, b, target);
-    exe.linkLibrary(imgui);
+    exe.linkLibrary(imguiLibrary(b, target));
+    exe.linkLibrary(glfwLibrary(b, target));
+    exe.linkLibrary(glLibrary(b, target));
+    exe.linkLibrary(stbLibrary(b, target));
 
-    var glfw = glfwLibrary(path, b, target);
-    exe.linkLibrary(glfw);
-
-    var gl = glLibrary(path, b, target);
-    exe.linkLibrary(gl);
-
-    var stb = stbLibrary(path, b, target);
-    exe.linkLibrary(stb);
-
-    exe.addPackage(glfwPackage(path));
-    exe.addPackage(glPackage(path));
-    exe.addPackage(stbPackage(path));
-    exe.addPackage(imguiPackage(path));
-    exe.addPackage(ztPackage(path));
+    exe.addPackage(glfwPackage());
+    exe.addPackage(glPackage());
+    exe.addPackage(stbPackage());
+    exe.addPackage(imguiPackage());
+    exe.addPackage(ztPackage());
 }
-pub fn stbLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+pub fn ztPackage() std.build.Pkg {
+    comptime var path = getRelativePath();
+    return .{ .name = "zt", .path = std.build.FileSource{ .path = path ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{
+        glfwPackage(),
+        glPackage(),
+        imguiPackage(),
+        stbPackage(),
+    } };
+}
+
+// STB
+pub fn stbLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+    comptime var path = getRelativePath();
     _ = target;
     var stb = b.addStaticLibrary("stb", null);
     stb.linkLibC();
@@ -63,19 +73,14 @@ pub fn stbLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.
 
     return stb;
 }
-pub fn stbPackage(comptime path: []const u8) std.build.Pkg {
+pub fn stbPackage() std.build.Pkg {
+    comptime var path = getRelativePath();
     return .{ .name = "stb_image", .path = std.build.FileSource{ .path = path ++ "src/pkg/stb_image.zig" } };
 }
-pub fn ztPackage(comptime path: []const u8) std.build.Pkg {
-    return .{ .name = "zt", .path = std.build.FileSource{ .path = path ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{
-        glfwPackage(path),
-        glPackage(path),
-        imguiPackage(path),
-        stbPackage(path),
-    } };
-}
 
-pub fn glLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+// OpenGL
+pub fn glLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+    comptime var path = getRelativePath();
     var gl = b.addStaticLibrary("gl", null);
     gl.linkLibC();
 
@@ -99,11 +104,14 @@ pub fn glLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.b
 
     return gl;
 }
-pub fn glPackage(comptime path: []const u8) std.build.Pkg {
+pub fn glPackage() std.build.Pkg {
+    comptime var path = getRelativePath();
     return .{ .name = "gl", .path = std.build.FileSource{ .path = path ++ "src/pkg/gl.zig" } };
 }
 
-pub fn imguiLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+// ImGui
+pub fn imguiLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+    comptime var path = getRelativePath();
     var imgui = b.addStaticLibrary("imgui", null);
     imgui.linkLibC();
     imgui.linkSystemLibrary("c++");
@@ -130,11 +138,14 @@ pub fn imguiLibrary(comptime path: []const u8, b: *std.build.Builder, target: st
 
     return imgui;
 }
-pub fn imguiPackage(comptime path: []const u8) std.build.Pkg {
+pub fn imguiPackage() std.build.Pkg {
+    comptime var path = getRelativePath();
     return .{ .name = "imgui", .path = std.build.FileSource{ .path = path ++ "src/pkg/imgui.zig" } };
 }
 
-pub fn glfwLibrary(comptime path: []const u8, b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+// GLFW
+pub fn glfwLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+    comptime var path = getRelativePath();
     var glfw = b.addStaticLibrary("glfw", null);
     glfw.linkLibC();
 
@@ -203,7 +214,8 @@ pub fn glfwLibrary(comptime path: []const u8, b: *std.build.Builder, target: std
 
     return glfw;
 }
-pub fn glfwPackage(comptime path: []const u8) std.build.Pkg {
+pub fn glfwPackage() std.build.Pkg {
+    comptime var path = getRelativePath();
     return .{ .name = "glfw", .path = std.build.FileSource{ .path = path ++ "src/pkg/glfw.zig" } };
 }
 
