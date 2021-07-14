@@ -11,11 +11,9 @@ create a branch for stable releases when convenient.
 Check out the [wiki](https://github.com/JonSnowbd/ZT/wiki) for documentation and help.
 
 <h1 align=center>For Applications</h1>
-++++
 <p align="center">
   <img width="640px" height="390px" src="https://cdn.discordapp.com/attachments/602279341371424780/864667669940273172/unknown.png">
 </p>
-++++
 
 Get your applications done quick with industry standard ImGui library, used
 by a bunch of applications for its convenience and power.
@@ -26,11 +24,9 @@ everything for you without ever needing to touch gamedev code.
 <hr/>
 
 <h1 align=center>For Games</h1>
-++++
 <p align="center">
   <img width="640px" height="390px" src="https://cdn.discordapp.com/attachments/602279341371424780/864667491817095218/unknown.png">
 </p>
-++++
 
 With ImGui at the forefront for free, debugging and creating editors
 for your game is as smooth as it can be without deciding anything for you
