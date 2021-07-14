@@ -2,24 +2,20 @@
   <img width="200" height="100" src="/example/assets/texture/logo.png">
 </p>
 
-ZT is a zig-contained library that automatically compiles+links ImGui, OpenGL, and GLFW into typed packages.
+A zig-contained library for Windows and Ubuntu that automatically compiles and
+links ImGui, OpenGL, stb_image, and GLFW into typed packages.
 
-By zig contained I mean that ZT is intended to eventually be entirely contained and built by Zig and its built in
-LibC and clang compiler without any external building or dependencies. Just git submodule, link, and build for windows
-and Linux.
+ZT will always target the latest dev version of Zig, and will
+create a branch for stable releases when convenient.
 
-The entirety of ZT's dependencies are inlined(and maintained by me) into the repo, and as such updates to zig will not disrupt this library by
-hardlocking ZT until other packages get updated, or if any dependency later decides to support stable rather than nightly,
-etc.
-
-As a result this library will always(when I notice a breakage, I will fix it! I might be late to recognize breaking changes in zig) be
-working on its intended platforms with the latest development branch of zig.
-
+Check out the [wiki](https://github.com/JonSnowbd/ZT/wiki) for documentation and help.
 
 <h1 align=center>For Applications</h1>
+++++
 <p align="center">
-  <img width="90%" src="https://cdn.discordapp.com/attachments/602279341371424780/863453053700014080/unknown.png">
+  <img width="640px" height="390px" src="https://cdn.discordapp.com/attachments/602279341371424780/864667669940273172/unknown.png">
 </p>
+++++
 
 Get your applications done quick with industry standard ImGui library, used
 by a bunch of applications for its convenience and power.
@@ -27,46 +23,37 @@ by a bunch of applications for its convenience and power.
 Using ImGui is as simple as calling the functions! ZT will render
 everything for you without ever needing to touch gamedev code.
 
+<hr/>
+
 <h1 align=center>For Games</h1>
+++++
 <p align="center">
-  <img width="90%" src="https://cdn.discordapp.com/attachments/602279341371424780/863422653951639562/unknown.png">
+  <img width="640px" height="390px" src="https://cdn.discordapp.com/attachments/602279341371424780/864667491817095218/unknown.png">
 </p>
+++++
 
 With ImGui at the forefront for free, debugging and creating editors
 for your game is as smooth as it can be without deciding anything for you
 
+<hr/>
 
-# Help!
+# Overview
 
-If you're in need of help with ZT feel free to ping `PySnow#8836` on the [zig discord](https://discord.gg/WQ2HWkuxVJ), or leave an issue here and I will
-get back to you as soon as I can.
+To work with ZT You will need:
 
-# Requirements
+- Zig 0.9.* Main branch build (See [zig-0.8.0 branch](https://github.com/JonSnowbd/ZT/tree/zig-0.8.0) for the last 0.8 compatible build.)
+- Ubuntu: `sudo apt install build-essential xorg-dev`
 
-Zig 0.9.* Main branch build (See [zig-0.8.0 branch](https://github.com/JonSnowbd/ZT/tree/zig-0.8.0) for the last 0.8 compatible build.)
+### Current Status
 
-Ubuntu: `sudo apt install build-essential xorg-dev`
+- ZT when used for the purpose of GL/ImGui libraries is very stable
+- ZT.App is still receiving breaking changes as I find where I can make
+the library more flexible for casual use, but overall I find it convenient for
+applications and games
 
-## Current Status
+See [the example](/example/src/main.zig) for what ZT.App has to offer.
 
-Theres not much to be buggy in the general application of this as it just links GLFW+GL+ImGui to your artifact, and as such
-using it for this purpose is very stable.
-
-On the `zt.App` side, it is very close to its finalized api, and is being used to develop a non-trivial project to expose
-any issues with the project and api. I recommend using it anywhere but productions that require high stability.
-
-Development for ZT is focused on the following items in order of importance:
-- Providing an easy to use (and optional) audio api.
-- Smoothing out Generic Buffer performance and api
-- Utility items such as spatial hashing. (Game oriented, but due to zig's lazy build nature, wont inflate non-gaming oriented binaries.)
-
-See [the example](/example/src/main.zig) that displays a few features of `zt.App`
-
-## Where
-
-Right now working on both windows and ubuntu(and anything thats compatible with x11)
-
-## Why
+### Why
 
 ZT is intended for an extremely broad group of developers in zig realtime graphics and applications, as it does not railroad you into
 using its app+windowing interface to function, and is better viewed as the following goals being accomplished without
@@ -83,17 +70,17 @@ and additionally a ready to go combination of all 3 that lets you just immediate
 OpenGL constructs to just work on your application with convenience for use as desktop application code such as
 Energy Saving mode.
 
-## Getting started
+# Getting Started
 
 First you'll want to clone this into your zig project's folder, and `const ztBuild = @import("path/to/ZT/build.zig")` 
 in your own `build.zig` to import this framework's build.zig, and that will expose some important functions
 to link ZT into your project.
 
-- `ztBuild.link("path/to/ZT/", b, exe, target)` will add ZT's packages to your exe and link the source files for GLFW/GL/ImGui
+- `ztBuild.link(b, exe, target)` will add ZT's packages to your exe and link the source files for GLFW/GL/ImGui
 - (optional) `ztBuild.addBinaryContent("path/to/binContent")` adds binary content to your zig-out folder output, basically the folder structure
 ends up being as if `path/to/binContent` was the root folder containing your executable. This is smart and will skip older assets.
 
-So with `ztBuild` imported you just `ztBuild.link("path/to/ZT/", b, exe, target)` and you can start importing and using
+So with `ztBuild` imported you just `ztBuild.link(b, exe, target)` and you can start importing and using
 ZT, or if you so choose, completely ignore ZT and use raw opengl/glfw/imgui.
 
 Then getting started is as easy as this:
@@ -115,6 +102,7 @@ fn main() !void {
     while(context.open) {
         context.beginFrame();
         // Application code here!
+        context.data.yourData += 1;
         context.endFrame();
     }
     // Unload here
@@ -123,9 +111,6 @@ fn main() !void {
 ```
 
 For a more indepth example [see the example file that shows opengl rendering mixed with imgui and more](example/src/main.zig)
-
-Note that anything related to zt.App directly is self contained, and if you so wish you can use all the abstractions without
-using the app interface for window management, if you just want the packages.
 
 ## Gotcha:
 
@@ -137,51 +122,6 @@ let me know and I'll see how I can enable your usecase within ZT.
 event, unless you disable vsync.
 - Need direct access to the input queue? Your context contains an ArrayList of tagged unions that summarizes every input event.
 Try to use this instead of overriding GLFW event callbacks.
-- Don't forget when building your application for distribution, if you want it to be lean you can build with `-Drelease-small` and package
-it with UPX after building! Small binaries are cool. (Note: Realizing now that UPX causes applications to be detected as viruses.)
-- Windows release builds currently do not use LTO as it is currently dropping `_tls_index` for ZT. This will be undone when that zig bug is fixed.
-
-## How Do I...
-
-- Show smooth animation in powersaving mode? 
-
-`context.queueAnimationFrames(seconds:f32)` will set a certain amount of seconds for powersaving to be temporarily
-disabled. Use this if you have smooth transitions that need to be displayed
-
-- Update the powersaving frame from an external source e.g threads?
-
-`context.forceUpdate()` will force the application to update and redraw by inputting an empty event into glfw.
-
-- Use an opengl texture in imgui?
-
-If youre using the `zt.gl.Texture` abstraction, its as simple as passing in `texture.imguiId()` as the id, otherwise
-you can pass in the opengl [texture id converted to a pointer, as done in texture.zig](src/zt/texture.zig)
-
-- Read inputs in zt.App?
-
-Inputs are forwarded into your `zt.App` context fields as `.input` which is an array list of inputs represented as
-a tagged union of all possible input types.
-
-- Draw font text?
-
-ZT's renderer does not cover anything more indepth than the basics, you'll want to implement your own font parsing for proper rendering. Note that
-you only really have to work on the font parsing, rendering a font is the same as any other sprite, and is easily
-done through the provided renderer's sprite functions.
-
-## Where is...
-
-### ImGui
-- [ZT Custom ImGui Components](src/zt/customComponents.zig)
-- [ImGui Bindings](src/pkg/imgui.zig)
-- [Demo](https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp)
-
-### ZT
-- [Math Source](src/pkg/zlm.zig) `zt.math`
-- [RenderTarget Abstraction](src/zt/renderTarget.zig)
-- [Shader Abstraction](src/zt/shader.zig) (Takes 2 strings to generate a shader program, easy to use with @embedFile)
-- [Texture Abstraction](src/zt/texture.zig) (This lets you load textures from file system and bind into opengl)
-- [Buffer Abstraction](src/zt/generateBuffer.zig) (This lets you generate a buffer pair for any given vertex struct that uses only float/vec2/vec3/vec4)
-- [Simple Renderer](src/zt/renderer.zig) This is a general purpose renderer that can draw sprites, lines, rectangles, and circles.
 
 ## Credits
 
