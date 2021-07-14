@@ -16,8 +16,6 @@ pub fn build(b: *std.build.Builder) void {
     });
     const mode = b.standardReleaseOptions();
 
-    std.debug.print("{s}\n", .{getRelativePath()});
-
     const exe = b.addExecutable("example", "example/src/main.zig");
     link(b, exe, target);
     exe.setTarget(target);
