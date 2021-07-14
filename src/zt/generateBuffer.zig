@@ -222,6 +222,18 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.shader.bind();
             if (loc != -1) {
                 switch (@TypeOf(uniform)) {
+                    bool => {
+                        glUniform1i(loc, if(uniform) 1 else 0);
+                        glErr("Setting a uniform bool(i32):");
+                    },
+                    i32 => {
+                        glUniform1i(loc, uniform);
+                        glErr("Setting a uniform i32:");
+                    },
+                    u32 => {
+                        glUniform1ui(loc, uniform);
+                        glErr("Setting a uniform u32:");
+                    },
                     f32 => {
                         glUniform1f(loc, uniform);
                         glErr("Setting a uniform f32:");
