@@ -26,6 +26,7 @@ pub const SampleData = struct {
     render: zt.game.Renderer = undefined,
     sheet: zt.gl.Texture = undefined,
     redShader: zt.gl.Shader = undefined,
+    consoleOpen:bool = true,
 };
 pub const SampleApplication = zt.App(SampleData);
 
@@ -71,12 +72,20 @@ pub fn main() !void {
 
 // This is a simple side panel that will display information about the scene, your context, and settings.
 fn inspectContext(ctx: *SampleApplication.Context) void {
+
+    // Basic toggle
+    const glfw = @import("glfw");
+    var io = igGetIO();
+    if(io.*.KeysDownDuration[glfw.GLFW_KEY_GRAVE_ACCENT] == 0.0) {
+        ctx.data.consoleOpen = !ctx.data.consoleOpen;
+    }
+    if(!ctx.data.consoleOpen) return;
+
     const flags =
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoResize;
 
-    var io = igGetIO();
     igSetNextWindowPos(zt.math.vec2(8, 8), ImGuiCond_Always, .{});
     igSetNextWindowSize(zt.math.vec2(300, io.*.DisplaySize.y - 16), ImGuiCond_Always);
     if (igBegin("Context Inspection", null, flags)) {

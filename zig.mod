@@ -1,5 +1,5 @@
-id: ks55utmw1wns4rtkzqtvhpobd2lcjo6tnhmdmgk9cupgwtex
+id: iz2vhqchpoifkzmhs6puc9lwgksgp3oxsp7qu8os78yxi1wx
 name: ZT
 main: build.zig
-license: MIT
-description: A Zig based Imgui Application framework
+description: A zig based Imgui Application framework
+dependencies:
