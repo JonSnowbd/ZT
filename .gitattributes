@@ -1,1 +1,3 @@
 src/dep/** linguist-vendored
+
+*.zig text eol=lf
