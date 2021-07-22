@@ -70,6 +70,13 @@ pub fn ztTextColor(comptime fmt: []const u8, color: ImVec4, args: anytype) void 
 /// Attempts to create a general editor for most structs, including math structs. This isnt always what you want, and in
 /// those cases its always better to layout your own editor. This is biased towards creating drag inputs.
 pub fn ztEditDrag(label: []const u8, speed: f32, ptr: anytype) bool {
+    // Array buffers are weird. Lets sort them out first.
+    const ti: std.builtin.TypeInfo = @typeInfo(@TypeOf(ptr.*));
+    if(ti == .Array) {
+        if(ti.Array.child == u8) {
+            return igInputText(label.ptr, ptr, @intCast(usize,ti.Array.len), ImGuiInputTextFlags_None, null, null);
+        }
+    }
     const fmax = std.math.f32_max;
     switch (@TypeOf(ptr)) {
         *bool => {
@@ -131,6 +138,13 @@ pub fn ztEditDrag(label: []const u8, speed: f32, ptr: anytype) bool {
 }
 
 pub fn ztEdit(label: []const u8, ptr: anytype) bool {
+    // Array buffers are weird. Lets sort them out first.
+    const ti: std.builtin.TypeInfo = @typeInfo(@TypeOf(ptr.*));
+    if(ti == .Array) {
+        if(ti.Array.child == u8) {
+            return igInputText(label.ptr, ptr, @intCast(usize,ti.Array.len), ImGuiInputTextFlags_None, null, null);
+        }
+    }
     switch (@TypeOf(ptr)) {
         *bool => {
             return igCheckbox(label.ptr, ptr);
