@@ -9,6 +9,8 @@ usingnamespace @import("glfw");
 usingnamespace @import("gl");
 usingnamespace @import("imgui");
 
+var initialized: bool = false;
+
 pub fn App(comptime Data: type) type {
     return struct {
         const Self = @This();
@@ -163,6 +165,20 @@ pub fn App(comptime Data: type) type {
             }
         };
 
+        /// If you need glfw to init before starting, use this to init glfw and
+        /// other libraries without actually spinning up the context.
+        pub fn preInit() void {
+            if(!initialized) {
+                if (glfwInit() < 0) {
+                    std.debug.panic("Failed to init GLFW", .{});
+                }
+
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+                initialized = true;
+            }
+        }
         pub fn begin(applicationAllocator: *std.mem.Allocator) *Context {
             var self: *Context = applicationAllocator.create(Context) catch unreachable;
             self.* = .{};
@@ -173,13 +189,7 @@ pub fn App(comptime Data: type) type {
             self.input = std.ArrayList(InputEvent).init(applicationAllocator);
             self.time = TimeManager.init();
 
-            if (glfwInit() < 0) {
-                std.debug.panic("Failed to init GLFW", .{});
-            }
-
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            preInit();
             self.window = glfwCreateWindow(800, 600, "ZT Application", null, null).?;
             self.open = true;
             glfwMakeContextCurrent(self.window);
@@ -196,10 +206,16 @@ pub fn App(comptime Data: type) type {
             _ = glfwSetMouseButtonCallback(self.window, mousebuttonCallback);
             _ = glfwSetCursorPosCallback(self.window, cursorCallback);
             _ = glfwSetScrollCallback(self.window, mouseWheelCallback);
+            _ = glfwSetWindowMaximizeCallback(self.window, windowMaximizeChanged);
 
             glClearColor(0.1, 0.1, 0.12, 1.0);
 
-            windowSizeChanged(self.window, 800, 600);
+            var width: c_int = 0;
+            var height: c_int = 0;
+            glfwGetWindowSize(self.window, &width, &height);
+            glViewport(0, 0, width, height);
+            var io = igGetIO();
+            io.*.DisplaySize = .{ .x = @intToFloat(f32, width), .y = @intToFloat(f32, height) };
 
             return self;
         }
@@ -210,6 +226,15 @@ pub fn App(comptime Data: type) type {
             glViewport(0, 0, newWidth, newHeight);
             var io = igGetIO();
             io.*.DisplaySize = .{ .x = @intToFloat(f32, newWidth), .y = @intToFloat(f32, newHeight) };
+        }
+        fn windowMaximizeChanged(win: ?*GLFWwindow, maximized: c_int) callconv(.C) void {
+            _ = maximized;
+            var width: c_int = 0;
+            var height: c_int = 0;
+            glfwGetWindowSize(win, &width, &height);
+            glViewport(0, 0, width, height);
+            var io = igGetIO();
+            io.*.DisplaySize = .{ .x = @intToFloat(f32, width), .y = @intToFloat(f32, height) };
         }
         fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
             var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfwGetWindowUserPointer(win).?));
