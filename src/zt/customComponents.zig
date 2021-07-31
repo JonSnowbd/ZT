@@ -2,16 +2,9 @@ const std = @import("std");
 const zt = @import("../zt.zig");
 usingnamespace @import("imgui");
 
-/// This is a simple viewport, it lays on the back of the window and lets other windows dock into it.
 /// You can't remove the background from this, but you can make it invisible with
 /// style.Colors.
-pub inline fn ztViewPort(left: f32, top: f32, right: f32, bottom: f32) void {
-    ztViewPortPro(.{ .x = left, .y = top, .z = right, .w = bottom });
-}
-/// Paddings order: L,T,R,B
-/// You can't remove the background from this, but you can make it invisible with
-/// style.Colors.
-pub fn ztViewPortPro(paddings: ImVec4) void {
+pub fn ztViewPort() ImGuiID {
     const dockNodeFlags = ImGuiDockNodeFlags_None;
     const windowFlags =
         ImGuiWindowFlags_NoCollapse |
@@ -24,12 +17,15 @@ pub fn ztViewPortPro(paddings: ImVec4) void {
         ImGuiWindowFlags_NoNavFocus |
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_NoFocusOnAppearing |
+        ImGuiWindowFlags_NoMouseInputs |
+        ImGuiWindowFlags_NoInputs |
         ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     var mainView = igGetMainViewport();
 
-    var pos: ImVec2 = .{ .x = mainView.*.Pos.x + paddings.x, .y = mainView.*.Pos.y + paddings.y };
-    var size: ImVec2 = .{ .x = mainView.*.Size.x - paddings.x - paddings.z, .y = mainView.*.Size.y - paddings.y - paddings.w };
+    var pos: ImVec2 = mainView.*.WorkPos;
+    var size: ImVec2 = mainView.*.WorkSize;
+
     igSetNextWindowPos(pos, ImGuiCond_Always, .{});
     igSetNextWindowSize(size, ImGuiCond_Always);
 
@@ -40,7 +36,10 @@ pub fn ztViewPortPro(paddings: ImVec4) void {
 
     igEnd();
     igPopStyleVar(1);
+
+    return id;
 }
+
 /// If you ever need to format a string for use inside imgui, this will work the same as any format function.
 pub inline fn fmtTextForImgui(comptime fmt: []const u8, args: anytype) []const u8 {
     var alloc = zt.Allocators.ring();
