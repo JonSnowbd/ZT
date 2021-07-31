@@ -446,8 +446,8 @@ pub const struct_ImGuiWindowSettings = extern struct {
 pub const ImGuiWindowSettings = struct_ImGuiWindowSettings;
 pub const ImGuiItemStatusFlags = c_int;
 pub const struct_ImRect = extern struct {
-    Min: ImVec2,
-    Max: ImVec2,
+    Min: ImVec2 = .{},
+    Max: ImVec2 = .{},
     pub fn init(x: f32, y: f32, w: f32, h: f32) @This() {
         return .{ .Min = .{ .x = x, .y = y }, .Max = .{ .x = w, .y = h } };
     }
