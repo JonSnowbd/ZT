@@ -5,7 +5,7 @@ usingnamespace @import("imgui");
 /// You can't remove the background from this, but you can make it invisible with
 /// style.Colors.
 pub fn ztViewPort() ImGuiID {
-    const dockNodeFlags = ImGuiDockNodeFlags_None;
+    const dockNodeFlags = ImGuiDockNodeFlags_PassthruCentralNode;
     const windowFlags =
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoDecoration |
