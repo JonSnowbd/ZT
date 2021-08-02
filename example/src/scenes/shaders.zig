@@ -17,17 +17,17 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
     render.updateCamera(.{}, scale, rotation);
 
     // Without a shader:
-    render.sprite(ctx.data.sheet, zt.math.vec2(-30,0), 0, zt.math.vec2(32, 32), zt.math.Vec4.white, zt.math.vec2(0.5, 0.5), zt.math.rect(16, 0, 16, 16));
+    render.sprite(ctx.data.sheet, zt.math.vec2(-30, 0), 0, zt.math.vec2(32, 32), zt.math.Vec4.white, zt.math.vec2(0.5, 0.5), zt.math.rect(16, 0, 16, 16));
 
-    if(shaderActive) {
+    if (shaderActive) {
         // Pushing and popping shaders is a one-stack deal, I don't see the need to have nested shaders.
         render.updateShader(&ctx.data.redShader);
-        render.sprite(ctx.data.sheet, zt.math.vec2(30,0), 0, zt.math.vec2(32, 32), zt.math.Vec4.white, zt.math.vec2(0.5, 0.5), zt.math.rect(16, 0, 16, 16));
+        render.sprite(ctx.data.sheet, zt.math.vec2(30, 0), 0, zt.math.vec2(32, 32), zt.math.Vec4.white, zt.math.vec2(0.5, 0.5), zt.math.rect(16, 0, 16, 16));
         render.updateShader(null);
 
         // and because of this, you can push as many times as you want, and pop once to get back to default.
     } else {
-        render.sprite(ctx.data.sheet, zt.math.vec2(30,0), 0, zt.math.vec2(32, 32), zt.math.Vec4.white, zt.math.vec2(0.5, 0.5), zt.math.rect(16, 0, 16, 16));
+        render.sprite(ctx.data.sheet, zt.math.vec2(30, 0), 0, zt.math.vec2(32, 32), zt.math.Vec4.white, zt.math.vec2(0.5, 0.5), zt.math.rect(16, 0, 16, 16));
     }
 
     render.flush();

@@ -26,7 +26,7 @@ pub const SampleData = struct {
     render: zt.game.Renderer = undefined,
     sheet: zt.gl.Texture = undefined,
     redShader: zt.gl.Shader = undefined,
-    consoleOpen:bool = true,
+    consoleOpen: bool = true,
 };
 pub const SampleApplication = zt.App(SampleData);
 
@@ -76,10 +76,10 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
     // Basic toggle
     const glfw = @import("glfw");
     var io = igGetIO();
-    if(io.*.KeysDownDuration[glfw.GLFW_KEY_GRAVE_ACCENT] == 0.0) {
+    if (io.*.KeysDownDuration[glfw.GLFW_KEY_GRAVE_ACCENT] == 0.0) {
         ctx.data.consoleOpen = !ctx.data.consoleOpen;
     }
-    if(!ctx.data.consoleOpen) return;
+    if (!ctx.data.consoleOpen) return;
 
     const flags =
         ImGuiWindowFlags_NoMove |

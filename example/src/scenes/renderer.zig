@@ -36,7 +36,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 
     // Text in the renderer is very rudimentary and not really intended for ingame use in world space.
     // All renderer does is add text to imgui's background drawlist. As such you should transform world to screenspace.
-    const message = 
+    const message =
         \\Sadly, text is forwarded by imgui and not affected by matrices.
         \\Note this also means nothing but imgui itself can be infront of this text.
         \\But fear not! It wouldn't be difficult to implement your own text if needed.

@@ -18,7 +18,7 @@ defaultShader: zt.gl.Shader = undefined,
 buildSize: zt.math.Vec2 = .{},
 resolution: i32 = 2,
 
-pub fn createShader(fragment:[*:0]const u8) zt.gl.Shader {
+pub fn createShader(fragment: [*:0]const u8) zt.gl.Shader {
     return zt.gl.Shader.init(VertShaderSource, fragment);
 }
 
@@ -58,9 +58,9 @@ pub fn updateCameraScreenSpace(self: *Self) void {
 }
 
 /// Sets the shader used by the internal buffer. Pass in null to revert to the default shader.
-pub fn updateShader(self:*Self, shader:?*zt.gl.Shader) void {
+pub fn updateShader(self: *Self, shader: ?*zt.gl.Shader) void {
     self.flush();
-    if(shader) |realShader| {
+    if (shader) |realShader| {
         self.internal.shader = realShader.*;
     } else {
         self.internal.shader = self.defaultShader;

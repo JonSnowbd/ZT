@@ -71,9 +71,9 @@ pub fn ztTextColor(comptime fmt: []const u8, color: ImVec4, args: anytype) void 
 pub fn ztEditDrag(label: []const u8, speed: f32, ptr: anytype) bool {
     // Array buffers are weird. Lets sort them out first.
     const ti: std.builtin.TypeInfo = @typeInfo(@TypeOf(ptr.*));
-    if(ti == .Array) {
-        if(ti.Array.child == u8) {
-            return igInputText(label.ptr, ptr, @intCast(usize,ti.Array.len), ImGuiInputTextFlags_None, null, null);
+    if (ti == .Array) {
+        if (ti.Array.child == u8) {
+            return igInputText(label.ptr, ptr, @intCast(usize, ti.Array.len), ImGuiInputTextFlags_None, null, null);
         }
     }
     const fmax = std.math.f32_max;
@@ -139,9 +139,9 @@ pub fn ztEditDrag(label: []const u8, speed: f32, ptr: anytype) bool {
 pub fn ztEdit(label: []const u8, ptr: anytype) bool {
     // Array buffers are weird. Lets sort them out first.
     const ti: std.builtin.TypeInfo = @typeInfo(@TypeOf(ptr.*));
-    if(ti == .Array) {
-        if(ti.Array.child == u8) {
-            return igInputText(label.ptr, ptr, @intCast(usize,ti.Array.len), ImGuiInputTextFlags_None, null, null);
+    if (ti == .Array) {
+        if (ti.Array.child == u8) {
+            return igInputText(label.ptr, ptr, @intCast(usize, ti.Array.len), ImGuiInputTextFlags_None, null, null);
         }
     }
     switch (@TypeOf(ptr)) {

@@ -223,7 +223,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             if (loc != -1) {
                 switch (@TypeOf(uniform)) {
                     bool => {
-                        glUniform1i(loc, if(uniform) 1 else 0);
+                        glUniform1i(loc, if (uniform) 1 else 0);
                         glErr("Setting a uniform bool(i32):");
                     },
                     i32 => {

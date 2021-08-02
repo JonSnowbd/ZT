@@ -168,7 +168,7 @@ pub fn App(comptime Data: type) type {
         /// If you need glfw to init before starting, use this to init glfw and
         /// other libraries without actually spinning up the context.
         pub fn preInit() void {
-            if(!initialized) {
+            if (!initialized) {
                 if (glfwInit() < 0) {
                     std.debug.panic("Failed to init GLFW", .{});
                 }
@@ -182,7 +182,7 @@ pub fn App(comptime Data: type) type {
         pub fn begin(applicationAllocator: *std.mem.Allocator) *Context {
             var self: *Context = applicationAllocator.create(Context) catch unreachable;
             self.* = .{};
-            if(Data != void) {
+            if (Data != void) {
                 self.data = .{};
             }
             self.allocator = applicationAllocator;
