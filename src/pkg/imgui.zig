@@ -1771,7 +1771,6 @@ pub const ImGuiTabBarFlags_ = enum(c_int) {
     FittingPolicyResizeDown = 64,
     FittingPolicyScroll = 128,
     FittingPolicyMask_ = 192,
-    FittingPolicyDefault_ = 64,
     _,
 };
 pub const ImGuiTabBarFlags_None = @enumToInt(ImGuiTabBarFlags_.None);
@@ -1784,7 +1783,7 @@ pub const ImGuiTabBarFlags_NoTooltip = @enumToInt(ImGuiTabBarFlags_.NoTooltip);
 pub const ImGuiTabBarFlags_FittingPolicyResizeDown = @enumToInt(ImGuiTabBarFlags_.FittingPolicyResizeDown);
 pub const ImGuiTabBarFlags_FittingPolicyScroll = @enumToInt(ImGuiTabBarFlags_.FittingPolicyScroll);
 pub const ImGuiTabBarFlags_FittingPolicyMask_ = @enumToInt(ImGuiTabBarFlags_.FittingPolicyMask_);
-pub const ImGuiTabBarFlags_FittingPolicyDefault_ = @enumToInt(ImGuiTabBarFlags_.FittingPolicyDefault_);
+pub const ImGuiTabBarFlags_FittingPolicyDefault_ = @enumToInt(ImGuiTabBarFlags_.FittingPolicyResizeDown);
 pub const ImGuiTabItemFlags_ = enum(c_int) {
     None = 0,
     UnsavedDocument = 1,
@@ -2713,7 +2712,6 @@ pub const ImGuiButtonFlagsPrivate_ = enum(c_int) {
     ImGuiButtonFlags_NoNavFocus = 262144,
     ImGuiButtonFlags_NoHoveredOnFocus = 524288,
     ImGuiButtonFlags_PressedOnMask_ = 1008,
-    ImGuiButtonFlags_PressedOnDefault_ = 32,
     _,
 };
 pub const ImGuiButtonFlags_PressedOnClick = @enumToInt(ImGuiButtonFlagsPrivate_.ImGuiButtonFlags_PressedOnClick);
@@ -2733,7 +2731,7 @@ pub const ImGuiButtonFlags_NoHoldingActiveId = @enumToInt(ImGuiButtonFlagsPrivat
 pub const ImGuiButtonFlags_NoNavFocus = @enumToInt(ImGuiButtonFlagsPrivate_.ImGuiButtonFlags_NoNavFocus);
 pub const ImGuiButtonFlags_NoHoveredOnFocus = @enumToInt(ImGuiButtonFlagsPrivate_.ImGuiButtonFlags_NoHoveredOnFocus);
 pub const ImGuiButtonFlags_PressedOnMask_ = @enumToInt(ImGuiButtonFlagsPrivate_.ImGuiButtonFlags_PressedOnMask_);
-pub const ImGuiButtonFlags_PressedOnDefault_ = @enumToInt(ImGuiButtonFlagsPrivate_.ImGuiButtonFlags_PressedOnDefault_);
+pub const ImGuiButtonFlags_PressedOnDefault_ = @enumToInt(ImGuiButtonFlagsPrivate_.ImGuiButtonFlags_PressedOnClickRelease);
 pub const ImGuiSliderFlagsPrivate_ = enum(c_int) {
     ImGuiSliderFlags_Vertical = 1048576,
     ImGuiSliderFlags_ReadOnly = 2097152,
