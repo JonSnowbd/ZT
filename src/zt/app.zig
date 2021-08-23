@@ -239,7 +239,11 @@ pub fn App(comptime Data: type) type {
         fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
             var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfwGetWindowUserPointer(win).?));
             var io = igGetIO();
-            io.*.KeysDown[@intCast(usize, key)] = if (action == GLFW_PRESS) true else false;
+            var pressed = false;
+            if(action == GLFW_PRESS or action == GLFW_REPEAT) {
+                pressed = true;
+            }
+            io.*.KeysDown[@intCast(usize, key)] = pressed;
             io.*.KeyShift = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_SHIFT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_SHIFT)];
             io.*.KeyCtrl = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_CONTROL)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_CONTROL)];
             io.*.KeyAlt = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_ALT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_ALT)];
@@ -263,15 +267,19 @@ pub fn App(comptime Data: type) type {
         fn mousebuttonCallback(win: ?*GLFWwindow, key: c_int, action: c_int, mods: c_int) callconv(.C) void {
             var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfwGetWindowUserPointer(win).?));
             var io = igGetIO();
+            var pressed = false;
+            if(action == GLFW_PRESS or action == GLFW_REPEAT) {
+                pressed = true;
+            }
             switch (key) {
                 GLFW_MOUSE_BUTTON_LEFT => {
-                    io.*.MouseDown[ImGuiMouseButton_Left] = if (action == GLFW_PRESS) true else false;
+                    io.*.MouseDown[ImGuiMouseButton_Left] = pressed;
                 },
                 GLFW_MOUSE_BUTTON_MIDDLE => {
-                    io.*.MouseDown[ImGuiMouseButton_Middle] = if (action == GLFW_PRESS) true else false;
+                    io.*.MouseDown[ImGuiMouseButton_Middle] = pressed;
                 },
                 GLFW_MOUSE_BUTTON_RIGHT => {
-                    io.*.MouseDown[ImGuiMouseButton_Right] = if (action == GLFW_PRESS) true else false;
+                    io.*.MouseDown[ImGuiMouseButton_Right] = pressed;
                 },
                 else => {},
             }
