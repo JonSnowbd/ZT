@@ -1,4 +1,4 @@
-usingnamespace @import("gl");
+const gl = @import("gl");
 
 const Self = @This();
 
@@ -13,36 +13,36 @@ pub fn from(shaderID: c_uint) @This() {
 pub fn init(vert: [*:0]const u8, frag: [*:0]const u8) @This() {
     var self = @This(){};
 
-    var vertId = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertId, 1, &vert, null);
-    glCompileShader(vertId);
+    var vertId = gl.glCreateShader(gl.GL_VERTEX_SHADER);
+    gl.glShaderSource(vertId, 1, &vert, null);
+    gl.glCompileShader(vertId);
 
-    var fragId = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragId, 1, &frag, null);
-    glCompileShader(fragId);
+    var fragId = gl.glCreateShader(gl.GL_FRAGMENT_SHADER);
+    gl.glShaderSource(fragId, 1, &frag, null);
+    gl.glCompileShader(fragId);
 
-    self.id = glCreateProgram();
-    glAttachShader(self.id, vertId);
-    glAttachShader(self.id, fragId);
-    glLinkProgram(self.id);
+    self.id = gl.glCreateProgram();
+    gl.glAttachShader(self.id, vertId);
+    gl.glAttachShader(self.id, fragId);
+    gl.glLinkProgram(self.id);
 
-    glDeleteShader(vertId);
-    glDeleteShader(fragId);
+    gl.glDeleteShader(vertId);
+    gl.glDeleteShader(fragId);
 
-    glUseProgram(0);
+    gl.glUseProgram(0);
 
     self.dead = false;
 
     return self;
 }
 pub fn deinit(self: *Self) void {
-    glDeleteProgram(self.id);
+    gl.glDeleteProgram(self.id);
     self.dead = true;
 }
 pub fn bind(self: *Self) void {
-    glUseProgram(self.id);
+    gl.glUseProgram(self.id);
 }
 pub fn unbind(self: *Self) void {
     _ = self;
-    glUseProgram(0);
+    gl.glUseProgram(0);
 }

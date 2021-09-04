@@ -1,6 +1,6 @@
 const std = @import("std");
 const stb = @import("stb_image");
-usingnamespace @import("gl");
+const gl = @import("gl");
 
 const Self = @This();
 
@@ -31,31 +31,31 @@ pub fn init(filePath: []const u8) !@This() {
     self.width = @intToFloat(f32, w);
     self.height = @intToFloat(f32, h);
 
-    glGenTextures(1, &self.id);
-    glBindTexture(GL_TEXTURE_2D, self.id);
+    gl.glGenTextures(1, &self.id);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
     switch (numChannels) {
         3 => {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, w, h, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, data);
         },
         4 => {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, w, h, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, data);
         },
         else => {
             std.debug.print("ERROR! Failed to compile texture {s} with {any} channels.\n", .{ filePath, numChannels });
-            glBindTexture(GL_TEXTURE_2D, 0);
+            gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
             return error.FailedToInit;
         },
     }
-    glGenerateMipmap(GL_TEXTURE_2D);
+    gl.glGenerateMipmap(gl.GL_TEXTURE_2D);
     stb.stbi_image_free(data);
     self.dead = false;
 
-    glBindTexture(GL_TEXTURE_2D, 0); // Init isnt an explicit bind, so reset.
+    gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Init isnt an explicit bind, so reset.
 
     return self;
 }
@@ -63,17 +63,17 @@ pub fn initBlank(width: c_int, height: c_int) @This() {
     var self = @This(){};
     self.width = @intToFloat(f32, width);
     self.height = @intToFloat(f32, height);
-    glGenTextures(1, &self.id);
-    glBindTexture(GL_TEXTURE_2D, self.id);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl.glGenTextures(1, &self.id);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
+    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, null);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
 
     return self;
 }
 pub fn deinit(self: *Self) void {
-    glDeleteTextures(1, &self.id);
+    gl.glDeleteTextures(1, &self.id);
     self.dead = true;
 }
 /// using Texture.from(c_uint) is a naive cast that wont query size to generate information.
@@ -81,30 +81,30 @@ fn updateInformation(self: *Self) void {
     self.bind();
     var w: c_int = 0;
     var h: c_int = 0;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
+    gl.glGetTexLevelParameteriv(gl.GL_TEXTURE_2D, 0, gl.GL_TEXTURE_WIDTH, &w);
+    gl.glGetTexLevelParameteriv(gl.GL_TEXTURE_2D, 0, gl.GL_TEXTURE_HEIGHT, &h);
     self.width = @intToFloat(f32, w);
     self.height = @intToFloat(f32, h);
 }
 pub fn bind(self: *Self) void {
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, self.id);
+    gl.glActiveTexture(gl.GL_TEXTURE0);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
 }
 pub fn unbind(self: *Self) void {
     _ = self;
-    glBindTexture(GL_TEXTURE_2D, 0);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
 }
 pub fn setNearestFilter(self: *Self) void {
-    glBindTexture(GL_TEXTURE_2D, self.id);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glBindTexture(GL_TEXTURE_2D, 0); // Clear
+    gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Clear
 }
 pub fn setLinearFilter(self: *Self) void {
-    glBindTexture(GL_TEXTURE_2D, self.id);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0); // Clear
+    gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Clear
 }
 /// Use this to get the correct Texture ID for use in imgui.
 pub fn imguiId(self: *Self) *c_void {

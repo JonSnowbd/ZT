@@ -5,9 +5,8 @@ const TimeManager = @import("timeManager.zig");
 
 const zt = @import("../zt.zig");
 const gl = @import("gl");
-usingnamespace @import("glfw");
-usingnamespace @import("gl");
-usingnamespace @import("imgui");
+const glfw = @import("glfw");
+const ig = @import("imgui");
 
 var initialized: bool = false;
 
@@ -50,7 +49,7 @@ pub fn App(comptime Data: type) type {
             allocator: *std.mem.Allocator = undefined,
             data: Data = undefined,
             settings: Settings = .{},
-            window: ?*GLFWwindow = undefined,
+            window: ?*glfw.GLFWwindow = undefined,
             input: std.ArrayList(InputEvent) = undefined,
             time: TimeManager = undefined,
             open: bool = false,
@@ -58,29 +57,29 @@ pub fn App(comptime Data: type) type {
             pub fn deinit(self: *Context) void {
                 self.input.deinit();
                 ImGuiImplementation.Shutdown();
-                glfwTerminate();
+                glfw.glfwTerminate();
                 self.allocator.destroy(self);
             }
 
             pub fn beginFrame(self: *Context) void {
                 _ = self;
-                glClear(GL_COLOR_BUFFER_BIT);
-                igNewFrame();
+                gl.glClear(gl.GL_COLOR_BUFFER_BIT);
+                ig.igNewFrame();
             }
             pub fn endFrame(self: *Context) void {
-                var io = igGetIO();
+                var io = ig.igGetIO();
                 // Render
                 if (self.settings.imguiActive) {
-                    igRender();
-                    var dd = igGetDrawData();
+                    ig.igRender();
+                    var dd = ig.igGetDrawData();
                     ImGuiImplementation.RenderDrawData(dd);
                 } else {
-                    igEndFrame();
+                    ig.igEndFrame();
                 }
                 self.input.items.len = 0;
 
-                glfwSwapBuffers(self.window);
-                glfwPollEvents();
+                glfw.glfwSwapBuffers(self.window);
+                glfw.glfwPollEvents();
 
                 self.time.tick();
                 io.*.DeltaTime = self.time.dt;
@@ -88,38 +87,38 @@ pub fn App(comptime Data: type) type {
                     if (self._updateSeconds > 0.0) {
                         self._updateSeconds -= self.time.dt;
                     } else {
-                        glfwWaitEvents();
+                        glfw.glfwWaitEvents();
                     }
                 }
 
-                self.open = glfwWindowShouldClose(self.window) == 0;
+                self.open = glfw.glfwWindowShouldClose(self.window) == 0;
             }
             pub fn setWindowSize(self: *Context, width: c_int, height: c_int) void {
-                glfwSetWindowSize(self.window, width, height);
+                glfw.glfwSetWindowSize(self.window, width, height);
             }
             pub fn setWindowTitle(self: *Context, string: []const u8) void {
-                glfwSetWindowTitle(self.window, string.ptr);
+                glfw.glfwSetWindowTitle(self.window, string.ptr);
             }
             pub fn setVsync(self: *Context, on: bool) void {
                 if (on) {
-                    glfwSwapInterval(1);
+                    glfw.glfwSwapInterval(1);
                 } else {
-                    glfwSwapInterval(0);
+                    glfw.glfwSwapInterval(0);
                 }
                 self.settings.vsync = on;
             }
             pub fn setWindowIcon(self: *Context, path: []const u8) void {
                 stb.stbi_set_flip_vertically_on_load(0);
-                var image = GLFWimage{ .width = 0, .height = 0, .pixels = null };
+                var image = glfw.GLFWimage{ .width = 0, .height = 0, .pixels = null };
                 image.pixels = stb.stbi_load(path.ptr, &image.width, &image.height, 0, 4);
                 if (image.width > 0 and image.height > 0) {
-                    glfwSetWindowIcon(self.window, 1, &image);
+                    glfw.glfwSetWindowIcon(self.window, 1, &image);
                     stb.stbi_image_free(image.pixels);
                 } else {
                     std.debug.print("Failed to load icon {s}", .{path});
                 }
             }
-            /// If you have an animation that needs to play you can queue an amount of seconds that will ignore energy saving.
+            /// If you have an animation that needs to play you can queue an amount of seconds that will ig.ignore energy saving.
             pub fn setAnimationFrames(self: *Context, seconds: f32) void {
                 self._updateSeconds = seconds;
             }
@@ -127,11 +126,11 @@ pub fn App(comptime Data: type) type {
             /// if you are using energy saving mode.
             pub fn forceUpdate(self: *Context) void {
                 _ = self;
-                glfwPostEmptyEvent();
+                glfw.glfwPostEmptyEvent();
             }
-            pub fn addFont(self: *Context, path: []const u8, pxSize: f32) *ImFont {
-                var io = igGetIO();
-                var newFont: *ImFont = ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, pxSize, null, ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
+            pub fn addFont(self: *Context, path: []const u8, pxSize: f32) *ig.ImFont {
+                var io = ig.igGetIO();
+                var newFont: *ig.ImFont = ig.ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, pxSize, null, ig.ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
                 self.rebuildFont();
                 return newFont;
             }
@@ -139,26 +138,26 @@ pub fn App(comptime Data: type) type {
             /// This is also called for you when you add and remove fonts.
             pub fn rebuildFont(self: *Context) void {
                 _ = self;
-                var io = igGetIO();
+                var io = ig.igGetIO();
                 // Delete the old texture
                 var texId = @intCast(c_uint, @ptrToInt(io.*.Fonts.*.TexID));
-                glDeleteTextures(1, &texId);
+                gl.glDeleteTextures(1, &texId);
 
                 // Generate new texture
                 var newTexId: c_uint = 0;
                 var pixels: [*c]u8 = undefined;
                 var fontTexWidth: i32 = undefined;
                 var fontTexHeight: i32 = undefined;
-                ImFontAtlas_GetTexDataAsRGBA32(io.*.Fonts, &pixels, &fontTexWidth, &fontTexHeight, null);
+                ig.ImFontAtlas_GetTexDataAsRGBA32(io.*.Fonts, &pixels, &fontTexWidth, &fontTexHeight, null);
 
                 // Upload texture to graphics system
-                glGenTextures(1, &newTexId);
-                glBindTexture(GL_TEXTURE_2D, newTexId);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                gl.glGenTextures(1, &newTexId);
+                gl.glBindTexture(gl.GL_TEXTURE_2D, newTexId);
+                gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
+                gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
                 if (@hasDecl(gl, "GL_UNPACK_ROW_LENGTH"))
-                    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fontTexWidth, fontTexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+                    gl.glPixelStorei(gl.GL_UNPACK_ROW_LENGTH, 0);
+                gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, fontTexWidth, fontTexHeight, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, pixels);
                 // Store our identifier
                 io.*.Fonts.*.TexID = @intToPtr(*c_void, newTexId);
                 ImGuiImplementation.g_FontTexture = newTexId;
@@ -169,13 +168,13 @@ pub fn App(comptime Data: type) type {
         /// other libraries without actually spinning up the context.
         pub fn preInit() void {
             if (!initialized) {
-                if (glfwInit() < 0) {
+                if (glfw.glfwInit() < 0) {
                     std.debug.panic("Failed to init GLFW", .{});
                 }
 
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+                glfw.glfwWindowHint(glfw.GLFW_CONTEXT_VERSION_MAJOR, 3);
+                glfw.glfwWindowHint(glfw.GLFW_CONTEXT_VERSION_MINOR, 3);
+                glfw.glfwWindowHint(glfw.GLFW_OPENGL_PROFILE, glfw.GLFW_OPENGL_CORE_PROFILE);
                 initialized = true;
             }
         }
@@ -190,63 +189,63 @@ pub fn App(comptime Data: type) type {
             self.time = TimeManager.init();
 
             preInit();
-            self.window = glfwCreateWindow(800, 600, "ZT Application", null, null).?;
+            self.window = glfw.glfwCreateWindow(800, 600, "ZT Application", null, null).?;
             self.open = true;
-            glfwMakeContextCurrent(self.window);
+            glfw.glfwMakeContextCurrent(self.window);
 
-            if (gladLoadGL() < 0) {
+            if (gl.gladLoadGL() < 0) {
                 std.debug.panic("Failed to init Glad GL Loader", .{});
             }
             ImGuiImplementation.init("#version 330");
 
-            glfwSetWindowUserPointer(self.window, self);
-            _ = glfwSetFramebufferSizeCallback(self.window, windowSizeChanged);
-            _ = glfwSetKeyCallback(self.window, inputCallback);
-            _ = glfwSetCharCallback(self.window, charCallback);
-            _ = glfwSetMouseButtonCallback(self.window, mousebuttonCallback);
-            _ = glfwSetCursorPosCallback(self.window, cursorCallback);
-            _ = glfwSetScrollCallback(self.window, mouseWheelCallback);
-            _ = glfwSetWindowMaximizeCallback(self.window, windowMaximizeChanged);
+            glfw.glfwSetWindowUserPointer(self.window, self);
+            _ = glfw.glfwSetFramebufferSizeCallback(self.window, windowSizeChanged);
+            _ = glfw.glfwSetKeyCallback(self.window, inputCallback);
+            _ = glfw.glfwSetCharCallback(self.window, charCallback);
+            _ = glfw.glfwSetMouseButtonCallback(self.window, mousebuttonCallback);
+            _ = glfw.glfwSetCursorPosCallback(self.window, cursorCallback);
+            _ = glfw.glfwSetScrollCallback(self.window, mouseWheelCallback);
+            _ = glfw.glfwSetWindowMaximizeCallback(self.window, windowMaximizeChanged);
 
-            glClearColor(0.1, 0.1, 0.12, 1.0);
+            gl.glClearColor(0.1, 0.1, 0.12, 1.0);
 
             var width: c_int = 0;
             var height: c_int = 0;
-            glfwGetWindowSize(self.window, &width, &height);
-            glViewport(0, 0, width, height);
-            var io = igGetIO();
+            glfw.glfwGetWindowSize(self.window, &width, &height);
+            gl.glViewport(0, 0, width, height);
+            var io = ig.igGetIO();
             io.*.DisplaySize = .{ .x = @intToFloat(f32, width), .y = @intToFloat(f32, height) };
 
             return self;
         }
 
         // Callbacks
-        fn windowSizeChanged(win: ?*GLFWwindow, newWidth: c_int, newHeight: c_int) callconv(.C) void {
+        fn windowSizeChanged(win: ?*glfw.GLFWwindow, newWidth: c_int, newHeight: c_int) callconv(.C) void {
             _ = win;
-            glViewport(0, 0, newWidth, newHeight);
-            var io = igGetIO();
+            gl.glViewport(0, 0, newWidth, newHeight);
+            var io = ig.igGetIO();
             io.*.DisplaySize = .{ .x = @intToFloat(f32, newWidth), .y = @intToFloat(f32, newHeight) };
         }
-        fn windowMaximizeChanged(win: ?*GLFWwindow, maximized: c_int) callconv(.C) void {
+        fn windowMaximizeChanged(win: ?*glfw.GLFWwindow, maximized: c_int) callconv(.C) void {
             _ = maximized;
             var width: c_int = 0;
             var height: c_int = 0;
-            glfwGetWindowSize(win, &width, &height);
-            glViewport(0, 0, width, height);
-            var io = igGetIO();
+            glfw.glfwGetWindowSize(win, &width, &height);
+            gl.glViewport(0, 0, width, height);
+            var io = ig.igGetIO();
             io.*.DisplaySize = .{ .x = @intToFloat(f32, width), .y = @intToFloat(f32, height) };
         }
-        fn inputCallback(win: ?*GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfwGetWindowUserPointer(win).?));
-            var io = igGetIO();
+        fn inputCallback(win: ?*glfw.GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
+            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+            var io = ig.igGetIO();
             var pressed = false;
-            if(action == GLFW_PRESS or action == GLFW_REPEAT) {
+            if(action == glfw.GLFW_PRESS or action == glfw.GLFW_REPEAT) {
                 pressed = true;
             }
             io.*.KeysDown[@intCast(usize, key)] = pressed;
-            io.*.KeyShift = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_SHIFT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_SHIFT)];
-            io.*.KeyCtrl = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_CONTROL)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_CONTROL)];
-            io.*.KeyAlt = io.*.KeysDown[@intCast(usize, GLFW_KEY_LEFT_ALT)] or io.*.KeysDown[@intCast(usize, GLFW_KEY_RIGHT_ALT)];
+            io.*.KeyShift = io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_LEFT_SHIFT)] or io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_RIGHT_SHIFT)];
+            io.*.KeyCtrl = io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_LEFT_CONTROL)] or io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_RIGHT_CONTROL)];
+            io.*.KeyAlt = io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_LEFT_ALT)] or io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_RIGHT_ALT)];
             context.input.append(.{ .keyboard = .{
                 .key = key,
                 .scan = scan,
@@ -254,9 +253,9 @@ pub fn App(comptime Data: type) type {
                 .mods = mods,
             } }) catch unreachable;
         }
-        fn mouseWheelCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfwGetWindowUserPointer(win).?));
-            var io = igGetIO();
+        fn mouseWheelCallback(win: ?*glfw.GLFWwindow, x: f64, y: f64) callconv(.C) void {
+            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+            var io = ig.igGetIO();
             io.*.MouseWheel = @floatCast(f32, y);
             io.*.MouseWheelH = @floatCast(f32, x);
             context.input.append(.{ .mouseWheel = .{
@@ -264,22 +263,22 @@ pub fn App(comptime Data: type) type {
                 .y = y,
             } }) catch unreachable;
         }
-        fn mousebuttonCallback(win: ?*GLFWwindow, key: c_int, action: c_int, mods: c_int) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfwGetWindowUserPointer(win).?));
-            var io = igGetIO();
+        fn mousebuttonCallback(win: ?*glfw.GLFWwindow, key: c_int, action: c_int, mods: c_int) callconv(.C) void {
+            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+            var io = ig.igGetIO();
             var pressed = false;
-            if(action == GLFW_PRESS or action == GLFW_REPEAT) {
+            if(action == glfw.GLFW_PRESS or action == glfw.GLFW_REPEAT) {
                 pressed = true;
             }
             switch (key) {
-                GLFW_MOUSE_BUTTON_LEFT => {
-                    io.*.MouseDown[ImGuiMouseButton_Left] = pressed;
+                glfw.GLFW_MOUSE_BUTTON_LEFT => {
+                    io.*.MouseDown[ig.ImGuiMouseButton_Left] = pressed;
                 },
-                GLFW_MOUSE_BUTTON_MIDDLE => {
-                    io.*.MouseDown[ImGuiMouseButton_Middle] = pressed;
+                glfw.GLFW_MOUSE_BUTTON_MIDDLE => {
+                    io.*.MouseDown[ig.ImGuiMouseButton_Middle] = pressed;
                 },
-                GLFW_MOUSE_BUTTON_RIGHT => {
-                    io.*.MouseDown[ImGuiMouseButton_Right] = pressed;
+                glfw.GLFW_MOUSE_BUTTON_RIGHT => {
+                    io.*.MouseDown[ig.ImGuiMouseButton_Right] = pressed;
                 },
                 else => {},
             }
@@ -289,19 +288,19 @@ pub fn App(comptime Data: type) type {
                 .mods = mods,
             } }) catch unreachable;
         }
-        fn cursorCallback(win: ?*GLFWwindow, x: f64, y: f64) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfwGetWindowUserPointer(win).?));
-            var io = igGetIO();
+        fn cursorCallback(win: ?*glfw.GLFWwindow, x: f64, y: f64) callconv(.C) void {
+            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+            var io = ig.igGetIO();
             io.*.MousePos = .{ .x = @floatCast(f32, x), .y = @floatCast(f32, y) };
             context.input.append(.{ .mousePosition = .{
                 .x = x,
                 .y = y,
             } }) catch unreachable;
         }
-        fn charCallback(win: ?*GLFWwindow, char: c_uint) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfwGetWindowUserPointer(win).?));
-            var io = igGetIO();
-            ImGuiIO_AddInputCharacter(io, char);
+        fn charCallback(win: ?*glfw.GLFWwindow, char: c_uint) callconv(.C) void {
+            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+            var io = ig.igGetIO();
+            ig.ImGuiIO_AddInputCharacter(io, char);
             context.input.append(.{ .character = .{
                 .value = char,
             } }) catch unreachable;

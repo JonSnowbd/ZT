@@ -1,7 +1,7 @@
 const std = @import("std");
 const zt = @import("zt");
-usingnamespace @import("imgui");
-usingnamespace zt.custom_components;
+const ig = @import("imgui");
+const zg = zt.custom_components;
 
 const scenes_n = [_][]const u8{
     "2D Rendering",
@@ -34,7 +34,7 @@ pub fn main() !void {
     var context = SampleApplication.begin(std.heap.c_allocator);
 
     // Lets customize!
-    var io = igGetIO();
+    var io = ig.igGetIO();
     var font = context.addFont(zt.path("public-sans.ttf"), 14.0);
     io.*.FontDefault = font;
 
@@ -75,45 +75,45 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
 
     // Basic toggle
     const glfw = @import("glfw");
-    var io = igGetIO();
+    var io = ig.igGetIO();
     if (io.*.KeysDownDuration[glfw.GLFW_KEY_GRAVE_ACCENT] == 0.0) {
         ctx.data.consoleOpen = !ctx.data.consoleOpen;
     }
     if (!ctx.data.consoleOpen) return;
 
     const flags =
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoResize;
+        ig.ImGuiWindowFlags_NoMove |
+        ig.ImGuiWindowFlags_NoTitleBar |
+        ig.ImGuiWindowFlags_NoResize;
 
-    igSetNextWindowPos(zt.math.vec2(8, 8), ImGuiCond_Always, .{});
-    igSetNextWindowSize(zt.math.vec2(300, io.*.DisplaySize.y - 16), ImGuiCond_Always);
-    if (igBegin("Context Inspection", null, flags)) {
-        igText("Data Settings");
-        // ztEdit("Current Scene", &ctx.data.currentScene);
-        if (igBeginListBox("##Listbox pog", .{})) {
+    ig.igSetNextWindowPos(zt.math.vec2(8, 8), ig.ImGuiCond_Always, .{});
+    ig.igSetNextWindowSize(zt.math.vec2(300, io.*.DisplaySize.y - 16), ig.ImGuiCond_Always);
+    if (ig.igBegin("Context Inspection", null, flags)) {
+        ig.igText("Data Settings");
+        // zg.ztEdit("Current Scene", &ctx.data.currentScene);
+        if (ig.igBeginListBox("##Listbox pog", .{})) {
             var i: usize = 0;
             while (i < scenes.len) : (i += 1) {
-                if (igSelectable_Bool(scenes_n[i].ptr, i == ctx.data.currentScene, ImGuiSelectableFlags_SpanAvailWidth, .{})) {
+                if (ig.igSelectable_Bool(scenes_n[i].ptr, i == ctx.data.currentScene, ig.ImGuiSelectableFlags_SpanAvailWidth, .{})) {
                     ctx.data.currentScene = i;
                 }
             }
-            igEndListBox();
+            ig.igEndListBox();
         }
-        igSeparator();
+        ig.igSeparator();
 
-        igText("Settings");
-        _ = ztEdit("Energy Saving", &ctx.settings.energySaving);
-        if (igCheckbox("V Sync", &ctx.settings.vsync)) {
+        ig.igText("Settings");
+        _ = zg.ztEdit("Energy Saving", &ctx.settings.energySaving);
+        if (ig.igCheckbox("V Sync", &ctx.settings.vsync)) {
             // The vsync setting is only a getter, setting it does nothing.
             // So on change, we follow through with the real call that changes it.
             ctx.setVsync(ctx.settings.vsync);
         }
-        _ = ztEdit("ImGui Active (Warning!!)", &ctx.settings.imguiActive);
-        igSeparator();
+        _ = zg.ztEdit("ig.ImGui Active (Warning!!)", &ctx.settings.imguiActive);
+        ig.igSeparator();
 
-        igText("Information");
-        ztText("{d:.1}fps", .{ctx.time.fps});
+        ig.igText("Information");
+        zg.ztText("{d:.1}fps", .{ctx.time.fps});
     }
-    igEnd();
+    ig.igEnd();
 }

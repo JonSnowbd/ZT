@@ -461,4 +461,3 @@ pub const GLFW_JOYSTICK_HAT_BUTTONS = @import("std").zig.c_translation.promoteIn
 pub const GLFW_COCOA_CHDIR_RESOURCES = @import("std").zig.c_translation.promoteIntLiteral(c_int, 0x00051001, .hexadecimal);
 pub const GLFW_COCOA_MENUBAR = @import("std").zig.c_translation.promoteIntLiteral(c_int, 0x00051002, .hexadecimal);
 pub const GLFW_DONT_CARE = -@as(c_int, 1);
-pub const GLAPIENTRY = APIENTRY;

@@ -1,25 +1,22 @@
 const gl = @import("gl");
 const std = @import("std");
-
 const zt = @import("../zt.zig");
 
-usingnamespace gl;
-
-fn glErr(msg: []const u8) void {
+fn reportErr(msg: []const u8) void {
     if (std.builtin.mode == .Debug) {
-        var err = glGetError();
-        while (err != GL_NO_ERROR) {
+        var err = gl.glGetError();
+        while (err != gl.GL_NO_ERROR) {
             switch (err) {
-                GL_INVALID_ENUM => {
+                gl.GL_INVALID_ENUM => {
                     std.debug.print("{s}\nOPENGL ERROR: INVALID ENUM\n", .{msg});
                 },
-                GL_INVALID_VALUE => {
+                gl.GL_INVALID_VALUE => {
                     std.debug.print("{s}\nOPENGL ERROR: INVALID VALUE\n", .{msg});
                 },
-                GL_INVALID_OPERATION => {
+                gl.GL_INVALID_OPERATION => {
                     std.debug.print("{s}\nOPENGL ERROR: INVALID OPERATION\n", .{msg});
                 },
-                GL_OUT_OF_MEMORY => {
+                gl.GL_OUT_OF_MEMORY => {
                     std.debug.print("{s}\nOPENGL ERROR: OUT OF MEMORY\n", .{msg});
                 },
                 else => {
@@ -27,7 +24,7 @@ fn glErr(msg: []const u8) void {
                 },
             }
 
-            err = glGetError();
+            err = gl.glGetError();
         }
     }
 }
@@ -45,7 +42,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
 
         vertices: [V]T = undefined,
         vertCount: usize = 0,
-        // Worst case scenario every single draw is a quad, so * 6.
+        // Worst case scenario every singl.gle draw is a quad, so * 6.
         indices: [V * 6]c_uint = undefined,
         indCount: usize = 0,
         shader: zt.gl.Shader = undefined,
@@ -56,15 +53,15 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             var self = @This(){};
             self.shader = shader;
 
-            glGenBuffers(1, &self.vboId);
-            glGenBuffers(1, &self.iboId);
+            gl.glGenBuffers(1, &self.vboId);
+            gl.glGenBuffers(1, &self.iboId);
 
             // Create VAO
-            glGenVertexArrays(1, &self.vaoId);
+            gl.glGenVertexArrays(1, &self.vaoId);
 
-            glBindVertexArray(self.vaoId);
-            glBindBuffer(GL_ARRAY_BUFFER, self.vboId);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.iboId);
+            gl.glBindVertexArray(self.vaoId);
+            gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vboId);
+            gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self.iboId);
 
             var currentOffset: usize = 0;
             var stride: c_int = @intCast(c_int, @sizeOf(T));
@@ -72,23 +69,23 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             inline for (std.meta.fields(T)) |field, i| {
                 switch (field.field_type) {
                     f32 => {
-                        glVertexAttribPointer(@intCast(c_uint, i), 1, GL_FLOAT, GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
-                        glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 4;
                     },
                     zt.math.Vec2 => {
-                        glVertexAttribPointer(@intCast(c_uint, i), 2, GL_FLOAT, GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
-                        glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 2, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 8;
                     },
                     zt.math.Vec3 => {
-                        glVertexAttribPointer(@intCast(c_uint, i), 3, GL_FLOAT, GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
-                        glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 3, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 12;
                     },
                     zt.math.Vec4 => {
-                        glVertexAttribPointer(@intCast(c_uint, i), 4, GL_FLOAT, GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
-                        glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 4, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += 16;
                     },
                     else => {
@@ -97,29 +94,29 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                 }
             }
 
-            glBindVertexArray(0);
+            gl.glBindVertexArray(0);
             return self;
         }
         pub fn deinit(self: *@This()) void {
-            glDeleteVertexArrays(1, &self.vaoId);
-            glDeleteBuffers(1, &self.vboId);
-            glDeleteBuffers(1, &self.iboId);
-            glErr("Deleting the buffers:");
+            gl.glDeleteVertexArrays(1, &self.vaoId);
+            gl.glDeleteBuffers(1, &self.vboId);
+            gl.glDeleteBuffers(1, &self.iboId);
+            reportErr("Deleting the buffers:");
         }
         pub fn bind(self: *@This()) void {
-            glBindVertexArray(self.vaoId);
+            gl.glBindVertexArray(self.vaoId);
             self.shader.bind();
-            glBindBuffer(GL_ARRAY_BUFFER, self.vboId);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.iboId);
-            glErr("Binding the buffers:");
+            gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vboId);
+            gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self.iboId);
+            reportErr("Binding the buffers:");
         }
         pub fn unbind(self: *@This()) void {
             _ = self;
-            glBindVertexArray(0);
+            gl.glBindVertexArray(0);
             self.shader.unbind();
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            glErr("Unbinding the buffers:");
+            gl.glBindBuffer(gl.GL_ARRAY_BUFFER, 0);
+            gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, 0);
+            reportErr("Unbinding the buffers:");
         }
         pub fn clear(self: *@This()) void {
             self.vertCount = 0;
@@ -163,7 +160,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.indCount += 6;
             self.dirty = true;
         }
-        /// Commits to opengl with the currently added sprites in a static memory location. Use this if you are going
+        /// Commits to opengl.gl with the currently added sprites in a static memory location. Use this if you are going
         /// to very rarely push again. You can still flush as many times as needed.
         pub fn pushStatic(self: *@This()) void {
             if (!self.dirty) {
@@ -172,12 +169,12 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.bind();
             var vertSize: c_longlong = @intCast(c_longlong, @sizeOf(T) * self.vertCount);
             var indSize: c_longlong = @intCast(c_longlong, @sizeOf(c_uint) * self.indCount);
-            glBufferData(GL_ARRAY_BUFFER, vertSize, &self.vertices, GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, GL_STATIC_DRAW);
+            gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_STATIC_DRAW);
+            gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_STATIC_DRAW);
             self.unbind();
             self.dirty = false;
         }
-        /// Commits to opengl with the currently added sprites in a dynamic memory location. Use this if you are pushing
+        /// Commits to opengl.gl with the currently added sprites in a dynamic memory location. Use this if you are pushing
         /// and flushing once a frame.
         pub fn pushDynamic(self: *@This()) void {
             if (!self.dirty) {
@@ -186,12 +183,12 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.bind();
             var vertSize: c_longlong = @intCast(c_longlong, @sizeOf(T) * self.vertCount);
             var indSize: c_longlong = @intCast(c_longlong, @sizeOf(c_uint) * self.indCount);
-            glBufferData(GL_ARRAY_BUFFER, vertSize, self.vertices[0..self.vertCount], GL_DYNAMIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indSize, self.indices[0..self.indCount], GL_DYNAMIC_DRAW);
+            gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, self.vertices[0..self.vertCount], gl.GL_DYNAMIC_DRAW);
+            gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, self.indices[0..self.indCount], gl.GL_DYNAMIC_DRAW);
             self.unbind();
             self.dirty = false;
         }
-        /// Commits to opengl with the currently added sprites in a streaming memory location. Use this if you are going
+        /// Commits to opengl.gl with the currently added sprites in a streaming memory location. Use this if you are going
         /// to be pushing and flushing multiple times per frame.
         pub fn pushStream(self: *@This()) void {
             if (!self.dirty) {
@@ -200,59 +197,59 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.bind();
             var vertSize = @intCast(c_longlong, @sizeOf(T) * self.vertCount);
             var indSize = @intCast(c_longlong, @sizeOf(c_uint) * self.indCount);
-            glBufferData(GL_ARRAY_BUFFER, vertSize, &self.vertices, GL_STREAM_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, GL_STREAM_DRAW);
+            gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_STREAM_DRAW);
+            gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_STREAM_DRAW);
             self.unbind();
             self.dirty = false;
-            glErr("Pushing the buffers:");
+            reportErr("Pushing the buffers:");
         }
 
         /// Draws the currently pushed data to the screen. Note the data is not cleared, leaving you the option to maintain
         /// the current vertices every frame if so desired.
         pub fn flush(self: *@This()) void {
             self.bind();
-            glDrawElements(GL_TRIANGLES, @intCast(c_int, self.indCount), GL_UNSIGNED_INT, null);
+            gl.glDrawElements(gl.GL_TRIANGLES, @intCast(c_int, self.indCount), gl.GL_UNSIGNED_INT, null);
             self.unbind();
-            glErr("Flushing the buffers:");
+            reportErr("Flushing the buffers:");
         }
 
         pub fn setUniform(self: *@This(), comptime uniName: []const u8, uniform: anytype) void {
             _ = self;
-            var loc: c_int = glGetUniformLocation(self.shader.id, uniName.ptr);
+            var loc: c_int = gl.glGetUniformLocation(self.shader.id, uniName.ptr);
             self.shader.bind();
             if (loc != -1) {
                 switch (@TypeOf(uniform)) {
                     bool => {
-                        glUniform1i(loc, if (uniform) 1 else 0);
-                        glErr("Setting a uniform bool(i32):");
+                        gl.glUniform1i(loc, if (uniform) 1 else 0);
+                        reportErr("Setting a uniform bool(i32):");
                     },
                     i32 => {
-                        glUniform1i(loc, uniform);
-                        glErr("Setting a uniform i32:");
+                        gl.glUniform1i(loc, uniform);
+                        reportErr("Setting a uniform i32:");
                     },
                     u32 => {
-                        glUniform1ui(loc, uniform);
-                        glErr("Setting a uniform u32:");
+                        gl.glUniform1ui(loc, uniform);
+                        reportErr("Setting a uniform u32:");
                     },
                     f32 => {
-                        glUniform1f(loc, uniform);
-                        glErr("Setting a uniform f32:");
+                        gl.glUniform1f(loc, uniform);
+                        reportErr("Setting a uniform f32:");
                     },
                     zt.math.Vec2 => {
-                        glUniform2f(loc, uniform.x, uniform.y);
-                        glErr("Setting a uniform vec2:");
+                        gl.glUniform2f(loc, uniform.x, uniform.y);
+                        reportErr("Setting a uniform vec2:");
                     },
                     zt.math.Vec3 => {
-                        glUniform3f(loc, uniform.x, uniform.y, uniform.z);
-                        glErr("Setting a uniform vec3:");
+                        gl.glUniform3f(loc, uniform.x, uniform.y, uniform.z);
+                        reportErr("Setting a uniform vec3:");
                     },
                     zt.math.Vec4 => {
-                        glUniform4f(loc, uniform.x, uniform.y, uniform.z, uniform.w);
-                        glErr("Setting a uniform vec4:");
+                        gl.glUniform4f(loc, uniform.x, uniform.y, uniform.z, uniform.w);
+                        reportErr("Setting a uniform vec4:");
                     },
                     zt.math.Mat4 => {
-                        glUniformMatrix4fv(loc, 1, 0, &uniform.inlined());
-                        glErr("Setting a uniform mat4:");
+                        gl.glUniformMatrix4fv(loc, 1, 0, &uniform.inlined());
+                        reportErr("Setting a uniform mat4:");
                     },
                     else => {
                         @compileError("You cannot use that type in a genbuffer's uniform.");
@@ -260,7 +257,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                 }
             }
             self.shader.unbind();
-            glErr("Setting a uniform (location not found):");
+            reportErr("Setting a uniform (location not found):");
         }
     };
 }

@@ -1,7 +1,7 @@
 const zt = @import("zt");
 const main = @import("../main.zig");
-usingnamespace @import("imgui");
-usingnamespace zt.custom_components;
+const ig = @import("imgui");
+const zg = zt.custom_components;
 
 var rotation: f32 = 0.0;
 var scale: f32 = 1.0;
@@ -18,7 +18,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
     control(ctx);
 
     var render = ctx.data.render;
-    var io = igGetIO();
+    var io = ig.igGetIO();
 
     // It's important to set the render size, then the camera. This applies the matrices used to display all the sprites.
     render.updateRenderSize(io.*.DisplaySize);
@@ -59,22 +59,22 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control(ctx: *main.SampleApplication.Context) void {
-    var io = igGetIO();
-    igSetNextWindowPos(io.*.DisplaySize, ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
-    if (igBegin("Renderer Demo Settings", null, ImGuiWindowFlags_None)) {
-        igPushItemWidth(igGetWindowWidth() * 0.5);
-        _ = igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ImGuiSliderFlags_None);
-        _ = igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ImGuiSliderFlags_None);
-        igSeparator();
-        _ = ztEditDrag("Line Start", 0.1, &lineStart);
-        _ = ztEditDrag("Line End", 0.1, &lineEnd);
-        _ = ztEditDrag("Line Thickness", 0.1, &thickness);
-        _ = ztEditDrag("Line Start color", 0.1, &startColor);
-        _ = ztEditDrag("Line End color", 0.1, &endColor);
-        igSeparator();
-        _ = ztEditDrag("Circle Radius", 0.1, &radius);
-        _ = ztEditDrag("Circle Resolution", 0.1, &ctx.data.render.resolution);
-        igPopItemWidth();
+    var io = ig.igGetIO();
+    ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
+    if (ig.igBegin("Renderer Demo Settings", null, ig.ImGuiWindowFlags_None)) {
+        ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);
+        _ = ig.igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ig.ImGuiSliderFlags_None);
+        _ = ig.igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ig.ImGuiSliderFlags_None);
+        ig.igSeparator();
+        _ = zg.ztEditDrag("Line Start", 0.1, &lineStart);
+        _ = zg.ztEditDrag("Line End", 0.1, &lineEnd);
+        _ = zg.ztEditDrag("Line Thickness", 0.1, &thickness);
+        _ = zg.ztEditDrag("Line Start color", 0.1, &startColor);
+        _ = zg.ztEditDrag("Line End color", 0.1, &endColor);
+        ig.igSeparator();
+        _ = zg.ztEditDrag("Circle Radius", 0.1, &radius);
+        _ = zg.ztEditDrag("Circle Resolution", 0.1, &ctx.data.render.resolution);
+        ig.igPopItemWidth();
     }
-    igEnd();
+    ig.igEnd();
 }

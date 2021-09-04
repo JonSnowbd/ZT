@@ -1,7 +1,7 @@
 const zt = @import("zt");
 const main = @import("../main.zig");
-usingnamespace @import("imgui");
-usingnamespace zt.custom_components;
+const ig = @import("imgui");
+const zg = zt.custom_components;
 
 var rotation: f32 = 0.0;
 var scale: f32 = 1.0;
@@ -23,7 +23,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
     control();
 
     var render = ctx.data.render;
-    var io = igGetIO();
+    var io = ig.igGetIO();
 
     // It's important to set the render size, then the camera. This applies the matrices used to display all the sprites.
     render.updateRenderSize(io.*.DisplaySize);
@@ -86,19 +86,19 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control() void {
-    var io = igGetIO();
-    igSetNextWindowPos(io.*.DisplaySize, ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
-    if (igBegin("Renderer Demo Settings", null, ImGuiWindowFlags_None)) {
-        igPushItemWidth(igGetWindowWidth() * 0.5);
-        _ = igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ImGuiSliderFlags_None);
-        _ = igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ImGuiSliderFlags_None);
-        igSeparator();
-        _ = ztEditDrag("Line Pos", 0.1, &linePos);
-        _ = ztEditDrag("Rect Pos", 0.1, &rectPos);
-        _ = ztEditDrag("Circle Pos", 0.1, &circlePos);
-        _ = ztEditDrag("Point Pos", 0.1, &pointPos);
-        _ = ztEditDrag("Poly Pos", 0.1, &polyPos);
-        igPopItemWidth();
+    var io = ig.igGetIO();
+    ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
+    if (ig.igBegin("Renderer Demo Settings", null, ig.ImGuiWindowFlags_None)) {
+        ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);
+        _ = ig.igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ig.ImGuiSliderFlags_None);
+        _ = ig.igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ig.ImGuiSliderFlags_None);
+        ig.igSeparator();
+        _ = zg.ztEditDrag("Line Pos", 0.1, &linePos);
+        _ = zg.ztEditDrag("Rect Pos", 0.1, &rectPos);
+        _ = zg.ztEditDrag("Circle Pos", 0.1, &circlePos);
+        _ = zg.ztEditDrag("Point Pos", 0.1, &pointPos);
+        _ = zg.ztEditDrag("Poly Pos", 0.1, &polyPos);
+        ig.igPopItemWidth();
     }
-    igEnd();
+    ig.igEnd();
 }

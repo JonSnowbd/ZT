@@ -1,7 +1,6 @@
 const std = @import("std");
 const zt = @import("../zt.zig");
-
-usingnamespace @import("gl");
+const gl = @import("gl");
 
 const Self = @This();
 pub const VertShaderSource = @embedFile("shader/renderer.vertex");
@@ -266,8 +265,8 @@ pub fn flush(self: *Self) void {
     if (self.currentTexture == null or self.internal.indCount == 0) {
         return;
     }
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    gl.glEnable(gl.GL_BLEND);
+    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
     self.internal.setUniform("View", self.viewMatrix);
     self.internal.setUniform("Projection", self.projectionMatrix);
     self.internal.pushStream();

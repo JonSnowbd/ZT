@@ -1,8 +1,8 @@
 const std = @import("std");
 const zt = @import("zt");
 const main = @import("../main.zig");
-usingnamespace @import("imgui");
-usingnamespace zt.custom_components;
+const ig = @import("imgui");
+const zg = zt.custom_components;
 
 const Hash = zt.game.SpatialHash.Generate(usize, .{ .bucketSize = 80 });
 var rng: std.rand.Xoroshiro128 = undefined;
@@ -45,7 +45,7 @@ var currentStyle: queryStyle = .point;
 
 pub fn update(ctx: *main.SampleApplication.Context) void {
     // Basic scene initialization:
-    var io = igGetIO();
+    var io = ig.igGetIO();
     sceneSetup(ctx);
 
     var render = ctx.data.render;
@@ -78,7 +78,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
         .line => {
             const lineCol = zt.math.vec4(0.0, 0.0, 0.0, 1.0);
             var mouse = render.screenToWorld(io.*.MousePos);
-            if (!io.*.MouseDown[ImGuiMouseButton_Left]) {
+            if (!io.*.MouseDown[ig.ImGuiMouseButton_Left]) {
                 line_Q = mouse;
             } else {}
             var query = hash.queryLine(line_Q, mouse);
@@ -96,7 +96,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
         .rect => {
             const lineCol = zt.math.vec4(0.0, 0.0, 0.0, 1.0);
             var mouse = render.screenToWorld(io.*.MousePos);
-            if (!io.*.MouseDown[ImGuiMouseButton_Left]) {
+            if (!io.*.MouseDown[ig.ImGuiMouseButton_Left]) {
                 rect_Q.position = mouse;
             } else {
                 rect_Q.size = mouse.sub(rect_Q.position);
@@ -120,23 +120,23 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control() void {
-    var io = igGetIO();
-    igSetNextWindowPos(io.*.DisplaySize, ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
-    if (igBegin("Spatial Hash Demo", null, ImGuiWindowFlags_None)) {
-        igPushItemWidth(igGetWindowWidth() * 0.5);
-        _ = igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ImGuiSliderFlags_None);
-        _ = igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ImGuiSliderFlags_None);
-        igSeparator();
-        _ = ztEditDrag("Within Bounds", 2, &bounds);
+    var io = ig.igGetIO();
+    ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
+    if (ig.igBegin("Spatial Hash Demo", null, ig.ImGuiWindowFlags_None)) {
+        ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);
+        _ = ig.igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ig.ImGuiSliderFlags_None);
+        _ = ig.igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ig.ImGuiSliderFlags_None);
+        ig.igSeparator();
+        _ = zg.ztEditDrag("Within Bounds", 2, &bounds);
 
         var generation: ?usize = null;
-        if (igButton("Spawn 10 items", .{})) {
+        if (ig.igButton("Spawn 10 items", .{})) {
             generation = 10;
         }
-        if (igButton("Spawn 100 items", .{})) {
+        if (ig.igButton("Spawn 100 items", .{})) {
             generation = 100;
         }
-        if (igButton("Spawn 1000 items", .{})) {
+        if (ig.igButton("Spawn 1000 items", .{})) {
             generation = 1000;
         }
 
@@ -152,27 +152,27 @@ fn control() void {
             }
             spawned += @intCast(i32, len);
         }
-        if (igBeginListBox("## INPUT STYLE", .{})) {
-            if (igSelectable_Bool("Point", currentStyle == .point, ImGuiSelectableFlags_SpanAvailWidth, .{})) {
+        if (ig.igBeginListBox("## INPUT STYLE", .{})) {
+            if (ig.igSelectable_Bool("Point", currentStyle == .point, ig.ImGuiSelectableFlags_SpanAvailWidth, .{})) {
                 currentStyle = .point;
             }
-            if (igSelectable_Bool("Line", currentStyle == .line, ImGuiSelectableFlags_SpanAvailWidth, .{})) {
+            if (ig.igSelectable_Bool("Line", currentStyle == .line, ig.ImGuiSelectableFlags_SpanAvailWidth, .{})) {
                 currentStyle = .line;
             }
-            if (igSelectable_Bool("Rect", currentStyle == .rect, ImGuiSelectableFlags_SpanAvailWidth, .{})) {
+            if (ig.igSelectable_Bool("Rect", currentStyle == .rect, ig.ImGuiSelectableFlags_SpanAvailWidth, .{})) {
                 currentStyle = .rect;
             }
-            igEndListBox();
+            ig.igEndListBox();
         }
-        ztTextWrap("You've spawned {any} squares.", .{spawned});
-        igTextWrapped("Use middle mouse to scroll, and mousewheel to zoom");
-        igPopItemWidth();
+        zg.ztTextWrap("You've spawned {any} squares.", .{spawned});
+        ig.igTextWrapped("Use middle mouse to scroll, and mousewheel to zoom");
+        ig.igPopItemWidth();
     }
-    igEnd();
+    ig.igEnd();
 }
 
 fn sceneSetup(ctx: *main.SampleApplication.Context) void {
-    var io = igGetIO();
+    var io = ig.igGetIO();
     if (!inited) {
         rng = std.rand.Xoroshiro128.init(13578457);
         array = std.ArrayList(blip).init(ctx.allocator);
@@ -180,7 +180,7 @@ fn sceneSetup(ctx: *main.SampleApplication.Context) void {
         inited = true;
     }
     // Mouse Controls for this scene, pretty convenient considering the aabb size.
-    if (io.*.MouseDown[ImGuiMouseButton_Middle]) {
+    if (io.*.MouseDown[ig.ImGuiMouseButton_Middle]) {
         pos = pos.add(io.*.MouseDelta.scaleDiv(scale));
     }
     if (io.*.MouseWheel != 0) {

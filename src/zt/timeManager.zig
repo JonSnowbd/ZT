@@ -1,5 +1,5 @@
 const std = @import("std");
-usingnamespace @import("glfw");
+const glfw = @import("glfw");
 
 const Self = @This();
 
@@ -13,7 +13,7 @@ pub fn init() @This() {
     return .{};
 }
 pub fn tick(self: *Self) void {
-    var lap = glfwGetTime();
+    var lap = glfw.glfwGetTime();
 
     // No need to worry about overflow, unless a frame intends to last for over a month.
     self.dt = @floatCast(f32, lap - self._previous);

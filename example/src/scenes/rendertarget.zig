@@ -1,7 +1,7 @@
 const zt = @import("zt");
 const main = @import("../main.zig");
-usingnamespace @import("imgui");
-usingnamespace zt.custom_components;
+const ig = @import("imgui");
+const zg = zt.custom_components;
 
 var rotation: f32 = 0.0;
 var zoom: f32 = 1.0;
@@ -15,7 +15,7 @@ fn ensure() void {
 }
 
 pub fn update(ctx: *main.SampleApplication.Context) void {
-    var io = igGetIO();
+    var io = ig.igGetIO();
     ensure();
     control(ctx);
     var render = ctx.data.render;
@@ -33,42 +33,42 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control(ctx: *main.SampleApplication.Context) void {
-    var io = igGetIO();
-    igSetNextWindowPos(io.*.DisplaySize, ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
-    if (igBegin("RenderTarget Demo Settings", null, ImGuiWindowFlags_None)) {
-        igPushItemWidth(igGetWindowWidth() * 0.5);
-        _ = igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ImGuiSliderFlags_None);
-        _ = igDragFloat("Camera Zoom", &zoom, 0.02, 0.1, 16, "%.3f", ImGuiSliderFlags_None);
-        igPopItemWidth();
+    var io = ig.igGetIO();
+    ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
+    if (ig.igBegin("RenderTarget Demo Settings", null, ig.ImGuiWindowFlags_None)) {
+        ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);
+        _ = ig.igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ig.ImGuiSliderFlags_None);
+        _ = ig.igDragFloat("Camera Zoom", &zoom, 0.02, 0.1, 16, "%.3f", ig.ImGuiSliderFlags_None);
+        ig.igPopItemWidth();
     }
-    igEnd();
+    ig.igEnd();
 
     // Display the rendertarget
-    igSetNextWindowPos(zt.math.vec2(io.*.DisplaySize.x, 0), ImGuiCond_Appearing, .{ .x = 1, .y = 0 });
-    if (igBegin("RenderTarget Demo Viewer", null, ImGuiWindowFlags_NoScrollbar)) {
+    ig.igSetNextWindowPos(zt.math.vec2(io.*.DisplaySize.x, 0), ig.ImGuiCond_Appearing, .{ .x = 1, .y = 0 });
+    if (ig.igBegin("RenderTarget Demo Viewer", null, ig.ImGuiWindowFlags_NoScrollbar)) {
         var contentSpace: zt.math.Vec2 = .{};
-        igGetContentRegionAvail(&contentSpace);
+        ig.igGetContentRegionAvail(&contentSpace);
         var ratio = contentSpace.x / rt.?.target.width;
 
         // With opengl and imgui, you need to flip the y source vectors.
         var uv1 = zt.math.vec2(0, 1);
         var uv2 = zt.math.vec2(1, 0);
         var size = zt.math.vec2(contentSpace.x, rt.?.target.height * ratio);
-        igImage(rt.?.target.imguiId(), size, uv1, uv2, zt.math.Vec4.white, zt.math.Vec4.white);
+        ig.igImage(rt.?.target.imguiId(), size, uv1, uv2, zt.math.Vec4.white, zt.math.Vec4.white);
 
-        if (igButton("Update RT", .{})) {
+        if (ig.igButton("Update RT", .{})) {
             drawIntoRT(ctx);
         }
-        igSameLine(0, 2);
-        if (igButton("Nearest", .{})) {
+        ig.igSameLine(0, 2);
+        if (ig.igButton("Nearest", .{})) {
             rt.?.target.setNearestFilter();
         }
-        igSameLine(0, 2);
-        if (igButton("Linear", .{})) {
+        ig.igSameLine(0, 2);
+        if (ig.igButton("Linear", .{})) {
             rt.?.target.setLinearFilter();
         }
     }
-    igEnd();
+    ig.igEnd();
 }
 
 fn drawIntoRT(ctx: *main.SampleApplication.Context) void {
