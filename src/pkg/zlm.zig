@@ -262,6 +262,11 @@ pub fn specializeOn(comptime Real: type) type {
                     (vec.x * mat.fields[0][1]) + (vec.y * mat.fields[1][1]) + mat.fields[3][1],
                 );
             }
+
+            /// Assumes you are rotating around the 0,0 origin.
+            pub fn rotate(vec: Vec2, radians: f32) Vec2 {
+                return vec.transform4(Mat4.createZRotation(radians));
+            }
         };
 
         /// 3-dimensional vector type.
