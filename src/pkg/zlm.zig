@@ -271,7 +271,6 @@ pub fn specializeOn(comptime Real: type) type {
 
         /// 3-dimensional vector type.
         pub const Vec3 = extern struct {
-
             x: Real = 0,
             y: Real = 0,
             z: Real = 0,
@@ -783,6 +782,5 @@ pub fn toRadians(deg: anytype) @TypeOf(deg) {
 pub fn toDegrees(rad: anytype) @TypeOf(rad) {
     return 180.0 * rad / std.math.pi;
 }
-
 
 pub usingnamespace specializeOn(f32);

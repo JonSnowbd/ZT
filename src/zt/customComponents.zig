@@ -2,7 +2,6 @@ const std = @import("std");
 const zt = @import("../zt.zig");
 const ig = @import("imgui");
 
-
 /// You can't remove the background from this, but you can make it invisible with
 /// style.Colors.
 pub fn ztViewPort() ig.ImGuiID {

@@ -239,7 +239,7 @@ pub fn App(comptime Data: type) type {
             var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
             var io = ig.igGetIO();
             var pressed = false;
-            if(action == glfw.GLFW_PRESS or action == glfw.GLFW_REPEAT) {
+            if (action == glfw.GLFW_PRESS or action == glfw.GLFW_REPEAT) {
                 pressed = true;
             }
             io.*.KeysDown[@intCast(usize, key)] = pressed;
@@ -267,7 +267,7 @@ pub fn App(comptime Data: type) type {
             var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
             var io = ig.igGetIO();
             var pressed = false;
-            if(action == glfw.GLFW_PRESS or action == glfw.GLFW_REPEAT) {
+            if (action == glfw.GLFW_PRESS or action == glfw.GLFW_REPEAT) {
                 pressed = true;
             }
             switch (key) {

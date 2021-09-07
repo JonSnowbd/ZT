@@ -4,7 +4,6 @@ const zt = @import("../zt.zig");
 const gl = @import("gl");
 const ig = @import("imgui");
 
-
 // OpenGL Data
 var g_GlVersion: gl.GLuint = 0; // Extracted at runtime using gl.GL_MAJOR_VERSION, gl.GL_MINOR_VERSION queries.
 var g_GlslVersionStringMem: [32]u8 = undefined; // Specified by user or detected based on compile time GL settings.
