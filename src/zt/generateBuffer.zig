@@ -36,6 +36,8 @@ fn reportErr(msg: []const u8) void {
 /// V is a maximum vertex count before flush is requested by an error on add*() functions.
 pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
     return struct {
+        pub const VertexLimit = V;
+        pub const IndexLimit = V * 6;
         vaoId: c_uint = undefined,
         vboId: c_uint = undefined,
         iboId: c_uint = undefined,
@@ -43,7 +45,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
         vertices: [V]T = undefined,
         vertCount: usize = 0,
         // Worst case scenario every singl.gle draw is a quad, so * 6.
-        indices: [V * 6]c_uint = undefined,
+        indices: [IndexLimit]c_uint = undefined,
         indCount: usize = 0,
         shader: zt.gl.Shader = undefined,
 
@@ -183,8 +185,8 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.bind();
             var vertSize: c_longlong = @intCast(c_longlong, @sizeOf(T) * self.vertCount);
             var indSize: c_longlong = @intCast(c_longlong, @sizeOf(c_uint) * self.indCount);
-            gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, self.vertices[0..self.vertCount], gl.GL_DYNAMIC_DRAW);
-            gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, self.indices[0..self.indCount], gl.GL_DYNAMIC_DRAW);
+            gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_DYNAMIC_DRAW);
+            gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_DYNAMIC_DRAW);
             self.unbind();
             self.dirty = false;
         }

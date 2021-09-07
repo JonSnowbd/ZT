@@ -190,7 +190,15 @@ pub fn line(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, star
 }
 
 pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, target: zt.math.Vec2, radius: f32, z: f32, col: zt.math.Vec4) void {
+    if (self.currentTexture == null) {
+        self.currentTexture = texture;
+    } else if (self.currentTexture.?.id != texture.id) {
+        self.flush();
+        self.currentTexture = texture;
+    }
     const twoPi: f32 = 2.0 * std.math.pi;
+    const sin = std.math.sin;
+    const cos = std.math.cos;
 
     const addition: i32 = std.math.clamp(@floatToInt(i32, std.math.round(radius / 100.0)) * 10, 0, 20);
     const triCount: i32 = (@floatToInt(i32, twoPi) * self.resolution) + addition;
@@ -209,22 +217,18 @@ pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, ta
             .tex = .{ .x = source.position.x, .y = source.position.y },
         };
         var l = Vertex{
-            .pos = zt.math.vec3(target.x + (radius * @cos(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * @sin(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), z),
+            .pos = zt.math.vec3(target.x + (radius * cos(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * sin(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), z),
             .col = col,
             .tex = .{ .x = source.position.x + source.size.x, .y = source.position.y },
         };
         var r = Vertex{
-            .pos = zt.math.vec3(target.x + (radius * @cos(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * @sin(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), z),
+            .pos = zt.math.vec3(target.x + (radius * cos(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * sin(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), z),
             .col = col,
             .tex = .{ .x = source.position.x, .y = source.position.y + source.size.y },
         };
-        self.internal.addTri(c, l, r) catch |err| {
-            if (err == error.NeedsFlush) {
-                self.flush();
-                self.internal.addTri(c, l, r) catch unreachable;
-                return;
-            }
-            std.debug.panic("Rendering error: {s}", .{@errorName(err)});
+        self.internal.addTri(c, l, r) catch {
+            self.flush();
+            self.internal.addTri(c, l, r) catch unreachable;
         };
     }
 }
@@ -269,7 +273,7 @@ pub fn flush(self: *Self) void {
     gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
     self.internal.setUniform("View", self.viewMatrix);
     self.internal.setUniform("Projection", self.projectionMatrix);
-    self.internal.pushStream();
+    self.internal.pushDynamic();
     self.currentTexture.?.bind();
     self.internal.flush();
     self.internal.clear();

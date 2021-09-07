@@ -1,8 +1,5 @@
 const std = @import("std");
 
-pub var linkAudio: bool = false;
-pub var linkNet: bool = false;
-
 fn getRelativePath() []const u8 {
     comptime var src: std.builtin.SourceLocation = @src();
     return std.fs.path.dirname(src.file).? ++ std.fs.path.sep_str;
