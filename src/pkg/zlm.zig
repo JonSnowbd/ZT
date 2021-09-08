@@ -209,6 +209,26 @@ pub fn specializeOn(comptime Real: type) type {
                     other.position.y <= self.position.y + self.size.y and
                     self.position.y <= other.position.y + other.size.y;
             }
+            pub fn moved(self: Rect, position: Vec2) Rect {
+                return rect(self.position.x+position.x, self.position.y+position.y, self.size.x, self.size.y);
+            }
+            /// negative expansion moves the left/top bounds, positive moves the bottom/right bounds.
+            pub fn expand(self: Rect, expansion: Vec2) Rect {
+                var copy = self;
+                if(expansion.x < 0) {
+                    copy.position.x += expansion.x;
+                    copy.size.x -= expansion.x;
+                } else {
+                    copy.position.x += expansion.x;
+                }
+                if(expansion.y < 0) {
+                    copy.position.y += expansion.y;
+                    copy.size.y -= expansion.y;
+                } else {
+                    copy.position.y += expansion.y;
+                }
+                return copy;
+            }
         };
 
         /// 2-dimensional vector type.
