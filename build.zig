@@ -5,12 +5,36 @@ fn getRelativePath() []const u8 {
     return std.fs.path.dirname(src.file).? ++ std.fs.path.sep_str;
 }
 
+pub const stbPkg = std.build.Pkg{ 
+    .name = "stb_image", 
+    .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/stb_image.zig" },
+};
+pub const glPkg = std.build.Pkg{
+    .name = "gl",
+    .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/gl.zig" },
+};
+pub const imguiPkg = std.build.Pkg{
+    .name = "imgui",
+    .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/imgui.zig" }
+};
+pub const glfwPkg = std.build.Pkg{
+    .name = "glfw",
+    .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/glfw.zig" }
+};
+pub const ztPkg = std.build.Pkg {
+    .name = "zt",
+    .path = std.build.FileSource{ .path = getRelativePath() ++ "src/zt.zig" },
+    .dependencies = &[_]std.build.Pkg{
+        glfwPkg,
+        glPkg,
+        imguiPkg,
+        stbPkg,
+    } };
+
 // Build here only exists to build the example. to use ZT you'll want to import this file and use the link function in
 // your build.zig
 pub fn build(b: *std.build.Builder) void {
-    const target = b.standardTargetOptions(.{
-        .default_target = .{ .abi = std.Target.Abi.gnu }, // Lets avoid MSVC on windows :')
-    });
+    const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
 
     const exe = b.addExecutable("example", "example/src/main.zig");
@@ -38,20 +62,11 @@ pub fn link(b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.bu
     exe.linkLibrary(glLibrary(b, target));
     exe.linkLibrary(stbLibrary(b, target));
 
-    exe.addPackage(glfwPackage());
-    exe.addPackage(glPackage());
-    exe.addPackage(stbPackage());
-    exe.addPackage(imguiPackage());
-    exe.addPackage(ztPackage());
-}
-pub fn ztPackage() std.build.Pkg {
-    comptime var path = getRelativePath();
-    return .{ .name = "zt", .path = std.build.FileSource{ .path = path ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{
-        glfwPackage(),
-        glPackage(),
-        imguiPackage(),
-        stbPackage(),
-    } };
+    exe.addPackage(glfwPkg);
+    exe.addPackage(glPkg);
+    exe.addPackage(stbPkg);
+    exe.addPackage(imguiPkg);
+    exe.addPackage(ztPkg);
 }
 
 // STB
@@ -68,11 +83,6 @@ pub fn stbLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.Li
 
     return stb;
 }
-pub fn stbPackage() std.build.Pkg {
-    comptime var path = getRelativePath();
-    return .{ .name = "stb_image", .path = std.build.FileSource{ .path = path ++ "src/pkg/stb_image.zig" } };
-}
-
 // OpenGL
 pub fn glLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
@@ -99,11 +109,6 @@ pub fn glLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.Lib
 
     return gl;
 }
-pub fn glPackage() std.build.Pkg {
-    comptime var path = getRelativePath();
-    return .{ .name = "gl", .path = std.build.FileSource{ .path = path ++ "src/pkg/gl.zig" } };
-}
-
 // ImGui
 pub fn imguiLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
@@ -133,11 +138,6 @@ pub fn imguiLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.
 
     return imgui;
 }
-pub fn imguiPackage() std.build.Pkg {
-    comptime var path = getRelativePath();
-    return .{ .name = "imgui", .path = std.build.FileSource{ .path = path ++ "src/pkg/imgui.zig" } };
-}
-
 // GLFW
 pub fn glfwLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
@@ -208,10 +208,6 @@ pub fn glfwLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.L
     }, flagContainer.items);
 
     return glfw;
-}
-pub fn glfwPackage() std.build.Pkg {
-    comptime var path = getRelativePath();
-    return .{ .name = "glfw", .path = std.build.FileSource{ .path = path ++ "src/pkg/glfw.zig" } };
 }
 
 pub const AddContentErrors = error{ PermissionError, WriteError, FileError, FolderError, RecursionError };
