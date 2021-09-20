@@ -197,10 +197,10 @@ pub fn specializeOn(comptime Real: type) type {
                 return self.position.y;
             }
             pub inline fn right(self: Rect) Real {
-                return self.position.x+self.size.x;
+                return self.position.x + self.size.x;
             }
             pub inline fn bottom(self: Rect) Real {
-                return self.position.y+self.size.y;
+                return self.position.y + self.size.y;
             }
             pub inline fn newVec(pos: Vec2, size: Vec2) Rect {
                 return new(pos.x, pos.y, size.x, size.y);
@@ -222,14 +222,14 @@ pub fn specializeOn(comptime Real: type) type {
                     self.position.y <= other.position.y + other.size.y;
             }
             pub fn moved(self: Rect, position: Vec2) Rect {
-                return rect(self.position.x+position.x, self.position.y+position.y, self.size.x, self.size.y);
+                return rect(self.position.x + position.x, self.position.y + position.y, self.size.x, self.size.y);
             }
             pub fn inset(self: Rect, amount: Real) Rect {
-                return rect(self.position.x+amount, self.position.y+amount, self.size.x-(amount*2), self.size.y-(amount*2));
+                return rect(self.position.x + amount, self.position.y + amount, self.size.x - (amount * 2), self.size.y - (amount * 2));
             }
             /// Returns how much the two rectangles intersect on each axis, if they do.
-            pub fn intersection(self: Rect, other:Rect) ?Vec2 {
-                if(self.intersectsRect(other)) {
+            pub fn intersection(self: Rect, other: Rect) ?Vec2 {
+                if (self.intersectsRect(other)) {
                     var val: Vec2 = .{};
                     val.x = std.math.min(self.right(), other.right()) - std.math.max(self.left(), other.left());
                     val.y = std.math.min(self.bottom(), other.bottom()) - std.math.max(self.top(), other.top());
@@ -241,13 +241,13 @@ pub fn specializeOn(comptime Real: type) type {
             /// negative expansion moves the left/top bounds, positive moves the bottom/right bounds.
             pub fn expand(self: Rect, expansion: Vec2) Rect {
                 var copy = self;
-                if(expansion.x < 0) {
+                if (expansion.x < 0) {
                     copy.position.x += expansion.x;
                     copy.size.x -= expansion.x;
                 } else {
                     copy.position.x += expansion.x;
                 }
-                if(expansion.y < 0) {
+                if (expansion.y < 0) {
                     copy.position.y += expansion.y;
                     copy.size.y -= expansion.y;
                 } else {
