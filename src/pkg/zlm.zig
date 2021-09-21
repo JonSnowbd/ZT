@@ -1,7 +1,7 @@
 const std = @import("std");
 
 /// Makes all vector and matrix types generic against Real
-pub fn specializeOn(comptime Real: type) type {
+fn specializeOn(comptime Real: type) type {
     return struct {
         /// Helper for the swizzle operator.
         /// Returns the type fitting the number of swizzle elements
@@ -216,10 +216,10 @@ pub fn specializeOn(comptime Real: type) type {
                 return ((((self.position.x <= other.position.x) and ((other.position.x + other.size.x) <= (self.position.x + self.size.x))) and (self.position.y <= other.position.y)) and ((other.position.y + other.size.y) <= (self.position.y + self.size.y)));
             }
             pub fn intersectsRect(self: Rect, other: Rect) bool {
-                return other.position.x <= self.position.x + self.size.x and
-                    self.position.x <= other.position.x + other.size.x and
-                    other.position.y <= self.position.y + self.size.y and
-                    self.position.y <= other.position.y + other.size.y;
+                return other.position.x < self.position.x + self.size.x and
+                    self.position.x < other.position.x + other.size.x and
+                    other.position.y < self.position.y + self.size.y and
+                    self.position.y < other.position.y + other.size.y;
             }
             pub fn moved(self: Rect, position: Vec2) Rect {
                 return rect(self.position.x + position.x, self.position.y + position.y, self.size.x, self.size.y);
@@ -474,6 +474,10 @@ pub fn specializeOn(comptime Real: type) type {
                     3 => return vec.w,
                     else => @compileError("index out of bounds!"),
                 }
+            }
+
+            pub fn colorFaded(vec: Vec4, newTransparency: Real) Vec4 {
+                return .{ .x = vec.x, .y = vec.y, .z = vec.z, .w = newTransparency };
             }
         };
 
