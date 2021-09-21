@@ -70,12 +70,16 @@ pub fn updateShader(self: *Self, shader: ?*zt.gl.Shader) void {
 /// draw the whole texture. Note; normalized origin is multiplicative. 1,1 will draw the texture from bottom right, providing
 /// beyond 0 and 1 is supported if the anchor needs to be 
 pub inline fn sprite(self: *Self, texture: zt.gl.Texture, pos: zt.math.Vec2, z: f32, size: zt.math.Vec2, color: zt.math.Vec4, normOrigin: ?zt.math.Vec2, src: ?zt.math.Rect) void {
-    const offset: zt.math.Vec2 = if (normOrigin) |no| .{ .x = -(size.x * no.x), .y = -(size.y * no.y) } else .{};
+    var offset: zt.math.Vec2 = if (normOrigin) |no| .{ .x = -(size.x * no.x), .y = -(size.y * no.y) } else .{};
     const source: zt.math.Rect =
         if (src) |s|
         zt.math.rect(s.position.x / texture.width, s.position.y / texture.height, s.size.x / texture.width, s.size.y / texture.height)
     else
         zt.math.rect(0, 0, 1, 1);
+
+    if (size.x < 0.0) {
+        offset.x -= size.x;
+    }
 
     self.spriteEx(texture, pos.x + offset.x, pos.y + offset.y, z, size.x, size.y, source.position.x, source.position.y, source.size.x, source.size.y, color, color, color, color);
 }

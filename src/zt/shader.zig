@@ -5,13 +5,13 @@ const Self = @This();
 id: c_uint = 0,
 dead: bool = true,
 
-pub fn from(shaderID: c_uint) @This() {
+pub fn from(shaderID: c_uint) Self {
     return .{
         .id = shaderID,
     };
 }
-pub fn init(vert: [*:0]const u8, frag: [*:0]const u8) @This() {
-    var self = @This(){};
+pub fn init(vert: [*:0]const u8, frag: [*:0]const u8) Self {
+    var self: Self = .{};
 
     var vertId = gl.glCreateShader(gl.GL_VERTEX_SHADER);
     gl.glShaderSource(vertId, 1, &vert, null);

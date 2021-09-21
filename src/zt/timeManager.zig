@@ -10,7 +10,9 @@ fps: f32 = 0.0,
 dt: f32 = 0.0,
 
 pub fn init() @This() {
-    return .{};
+    return .{
+        ._previous = glfw.glfwGetTime(),
+    };
 }
 pub fn tick(self: *Self) void {
     var lap = glfw.glfwGetTime();

@@ -62,7 +62,9 @@ pub fn App(comptime Data: type) type {
             }
 
             pub fn beginFrame(self: *Context) void {
-                _ = self;
+                self.open = glfw.glfwWindowShouldClose(self.window) == 0;
+                self.time.tick();
+                glfw.glfwPollEvents();
                 gl.glClear(gl.GL_COLOR_BUFFER_BIT);
                 ig.igNewFrame();
             }
@@ -76,12 +78,10 @@ pub fn App(comptime Data: type) type {
                 } else {
                     ig.igEndFrame();
                 }
+
                 self.input.items.len = 0;
 
                 glfw.glfwSwapBuffers(self.window);
-                glfw.glfwPollEvents();
-
-                self.time.tick();
                 io.*.DeltaTime = self.time.dt;
                 if (self.settings.energySaving) {
                     if (self._updateSeconds > 0.0) {
@@ -90,8 +90,6 @@ pub fn App(comptime Data: type) type {
                         glfw.glfwWaitEvents();
                     }
                 }
-
-                self.open = glfw.glfwWindowShouldClose(self.window) == 0;
             }
             pub fn setWindowSize(self: *Context, width: c_int, height: c_int) void {
                 glfw.glfwSetWindowSize(self.window, width, height);
@@ -186,8 +184,6 @@ pub fn App(comptime Data: type) type {
             }
             self.allocator = applicationAllocator;
             self.input = std.ArrayList(InputEvent).init(applicationAllocator);
-            self.time = TimeManager.init();
-
             preInit();
             self.window = glfw.glfwCreateWindow(800, 600, "ZT Application", null, null).?;
             self.open = true;
@@ -215,7 +211,7 @@ pub fn App(comptime Data: type) type {
             gl.glViewport(0, 0, width, height);
             var io = ig.igGetIO();
             io.*.DisplaySize = .{ .x = @intToFloat(f32, width), .y = @intToFloat(f32, height) };
-
+            self.time = TimeManager.init();
             return self;
         }
 

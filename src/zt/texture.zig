@@ -1,7 +1,6 @@
 const std = @import("std");
 const stb = @import("stb_image");
 const gl = @import("gl");
-
 const Self = @This();
 
 id: c_uint = undefined,
@@ -11,22 +10,22 @@ dead: bool = true,
 
 /// Loads an already existing opengl texture from a c_uint
 /// inDepth optionally inspects the opengl texture to fill in texture width/height information.
-pub fn from(id: c_uint, inDepth: bool) @This() {
-    var self: @This() = .{ .id = id, .dead = false };
+pub fn from(id: c_uint, inDepth: bool) Self {
+    var self: Self = .{ .id = id, .dead = false };
     if (inDepth) {
         self.updateInformation();
     }
     return self;
 }
 /// Takes a file path and loads it into opengl using stb_image.
-pub fn init(filePath: []const u8) !@This() {
+pub fn init(filePath: []const u8) !Self {
     var ownedFp: [:0]const u8 = try std.heap.c_allocator.dupeZ(u8, filePath);
     defer std.heap.c_allocator.free(ownedFp);
     var w: c_int = 0;
     var h: c_int = 0;
     var numChannels: c_int = 0;
     var data = stb.stbi_load(ownedFp.ptr, &w, &h, &numChannels, 0);
-    var self = @This(){};
+    var self = Self{};
 
     self.width = @intToFloat(f32, w);
     self.height = @intToFloat(f32, h);
@@ -59,8 +58,8 @@ pub fn init(filePath: []const u8) !@This() {
 
     return self;
 }
-pub fn initBlank(width: c_int, height: c_int) @This() {
-    var self = @This(){};
+pub fn initBlank(width: c_int, height: c_int) Self {
+    var self = Self{};
     self.width = @intToFloat(f32, width);
     self.height = @intToFloat(f32, height);
     gl.glGenTextures(1, &self.id);

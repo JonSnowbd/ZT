@@ -6,17 +6,7 @@ const math = @import("../pkg/zlm.zig");
 pub const SpatialHashSettings = struct {
     /// The height and width of each bucket inside the hash.
     bucketSize: f32 = 256,
-
-    // TODO:
-    // Visualizable spatial hashes feature methods to output squares and lines to visually debug them.
-    // This reduces performance by a small bit.
-    // visualizable: bool = false,
 };
-const SpatialVisualization = struct {
-    const Theme = struct {};
-    theme: Theme = .{},
-};
-
 pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings) type {
     // const VisType: type = if (spatialSettings.visualizable) SpatialVisualization else void;
     return struct {
@@ -47,9 +37,6 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
         /// This is a temporary holding bucket of every target inside of a query. This is used for each query
         /// and as such modifying the spatial hash, or starting a new query will change this bucket.
         holding: Bucket,
-        // TODO:
-        // If the provided settings indicates that this is a visualizable spatial hash, this will be a non-void field.
-        // visualization: VisType = undefined,
 
         /// Creates a spatial hash instance and allocates memory for the bucket structures.
         pub fn init(allocator: *std.mem.Allocator) Self {
