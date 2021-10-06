@@ -123,7 +123,7 @@ fn specializeOn(comptime Real: type) type {
                 pub fn lerp(a: Self, b: Self, mix: f32) Self {
                     var result: Self = undefined;
                     inline for (@typeInfo(Self).Struct.fields) |fld| {
-                        @field(result, fld.name) = (@field(a, fld.name) - @field(b, fld.name)) * mix;
+                        @field(result, fld.name) = @field(a, fld.name) + (@field(b, fld.name) - @field(a, fld.name)) * mix;
                     }
                     return result;
                 }
