@@ -120,10 +120,10 @@ fn specializeOn(comptime Real: type) type {
                 }
                 /// Returns a vector `mix`% between the two vectors.
                 /// 0 is a, 1 is b, 0.5 is between the two.
-                pub fn lerp(a: Self, b: Self, mix:f32) Self {
+                pub fn lerp(a: Self, b: Self, mix: f32) Self {
                     var result: Self = undefined;
                     inline for (@typeInfo(Self).Struct.fields) |fld| {
-                        @field(result, fld.name) = (@field(a, fld.name)-@field(b, fld.name)) * mix;
+                        @field(result, fld.name) = (@field(a, fld.name) - @field(b, fld.name)) * mix;
                     }
                     return result;
                 }
