@@ -5,20 +5,20 @@ const ig = @import("imgui");
 const zg = zt.custom_components;
 
 const Hash = zt.game.SpatialHash.Generate(usize, .{ .bucketSize = 80 });
-var rng: std.rand.Xoroshiro128 = undefined;
+var rng: std.rand.Random = undefined;
 const blip = struct {
     aabb: zt.math.Rect = .{},
     color: zt.math.Vec4 = .{},
     pub fn generate(within: zt.math.Rect) blip {
         // This is slow, but I'm lazy and this is just a demo, soooooo...
         var self: blip = .{};
-        self.aabb.size.x = std.math.clamp(rng.random.float(f32) * 100.0, 5.0, within.size.x);
-        self.aabb.size.y = std.math.clamp(rng.random.float(f32) * 100.0, 5.0, within.size.y);
-        self.aabb.position.x = std.math.clamp(rng.random.float(f32) * within.size.x, 0, within.size.x - self.aabb.size.x) + within.position.x;
-        self.aabb.position.y = std.math.clamp(rng.random.float(f32) * within.size.y, 0, within.size.y - self.aabb.size.y) + within.position.y;
+        self.aabb.size.x = std.math.clamp(rng.float(f32) * 100.0, 5.0, within.size.x);
+        self.aabb.size.y = std.math.clamp(rng.float(f32) * 100.0, 5.0, within.size.y);
+        self.aabb.position.x = std.math.clamp(rng.float(f32) * within.size.x, 0, within.size.x - self.aabb.size.x) + within.position.x;
+        self.aabb.position.y = std.math.clamp(rng.float(f32) * within.size.y, 0, within.size.y - self.aabb.size.y) + within.position.y;
 
         // Little bit of transparency! Incase they overlap.
-        self.color = zt.math.vec4(rng.random.float(f32), rng.random.float(f32), rng.random.float(f32), 0.33);
+        self.color = zt.math.vec4(rng.float(f32), rng.float(f32), rng.float(f32), 0.33);
         return self;
     }
 };
@@ -174,7 +174,15 @@ fn control() void {
 fn sceneSetup(ctx: *main.SampleApplication.Context) void {
     var io = ig.igGetIO();
     if (!inited) {
-        rng = std.rand.Xoroshiro128.init(13578457);
+        var prng = std.rand.DefaultPrng.init(blk: {
+            var seed: u64 = undefined;
+            std.os.getrandom(std.mem.asBytes(&seed)) catch {
+                std.debug.warn("OS getRandom failed.", .{});
+                std.process.exit(1);
+            };
+            break :blk seed;
+        });
+        rng = prng.random();
         array = std.ArrayList(blip).init(ctx.allocator);
         hash = Hash.init(ctx.allocator);
         inited = true;
