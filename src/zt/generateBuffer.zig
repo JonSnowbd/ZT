@@ -71,6 +71,41 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
 
             inline for (std.meta.fields(T)) |field, i| {
                 switch (field.field_type) {
+                    bool => {
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_BOOL, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        currentOffset += @sizeOf(bool);
+                    },
+                    i8 => {
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_BYTE, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        currentOffset += @sizeOf(i8);
+                    },
+                    u8 => {
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_UNSIGNED_BYTE, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        currentOffset += @sizeOf(u8);
+                    },
+                    i16 => {
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_SHORT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        currentOffset += @sizeOf(i16);
+                    },
+                    u16 => {
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_UNSIGNED_SHORT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        currentOffset += @sizeOf(u16);
+                    },
+                    i32 => {
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_INT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        currentOffset += @sizeOf(i32);
+                    },
+                    u32 => {
+                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_UNSIGNED_INT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        currentOffset += @sizeOf(u32);
+                    },
                     f32 => {
                         gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
                         gl.glEnableVertexAttribArray(@intCast(c_uint, i));
@@ -92,7 +127,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                         currentOffset += 16;
                     },
                     else => {
-                        @compileError("Vertex Struct had types incompatible with automatic buffers.");
+                        @compileError("Vertex Struct had types incompatible with automatic buffers:" ++ @typeName(field.field_type));
                     },
                 }
             }
