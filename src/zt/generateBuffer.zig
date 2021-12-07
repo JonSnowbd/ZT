@@ -45,7 +45,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
 
         vertices: [V]T = undefined,
         vertCount: usize = 0,
-        // Worst case scenario every singl.gle draw is a quad, so * 6.
+        // Worst case scenario every single draw is a quad, so * 6.
         indices: [IndexLimit]c_uint = undefined,
         indCount: usize = 0,
         shader: zt.gl.Shader = undefined,
@@ -98,12 +98,12 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                     //     currentOffset += @sizeOf(u16);
                     // },
                     i32 => {
-                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_INT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glVertexAttribIPointer(@intCast(c_uint, i), 1, gl.GL_INT, stride, @intToPtr(*allowzero c_void, currentOffset));
                         gl.glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += @sizeOf(i32);
                     },
                     u32 => {
-                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_UNSIGNED_INT, gl.GL_FALSE, stride, @intToPtr(*allowzero c_void, currentOffset));
+                        gl.glVertexAttribIPointer(@intCast(c_uint, i), 1, gl.GL_UNSIGNED_INT, stride, @intToPtr(*allowzero c_void, currentOffset));
                         gl.glEnableVertexAttribArray(@intCast(c_uint, i));
                         currentOffset += @sizeOf(u32);
                     },
