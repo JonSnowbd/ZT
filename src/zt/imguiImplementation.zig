@@ -134,7 +134,7 @@ fn SetupRenderState(draw_data: *ig.ImDrawData, fb_width: c_int, fb_height: c_int
         gl.GL_FLOAT,
         gl.GL_FALSE,
         @sizeOf(ig.ImDrawVert),
-        @intToPtr(?*c_void, @offsetOf(ig.ImDrawVert, "pos")),
+        @intToPtr(?*anyopaque, @offsetOf(ig.ImDrawVert, "pos")),
     );
     gl.glVertexAttribPointer(
         @intCast(c_uint, g_AttribLocationVtxUV),
@@ -142,7 +142,7 @@ fn SetupRenderState(draw_data: *ig.ImDrawData, fb_width: c_int, fb_height: c_int
         gl.GL_FLOAT,
         gl.GL_FALSE,
         @sizeOf(ig.ImDrawVert),
-        @intToPtr(?*c_void, @offsetOf(ig.ImDrawVert, "uv")),
+        @intToPtr(?*anyopaque, @offsetOf(ig.ImDrawVert, "uv")),
     );
     gl.glVertexAttribPointer(
         @intCast(c_uint, g_AttribLocationVtxColor),
@@ -150,7 +150,7 @@ fn SetupRenderState(draw_data: *ig.ImDrawData, fb_width: c_int, fb_height: c_int
         gl.GL_UNSIGNED_BYTE,
         gl.GL_TRUE,
         @sizeOf(ig.ImDrawVert),
-        @intToPtr(?*c_void, @offsetOf(ig.ImDrawVert, "col")),
+        @intToPtr(?*anyopaque, @offsetOf(ig.ImDrawVert, "col")),
     );
 }
 
@@ -208,7 +208,7 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
                                 gl.GL_TRIANGLES,
                                 @intCast(gl.GLsizei, pcmd.ElemCount),
                                 if (@sizeOf(ig.ImDrawIdx) == 2) gl.GL_UNSIGNED_SHORT else gl.GL_UNSIGNED_INT,
-                                @intToPtr(?*const c_void, pcmd.IdxOffset * @sizeOf(ig.ImDrawIdx)),
+                                @intToPtr(?*const anyopaque, pcmd.IdxOffset * @sizeOf(ig.ImDrawIdx)),
                                 @intCast(gl.GLint, pcmd.VtxOffset),
                             );
                         } else {
@@ -216,7 +216,7 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
                                 gl.GL_TRIANGLES,
                                 @intCast(gl.GLsizei, pcmd.ElemCount),
                                 if (@sizeOf(ig.ImDrawIdx) == 2) gl.GL_UNSIGNED_SHORT else gl.GL_UNSIGNED_INT,
-                                @intToPtr(?*const c_void, pcmd.IdxOffset * @sizeOf(ig.ImDrawIdx)),
+                                @intToPtr(?*const anyopaque, pcmd.IdxOffset * @sizeOf(ig.ImDrawIdx)),
                             );
                         }
                     }
@@ -248,7 +248,7 @@ fn CreateFontsTexture() bool {
     gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, pixels);
 
     // Store our identifier
-    io.*.Fonts.*.TexID = @intToPtr(*c_void, g_FontTexture);
+    io.*.Fonts.*.TexID = @intToPtr(*anyopaque, g_FontTexture);
 
     return true;
 }
@@ -271,7 +271,7 @@ fn CreateDeviceObjects() void {
     if (std.fmt.parseInt(u32, numberPart, 10)) |value| {
         glsl_version = value;
     } else |_| {
-        std.debug.warn("Couldn't parse glsl version from '{any}', '{any}'\n", .{ g_GlslVersionString, numberPart });
+        std.debug.print("Couldn't parse glsl version from '{any}', '{any}'\n", .{ g_GlslVersionString, numberPart });
     }
 
     const vertex_shader_glsl_120 = "uniform mat4 ProjMtx;\n" ++

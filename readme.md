@@ -37,7 +37,7 @@ for your game is as smooth as it can be without deciding anything for you
 
 To work with ZT You will need:
 
-- Zig 0.9.* Main branch build (See [zig-0.8.0 branch](https://github.com/JonSnowbd/ZT/tree/zig-0.8.0) for the last 0.8 compatible build.)
+- Zig 0.10.* Main branch build
 - Ubuntu: `sudo apt install build-essential xorg-dev`
 
 ### Current Status
@@ -72,11 +72,11 @@ First you'll want to clone this into your zig project's folder, and `const ztBui
 in your own `build.zig` to import this framework's build.zig, and that will expose some important functions
 to link ZT into your project.
 
-- `ztBuild.link(b, exe, target)` will add ZT's packages to your exe and link the source files for GLFW/GL/ImGui
+- `ztBuild.link(exe)` will add ZT's packages to your exe and link the source files for GLFW/GL/ImGui
 - (optional) `ztBuild.addBinaryContent("path/to/binContent")` adds binary content to your zig-out folder output, basically the folder structure
 ends up being as if `path/to/binContent` was the root folder containing your executable. This is smart and will skip older assets.
 
-So with `ztBuild` imported you just `ztBuild.link(b, exe, target)` and you can start importing and using
+So with `ztBuild` imported you just `ztBuild.link(exe)` and you can start importing and using
 ZT, or if you so choose, completely ignore ZT and use raw opengl/glfw/imgui.
 
 Then getting started is as easy as this:

@@ -29,7 +29,7 @@ pub fn build(b: *std.build.Builder) void {
     const mode = b.standardReleaseOptions();
 
     const exe = b.addExecutable("example", "example/src/main.zig");
-    link(b, exe, target);
+    link(exe);
     exe.setTarget(target);
     exe.setBuildMode(mode);
     exe.install();
@@ -46,12 +46,12 @@ pub fn build(b: *std.build.Builder) void {
     run_step.dependOn(&run_cmd.step);
 }
 
-pub fn link(b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.build.Target) void {
+pub fn link(exe: *std.build.LibExeObjStep) void {
     // Link step
-    exe.linkLibrary(imguiLibrary(b, target));
-    exe.linkLibrary(glfwLibrary(b, target));
-    exe.linkLibrary(glLibrary(b, target));
-    exe.linkLibrary(stbLibrary(b, target));
+    exe.linkLibrary(imguiLibrary(exe.builder, exe.target));
+    exe.linkLibrary(glfwLibrary(exe.builder, exe.target));
+    exe.linkLibrary(glLibrary(exe.builder, exe.target));
+    exe.linkLibrary(stbLibrary(exe.builder, exe.target));
 
     exe.addPackage(glfwPkg);
     exe.addPackage(glPkg);
@@ -61,7 +61,7 @@ pub fn link(b: *std.build.Builder, exe: *std.build.LibExeObjStep, target: std.bu
 }
 
 // STB
-pub fn stbLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+pub fn stbLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
     _ = target;
     var stb = b.addStaticLibrary("stb", null);
@@ -75,7 +75,7 @@ pub fn stbLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.Li
     return stb;
 }
 // OpenGL
-pub fn glLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+pub fn glLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
     var gl = b.addStaticLibrary("gl", null);
     gl.linkLibC();
@@ -101,7 +101,7 @@ pub fn glLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.Lib
     return gl;
 }
 // ImGui
-pub fn imguiLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+pub fn imguiLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
     var imgui = b.addStaticLibrary("imgui", null);
     imgui.linkLibC();
@@ -130,7 +130,7 @@ pub fn imguiLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.
     return imgui;
 }
 // GLFW
-pub fn glfwLibrary(b: *std.build.Builder, target: std.build.Target) *std.build.LibExeObjStep {
+pub fn glfwLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
     var glfw = b.addStaticLibrary("glfw", null);
     glfw.linkLibC();
@@ -209,8 +209,8 @@ const fs = std.fs;
 pub fn addBinaryContent(comptime baseContentPath: []const u8) AddContentErrors!void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
-    const zigBin: []const u8 = std.fs.path.join(&gpa.allocator, &[_][]const u8{ "zig-out", "bin" }) catch return error.FolderError;
-    defer gpa.allocator.free(zigBin);
+    const zigBin: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ "zig-out", "bin" }) catch return error.FolderError;
+    defer gpa.allocator().free(zigBin);
     fs.cwd().makePath(zigBin) catch return error.FolderError;
 
     var sourceFolder: fs.Dir = fs.cwd().openDir(baseContentPath, .{ .iterate = true }) catch return error.FolderError;
@@ -219,18 +219,18 @@ pub fn addBinaryContent(comptime baseContentPath: []const u8) AddContentErrors!v
     while (iterator.next() catch return error.FolderError) |target| {
         var x: fs.Dir.Entry = target;
         if (x.kind == .Directory) {
-            const source: []const u8 = std.fs.path.join(&gpa.allocator, &[_][]const u8{ baseContentPath, x.name }) catch return error.RecursionError;
-            const targetFolder: []const u8 = std.fs.path.join(&gpa.allocator, &[_][]const u8{ zigBin, x.name }) catch return error.RecursionError;
-            defer gpa.allocator.free(source);
-            defer gpa.allocator.free(targetFolder);
-            try innerAddContent(&gpa.allocator, source, targetFolder);
+            const source: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ baseContentPath, x.name }) catch return error.RecursionError;
+            const targetFolder: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ zigBin, x.name }) catch return error.RecursionError;
+            defer gpa.allocator().free(source);
+            defer gpa.allocator().free(targetFolder);
+            try innerAddContent(gpa.allocator(), source, targetFolder);
         }
         if (x.kind == .File) {
             try copy(baseContentPath, zigBin, x.name);
         }
     }
 }
-fn innerAddContent(allocator: *std.mem.Allocator, folder: []const u8, dest: []const u8) AddContentErrors!void {
+fn innerAddContent(allocator: std.mem.Allocator, folder: []const u8, dest: []const u8) AddContentErrors!void {
     var sourceFolder: fs.Dir = fs.cwd().openDir(folder, .{ .iterate = true }) catch return error.FolderError;
     defer sourceFolder.close();
 

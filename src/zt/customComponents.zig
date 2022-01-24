@@ -130,7 +130,7 @@ pub fn ztEditDrag(label: []const u8, speed: f32, ptr: anytype) bool {
             return result;
         },
         else => {
-            std.debug.warn("No editor found for type {s}\n", .{@typeName(@TypeOf(ptr))});
+            std.debug.print("No editor found for type {s}\n", .{@typeName(@TypeOf(ptr))});
             return false;
         },
     }
@@ -195,7 +195,7 @@ pub fn ztEdit(label: []const u8, ptr: anytype) bool {
             return result;
         },
         else => {
-            std.debug.warn("No editor found for type {s}\n", .{@typeName(@TypeOf(ptr))});
+            std.debug.print("No editor found for type {s}\n", .{@typeName(@TypeOf(ptr))});
             return false;
         },
     }

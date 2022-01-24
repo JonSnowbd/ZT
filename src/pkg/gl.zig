@@ -2,7 +2,7 @@ const struct_gladGLversionStruct = extern struct {
     major: c_int,
     minor: c_int,
 };
-const GLADloadproc = ?fn ([*c]const u8) callconv(.C) ?*c_void;
+const GLADloadproc = ?fn ([*c]const u8) callconv(.C) ?*anyopaque;
 extern var GLVersion: struct_gladGLversionStruct;
 pub extern fn gladLoadGL() c_int;
 extern fn gladLoadGLLoader(GLADloadproc) c_int;
@@ -33,7 +33,7 @@ const KHRONOS_BOOLEAN_ENUM_FORCE_SIZE = @enumToInt(khronos_boolean_enum_t.KHRONO
 pub const GLenum = c_uint;
 pub const GLboolean = u8;
 pub const GLbitfield = c_uint;
-pub const GLvoid = c_void;
+pub const GLvoid = anyopaque;
 pub const GLbyte = khronos_int8_t;
 pub const GLubyte = khronos_uint8_t;
 pub const GLshort = khronos_int16_t;
@@ -46,8 +46,8 @@ pub const GLfloat = khronos_float_t;
 pub const GLclampf = khronos_float_t;
 pub const GLdouble = f64;
 pub const GLclampd = f64;
-pub const GLeglClientBufferEXT = ?*c_void;
-pub const GLeglImageOES = ?*c_void;
+pub const GLeglClientBufferEXT = ?*anyopaque;
+pub const GLeglImageOES = ?*anyopaque;
 pub const GLchar = u8;
 pub const GLcharARB = u8;
 pub const GLhandleARB = c_uint;
@@ -66,10 +66,10 @@ const struct___GLsync = opaque {};
 const GLsync = ?*struct___GLsync;
 const struct__cl_context = opaque {};
 const struct__cl_event = opaque {};
-const GLDEBUGPROC = ?fn (GLenum, GLenum, GLuint, GLenum, GLsizei, [*c]const GLchar, ?*const c_void) callconv(.C) void;
-const GLDEBUGPROCARB = ?fn (GLenum, GLenum, GLuint, GLenum, GLsizei, [*c]const GLchar, ?*const c_void) callconv(.C) void;
-const GLDEBUGPROCKHR = ?fn (GLenum, GLenum, GLuint, GLenum, GLsizei, [*c]const GLchar, ?*const c_void) callconv(.C) void;
-const GLDEBUGPROCAMD = ?fn (GLuint, GLenum, GLenum, GLsizei, [*c]const GLchar, ?*c_void) callconv(.C) void;
+const GLDEBUGPROC = ?fn (GLenum, GLenum, GLuint, GLenum, GLsizei, [*c]const GLchar, ?*const anyopaque) callconv(.C) void;
+const GLDEBUGPROCARB = ?fn (GLenum, GLenum, GLuint, GLenum, GLsizei, [*c]const GLchar, ?*const anyopaque) callconv(.C) void;
+const GLDEBUGPROCKHR = ?fn (GLenum, GLenum, GLuint, GLenum, GLsizei, [*c]const GLchar, ?*const anyopaque) callconv(.C) void;
+const GLDEBUGPROCAMD = ?fn (GLuint, GLenum, GLenum, GLsizei, [*c]const GLchar, ?*anyopaque) callconv(.C) void;
 const GLhalfNV = c_ushort;
 const GLvdpauSurfaceNV = GLintptr;
 const GLVULKANPROCNV = ?fn () callconv(.C) void;
@@ -96,9 +96,9 @@ const PFNGLTEXPARAMETERIPROC = ?fn (GLenum, GLenum, GLint) callconv(.C) void;
 extern var glad_glTexParameteri: PFNGLTEXPARAMETERIPROC;
 const PFNGLTEXPARAMETERIVPROC = ?fn (GLenum, GLenum, [*c]const GLint) callconv(.C) void;
 extern var glad_glTexParameteriv: PFNGLTEXPARAMETERIVPROC;
-const PFNGLTEXIMAGE1DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLint, GLenum, GLenum, ?*const c_void) callconv(.C) void;
+const PFNGLTEXIMAGE1DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLint, GLenum, GLenum, ?*const anyopaque) callconv(.C) void;
 extern var glad_glTexImage1D: PFNGLTEXIMAGE1DPROC;
-const PFNGLTEXIMAGE2DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, ?*const c_void) callconv(.C) void;
+const PFNGLTEXIMAGE2DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, ?*const anyopaque) callconv(.C) void;
 extern var glad_glTexImage2D: PFNGLTEXIMAGE2DPROC;
 const PFNGLDRAWBUFFERPROC = ?fn (GLenum) callconv(.C) void;
 extern var glad_glDrawBuffer: PFNGLDRAWBUFFERPROC;
@@ -140,7 +140,7 @@ const PFNGLPIXELSTOREIPROC = ?fn (GLenum, GLint) callconv(.C) void;
 extern var glad_glPixelStorei: PFNGLPIXELSTOREIPROC;
 const PFNGLREADBUFFERPROC = ?fn (GLenum) callconv(.C) void;
 extern var glad_glReadBuffer: PFNGLREADBUFFERPROC;
-const PFNGLREADPIXELSPROC = ?fn (GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, ?*c_void) callconv(.C) void;
+const PFNGLREADPIXELSPROC = ?fn (GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, ?*anyopaque) callconv(.C) void;
 extern var glad_glReadPixels: PFNGLREADPIXELSPROC;
 const PFNGLGETBOOLEANVPROC = ?fn (GLenum, [*c]GLboolean) callconv(.C) void;
 extern var glad_glGetBooleanv: PFNGLGETBOOLEANVPROC;
@@ -154,7 +154,7 @@ const PFNGLGETINTEGERVPROC = ?fn (GLenum, [*c]GLint) callconv(.C) void;
 extern var glad_glGetIntegerv: PFNGLGETINTEGERVPROC;
 const PFNGLGETSTRINGPROC = ?fn (GLenum) callconv(.C) [*c]const GLubyte;
 extern var glad_glGetString: PFNGLGETSTRINGPROC;
-const PFNGLGETTEXIMAGEPROC = ?fn (GLenum, GLint, GLenum, GLenum, ?*c_void) callconv(.C) void;
+const PFNGLGETTEXIMAGEPROC = ?fn (GLenum, GLint, GLenum, GLenum, ?*anyopaque) callconv(.C) void;
 extern var glad_glGetTexImage: PFNGLGETTEXIMAGEPROC;
 const PFNGLGETTEXPARAMETERFVPROC = ?fn (GLenum, GLenum, [*c]GLfloat) callconv(.C) void;
 extern var glad_glGetTexParameterfv: PFNGLGETTEXPARAMETERFVPROC;
@@ -173,7 +173,7 @@ extern var glad_glViewport: PFNGLVIEWPORTPROC;
 extern var GLAD_GL_VERSION_1_1: c_int;
 const PFNGLDRAWARRAYSPROC = ?fn (GLenum, GLint, GLsizei) callconv(.C) void;
 extern var glad_glDrawArrays: PFNGLDRAWARRAYSPROC;
-const PFNGLDRAWELEMENTSPROC = ?fn (GLenum, GLsizei, GLenum, ?*const c_void) callconv(.C) void;
+const PFNGLDRAWELEMENTSPROC = ?fn (GLenum, GLsizei, GLenum, ?*const anyopaque) callconv(.C) void;
 extern var glad_glDrawElements: PFNGLDRAWELEMENTSPROC;
 const PFNGLPOLYGONOFFSETPROC = ?fn (GLfloat, GLfloat) callconv(.C) void;
 extern var glad_glPolygonOffset: PFNGLPOLYGONOFFSETPROC;
@@ -185,9 +185,9 @@ const PFNGLCOPYTEXSUBIMAGE1DPROC = ?fn (GLenum, GLint, GLint, GLint, GLint, GLsi
 extern var glad_glCopyTexSubImage1D: PFNGLCOPYTEXSUBIMAGE1DPROC;
 const PFNGLCOPYTEXSUBIMAGE2DPROC = ?fn (GLenum, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei) callconv(.C) void;
 extern var glad_glCopyTexSubImage2D: PFNGLCOPYTEXSUBIMAGE2DPROC;
-const PFNGLTEXSUBIMAGE1DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLenum, GLenum, ?*const c_void) callconv(.C) void;
+const PFNGLTEXSUBIMAGE1DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLenum, GLenum, ?*const anyopaque) callconv(.C) void;
 extern var glad_glTexSubImage1D: PFNGLTEXSUBIMAGE1DPROC;
-const PFNGLTEXSUBIMAGE2DPROC = ?fn (GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, ?*const c_void) callconv(.C) void;
+const PFNGLTEXSUBIMAGE2DPROC = ?fn (GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, ?*const anyopaque) callconv(.C) void;
 extern var glad_glTexSubImage2D: PFNGLTEXSUBIMAGE2DPROC;
 const PFNGLBINDTEXTUREPROC = ?fn (GLenum, GLuint) callconv(.C) void;
 extern var glad_glBindTexture: PFNGLBINDTEXTUREPROC;
@@ -198,11 +198,11 @@ extern var glad_glGenTextures: PFNGLGENTEXTURESPROC;
 const PFNGLISTEXTUREPROC = ?fn (GLuint) callconv(.C) GLboolean;
 extern var glad_glIsTexture: PFNGLISTEXTUREPROC;
 extern var GLAD_GL_VERSION_1_2: c_int;
-const PFNGLDRAWRANGEELEMENTSPROC = ?fn (GLenum, GLuint, GLuint, GLsizei, GLenum, ?*const c_void) callconv(.C) void;
+const PFNGLDRAWRANGEELEMENTSPROC = ?fn (GLenum, GLuint, GLuint, GLsizei, GLenum, ?*const anyopaque) callconv(.C) void;
 extern var glad_glDrawRangeElements: PFNGLDRAWRANGEELEMENTSPROC;
-const PFNGLTEXIMAGE3DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, ?*const c_void) callconv(.C) void;
+const PFNGLTEXIMAGE3DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, ?*const anyopaque) callconv(.C) void;
 extern var glad_glTexImage3D: PFNGLTEXIMAGE3DPROC;
-const PFNGLTEXSUBIMAGE3DPROC = ?fn (GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLenum, ?*const c_void) callconv(.C) void;
+const PFNGLTEXSUBIMAGE3DPROC = ?fn (GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLenum, ?*const anyopaque) callconv(.C) void;
 extern var glad_glTexSubImage3D: PFNGLTEXSUBIMAGE3DPROC;
 const PFNGLCOPYTEXSUBIMAGE3DPROC = ?fn (GLenum, GLint, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei) callconv(.C) void;
 extern var glad_glCopyTexSubImage3D: PFNGLCOPYTEXSUBIMAGE3DPROC;
@@ -211,26 +211,26 @@ const PFNGLACTIVETEXTUREPROC = ?fn (GLenum) callconv(.C) void;
 extern var glad_glActiveTexture: PFNGLACTIVETEXTUREPROC;
 const PFNGLSAMPLECOVERAGEPROC = ?fn (GLfloat, GLboolean) callconv(.C) void;
 extern var glad_glSampleCoverage: PFNGLSAMPLECOVERAGEPROC;
-const PFNGLCOMPRESSEDTEXIMAGE3DPROC = ?fn (GLenum, GLint, GLenum, GLsizei, GLsizei, GLsizei, GLint, GLsizei, ?*const c_void) callconv(.C) void;
+const PFNGLCOMPRESSEDTEXIMAGE3DPROC = ?fn (GLenum, GLint, GLenum, GLsizei, GLsizei, GLsizei, GLint, GLsizei, ?*const anyopaque) callconv(.C) void;
 extern var glad_glCompressedTexImage3D: PFNGLCOMPRESSEDTEXIMAGE3DPROC;
-const PFNGLCOMPRESSEDTEXIMAGE2DPROC = ?fn (GLenum, GLint, GLenum, GLsizei, GLsizei, GLint, GLsizei, ?*const c_void) callconv(.C) void;
+const PFNGLCOMPRESSEDTEXIMAGE2DPROC = ?fn (GLenum, GLint, GLenum, GLsizei, GLsizei, GLint, GLsizei, ?*const anyopaque) callconv(.C) void;
 extern var glad_glCompressedTexImage2D: PFNGLCOMPRESSEDTEXIMAGE2DPROC;
-const PFNGLCOMPRESSEDTEXIMAGE1DPROC = ?fn (GLenum, GLint, GLenum, GLsizei, GLint, GLsizei, ?*const c_void) callconv(.C) void;
+const PFNGLCOMPRESSEDTEXIMAGE1DPROC = ?fn (GLenum, GLint, GLenum, GLsizei, GLint, GLsizei, ?*const anyopaque) callconv(.C) void;
 extern var glad_glCompressedTexImage1D: PFNGLCOMPRESSEDTEXIMAGE1DPROC;
-const PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC = ?fn (GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLsizei, ?*const c_void) callconv(.C) void;
+const PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC = ?fn (GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLsizei, ?*const anyopaque) callconv(.C) void;
 extern var glad_glCompressedTexSubImage3D: PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC;
-const PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC = ?fn (GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLsizei, ?*const c_void) callconv(.C) void;
+const PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC = ?fn (GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLsizei, ?*const anyopaque) callconv(.C) void;
 extern var glad_glCompressedTexSubImage2D: PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC;
-const PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLenum, GLsizei, ?*const c_void) callconv(.C) void;
+const PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC = ?fn (GLenum, GLint, GLint, GLsizei, GLenum, GLsizei, ?*const anyopaque) callconv(.C) void;
 extern var glad_glCompressedTexSubImage1D: PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC;
-const PFNGLGETCOMPRESSEDTEXIMAGEPROC = ?fn (GLenum, GLint, ?*c_void) callconv(.C) void;
+const PFNGLGETCOMPRESSEDTEXIMAGEPROC = ?fn (GLenum, GLint, ?*anyopaque) callconv(.C) void;
 extern var glad_glGetCompressedTexImage: PFNGLGETCOMPRESSEDTEXIMAGEPROC;
 extern var GLAD_GL_VERSION_1_4: c_int;
 const PFNGLBLENDFUNCSEPARATEPROC = ?fn (GLenum, GLenum, GLenum, GLenum) callconv(.C) void;
 extern var glad_glBlendFuncSeparate: PFNGLBLENDFUNCSEPARATEPROC;
 const PFNGLMULTIDRAWARRAYSPROC = ?fn (GLenum, [*c]const GLint, [*c]const GLsizei, GLsizei) callconv(.C) void;
 extern var glad_glMultiDrawArrays: PFNGLMULTIDRAWARRAYSPROC;
-const PFNGLMULTIDRAWELEMENTSPROC = ?fn (GLenum, [*c]const GLsizei, GLenum, [*c]const ?*const c_void, GLsizei) callconv(.C) void;
+const PFNGLMULTIDRAWELEMENTSPROC = ?fn (GLenum, [*c]const GLsizei, GLenum, [*c]const ?*const anyopaque, GLsizei) callconv(.C) void;
 extern var glad_glMultiDrawElements: PFNGLMULTIDRAWELEMENTSPROC;
 const PFNGLPOINTPARAMETERFPROC = ?fn (GLenum, GLfloat) callconv(.C) void;
 extern var glad_glPointParameterf: PFNGLPOINTPARAMETERFPROC;
@@ -269,19 +269,19 @@ const PFNGLGENBUFFERSPROC = ?fn (GLsizei, [*c]GLuint) callconv(.C) void;
 extern var glad_glGenBuffers: PFNGLGENBUFFERSPROC;
 const PFNGLISBUFFERPROC = ?fn (GLuint) callconv(.C) GLboolean;
 extern var glad_glIsBuffer: PFNGLISBUFFERPROC;
-const PFNGLBUFFERDATAPROC = ?fn (GLenum, GLsizeiptr, ?*const c_void, GLenum) callconv(.C) void;
+const PFNGLBUFFERDATAPROC = ?fn (GLenum, GLsizeiptr, ?*const anyopaque, GLenum) callconv(.C) void;
 extern var glad_glBufferData: PFNGLBUFFERDATAPROC;
-const PFNGLBUFFERSUBDATAPROC = ?fn (GLenum, GLintptr, GLsizeiptr, ?*const c_void) callconv(.C) void;
+const PFNGLBUFFERSUBDATAPROC = ?fn (GLenum, GLintptr, GLsizeiptr, ?*const anyopaque) callconv(.C) void;
 extern var glad_glBufferSubData: PFNGLBUFFERSUBDATAPROC;
-const PFNGLGETBUFFERSUBDATAPROC = ?fn (GLenum, GLintptr, GLsizeiptr, ?*c_void) callconv(.C) void;
+const PFNGLGETBUFFERSUBDATAPROC = ?fn (GLenum, GLintptr, GLsizeiptr, ?*anyopaque) callconv(.C) void;
 extern var glad_glGetBufferSubData: PFNGLGETBUFFERSUBDATAPROC;
-const PFNGLMAPBUFFERPROC = ?fn (GLenum, GLenum) callconv(.C) ?*c_void;
+const PFNGLMAPBUFFERPROC = ?fn (GLenum, GLenum) callconv(.C) ?*anyopaque;
 extern var glad_glMapBuffer: PFNGLMAPBUFFERPROC;
 const PFNGLUNMAPBUFFERPROC = ?fn (GLenum) callconv(.C) GLboolean;
 extern var glad_glUnmapBuffer: PFNGLUNMAPBUFFERPROC;
 const PFNGLGETBUFFERPARAMETERIVPROC = ?fn (GLenum, GLenum, [*c]GLint) callconv(.C) void;
 extern var glad_glGetBufferParameteriv: PFNGLGETBUFFERPARAMETERIVPROC;
-const PFNGLGETBUFFERPOINTERVPROC = ?fn (GLenum, GLenum, [*c]?*c_void) callconv(.C) void;
+const PFNGLGETBUFFERPOINTERVPROC = ?fn (GLenum, GLenum, [*c]?*anyopaque) callconv(.C) void;
 extern var glad_glGetBufferPointerv: PFNGLGETBUFFERPOINTERVPROC;
 extern var GLAD_GL_VERSION_2_0: c_int;
 const PFNGLBLENDEQUATIONSEPARATEPROC = ?fn (GLenum, GLenum) callconv(.C) void;
@@ -344,7 +344,7 @@ const PFNGLGETVERTEXATTRIBFVPROC = ?fn (GLuint, GLenum, [*c]GLfloat) callconv(.C
 extern var glad_glGetVertexAttribfv: PFNGLGETVERTEXATTRIBFVPROC;
 const PFNGLGETVERTEXATTRIBIVPROC = ?fn (GLuint, GLenum, [*c]GLint) callconv(.C) void;
 extern var glad_glGetVertexAttribiv: PFNGLGETVERTEXATTRIBIVPROC;
-const PFNGLGETVERTEXATTRIBPOINTERVPROC = ?fn (GLuint, GLenum, [*c]?*c_void) callconv(.C) void;
+const PFNGLGETVERTEXATTRIBPOINTERVPROC = ?fn (GLuint, GLenum, [*c]?*anyopaque) callconv(.C) void;
 extern var glad_glGetVertexAttribPointerv: PFNGLGETVERTEXATTRIBPOINTERVPROC;
 const PFNGLISPROGRAMPROC = ?fn (GLuint) callconv(.C) GLboolean;
 extern var glad_glIsProgram: PFNGLISPROGRAMPROC;
@@ -468,7 +468,7 @@ const PFNGLVERTEXATTRIB4UIVPROC = ?fn (GLuint, [*c]const GLuint) callconv(.C) vo
 extern var glad_glVertexAttrib4uiv: PFNGLVERTEXATTRIB4UIVPROC;
 const PFNGLVERTEXATTRIB4USVPROC = ?fn (GLuint, [*c]const GLushort) callconv(.C) void;
 extern var glad_glVertexAttrib4usv: PFNGLVERTEXATTRIB4USVPROC;
-const PFNGLVERTEXATTRIBPOINTERPROC = ?fn (GLuint, GLint, GLenum, GLboolean, GLsizei, ?*const c_void) callconv(.C) void;
+const PFNGLVERTEXATTRIBPOINTERPROC = ?fn (GLuint, GLint, GLenum, GLboolean, GLsizei, ?*const anyopaque) callconv(.C) void;
 extern var glad_glVertexAttribPointer: PFNGLVERTEXATTRIBPOINTERPROC;
 extern var GLAD_GL_VERSION_2_1: c_int;
 const PFNGLUNIFORMMATRIX2X3FVPROC = ?fn (GLint, GLsizei, GLboolean, [*c]const GLfloat) callconv(.C) void;
@@ -514,7 +514,7 @@ const PFNGLBEGINCONDITIONALRENDERPROC = ?fn (GLuint, GLenum) callconv(.C) void;
 extern var glad_glBeginConditionalRender: PFNGLBEGINCONDITIONALRENDERPROC;
 const PFNGLENDCONDITIONALRENDERPROC = ?fn () callconv(.C) void;
 extern var glad_glEndConditionalRender: PFNGLENDCONDITIONALRENDERPROC;
-const PFNGLVERTEXATTRIBIPOINTERPROC = ?fn (GLuint, GLint, GLenum, GLsizei, ?*const c_void) callconv(.C) void;
+const PFNGLVERTEXATTRIBIPOINTERPROC = ?fn (GLuint, GLint, GLenum, GLsizei, ?*const anyopaque) callconv(.C) void;
 extern var glad_glVertexAttribIPointer: PFNGLVERTEXATTRIBIPOINTERPROC;
 const PFNGLGETVERTEXATTRIBIIVPROC = ?fn (GLuint, GLenum, [*c]GLint) callconv(.C) void;
 extern var glad_glGetVertexAttribIiv: PFNGLGETVERTEXATTRIBIIVPROC;
@@ -640,7 +640,7 @@ const PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC = ?fn (GLenum, GLsizei, GLenum, GL
 extern var glad_glRenderbufferStorageMultisample: PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC;
 const PFNGLFRAMEBUFFERTEXTURELAYERPROC = ?fn (GLenum, GLenum, GLuint, GLint, GLint) callconv(.C) void;
 extern var glad_glFramebufferTextureLayer: PFNGLFRAMEBUFFERTEXTURELAYERPROC;
-const PFNGLMAPBUFFERRANGEPROC = ?fn (GLenum, GLintptr, GLsizeiptr, GLbitfield) callconv(.C) ?*c_void;
+const PFNGLMAPBUFFERRANGEPROC = ?fn (GLenum, GLintptr, GLsizeiptr, GLbitfield) callconv(.C) ?*anyopaque;
 extern var glad_glMapBufferRange: PFNGLMAPBUFFERRANGEPROC;
 const PFNGLFLUSHMAPPEDBUFFERRANGEPROC = ?fn (GLenum, GLintptr, GLsizeiptr) callconv(.C) void;
 extern var glad_glFlushMappedBufferRange: PFNGLFLUSHMAPPEDBUFFERRANGEPROC;
@@ -655,7 +655,7 @@ extern var glad_glIsVertexArray: PFNGLISVERTEXARRAYPROC;
 extern var GLAD_GL_VERSION_3_1: c_int;
 const PFNGLDRAWARRAYSINSTANCEDPROC = ?fn (GLenum, GLint, GLsizei, GLsizei) callconv(.C) void;
 extern var glad_glDrawArraysInstanced: PFNGLDRAWARRAYSINSTANCEDPROC;
-const PFNGLDRAWELEMENTSINSTANCEDPROC = ?fn (GLenum, GLsizei, GLenum, ?*const c_void, GLsizei) callconv(.C) void;
+const PFNGLDRAWELEMENTSINSTANCEDPROC = ?fn (GLenum, GLsizei, GLenum, ?*const anyopaque, GLsizei) callconv(.C) void;
 extern var glad_glDrawElementsInstanced: PFNGLDRAWELEMENTSINSTANCEDPROC;
 const PFNGLTEXBUFFERPROC = ?fn (GLenum, GLenum, GLuint) callconv(.C) void;
 extern var glad_glTexBuffer: PFNGLTEXBUFFERPROC;
@@ -678,13 +678,13 @@ extern var glad_glGetActiveUniformBlockName: PFNGLGETACTIVEUNIFORMBLOCKNAMEPROC;
 const PFNGLUNIFORMBLOCKBINDINGPROC = ?fn (GLuint, GLuint, GLuint) callconv(.C) void;
 extern var glad_glUniformBlockBinding: PFNGLUNIFORMBLOCKBINDINGPROC;
 extern var GLAD_GL_VERSION_3_2: c_int;
-const PFNGLDRAWELEMENTSBASEVERTEXPROC = ?fn (GLenum, GLsizei, GLenum, ?*const c_void, GLint) callconv(.C) void;
+const PFNGLDRAWELEMENTSBASEVERTEXPROC = ?fn (GLenum, GLsizei, GLenum, ?*const anyopaque, GLint) callconv(.C) void;
 extern var glad_glDrawElementsBaseVertex: PFNGLDRAWELEMENTSBASEVERTEXPROC;
-const PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC = ?fn (GLenum, GLuint, GLuint, GLsizei, GLenum, ?*const c_void, GLint) callconv(.C) void;
+const PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC = ?fn (GLenum, GLuint, GLuint, GLsizei, GLenum, ?*const anyopaque, GLint) callconv(.C) void;
 extern var glad_glDrawRangeElementsBaseVertex: PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC;
-const PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC = ?fn (GLenum, GLsizei, GLenum, ?*const c_void, GLsizei, GLint) callconv(.C) void;
+const PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC = ?fn (GLenum, GLsizei, GLenum, ?*const anyopaque, GLsizei, GLint) callconv(.C) void;
 extern var glad_glDrawElementsInstancedBaseVertex: PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC;
-const PFNGLMULTIDRAWELEMENTSBASEVERTEXPROC = ?fn (GLenum, [*c]const GLsizei, GLenum, [*c]const ?*const c_void, GLsizei, [*c]const GLint) callconv(.C) void;
+const PFNGLMULTIDRAWELEMENTSBASEVERTEXPROC = ?fn (GLenum, [*c]const GLsizei, GLenum, [*c]const ?*const anyopaque, GLsizei, [*c]const GLint) callconv(.C) void;
 extern var glad_glMultiDrawElementsBaseVertex: PFNGLMULTIDRAWELEMENTSBASEVERTEXPROC;
 const PFNGLPROVOKINGVERTEXPROC = ?fn (GLenum) callconv(.C) void;
 extern var glad_glProvokingVertex: PFNGLPROVOKINGVERTEXPROC;
@@ -1686,10 +1686,10 @@ pub inline fn glTexParameteri(arg_20: GLenum, arg_21: GLenum, arg_22: GLint) voi
 pub inline fn glTexParameteriv(arg_23: GLenum, arg_24: GLenum, arg_25: [*c]const GLint) void {
     return glad_glTexParameteriv.?(arg_23, arg_24, arg_25);
 }
-pub inline fn glTexImage1D(arg_26: GLenum, arg_27: GLint, arg_28: GLint, arg_29: GLsizei, arg_30: GLint, arg_31: GLenum, arg_32: GLenum, arg_33: ?*const c_void) void {
+pub inline fn glTexImage1D(arg_26: GLenum, arg_27: GLint, arg_28: GLint, arg_29: GLsizei, arg_30: GLint, arg_31: GLenum, arg_32: GLenum, arg_33: ?*const anyopaque) void {
     return glad_glTexImage1D.?(arg_26, arg_27, arg_28, arg_29, arg_30, arg_31, arg_32, arg_33);
 }
-pub inline fn glTexImage2D(arg_34: GLenum, arg_35: GLint, arg_36: GLint, arg_37: GLsizei, arg_38: GLsizei, arg_39: GLint, arg_40: GLenum, arg_41: GLenum, arg_42: ?*const c_void) void {
+pub inline fn glTexImage2D(arg_34: GLenum, arg_35: GLint, arg_36: GLint, arg_37: GLsizei, arg_38: GLsizei, arg_39: GLint, arg_40: GLenum, arg_41: GLenum, arg_42: ?*const anyopaque) void {
     return glad_glTexImage2D.?(arg_34, arg_35, arg_36, arg_37, arg_38, arg_39, arg_40, arg_41, arg_42);
 }
 pub inline fn glDrawBuffer(arg_43: GLenum) void {
@@ -1752,7 +1752,7 @@ pub inline fn glPixelStorei(arg_71: GLenum, arg_72: GLint) void {
 pub inline fn glReadBuffer(arg_73: GLenum) void {
     return glad_glReadBuffer.?(arg_73);
 }
-pub inline fn glReadPixels(arg_74: GLint, arg_75: GLint, arg_76: GLsizei, arg_77: GLsizei, arg_78: GLenum, arg_79: GLenum, arg_80: ?*c_void) void {
+pub inline fn glReadPixels(arg_74: GLint, arg_75: GLint, arg_76: GLsizei, arg_77: GLsizei, arg_78: GLenum, arg_79: GLenum, arg_80: ?*anyopaque) void {
     return glad_glReadPixels.?(arg_74, arg_75, arg_76, arg_77, arg_78, arg_79, arg_80);
 }
 pub inline fn glGetBooleanv(arg_81: GLenum, arg_82: [*c]GLboolean) void {
@@ -1773,7 +1773,7 @@ pub inline fn glGetIntegerv(arg_87: GLenum, arg_88: [*c]GLint) void {
 pub inline fn glGetString(arg_89: GLenum) [*c]const GLubyte {
     return glad_glGetString.?(arg_89);
 }
-pub inline fn glGetTexImage(arg_90: GLenum, arg_91: GLint, arg_92: GLenum, arg_93: GLenum, arg_94: ?*c_void) void {
+pub inline fn glGetTexImage(arg_90: GLenum, arg_91: GLint, arg_92: GLenum, arg_93: GLenum, arg_94: ?*anyopaque) void {
     return glad_glGetTexImage.?(arg_90, arg_91, arg_92, arg_93, arg_94);
 }
 pub inline fn glGetTexParameterfv(arg_95: GLenum, arg_96: GLenum, arg_97: [*c]GLfloat) void {
@@ -1801,7 +1801,7 @@ pub const GL_VERSION_1_1 = @as(c_int, 1);
 pub inline fn glDrawArrays(arg_116: GLenum, arg_117: GLint, arg_118: GLsizei) void {
     return glad_glDrawArrays.?(arg_116, arg_117, arg_118);
 }
-pub inline fn glDrawElements(arg_119: GLenum, arg_120: GLsizei, arg_121: GLenum, arg_122: ?*const c_void) void {
+pub inline fn glDrawElements(arg_119: GLenum, arg_120: GLsizei, arg_121: GLenum, arg_122: ?*const anyopaque) void {
     return glad_glDrawElements.?(arg_119, arg_120, arg_121, arg_122);
 }
 pub inline fn glPolygonOffset(arg_123: GLfloat, arg_124: GLfloat) void {
@@ -1819,10 +1819,10 @@ pub inline fn glCopyTexSubImage1D(arg_140: GLenum, arg_141: GLint, arg_142: GLin
 pub inline fn glCopyTexSubImage2D(arg_146: GLenum, arg_147: GLint, arg_148: GLint, arg_149: GLint, arg_150: GLint, arg_151: GLint, arg_152: GLsizei, arg_153: GLsizei) void {
     return glad_glCopyTexSubImage2D.?(arg_146, arg_147, arg_148, arg_149, arg_150, arg_151, arg_152, arg_153);
 }
-pub inline fn glTexSubImage1D(arg_154: GLenum, arg_155: GLint, arg_156: GLint, arg_157: GLsizei, arg_158: GLenum, arg_159: GLenum, arg_160: ?*const c_void) void {
+pub inline fn glTexSubImage1D(arg_154: GLenum, arg_155: GLint, arg_156: GLint, arg_157: GLsizei, arg_158: GLenum, arg_159: GLenum, arg_160: ?*const anyopaque) void {
     return glad_glTexSubImage1D.?(arg_154, arg_155, arg_156, arg_157, arg_158, arg_159, arg_160);
 }
-pub inline fn glTexSubImage2D(arg_161: GLenum, arg_162: GLint, arg_163: GLint, arg_164: GLint, arg_165: GLsizei, arg_166: GLsizei, arg_167: GLenum, arg_168: GLenum, arg_169: ?*const c_void) void {
+pub inline fn glTexSubImage2D(arg_161: GLenum, arg_162: GLint, arg_163: GLint, arg_164: GLint, arg_165: GLsizei, arg_166: GLsizei, arg_167: GLenum, arg_168: GLenum, arg_169: ?*const anyopaque) void {
     return glad_glTexSubImage2D.?(arg_161, arg_162, arg_163, arg_164, arg_165, arg_166, arg_167, arg_168, arg_169);
 }
 pub inline fn glBindTexture(arg_170: GLenum, arg_171: GLuint) void {
@@ -1838,13 +1838,13 @@ pub inline fn glIsTexture(arg_176: GLuint) GLboolean {
     return glad_glIsTexture.?(arg_176);
 }
 pub const GL_VERSION_1_2 = @as(c_int, 1);
-pub inline fn glDrawRangeElements(arg_177: GLenum, arg_178: GLuint, arg_179: GLuint, arg_180: GLsizei, arg_181: GLenum, arg_182: ?*const c_void) void {
+pub inline fn glDrawRangeElements(arg_177: GLenum, arg_178: GLuint, arg_179: GLuint, arg_180: GLsizei, arg_181: GLenum, arg_182: ?*const anyopaque) void {
     return glad_glDrawRangeElements.?(arg_177, arg_178, arg_179, arg_180, arg_181, arg_182);
 }
-pub inline fn glTexImage3D(arg_183: GLenum, arg_184: GLint, arg_185: GLint, arg_186: GLsizei, arg_187: GLsizei, arg_188: GLsizei, arg_189: GLint, arg_190: GLenum, arg_191: GLenum, arg_192: ?*const c_void) void {
+pub inline fn glTexImage3D(arg_183: GLenum, arg_184: GLint, arg_185: GLint, arg_186: GLsizei, arg_187: GLsizei, arg_188: GLsizei, arg_189: GLint, arg_190: GLenum, arg_191: GLenum, arg_192: ?*const anyopaque) void {
     return glad_glTexImage3D.?(arg_183, arg_184, arg_185, arg_186, arg_187, arg_188, arg_189, arg_190, arg_191, arg_192);
 }
-pub inline fn glTexSubImage3D(arg_193: GLenum, arg_194: GLint, arg_195: GLint, arg_196: GLint, arg_197: GLint, arg_198: GLsizei, arg_199: GLsizei, arg_200: GLsizei, arg_201: GLenum, arg_202: GLenum, arg_203: ?*const c_void) void {
+pub inline fn glTexSubImage3D(arg_193: GLenum, arg_194: GLint, arg_195: GLint, arg_196: GLint, arg_197: GLint, arg_198: GLsizei, arg_199: GLsizei, arg_200: GLsizei, arg_201: GLenum, arg_202: GLenum, arg_203: ?*const anyopaque) void {
     return glad_glTexSubImage3D.?(arg_193, arg_194, arg_195, arg_196, arg_197, arg_198, arg_199, arg_200, arg_201, arg_202, arg_203);
 }
 pub inline fn glCopyTexSubImage3D(arg_204: GLenum, arg_205: GLint, arg_206: GLint, arg_207: GLint, arg_208: GLint, arg_209: GLint, arg_210: GLint, arg_211: GLsizei, arg_212: GLsizei) void {
@@ -1857,25 +1857,25 @@ pub inline fn glActiveTexture(arg_213: GLenum) void {
 pub inline fn glSampleCoverage(arg_214: GLfloat, arg_215: GLboolean) void {
     return glad_glSampleCoverage.?(arg_214, arg_215);
 }
-pub inline fn glCompressedTexImage3D(arg_216: GLenum, arg_217: GLint, arg_218: GLenum, arg_219: GLsizei, arg_220: GLsizei, arg_221: GLsizei, arg_222: GLint, arg_223: GLsizei, arg_224: ?*const c_void) void {
+pub inline fn glCompressedTexImage3D(arg_216: GLenum, arg_217: GLint, arg_218: GLenum, arg_219: GLsizei, arg_220: GLsizei, arg_221: GLsizei, arg_222: GLint, arg_223: GLsizei, arg_224: ?*const anyopaque) void {
     return glad_glCompressedTexImage3D.?(arg_216, arg_217, arg_218, arg_219, arg_220, arg_221, arg_222, arg_223, arg_224);
 }
-pub inline fn glCompressedTexImage2D(arg_225: GLenum, arg_226: GLint, arg_227: GLenum, arg_228: GLsizei, arg_229: GLsizei, arg_230: GLint, arg_231: GLsizei, arg_232: ?*const c_void) void {
+pub inline fn glCompressedTexImage2D(arg_225: GLenum, arg_226: GLint, arg_227: GLenum, arg_228: GLsizei, arg_229: GLsizei, arg_230: GLint, arg_231: GLsizei, arg_232: ?*const anyopaque) void {
     return glad_glCompressedTexImage2D.?(arg_225, arg_226, arg_227, arg_228, arg_229, arg_230, arg_231, arg_232);
 }
-pub inline fn glCompressedTexImage1D(arg_233: GLenum, arg_234: GLint, arg_235: GLenum, arg_236: GLsizei, arg_237: GLint, arg_238: GLsizei, arg_239: ?*const c_void) void {
+pub inline fn glCompressedTexImage1D(arg_233: GLenum, arg_234: GLint, arg_235: GLenum, arg_236: GLsizei, arg_237: GLint, arg_238: GLsizei, arg_239: ?*const anyopaque) void {
     return glad_glCompressedTexImage1D.?(arg_233, arg_234, arg_235, arg_236, arg_237, arg_238, arg_239);
 }
-pub inline fn glCompressedTexSubImage3D(arg_240: GLenum, arg_241: GLint, arg_242: GLint, arg_243: GLint, arg_244: GLint, arg_245: GLsizei, arg_246: GLsizei, arg_247: GLsizei, arg_248: GLenum, arg_249: GLsizei, arg_250: ?*const c_void) void {
+pub inline fn glCompressedTexSubImage3D(arg_240: GLenum, arg_241: GLint, arg_242: GLint, arg_243: GLint, arg_244: GLint, arg_245: GLsizei, arg_246: GLsizei, arg_247: GLsizei, arg_248: GLenum, arg_249: GLsizei, arg_250: ?*const anyopaque) void {
     return glad_glCompressedTexSubImage3D.?(arg_240, arg_241, arg_242, arg_243, arg_244, arg_245, arg_246, arg_247, arg_248, arg_249, arg_250);
 }
-pub inline fn glCompressedTexSubImage2D(arg_251: GLenum, arg_252: GLint, arg_253: GLint, arg_254: GLint, arg_255: GLsizei, arg_256: GLsizei, arg_257: GLenum, arg_258: GLsizei, arg_259: ?*const c_void) void {
+pub inline fn glCompressedTexSubImage2D(arg_251: GLenum, arg_252: GLint, arg_253: GLint, arg_254: GLint, arg_255: GLsizei, arg_256: GLsizei, arg_257: GLenum, arg_258: GLsizei, arg_259: ?*const anyopaque) void {
     return glad_glCompressedTexSubImage2D.?(arg_251, arg_252, arg_253, arg_254, arg_255, arg_256, arg_257, arg_258, arg_259);
 }
-pub inline fn glCompressedTexSubImage1D(arg_260: GLenum, arg_261: GLint, arg_262: GLint, arg_263: GLsizei, arg_264: GLenum, arg_265: GLsizei, arg_266: ?*const c_void) void {
+pub inline fn glCompressedTexSubImage1D(arg_260: GLenum, arg_261: GLint, arg_262: GLint, arg_263: GLsizei, arg_264: GLenum, arg_265: GLsizei, arg_266: ?*const anyopaque) void {
     return glad_glCompressedTexSubImage1D.?(arg_260, arg_261, arg_262, arg_263, arg_264, arg_265, arg_266);
 }
-pub inline fn glGetCompressedTexImage(arg_267: GLenum, arg_268: GLint, arg_269: ?*c_void) void {
+pub inline fn glGetCompressedTexImage(arg_267: GLenum, arg_268: GLint, arg_269: ?*anyopaque) void {
     return glad_glGetCompressedTexImage.?(arg_267, arg_268, arg_269);
 }
 pub const GL_VERSION_1_4 = @as(c_int, 1);
@@ -1885,7 +1885,7 @@ pub inline fn glBlendFuncSeparate(arg_270: GLenum, arg_271: GLenum, arg_272: GLe
 pub inline fn glMultiDrawArrays(arg_274: GLenum, arg_275: [*c]const GLint, arg_276: [*c]const GLsizei, arg_277: GLsizei) void {
     return glad_glMultiDrawArrays.?(arg_274, arg_275, arg_276, arg_277);
 }
-pub inline fn glMultiDrawElements(arg_278: GLenum, arg_279: [*c]const GLsizei, arg_280: GLenum, arg_281: [*c]const ?*const c_void, arg_282: GLsizei) void {
+pub inline fn glMultiDrawElements(arg_278: GLenum, arg_279: [*c]const GLsizei, arg_280: GLenum, arg_281: [*c]const ?*const anyopaque, arg_282: GLsizei) void {
     return glad_glMultiDrawElements.?(arg_278, arg_279, arg_280, arg_281, arg_282);
 }
 pub inline fn glPointParameterf(arg_283: GLenum, arg_284: GLfloat) void {
@@ -1943,16 +1943,16 @@ pub inline fn glGenBuffers(arg_317: GLsizei, arg_318: [*c]GLuint) void {
 pub inline fn glIsBuffer(arg_319: GLuint) GLboolean {
     return glad_glIsBuffer.?(arg_319);
 }
-pub inline fn glBufferData(arg_320: GLenum, arg_321: GLsizeiptr, arg_322: ?*const c_void, arg_323: GLenum) void {
+pub inline fn glBufferData(arg_320: GLenum, arg_321: GLsizeiptr, arg_322: ?*const anyopaque, arg_323: GLenum) void {
     return glad_glBufferData.?(arg_320, arg_321, arg_322, arg_323);
 }
-pub inline fn glBufferSubData(arg_324: GLenum, arg_325: GLintptr, arg_326: GLsizeiptr, arg_327: ?*const c_void) void {
+pub inline fn glBufferSubData(arg_324: GLenum, arg_325: GLintptr, arg_326: GLsizeiptr, arg_327: ?*const anyopaque) void {
     return glad_glBufferSubData.?(arg_324, arg_325, arg_326, arg_327);
 }
-pub inline fn glGetBufferSubData(arg_328: GLenum, arg_329: GLintptr, arg_330: GLsizeiptr, arg_331: ?*c_void) void {
+pub inline fn glGetBufferSubData(arg_328: GLenum, arg_329: GLintptr, arg_330: GLsizeiptr, arg_331: ?*anyopaque) void {
     return glad_glGetBufferSubData.?(arg_328, arg_329, arg_330, arg_331);
 }
-pub inline fn glMapBuffer(arg_332: GLenum, arg_333: GLenum) ?*c_void {
+pub inline fn glMapBuffer(arg_332: GLenum, arg_333: GLenum) ?*anyopaque {
     return glad_glMapBuffer.?(arg_332, arg_333);
 }
 pub inline fn glUnmapBuffer(arg_334: GLenum) GLboolean {
@@ -1961,7 +1961,7 @@ pub inline fn glUnmapBuffer(arg_334: GLenum) GLboolean {
 pub inline fn glGetBufferParameteriv(arg_335: GLenum, arg_336: GLenum, arg_337: [*c]GLint) void {
     return glad_glGetBufferParameteriv.?(arg_335, arg_336, arg_337);
 }
-pub inline fn glGetBufferPointerv(arg_338: GLenum, arg_339: GLenum, arg_340: [*c]?*c_void) void {
+pub inline fn glGetBufferPointerv(arg_338: GLenum, arg_339: GLenum, arg_340: [*c]?*anyopaque) void {
     return glad_glGetBufferPointerv.?(arg_338, arg_339, arg_340);
 }
 pub const GL_VERSION_2_0 = @as(c_int, 1);
@@ -2055,7 +2055,7 @@ pub inline fn glGetVertexAttribfv(arg_417: GLuint, arg_418: GLenum, arg_419: [*c
 pub inline fn glGetVertexAttribiv(arg_420: GLuint, arg_421: GLenum, arg_422: [*c]GLint) void {
     return glad_glGetVertexAttribiv.?(arg_420, arg_421, arg_422);
 }
-pub inline fn glGetVertexAttribPointerv(arg_423: GLuint, arg_424: GLenum, arg_425: [*c]?*c_void) void {
+pub inline fn glGetVertexAttribPointerv(arg_423: GLuint, arg_424: GLenum, arg_425: [*c]?*anyopaque) void {
     return glad_glGetVertexAttribPointerv.?(arg_423, arg_424, arg_425);
 }
 pub inline fn glIsProgram(arg_426: GLuint) GLboolean {
@@ -2241,7 +2241,7 @@ pub inline fn glVertexAttrib4uiv(arg_588: GLuint, arg_589: [*c]const GLuint) voi
 pub inline fn glVertexAttrib4usv(arg_590: GLuint, arg_591: [*c]const GLushort) void {
     return glad_glVertexAttrib4usv.?(arg_590, arg_591);
 }
-pub inline fn glVertexAttribPointer(arg_592: GLuint, arg_593: GLint, arg_594: GLenum, arg_595: GLboolean, arg_596: GLsizei, arg_597: ?*const c_void) void {
+pub inline fn glVertexAttribPointer(arg_592: GLuint, arg_593: GLint, arg_594: GLenum, arg_595: GLboolean, arg_596: GLsizei, arg_597: ?*const anyopaque) void {
     return glad_glVertexAttribPointer.?(arg_592, arg_593, arg_594, arg_595, arg_596, arg_597);
 }
 pub const GL_VERSION_2_1 = @as(c_int, 1);
@@ -2309,7 +2309,7 @@ pub inline fn glBeginConditionalRender(arg_661: GLuint, arg_662: GLenum) void {
 pub inline fn glEndConditionalRender() void {
     return glad_glEndConditionalRender.?();
 }
-pub inline fn glVertexAttribIPointer(arg_663: GLuint, arg_664: GLint, arg_665: GLenum, arg_666: GLsizei, arg_667: ?*const c_void) void {
+pub inline fn glVertexAttribIPointer(arg_663: GLuint, arg_664: GLint, arg_665: GLenum, arg_666: GLsizei, arg_667: ?*const anyopaque) void {
     return glad_glVertexAttribIPointer.?(arg_663, arg_664, arg_665, arg_666, arg_667);
 }
 pub inline fn glGetVertexAttribIiv(arg_668: GLuint, arg_669: GLenum, arg_670: [*c]GLint) void {
@@ -2498,7 +2498,7 @@ pub inline fn glRenderbufferStorageMultisample(arg_844: GLenum, arg_845: GLsizei
 pub inline fn glFramebufferTextureLayer(arg_849: GLenum, arg_850: GLenum, arg_851: GLuint, arg_852: GLint, arg_853: GLint) void {
     return glad_glFramebufferTextureLayer.?(arg_849, arg_850, arg_851, arg_852, arg_853);
 }
-pub inline fn glMapBufferRange(arg_854: GLenum, arg_855: GLintptr, arg_856: GLsizeiptr, arg_857: GLbitfield) ?*c_void {
+pub inline fn glMapBufferRange(arg_854: GLenum, arg_855: GLintptr, arg_856: GLsizeiptr, arg_857: GLbitfield) ?*anyopaque {
     return glad_glMapBufferRange.?(arg_854, arg_855, arg_856, arg_857);
 }
 pub inline fn glFlushMappedBufferRange(arg_858: GLenum, arg_859: GLintptr, arg_860: GLsizeiptr) void {
@@ -2520,7 +2520,7 @@ pub const GL_VERSION_3_1 = @as(c_int, 1);
 pub inline fn glDrawArraysInstanced(arg_867: GLenum, arg_868: GLint, arg_869: GLsizei, arg_870: GLsizei) void {
     return glad_glDrawArraysInstanced.?(arg_867, arg_868, arg_869, arg_870);
 }
-pub inline fn glDrawElementsInstanced(arg_871: GLenum, arg_872: GLsizei, arg_873: GLenum, arg_874: ?*const c_void, arg_875: GLsizei) void {
+pub inline fn glDrawElementsInstanced(arg_871: GLenum, arg_872: GLsizei, arg_873: GLenum, arg_874: ?*const anyopaque, arg_875: GLsizei) void {
     return glad_glDrawElementsInstanced.?(arg_871, arg_872, arg_873, arg_874, arg_875);
 }
 pub inline fn glTexBuffer(arg_876: GLenum, arg_877: GLenum, arg_878: GLuint) void {
@@ -2554,16 +2554,16 @@ pub inline fn glUniformBlockBinding(arg_910: GLuint, arg_911: GLuint, arg_912: G
     return glad_glUniformBlockBinding.?(arg_910, arg_911, arg_912);
 }
 pub const GL_VERSION_3_2 = @as(c_int, 1);
-pub inline fn glDrawElementsBaseVertex(arg_913: GLenum, arg_914: GLsizei, arg_915: GLenum, arg_916: ?*const c_void, arg_917: GLint) void {
+pub inline fn glDrawElementsBaseVertex(arg_913: GLenum, arg_914: GLsizei, arg_915: GLenum, arg_916: ?*const anyopaque, arg_917: GLint) void {
     return glad_glDrawElementsBaseVertex.?(arg_913, arg_914, arg_915, arg_916, arg_917);
 }
-pub inline fn glDrawRangeElementsBaseVertex(arg_918: GLenum, arg_919: GLuint, arg_920: GLuint, arg_921: GLsizei, arg_922: GLenum, arg_923: ?*const c_void, arg_924: GLint) void {
+pub inline fn glDrawRangeElementsBaseVertex(arg_918: GLenum, arg_919: GLuint, arg_920: GLuint, arg_921: GLsizei, arg_922: GLenum, arg_923: ?*const anyopaque, arg_924: GLint) void {
     return glad_glDrawRangeElementsBaseVertex.?(arg_918, arg_919, arg_920, arg_921, arg_922, arg_923, arg_924);
 }
-pub inline fn glDrawElementsInstancedBaseVertex(arg_925: GLenum, arg_926: GLsizei, arg_927: GLenum, arg_928: ?*const c_void, arg_929: GLsizei, arg_930: GLint) void {
+pub inline fn glDrawElementsInstancedBaseVertex(arg_925: GLenum, arg_926: GLsizei, arg_927: GLenum, arg_928: ?*const anyopaque, arg_929: GLsizei, arg_930: GLint) void {
     return glad_glDrawElementsInstancedBaseVertex.?(arg_925, arg_926, arg_927, arg_928, arg_929, arg_930);
 }
-pub inline fn glMultiDrawElementsBaseVertex(arg_931: GLenum, arg_932: [*c]const GLsizei, arg_933: GLenum, arg_934: [*c]const ?*const c_void, arg_935: GLsizei, arg_936: [*c]const GLint) void {
+pub inline fn glMultiDrawElementsBaseVertex(arg_931: GLenum, arg_932: [*c]const GLsizei, arg_933: GLenum, arg_934: [*c]const ?*const anyopaque, arg_935: GLsizei, arg_936: [*c]const GLint) void {
     return glad_glMultiDrawElementsBaseVertex.?(arg_931, arg_932, arg_933, arg_934, arg_935, arg_936);
 }
 pub inline fn glProvokingVertex(arg_937: GLenum) void {

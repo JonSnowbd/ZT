@@ -31,7 +31,7 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
         /// The HashType defines what 
         pub const HashType = std.HashMap(math.Vec2, Bucket, context, 80);
 
-        allocator: *std.mem.Allocator,
+        allocator: std.mem.Allocator,
         /// A HashMap of (Vec2 -> Bucket) to contain all the buckets as new ones appear.
         hashBins: HashType,
         /// This is a temporary holding bucket of every target inside of a query. This is used for each query
@@ -39,7 +39,7 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
         holding: Bucket,
 
         /// Creates a spatial hash instance and allocates memory for the bucket structures.
-        pub fn init(allocator: *std.mem.Allocator) Self {
+        pub fn init(allocator: std.mem.Allocator) Self {
             return .{
                 .allocator = allocator,
                 .hashBins = HashType.init(allocator),

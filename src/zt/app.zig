@@ -46,7 +46,7 @@ pub fn App(comptime Data: type) type {
         };
         pub const Context = struct {
             _updateSeconds: f32 = -1.0,
-            allocator: *std.mem.Allocator = undefined,
+            allocator: std.mem.Allocator = undefined,
             data: Data = undefined,
             settings: Settings = .{},
             window: ?*glfw.GLFWwindow = undefined,
@@ -157,7 +157,7 @@ pub fn App(comptime Data: type) type {
                     gl.glPixelStorei(gl.GL_UNPACK_ROW_LENGTH, 0);
                 gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, fontTexWidth, fontTexHeight, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, pixels);
                 // Store our identifier
-                io.*.Fonts.*.TexID = @intToPtr(*c_void, newTexId);
+                io.*.Fonts.*.TexID = @intToPtr(*anyopaque, newTexId);
                 ImGuiImplementation.g_FontTexture = newTexId;
             }
         };
@@ -176,7 +176,7 @@ pub fn App(comptime Data: type) type {
                 initialized = true;
             }
         }
-        pub fn begin(applicationAllocator: *std.mem.Allocator) *Context {
+        pub fn begin(applicationAllocator: std.mem.Allocator) *Context {
             var self: *Context = applicationAllocator.create(Context) catch unreachable;
             self.* = .{};
             if (Data != void) {

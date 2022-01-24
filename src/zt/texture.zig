@@ -106,6 +106,6 @@ pub fn setLinearFilter(self: *Self) void {
     gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Clear
 }
 /// Use this to get the correct Texture ID for use in imgui.
-pub fn imguiId(self: *Self) *c_void {
-    return @intToPtr(*c_void, self.id);
+pub fn imguiId(self: *Self) *anyopaque {
+    return @intToPtr(*anyopaque, self.id);
 }

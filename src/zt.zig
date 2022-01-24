@@ -37,7 +37,7 @@ pub inline fn path(subpath: []const u8) []const u8 {
     return pathEx(Allocators.ring(), subpath);
 }
 /// Same as path, but you own the memory.
-pub fn pathEx(allocator: *std.mem.Allocator, subpath: []const u8) []const u8 {
+pub fn pathEx(allocator: std.mem.Allocator, subpath: []const u8) []const u8 {
     var executablePath = known_folders.getPath(allocator, .executable_dir) catch unreachable;
     defer allocator.free(executablePath.?);
     return std.fs.path.joinZ(allocator, &[_][]const u8{ executablePath.?, subpath }) catch unreachable;

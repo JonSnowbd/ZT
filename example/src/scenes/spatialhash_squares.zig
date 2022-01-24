@@ -177,7 +177,7 @@ fn sceneSetup(ctx: *main.SampleApplication.Context) void {
         var prng = std.rand.DefaultPrng.init(blk: {
             var seed: u64 = undefined;
             std.os.getrandom(std.mem.asBytes(&seed)) catch {
-                std.debug.warn("OS getRandom failed.", .{});
+                std.debug.print("OS getRandom failed.", .{});
                 std.process.exit(1);
             };
             break :blk seed;
