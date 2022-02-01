@@ -31,7 +31,7 @@ pub const SampleData = struct {
 pub const SampleApplication = zt.App(SampleData);
 
 pub fn main() !void {
-    var context = SampleApplication.begin(std.heap.c_allocator);
+    var context = try SampleApplication.begin(std.heap.c_allocator);
 
     // Lets customize!
     var io = ig.igGetIO();
@@ -113,7 +113,7 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
         ig.igSeparator();
 
         ig.igText("Information");
-        zg.ztText("{d:.1}fps", .{ctx.time.fps});
+        zg.text("{d:.1}fps", .{ctx.time.fps});
     }
     ig.igEnd();
 }

@@ -47,23 +47,23 @@ pub inline fn fmtTextForImgui(comptime fmt: []const u8, args: anytype) []const u
 }
 /// Uses a ring allocator to spit out imgui text using zig.ig's formatting library.
 pub fn text(comptime fmt: []const u8, args: anytype) void {
-    var text = fmtTextForImgui(fmt, args);
-    ig.igText(text.ptr);
+    var textFormatted = fmtTextForImgui(fmt, args);
+    ig.igText(textFormatted.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library, wrapping if needed.
 pub fn textWrap(comptime fmt: []const u8, args: anytype) void {
-    var text = fmtTextForImgui(fmt, args);
-    ig.igTextWrapped(text.ptr);
+    var textFormatted = fmtTextForImgui(fmt, args);
+    ig.igTextWrapped(textFormatted.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library, in the disabled color.
 pub fn textDisabled(comptime fmt: []const u8, args: anytype) void {
-    var text = fmtTextForImgui(fmt, args);
-    ig.igTextDisabled(text.ptr);
+    var textFormatted = fmtTextForImgui(fmt, args);
+    ig.igTextDisabled(textFormatted.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library with a custom color.
 pub fn textColor(comptime fmt: []const u8, color: ig.ImVec4, args: anytype) void {
-    var text = fmtTextForImgui(fmt, args);
-    ig.igTextColored(color, text.ptr);
+    var textFormatted = fmtTextForImgui(fmt, args);
+    ig.igTextColored(color, textFormatted.ptr);
 }
 
 /// Attempts to create a general editor for most structs, including math structs. This isnt always what you want, and in

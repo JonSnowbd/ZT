@@ -164,7 +164,7 @@ fn control() void {
             }
             ig.igEndListBox();
         }
-        zg.ztTextWrap("You've spawned {any} squares.", .{spawned});
+        zg.textWrap("You've spawned {any} squares.", .{spawned});
         ig.igTextWrapped("Use middle mouse to scroll, and mousewheel to zoom");
         ig.igPopItemWidth();
     }

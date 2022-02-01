@@ -35,7 +35,7 @@ pub const gl = struct {
 /// to it. Useful to keep relative file loading working properly(especially using `zig build run`)
 /// when ran from any location.
 pub fn makeCwd() !void {
-    var folder = (try zt.known_folders.getPath(self.allocator, zt.known_folders.KnownFolder.executable_dir)).?;
+    var folder = (try known_folders.getPath(std.heap.c_allocator, known_folders.KnownFolder.executable_dir)).?;
     try std.os.chdir(folder);
 }
 
