@@ -40,7 +40,7 @@ fn control() void {
         ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);
         _ = ig.igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ig.ImGuiSliderFlags_None);
         _ = ig.igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ig.ImGuiSliderFlags_None);
-        _ = zg.ztEdit("Shader On", &shaderActive);
+        _ = zg.edit("Shader On", &shaderActive);
         ig.igPopItemWidth();
     }
     ig.igEnd();

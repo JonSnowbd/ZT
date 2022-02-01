@@ -10,7 +10,7 @@ pub fn RingBufferGenerate(comptime size: usize) type {
             .resizeFn = mem.Allocator.noResize,
         };
         var end_index: usize = 0;
-        pub fn getAllocator(self:*Self) mem.Allocator {
+        pub fn getAllocator(self: *Self) mem.Allocator {
             return mem.Allocator.init(self, alloc, mem.Allocator.NoResize(Self).noResize, mem.Allocator.NoOpFree(Self).noOpFree);
         }
         fn alloc(a: *Self, n: usize, ptr_align: u29, len_align: u29, ret_addr: usize) std.mem.Allocator.Error![]u8 {
@@ -41,7 +41,6 @@ pub fn RingBufferGenerate(comptime size: usize) type {
 var internal = RingBufferGenerate(1024 * 1024 * 3){};
 /// You can use this to allocate temp memory that you never have to free.
 var internalBuffer: mem.Allocator = internal.getAllocator();
-
 
 /// Returns a ring buffer that uses a page allocator in a loop of memory.
 /// Do not use this for permanent memory, but instead for throw away memory, no need

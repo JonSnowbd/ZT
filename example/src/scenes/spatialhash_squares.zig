@@ -127,7 +127,7 @@ fn control() void {
         _ = ig.igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ig.ImGuiSliderFlags_None);
         _ = ig.igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ig.ImGuiSliderFlags_None);
         ig.igSeparator();
-        _ = zg.ztEditDrag("Within Bounds", 2, &bounds);
+        _ = zg.editDrag("Within Bounds", 2, &bounds);
 
         var generation: ?usize = null;
         if (ig.igButton("Spawn 10 items", .{})) {

@@ -66,14 +66,14 @@ fn control(ctx: *main.SampleApplication.Context) void {
         _ = ig.igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ig.ImGuiSliderFlags_None);
         _ = ig.igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ig.ImGuiSliderFlags_None);
         ig.igSeparator();
-        _ = zg.ztEditDrag("Line Start", 0.1, &lineStart);
-        _ = zg.ztEditDrag("Line End", 0.1, &lineEnd);
-        _ = zg.ztEditDrag("Line Thickness", 0.1, &thickness);
-        _ = zg.ztEditDrag("Line Start color", 0.1, &startColor);
-        _ = zg.ztEditDrag("Line End color", 0.1, &endColor);
+        _ = zg.editDrag("Line Start", 0.1, &lineStart);
+        _ = zg.editDrag("Line End", 0.1, &lineEnd);
+        _ = zg.editDrag("Line Thickness", 0.1, &thickness);
+        _ = zg.editDrag("Line Start color", 0.1, &startColor);
+        _ = zg.editDrag("Line End color", 0.1, &endColor);
         ig.igSeparator();
-        _ = zg.ztEditDrag("Circle Radius", 0.1, &radius);
-        _ = zg.ztEditDrag("Circle Resolution", 0.1, &ctx.data.render.resolution);
+        _ = zg.editDrag("Circle Radius", 0.1, &radius);
+        _ = zg.editDrag("Circle Resolution", 0.1, &ctx.data.render.resolution);
         ig.igPopItemWidth();
     }
     ig.igEnd();

@@ -61,6 +61,8 @@ pub fn App(comptime Data: type) type {
                 self.allocator.destroy(self);
             }
 
+            /// Ticks forward timer, clears OpenGL, enqueues events, and dictates to imgui
+            /// that we are starting a new frame. Basically 
             pub fn beginFrame(self: *Context) void {
                 self.open = glfw.glfwWindowShouldClose(self.window) == 0;
                 self.time.tick();
@@ -68,6 +70,7 @@ pub fn App(comptime Data: type) type {
                 gl.glClear(gl.GL_COLOR_BUFFER_BIT);
                 ig.igNewFrame();
             }
+            /// Draws all the imgui commands, and flips the buffer to display the drawn image
             pub fn endFrame(self: *Context) void {
                 var io = ig.igGetIO();
                 // Render
@@ -91,12 +94,21 @@ pub fn App(comptime Data: type) type {
                     }
                 }
             }
+            /// Changes the context window's position. In some operating systems I believe this is
+            /// a no-op
+            pub fn setWindowPosition(self: *Context, x: c_int, y: c_int) void {
+                glfw.glfwSetWindowPos(self.window, x, y);
+            }
+            /// Changes the context window's size
             pub fn setWindowSize(self: *Context, width: c_int, height: c_int) void {
                 glfw.glfwSetWindowSize(self.window, width, height);
             }
+            /// Changes the context window's title(the text on the window's title bar, typically)
             pub fn setWindowTitle(self: *Context, string: []const u8) void {
                 glfw.glfwSetWindowTitle(self.window, string.ptr);
             }
+            /// If true, buffer swaps will happen each possible frame in line with your monitor hz,
+            /// but if false, will buffer swap as fast as it can.
             pub fn setVsync(self: *Context, on: bool) void {
                 if (on) {
                     glfw.glfwSwapInterval(1);
@@ -105,6 +117,9 @@ pub fn App(comptime Data: type) type {
                 }
                 self.settings.vsync = on;
             }
+            /// Give a path to a .png for the window icon. Note this does not affect the
+            /// binary icon, and you would rather want to use post builds specific to 
+            /// each platform.
             pub fn setWindowIcon(self: *Context, path: []const u8) void {
                 stb.stbi_set_flip_vertically_on_load(0);
                 var image = glfw.GLFWimage{ .width = 0, .height = 0, .pixels = null };
@@ -113,15 +128,19 @@ pub fn App(comptime Data: type) type {
                     glfw.glfwSetWindowIcon(self.window, 1, &image);
                     stb.stbi_image_free(image.pixels);
                 } else {
-                    std.debug.print("Failed to load icon {s}", .{path});
+                    std.debug.print("Failed to load icon {s}\n", .{path});
                 }
             }
-            /// If you have an animation that needs to play you can queue an amount of seconds that will ig.ignore energy saving.
+            /// Tells ZT to close the window
+            pub fn close(self: *Context) void {
+                glfw.glfwSetWindowShouldClose(self.window, 1);
+            }
+            /// If you have an animation that needs to play you can queue an amount of seconds that will ignore energy saving mode
             pub fn setAnimationFrames(self: *Context, seconds: f32) void {
                 self._updateSeconds = seconds;
             }
             /// If you are using multithreading or anything that will require the UI to update from outside, this can force a redraw,
-            /// if you are using energy saving mode.
+            /// if you are using energy saving mode
             pub fn forceUpdate(self: *Context) void {
                 _ = self;
                 glfw.glfwPostEmptyEvent();
@@ -133,7 +152,7 @@ pub fn App(comptime Data: type) type {
                 return newFont;
             }
             /// This will destroy and rebuild the font texture used for imgui.
-            /// This is also called for you when you add and remove fonts.
+            /// This is also called for you when you add and remove fonts
             pub fn rebuildFont(self: *Context) void {
                 _ = self;
                 var io = ig.igGetIO();
@@ -163,8 +182,8 @@ pub fn App(comptime Data: type) type {
         };
 
         /// If you need glfw to init before starting, use this to init glfw and
-        /// other libraries without actually spinning up the context.
-        pub fn preInit() void {
+        /// other libraries without actually spinning up the context
+        pub fn preInit() !void {
             if (!initialized) {
                 if (glfw.glfwInit() < 0) {
                     std.debug.panic("Failed to init GLFW", .{});
@@ -176,21 +195,22 @@ pub fn App(comptime Data: type) type {
                 initialized = true;
             }
         }
-        pub fn begin(applicationAllocator: std.mem.Allocator) *Context {
-            var self: *Context = applicationAllocator.create(Context) catch unreachable;
+        /// Starts the entire application! Returns errors if anything along the pipeline fails.
+        pub fn begin(applicationAllocator: std.mem.Allocator) !*Context {
+            var self: *Context = try applicationAllocator.create(Context);
             self.* = .{};
             if (Data != void) {
                 self.data = .{};
             }
             self.allocator = applicationAllocator;
             self.input = std.ArrayList(InputEvent).init(applicationAllocator);
-            preInit();
+            try preInit();
             self.window = glfw.glfwCreateWindow(800, 600, "ZT Application", null, null).?;
             self.open = true;
             glfw.glfwMakeContextCurrent(self.window);
 
             if (gl.gladLoadGL() < 0) {
-                std.debug.panic("Failed to init Glad GL Loader", .{});
+                return error.GladLoadError;
             }
             ImGuiImplementation.init("#version 330");
 
@@ -210,6 +230,7 @@ pub fn App(comptime Data: type) type {
             glfw.glfwGetWindowSize(self.window, &width, &height);
             gl.glViewport(0, 0, width, height);
             var io = ig.igGetIO();
+            io.*.ConfigFlags |= ig.ImGuiConfigFlags_DockingEnable;
             io.*.DisplaySize = .{ .x = @intToFloat(f32, width), .y = @intToFloat(f32, height) };
             self.time = TimeManager.init();
             return self;

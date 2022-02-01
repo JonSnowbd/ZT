@@ -93,11 +93,11 @@ fn control() void {
         _ = ig.igDragFloat("Camera Rotation", &rotation, 0.02, zt.math.toRadians(-360.0), zt.math.toRadians(360.0), "%.3f", ig.ImGuiSliderFlags_None);
         _ = ig.igDragFloat("Camera Zoom", &scale, 0.02, 0.1, 16, "%.3f", ig.ImGuiSliderFlags_None);
         ig.igSeparator();
-        _ = zg.ztEditDrag("Line Pos", 0.1, &linePos);
-        _ = zg.ztEditDrag("Rect Pos", 0.1, &rectPos);
-        _ = zg.ztEditDrag("Circle Pos", 0.1, &circlePos);
-        _ = zg.ztEditDrag("Point Pos", 0.1, &pointPos);
-        _ = zg.ztEditDrag("Poly Pos", 0.1, &polyPos);
+        _ = zg.editDrag("Line Pos", 0.1, &linePos);
+        _ = zg.editDrag("Rect Pos", 0.1, &rectPos);
+        _ = zg.editDrag("Circle Pos", 0.1, &circlePos);
+        _ = zg.editDrag("Point Pos", 0.1, &pointPos);
+        _ = zg.editDrag("Poly Pos", 0.1, &polyPos);
         ig.igPopItemWidth();
     }
     ig.igEnd();

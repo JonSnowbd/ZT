@@ -58,6 +58,12 @@ pub fn link(exe: *std.build.LibExeObjStep) void {
     exe.addPackage(stbPkg);
     exe.addPackage(imguiPkg);
     exe.addPackage(ztPkg);
+
+    if(exe.build_mode != .Debug) {
+        if(exe.target.isWindows()) {
+            exe.subsystem = .Windows;
+        }
+    }
 }
 
 // STB

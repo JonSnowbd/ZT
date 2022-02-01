@@ -90,7 +90,7 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
     ig.igSetNextWindowSize(zt.math.vec2(300, io.*.DisplaySize.y - 16), ig.ImGuiCond_Always);
     if (ig.igBegin("Context Inspection", null, flags)) {
         ig.igText("Data Settings");
-        // zg.ztEdit("Current Scene", &ctx.data.currentScene);
+        // zg.edit("Current Scene", &ctx.data.currentScene);
         if (ig.igBeginListBox("##Listbox pog", .{})) {
             var i: usize = 0;
             while (i < scenes.len) : (i += 1) {
@@ -103,13 +103,13 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
         ig.igSeparator();
 
         ig.igText("Settings");
-        _ = zg.ztEdit("Energy Saving", &ctx.settings.energySaving);
+        _ = zg.edit("Energy Saving", &ctx.settings.energySaving);
         if (ig.igCheckbox("V Sync", &ctx.settings.vsync)) {
             // The vsync setting is only a getter, setting it does nothing.
             // So on change, we follow through with the real call that changes it.
             ctx.setVsync(ctx.settings.vsync);
         }
-        _ = zg.ztEdit("ig.ImGui Active (Warning!!)", &ctx.settings.imguiActive);
+        _ = zg.edit("ig.ImGui Active (Warning!!)", &ctx.settings.imguiActive);
         ig.igSeparator();
 
         ig.igText("Information");

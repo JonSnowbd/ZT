@@ -31,6 +31,14 @@ pub const gl = struct {
     pub const GenerateBuffer = @import("zt/generateBuffer.zig").GenerateBuffer;
 };
 
+/// Finds the folder of the binary, and sets the operating system's working directory
+/// to it. Useful to keep relative file loading working properly(especially using `zig build run`)
+/// when ran from any location.
+pub fn makeCwd() !void {
+    var folder = (try zt.known_folders.getPath(self.allocator, zt.known_folders.KnownFolder.executable_dir)).?;
+    try std.os.chdir(folder);
+}
+
 /// Takes a relative path from the executable's cwd, and returns an absolute path to the resource. Great for making
 /// sure your application gets the right resources no matter where its launched from.
 pub inline fn path(subpath: []const u8) []const u8 {

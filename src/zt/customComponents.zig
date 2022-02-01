@@ -4,7 +4,7 @@ const ig = @import("imgui");
 
 /// You can't remove the background from this, but you can make it invisible with
 /// style.Colors.
-pub fn ztViewPort() ig.ImGuiID {
+pub fn viewPort() ig.ImGuiID {
     const dockNodeFlags = ig.ImGuiDockNodeFlags_PassthruCentralNode;
     const windowFlags =
         ig.ImGuiWindowFlags_NoCollapse |
@@ -46,29 +46,29 @@ pub inline fn fmtTextForImgui(comptime fmt: []const u8, args: anytype) []const u
     return alloc.dupeZ(u8, std.fmt.allocPrint(alloc, fmt, args) catch unreachable) catch unreachable;
 }
 /// Uses a ring allocator to spit out imgui text using zig.ig's formatting library.
-pub fn ztText(comptime fmt: []const u8, args: anytype) void {
+pub fn text(comptime fmt: []const u8, args: anytype) void {
     var text = fmtTextForImgui(fmt, args);
     ig.igText(text.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library, wrapping if needed.
-pub fn ztTextWrap(comptime fmt: []const u8, args: anytype) void {
+pub fn textWrap(comptime fmt: []const u8, args: anytype) void {
     var text = fmtTextForImgui(fmt, args);
     ig.igTextWrapped(text.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library, in the disabled color.
-pub fn ztTextDisabled(comptime fmt: []const u8, args: anytype) void {
+pub fn textDisabled(comptime fmt: []const u8, args: anytype) void {
     var text = fmtTextForImgui(fmt, args);
     ig.igTextDisabled(text.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library with a custom color.
-pub fn ztTextColor(comptime fmt: []const u8, color: ig.ImVec4, args: anytype) void {
+pub fn textColor(comptime fmt: []const u8, color: ig.ImVec4, args: anytype) void {
     var text = fmtTextForImgui(fmt, args);
     ig.igTextColored(color, text.ptr);
 }
 
 /// Attempts to create a general editor for most structs, including math structs. This isnt always what you want, and in
 /// those cases its always better to layout your own editor. This is biased towards creating drag inputs.
-pub fn ztEditDrag(label: []const u8, speed: f32, ptr: anytype) bool {
+pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
     // Array buffers are weird. Lets sort them out first.
     const ti: std.builtin.TypeInfo = @typeInfo(@TypeOf(ptr.*));
     if (ti == .Array) {
@@ -136,7 +136,7 @@ pub fn ztEditDrag(label: []const u8, speed: f32, ptr: anytype) bool {
     }
 }
 
-pub fn ztEdit(label: []const u8, ptr: anytype) bool {
+pub fn edit(label: []const u8, ptr: anytype) bool {
     // Array buffers are weird. Lets sort them out first.
     const ti: std.builtin.TypeInfo = @typeInfo(@TypeOf(ptr.*));
     if (ti == .Array) {
