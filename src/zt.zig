@@ -6,6 +6,7 @@ pub const Allocators = @import("zt/allocators.zig");
 pub const known_folders = @import("pkg/known_folders.zig");
 pub const custom_components = @import("zt/customComponents.zig");
 pub const math = @import("pkg/zlm.zig");
+pub const imgui_style = @import("zt/styler.zig");
 
 /// Everything inside of `Game` is designed around making a game easier to work on. Things like physics, spatial hashing,
 /// and general purpose rendering.

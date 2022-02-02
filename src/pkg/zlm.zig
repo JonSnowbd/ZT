@@ -487,6 +487,12 @@ fn specializeOn(comptime Real: type) type {
             pub fn colorFaded(vec: Vec4, newTransparency: Real) Vec4 {
                 return .{ .x = vec.x, .y = vec.y, .z = vec.z, .w = newTransparency };
             }
+
+            /// val = 0 means unchanged, val = 1 means full white, val = -1 means full black
+            /// Values are clamped between 0 and 1 to maintain valid normalized color, and alpha is unchanged.
+            pub fn brighten(self: @This(), val: f32) @This() {
+                return .{ .x = std.math.clamp(self.x * (1.0 + val), 0.0, 1.0), .y = std.math.clamp(self.y * (1.0 + val), 0.0, 1.0), .z = std.math.clamp(self.z * (1.0 + val), 0.0, 1.0), .w = self.w };
+            }
         };
 
         /// 2 by 2 matrix type.
