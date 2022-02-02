@@ -13,12 +13,10 @@ pub const glPkg = std.build.Pkg{
     .name = "gl",
     .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/gl.zig" },
 };
-pub const imguiPkg = std.build.Pkg{ .name = "imgui", .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/imgui.zig" } };
 pub const glfwPkg = std.build.Pkg{ .name = "glfw", .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/glfw.zig" } };
 pub const ztPkg = std.build.Pkg{ .name = "zt", .path = std.build.FileSource{ .path = getRelativePath() ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{
     glfwPkg,
     glPkg,
-    imguiPkg,
     stbPkg,
 } };
 
@@ -48,7 +46,6 @@ pub fn build(b: *std.build.Builder) void {
 
 pub fn link(exe: *std.build.LibExeObjStep) void {
     // Link step
-    exe.linkLibrary(imguiLibrary(exe));
     exe.linkLibrary(glfwLibrary(exe));
     exe.linkLibrary(glLibrary(exe));
     exe.linkLibrary(stbLibrary(exe));
@@ -56,7 +53,6 @@ pub fn link(exe: *std.build.LibExeObjStep) void {
     exe.addPackage(glfwPkg);
     exe.addPackage(glPkg);
     exe.addPackage(stbPkg);
-    exe.addPackage(imguiPkg);
     exe.addPackage(ztPkg);
 }
 
@@ -108,42 +104,6 @@ pub fn glLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     gl.addCSourceFile(path ++ "src/dep/gl/glad/src/glad.c", flagContainer.items);
 
     return gl;
-}
-// ImGui
-pub fn imguiLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
-    comptime var path = getRelativePath();
-    var b = exe.builder;
-    var target = exe.target;
-    var imgui = b.addStaticLibrary("imgui", null);
-    imgui.linkLibC();
-    imgui.linkSystemLibrary("c++");
-
-    // Generate flags.
-    var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
-    if (b.is_release) flagContainer.append("-Os") catch unreachable;
-    flagContainer.append("-Wno-return-type-c-linkage") catch unreachable;
-
-    // Link libraries.
-    if (target.isWindows()) {
-        imgui.linkSystemLibrary("winmm");
-        imgui.linkSystemLibrary("user32");
-        imgui.linkSystemLibrary("imm32");
-        imgui.linkSystemLibrary("gdi32");
-    }
-
-    if(target.isDarwin()) {
-        // !! Mac TODO
-        // Here we need to add the include the system libs needed for mac imgui
-    }
-
-    // Include dirs.
-    imgui.addIncludeDir(path ++ "src/dep/cimgui/imgui");
-    imgui.addIncludeDir(path ++ "src/dep/cimgui");
-
-    // Add C
-    imgui.addCSourceFiles(&.{ path ++ "src/dep/cimgui/imgui/imgui.cpp", path ++ "src/dep/cimgui/imgui/imgui_demo.cpp", path ++ "src/dep/cimgui/imgui/imgui_draw.cpp", path ++ "src/dep/cimgui/imgui/imgui_tables.cpp", path ++ "src/dep/cimgui/imgui/imgui_widgets.cpp", path ++ "src/dep/cimgui/cimgui.cpp" }, flagContainer.items);
-
-    return imgui;
 }
 // GLFW
 pub fn glfwLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {

@@ -71,6 +71,23 @@ pub fn initBlank(width: c_int, height: c_int) Self {
 
     return self;
 }
+pub fn initColor(width: c_int, height: c_int, color: u32) Self {
+    var dat: []u32 = std.heap.c_allocator.alloc(u32, @intCast(usize,width)*@intCast(usize,height)) catch unreachable;
+    for(dat)|*col| {
+        col.* = color;
+    }
+    var self = Self{};
+    self.width = @intToFloat(f32, width);
+    self.height = @intToFloat(f32, height);
+    gl.glGenTextures(1, &self.id);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
+    gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, dat.ptr);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
+    std.heap.c_allocator.free(dat);
+    return self;
+}
 pub fn deinit(self: *Self) void {
     gl.glDeleteTextures(1, &self.id);
     self.dead = true;
@@ -104,8 +121,4 @@ pub fn setLinearFilter(self: *Self) void {
     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
     gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
     gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Clear
-}
-/// Use this to get the correct Texture ID for use in imgui.
-pub fn imguiId(self: *Self) *anyopaque {
-    return @intToPtr(*anyopaque, self.id);
 }
