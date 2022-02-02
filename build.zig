@@ -48,28 +48,23 @@ pub fn build(b: *std.build.Builder) void {
 
 pub fn link(exe: *std.build.LibExeObjStep) void {
     // Link step
-    exe.linkLibrary(imguiLibrary(exe.builder, exe.target));
-    exe.linkLibrary(glfwLibrary(exe.builder, exe.target));
-    exe.linkLibrary(glLibrary(exe.builder, exe.target));
-    exe.linkLibrary(stbLibrary(exe.builder, exe.target));
+    exe.linkLibrary(imguiLibrary(exe));
+    exe.linkLibrary(glfwLibrary(exe));
+    exe.linkLibrary(glLibrary(exe));
+    exe.linkLibrary(stbLibrary(exe));
 
     exe.addPackage(glfwPkg);
     exe.addPackage(glPkg);
     exe.addPackage(stbPkg);
     exe.addPackage(imguiPkg);
     exe.addPackage(ztPkg);
-
-    if(exe.build_mode != .Debug) {
-        if(exe.target.isWindows()) {
-            exe.subsystem = .Windows;
-        }
-    }
 }
 
 // STB
-pub fn stbLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.LibExeObjStep {
+pub fn stbLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
-    _ = target;
+
+    var b = exe.builder;
     var stb = b.addStaticLibrary("stb", null);
     stb.linkLibC();
 
@@ -81,8 +76,11 @@ pub fn stbLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build
     return stb;
 }
 // OpenGL
-pub fn glLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.LibExeObjStep {
+pub fn glLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
+
+    var b = exe.builder;
+    var target = exe.target;
     var gl = b.addStaticLibrary("gl", null);
     gl.linkLibC();
 
@@ -97,6 +95,11 @@ pub fn glLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.
     if (target.isLinux()) {
         gl.linkSystemLibrary("gl");
     }
+    if(target.isDarwin()) {
+        // !! Mac TODO
+        // Here we need to add the include the system libs needed for mac opengl
+        // Maybe also 
+    }
 
     // Include dirs.
     gl.addIncludeDir(path ++ "src/dep/gl/glad/include");
@@ -107,8 +110,10 @@ pub fn glLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.
     return gl;
 }
 // ImGui
-pub fn imguiLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.LibExeObjStep {
+pub fn imguiLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
+    var b = exe.builder;
+    var target = exe.target;
     var imgui = b.addStaticLibrary("imgui", null);
     imgui.linkLibC();
     imgui.linkSystemLibrary("c++");
@@ -126,6 +131,11 @@ pub fn imguiLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.bui
         imgui.linkSystemLibrary("gdi32");
     }
 
+    if(target.isDarwin()) {
+        // !! Mac TODO
+        // Here we need to add the include the system libs needed for mac imgui
+    }
+
     // Include dirs.
     imgui.addIncludeDir(path ++ "src/dep/cimgui/imgui");
     imgui.addIncludeDir(path ++ "src/dep/cimgui");
@@ -136,11 +146,12 @@ pub fn imguiLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.bui
     return imgui;
 }
 // GLFW
-pub fn glfwLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.build.LibExeObjStep {
+pub fn glfwLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
+    var b = exe.builder;
+    var target = exe.target;
     var glfw = b.addStaticLibrary("glfw", null);
     glfw.linkLibC();
-
     var flagContainer: std.ArrayList([]const u8) = std.ArrayList([]const u8).init(std.heap.page_allocator);
     if (b.is_release) flagContainer.append("-Os") catch unreachable;
 
@@ -151,8 +162,8 @@ pub fn glfwLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.buil
     // For windows targets, link/add c.
     if (target.isWindows()) {
         if (b.is_release) {
-            glfw.subsystem = .Windows; // Hide the Console on release.
-            glfw.want_lto = false; // TODO: When _tls_index is no longer lost on lto, undo this.
+            exe.subsystem = .Windows; // Hide the Console on release.
+            exe.want_lto = false; // TODO: When _tls_index is no longer lost on lto, undo this.
         }
         flagContainer.append("-D_GLFW_WIN32") catch unreachable;
         glfw.linkSystemLibrary("gdi32");
@@ -192,6 +203,12 @@ pub fn glfwLibrary(b: *std.build.Builder, target: std.zig.CrossTarget) *std.buil
             path ++ "src/dep/glfw/src/osmesa_context.c",
             path ++ "src/dep/glfw/src/linux_joystick.c",
         }, flagContainer.items);
+    }
+
+    if (target.isDarwin()) {
+        // !! Mac TODO
+        // Here we need to add the include dirs and c files that glfw
+        // depends on for specifically the mac platform.
     }
 
     // Shared C.
