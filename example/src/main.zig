@@ -10,33 +10,44 @@ pub const SampleData = struct {
 pub const SampleApplication = zt.App(SampleData);
 
 pub fn main() !void {
-    var context = try SampleApplication.begin(std.heap.c_allocator);
+    var ctx = try SampleApplication.begin(std.heap.c_allocator);
     // Set up state
-    context.settings.energySaving = false; // Some examples are games, and will benefit from this.
-    context.data.render = zt.Renderer.init();
-    context.data.sheet = try zt.Texture.init(zt.path("texture/sheet.png"));
-    context.data.sheet.setNearestFilter(); // Pixel art looks better with nearest filters.
-    context.data.pixel = context.createWhitePixel();
+    ctx.settings.energySaving = false; // Some examples are games, and will benefit from this.
+    ctx.data.render = zt.Renderer.init();
+    ctx.data.sheet = try zt.Texture.init(zt.path("texture/sheet.png"));
+    ctx.data.sheet.setNearestFilter(); // Pixel art looks better with nearest filters.
+    ctx.data.pixel = ctx.createWhitePixel();
 
-    context.setWindowSize(1280, 720);
-    context.setWindowTitle("ZT Demo");
-    context.setWindowIcon(zt.path("texture/ico.png"));
+    ctx.setWindowSize(1280, 720);
+    ctx.setWindowTitle("ZT Demo");
+    ctx.setWindowIcon(zt.path("texture/ico.png"));
 
     // You control your own main loop, all you got to do is call begin and end frame,
     // and zt will handle the rest.
-    while (context.open) {
-        context.beginFrame();
+    while (ctx.open) {
+        ctx.beginFrame();
 
-        // Update camera sets the view matrix like a 2d camera.
-        context.data.render.updateCamera(.{}, 1.0, 0.0);
-        context.data.render.circle(context.data.pixel, null, context.info.mousePos, 15.0, 0.0, zt.math.Vec4.white);
+        // Update render size first, like this:
+        ctx.data.render.updateRenderSize(ctx.info.windowSize);
+        // then update camera sets the view matrix like a 2d camera.
+        // You can also directly modify .viewMatrix, .projectionMatrix, .inverseViewMatrix
+        // with a matrix of your own choosing.
+        ctx.data.render.updateCamera(.{}, 1.0, 0.0);
+
+        // The zt.Renderer has many useful methods you can explore.
+        var mousePos = ctx.data.render.screenToWorld(ctx.info.mousePos);
+
+        ctx.data.render.rectangleHollow(ctx.data.pixel, null, zt.math.Rect.new(-100,-100,200,200), 0, 2, zt.math.Vec4.white);
+        ctx.data.render.circle(ctx.data.pixel, null, mousePos, 15.0, 0.0, zt.math.Vec4.white);
+        ctx.data.render.line(ctx.data.pixel, null, .{}, mousePos, 0.0, 3.0, zt.math.Vec4.new(0.9, 0.4, 0.3, 1.0), zt.math.Vec4.white);
+
         // Always flush, even if you think it might be empty.
-        context.data.render.flush();
+        ctx.data.render.flush();
 
-        context.endFrame();
+        ctx.endFrame();
     }
 
-    context.data.sheet.deinit();
-    context.data.render.deinit();
-    context.deinit();
+    ctx.data.sheet.deinit();
+    ctx.data.render.deinit();
+    ctx.deinit();
 }

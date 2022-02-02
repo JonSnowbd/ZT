@@ -249,21 +249,6 @@ pub fn rectangleHollow(self: *Self, texture: zt.Texture, sourceRect: ?zt.math.Re
     self.line(texture, sourceRect, br, bl.add(.{ .x = -thickness * 0.5 }), z, thickness, col, col);
     self.line(texture, sourceRect, bl, tl.add(.{ .y = -thickness * 0.5 }), z, thickness, col, col);
 }
-
-pub fn text(self: *Self, pos: zt.math.Vec2, string: []const u8, col: zt.math.Vec4) void {
-    _ = self;
-    const ig = @import("imgui");
-    var drawlist = ig.igGetBackgroundDrawList_Nil();
-
-    var colCast: [4]u8 = .{
-        @floatToInt(u8, 255 * col.x),
-        @floatToInt(u8, 255 * col.y),
-        @floatToInt(u8, 255 * col.z),
-        @floatToInt(u8, 255 * col.w),
-    };
-    ig.ImDrawList_AddText_Vec2(drawlist, pos, @bitCast(ig.ImU32, colCast), string.ptr, null);
-}
-
 pub fn clear(self: *Self) void {
     self.internal.clear();
 }
