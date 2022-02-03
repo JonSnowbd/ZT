@@ -92,8 +92,8 @@ const SampleData = struct {
 
 const SampleApplication = zt.App(SampleData);
 
-fn main() !void {
-    var context = SampleApplication.begin(std.heap.c_allocator);
+pub fn main() !void {
+    var context = try SampleApplication.begin(std.heap.c_allocator);
     // Config here,
     while(context.open) {
         context.beginFrame();
