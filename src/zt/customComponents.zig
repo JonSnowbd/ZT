@@ -41,7 +41,7 @@ pub fn viewPort() ig.ImGuiID {
 }
 
 /// If you ever need to format a string for use inside imgui, this will work the same as any format function.
-pub inline fn fmtTextForImgui(comptime fmt: []const u8, args: anytype) []const u8 {
+pub inline fn fmtTextForImgui(comptime fmt: []const u8, args: anytype) [:0]const u8 {
     var alloc = zt.Allocators.ring();
     return alloc.dupeZ(u8, std.fmt.allocPrint(alloc, fmt, args) catch unreachable) catch unreachable;
 }
