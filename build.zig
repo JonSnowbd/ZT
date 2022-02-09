@@ -122,6 +122,7 @@ pub fn imguiLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
     if (b.is_release) flagContainer.append("-Os") catch unreachable;
     flagContainer.append("-Wno-return-type-c-linkage") catch unreachable;
+    flagContainer.append("-fno-sanitize=undefined") catch unreachable;
 
     // Link libraries.
     if (target.isWindows()) {
