@@ -31,7 +31,7 @@ pub const SampleData = struct {
 pub const SampleApplication = zt.App(SampleData);
 
 pub fn main() !void {
-    var context = try SampleApplication.begin(std.heap.c_allocator);
+    var context = try SampleApplication.begin(std.heap.c_allocator, .{});
 
     // Lets customize!
     var io = ig.igGetIO();

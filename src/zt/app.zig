@@ -196,12 +196,10 @@ pub fn App(comptime Data: type) type {
             }
         }
         /// Starts the entire application! Returns errors if anything along the pipeline fails.
-        pub fn begin(applicationAllocator: std.mem.Allocator) !*Context {
+        pub fn begin(applicationAllocator: std.mem.Allocator, data: Data) !*Context {
             var self: *Context = try applicationAllocator.create(Context);
             self.* = .{};
-            if (Data != void) {
-                self.data = .{};
-            }
+            self.data = data;
             self.allocator = applicationAllocator;
             self.input = std.ArrayList(InputEvent).init(applicationAllocator);
             try preInit();
