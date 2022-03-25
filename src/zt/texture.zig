@@ -71,6 +71,45 @@ pub fn initBlank(width: c_int, height: c_int) Self {
 
     return self;
 }
+pub fn initMemory(slice: []const u8) !Self {
+    var w: c_int = 0;
+    var h: c_int = 0;
+    var numChannels: c_int = 0;
+    var data = stb.stbi_load_from_memory(slice.ptr, @intCast(c_int, slice.len), &w, &h, &numChannels, 0);
+
+    var self = Self{};
+
+    self.width = @intToFloat(f32, w);
+    self.height = @intToFloat(f32, h);
+
+    gl.glGenTextures(1, &self.id);
+    gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
+
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
+    switch (numChannels) {
+        3 => {
+            gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, w, h, 0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, data);
+        },
+        4 => {
+            gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, w, h, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, data);
+        },
+        else => {
+            std.debug.print("ERROR! Failed to compile memory texture with {any} channels.\n", .{ numChannels });
+            gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
+            return error.FailedToInit;
+        },
+    }
+    gl.glGenerateMipmap(gl.GL_TEXTURE_2D);
+    stb.stbi_image_free(data);
+    self.dead = false;
+
+    gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Init isnt an explicit bind, so reset.
+
+    return self;
+} 
 pub fn deinit(self: *Self) void {
     gl.glDeleteTextures(1, &self.id);
     self.dead = true;

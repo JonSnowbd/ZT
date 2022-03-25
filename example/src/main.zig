@@ -20,10 +20,13 @@ const scenes = [_]fn (*SampleApplication.Context) void{
     @import("scenes/imgui.zig").update,
 };
 
+pub const embeddedImage: []const u8 = @embedFile("inline.png");
+
 /// SampleData will be available through the application's context.
 pub const SampleData = struct {
     currentScene: usize = 0,
     render: zt.game.Renderer = undefined,
+    inlined: zt.gl.Texture = undefined,
     sheet: zt.gl.Texture = undefined,
     redShader: zt.gl.Shader = undefined,
     consoleOpen: bool = true,
@@ -47,6 +50,7 @@ pub fn main() !void {
     // will be provided by `zt.game.Renderer`. If you need more flexibility than this you'll want to
     // edit ZT itself, or create your own buffer type.
     context.data.redShader = zt.game.Renderer.createShader(@embedFile("scenes/shader/red.fragment"));
+    context.data.inlined = try zt.gl.Texture.initMemory(embeddedImage);
 
     context.setWindowSize(1280, 720);
     context.setWindowTitle("ZT Demo");
