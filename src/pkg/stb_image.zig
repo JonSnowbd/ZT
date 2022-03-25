@@ -1,4 +1,4 @@
-const struct__iobuf = extern struct {
+pub const struct__iobuf = extern struct {
     _ptr: [*c]u8,
     _cnt: c_int,
     _base: [*c]u8,
@@ -8,7 +8,7 @@ const struct__iobuf = extern struct {
     _bufsiz: c_int,
     _tmpfname: [*c]u8,
 };
-const FILE = struct__iobuf;
+pub const FILE = struct__iobuf;
 pub const stbi_uc = u8;
 pub const stbi_us = c_ushort;
 pub const stbi_io_callbacks = extern struct {
@@ -50,6 +50,8 @@ pub extern fn stbi_is_16_bit_from_file(f: [*c]FILE) c_int;
 pub extern fn stbi_set_unpremultiply_on_load(flag_true_if_should_unpremultiply: c_int) void;
 pub extern fn stbi_convert_iphone_png_to_rgb(flag_true_if_should_convert: c_int) void;
 pub extern fn stbi_set_flip_vertically_on_load(flag_true_if_should_flip: c_int) void;
+pub extern fn stbi_set_unpremultiply_on_load_thread(flag_true_if_should_unpremultiply: c_int) void;
+pub extern fn stbi_convert_iphone_png_to_rgb_thread(flag_true_if_should_convert: c_int) void;
 pub extern fn stbi_set_flip_vertically_on_load_thread(flag_true_if_should_flip: c_int) void;
 pub extern fn stbi_zlib_decode_malloc_guesssize(buffer: [*c]const u8, len: c_int, initial_size: c_int, outlen: [*c]c_int) [*c]u8;
 pub extern fn stbi_zlib_decode_malloc_guesssize_headerflag(buffer: [*c]const u8, len: c_int, initial_size: c_int, outlen: [*c]c_int, parse_header: c_int) [*c]u8;
