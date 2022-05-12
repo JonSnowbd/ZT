@@ -114,7 +114,7 @@ fn specializeOn(comptime Real: type) type {
                 pub fn abs(a: Self) Self {
                     var result: Self = undefined;
                     inline for (@typeInfo(Self).Struct.fields) |fld| {
-                        @field(result, fld.name) = std.math.absFloat(@field(a, fld.name));
+                        @field(result, fld.name) = @fabs(@field(a, fld.name));
                     }
                     return result;
                 }
@@ -630,7 +630,7 @@ fn specializeOn(comptime Real: type) type {
             /// `aspect` is the screen aspect ratio (width / height)
             /// `near` is the distance of the near clip plane, whereas `far` is the distance to the far clip plane.
             pub fn createPerspective(fov: Real, aspect: Real, near: Real, far: Real) Mat4 {
-                std.debug.assert(std.math.fabs(aspect - 0.001) > 0);
+                std.debug.assert(@fabs(aspect - 0.001) > 0);
 
                 const tanHalfFovy = std.math.tan(fov / 2);
 

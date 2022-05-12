@@ -201,10 +201,8 @@ pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, ta
         self.currentTexture = texture;
     }
     const twoPi: f32 = 2.0 * std.math.pi;
-    const sin = std.math.sin;
-    const cos = std.math.cos;
 
-    const addition: i32 = std.math.clamp(@floatToInt(i32, std.math.round(radius / 100.0)) * 10, 0, 20);
+    const addition: i32 = std.math.clamp(@floatToInt(i32, @round(radius / 100.0)) * 10, 0, 20);
     const triCount: i32 = (@floatToInt(i32, twoPi) * self.resolution) + addition;
     var i: i32 = 0;
 
@@ -221,12 +219,12 @@ pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, ta
             .tex = .{ .x = source.position.x, .y = source.position.y },
         };
         var l = Vertex{
-            .pos = zt.math.vec3(target.x + (radius * cos(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * sin(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), z),
+            .pos = zt.math.vec3(target.x + (radius * @cos(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * @sin(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), z),
             .col = col,
             .tex = .{ .x = source.position.x + source.size.x, .y = source.position.y },
         };
         var r = Vertex{
-            .pos = zt.math.vec3(target.x + (radius * cos(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * sin(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), z),
+            .pos = zt.math.vec3(target.x + (radius * @cos(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * @sin(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), z),
             .col = col,
             .tex = .{ .x = source.position.x, .y = source.position.y + source.size.y },
         };

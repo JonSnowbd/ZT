@@ -217,7 +217,8 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
                     self.holding.put(value, {}) catch unreachable;
                 }
             }
-            if (std.math.fabs(queryEnd.y - queryStart.y) < std.math.fabs(queryEnd.x - queryStart.x)) {
+
+            if (@fabs(queryEnd.y - queryStart.y) < @fabs(queryEnd.x - queryStart.x)) {
                 if (queryStart.x > queryEnd.x) {
                     self.queryLineLow(queryEnd, queryStart);
                 } else {
@@ -246,7 +247,7 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
             return .{ .x = floatToIndex(vec.x), .y = floatToIndex(vec.y) };
         }
         inline fn floatToIndex(float: f32) f32 {
-            return (std.math.floor(float * cellInverse)) / cellInverse;
+            return (@floor(float * cellInverse)) / cellInverse;
         }
     };
 }
