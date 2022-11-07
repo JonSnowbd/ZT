@@ -150,7 +150,6 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             reportErr("Binding the buffers:");
         }
         pub fn unbind(self: *@This()) void {
-            _ = self;
             gl.glBindVertexArray(0);
             self.shader.unbind();
             gl.glBindBuffer(gl.GL_ARRAY_BUFFER, 0);
@@ -253,7 +252,6 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
         }
 
         pub fn setUniform(self: *@This(), comptime uniName: []const u8, uniform: anytype) void {
-            _ = self;
             var loc: c_int = gl.glGetUniformLocation(self.shader.id, uniName.ptr);
             self.shader.bind();
             if (loc != -1) {

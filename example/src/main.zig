@@ -11,7 +11,7 @@ const scenes_n = [_][]const u8{
     "2D Collider Support",
     "ImGui Demo",
 };
-const scenes = [_]fn (*SampleApplication.Context) void{
+const scenes = [_]*const fn (*SampleApplication.Context) void{
     @import("scenes/renderer.zig").update,
     @import("scenes/shaders.zig").update,
     @import("scenes/rendertarget.zig").update,

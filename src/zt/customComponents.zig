@@ -70,7 +70,7 @@ pub fn textColor(comptime fmt: []const u8, color: ig.ImVec4, args: anytype) void
 /// those cases its always better to layout your own editor. This is biased towards creating drag inputs.
 pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
     // Array buffers are weird. Lets sort them out first.
-    const ti: std.builtin.TypeInfo = @typeInfo(@TypeOf(ptr.*));
+    const ti: std.builtin.Type = @typeInfo(@TypeOf(ptr.*));
     if (ti == .Array) {
         if (ti.Array.child == u8) {
             return ig.igInputText(label.ptr, ptr, @intCast(usize, ti.Array.len), ig.ImGuiInputTextFlags_None, null, null);
@@ -138,7 +138,7 @@ pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
 
 pub fn edit(label: []const u8, ptr: anytype) bool {
     // Array buffers are weird. Lets sort them out first.
-    const ti: std.builtin.TypeInfo = @typeInfo(@TypeOf(ptr.*));
+    const ti: std.builtin.Type = @typeInfo(@TypeOf(ptr.*));
     if (ti == .Array) {
         if (ti.Array.child == u8) {
             return ig.igInputText(label.ptr, ptr, @intCast(usize, ti.Array.len), ig.ImGuiInputTextFlags_None, null, null);

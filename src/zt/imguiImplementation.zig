@@ -180,7 +180,7 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
     var clip_scale = draw_data.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
 
     if (draw_data.CmdListsCount > 0) {
-        for (draw_data.CmdLists.?[0..@intCast(usize, draw_data.CmdListsCount)]) |cmd_list| {
+        for (draw_data.CmdLists[0..@intCast(usize, draw_data.CmdListsCount)]) |cmd_list| {
             // Upload vertex/index buffers
             gl.glBufferData(gl.GL_ARRAY_BUFFER, @intCast(gl.GLsizeiptr, cmd_list.*.VtxBuffer.Size * @sizeOf(ig.ImDrawVert)), cmd_list.*.VtxBuffer.Data, gl.GL_STREAM_DRAW);
             gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, @intCast(gl.GLsizeiptr, cmd_list.*.IdxBuffer.Size * @sizeOf(ig.ImDrawIdx)), cmd_list.*.IdxBuffer.Data, gl.GL_STREAM_DRAW);
