@@ -12,9 +12,9 @@ pub const FILE = struct__iobuf;
 pub const stbi_uc = u8;
 pub const stbi_us = c_ushort;
 pub const stbi_io_callbacks = extern struct {
-    read: ?fn (?*anyopaque, [*c]u8, c_int) callconv(.C) c_int,
-    skip: ?fn (?*anyopaque, c_int) callconv(.C) void,
-    eof: ?fn (?*anyopaque) callconv(.C) c_int,
+    read: ?*const fn (?*anyopaque, [*c]u8, c_int) callconv(.C) c_int,
+    skip: ?*const fn (?*anyopaque, c_int) callconv(.C) void,
+    eof: ?*const fn (?*anyopaque) callconv(.C) c_int,
 };
 pub extern fn stbi_load_from_memory(buffer: [*c]const stbi_uc, len: c_int, x: [*c]c_int, y: [*c]c_int, channels_in_file: [*c]c_int, desired_channels: c_int) [*c]stbi_uc;
 pub extern fn stbi_load_from_callbacks(clbk: [*c]const stbi_io_callbacks, user: ?*anyopaque, x: [*c]c_int, y: [*c]c_int, channels_in_file: [*c]c_int, desired_channels: c_int) [*c]stbi_uc;

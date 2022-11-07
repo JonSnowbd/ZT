@@ -1,21 +1,24 @@
 const std = @import("std");
 
 fn getRelativePath() []const u8 {
-    comptime var src: std.builtin.SourceLocation = @src();
-    return std.fs.path.dirname(src.file).? ++ std.fs.path.sep_str;
+    comptime {
+        const src: std.builtin.SourceLocation = @src();
+        const dirname = std.fs.path.dirname(src.file).?;
+        return dirname ++ std.fs.path.sep_str;
+    }
 }
 
 pub const stbPkg = std.build.Pkg{
     .name = "stb_image",
-    .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/stb_image.zig" },
+    .source = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/stb_image.zig" },
 };
 pub const glPkg = std.build.Pkg{
     .name = "gl",
-    .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/gl.zig" },
+    .source = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/gl.zig" },
 };
-pub const imguiPkg = std.build.Pkg{ .name = "imgui", .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/imgui.zig" } };
-pub const glfwPkg = std.build.Pkg{ .name = "glfw", .path = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/glfw.zig" } };
-pub const ztPkg = std.build.Pkg{ .name = "zt", .path = std.build.FileSource{ .path = getRelativePath() ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{
+pub const imguiPkg = std.build.Pkg{ .name = "imgui", .source = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/imgui.zig" } };
+pub const glfwPkg = std.build.Pkg{ .name = "glfw", .source = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/glfw.zig" } };
+pub const ztPkg = std.build.Pkg{ .name = "zt", .source = std.build.FileSource{ .path = getRelativePath() ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{
     glfwPkg,
     glPkg,
     imguiPkg,
@@ -95,14 +98,14 @@ pub fn glLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     if (target.isLinux()) {
         gl.linkSystemLibrary("gl");
     }
-    if(target.isDarwin()) {
+    if (target.isDarwin()) {
         // !! Mac TODO
         // Here we need to add the include the system libs needed for mac opengl
-        // Maybe also 
+        // Maybe also
     }
 
     // Include dirs.
-    gl.addIncludeDir(path ++ "src/dep/gl/glad/include");
+    gl.addIncludePath(path ++ "src/dep/gl/glad/include");
 
     // Add c.
     gl.addCSourceFile(path ++ "src/dep/gl/glad/src/glad.c", flagContainer.items);
@@ -132,14 +135,14 @@ pub fn imguiLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
         imgui.linkSystemLibrary("gdi32");
     }
 
-    if(target.isDarwin()) {
+    if (target.isDarwin()) {
         // !! Mac TODO
         // Here we need to add the include the system libs needed for mac imgui
     }
 
     // Include dirs.
-    imgui.addIncludeDir(path ++ "src/dep/cimgui/imgui");
-    imgui.addIncludeDir(path ++ "src/dep/cimgui");
+    imgui.addIncludePath(path ++ "src/dep/cimgui/imgui");
+    imgui.addIncludePath(path ++ "src/dep/cimgui");
 
     // Add C
     imgui.addCSourceFiles(&.{ path ++ "src/dep/cimgui/imgui/imgui.cpp", path ++ "src/dep/cimgui/imgui/imgui_demo.cpp", path ++ "src/dep/cimgui/imgui/imgui_draw.cpp", path ++ "src/dep/cimgui/imgui/imgui_tables.cpp", path ++ "src/dep/cimgui/imgui/imgui_widgets.cpp", path ++ "src/dep/cimgui/cimgui.cpp" }, flagContainer.items);
@@ -157,8 +160,8 @@ pub fn glfwLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     if (b.is_release) flagContainer.append("-Os") catch unreachable;
 
     // Include dirs.
-    glfw.addIncludeDir(path ++ "src/dep/glfw/deps");
-    glfw.addIncludeDir(path ++ "src/dep/glfw/include");
+    glfw.addIncludePath(path ++ "src/dep/glfw/deps");
+    glfw.addIncludePath(path ++ "src/dep/glfw/include");
 
     // For windows targets, link/add c.
     if (target.isWindows()) {
@@ -187,7 +190,7 @@ pub fn glfwLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
         // Linux is a little too itchy to sanitize some glfw code that works but can hit UB
         flagContainer.append("-fno-sanitize=undefined") catch unreachable;
         flagContainer.append("-D_GLFW_X11") catch unreachable;
-        glfw.addSystemIncludeDir("/usr/include/");
+        glfw.addSystemIncludePath("/usr/include/");
         glfw.linkSystemLibrary("rt");
         glfw.linkSystemLibrary("m");
         glfw.linkSystemLibrary("x11");
@@ -237,11 +240,11 @@ pub fn addBinaryContent(comptime baseContentPath: []const u8) AddContentErrors!v
     defer gpa.allocator().free(zigBin);
     fs.cwd().makePath(zigBin) catch return error.FolderError;
 
-    var sourceFolder: fs.Dir = fs.cwd().openDir(baseContentPath, .{ .iterate = true }) catch return error.FolderError;
+    var sourceFolder = fs.cwd().openIterableDir(baseContentPath, .{}) catch return error.FolderError;
     defer sourceFolder.close();
-    var iterator: fs.Dir.Iterator = sourceFolder.iterate();
+    var iterator = sourceFolder.iterate();
     while (iterator.next() catch return error.FolderError) |target| {
-        var x: fs.Dir.Entry = target;
+        var x = target;
         if (x.kind == .Directory) {
             const source: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ baseContentPath, x.name }) catch return error.RecursionError;
             const targetFolder: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ zigBin, x.name }) catch return error.RecursionError;
@@ -255,12 +258,12 @@ pub fn addBinaryContent(comptime baseContentPath: []const u8) AddContentErrors!v
     }
 }
 fn innerAddContent(allocator: std.mem.Allocator, folder: []const u8, dest: []const u8) AddContentErrors!void {
-    var sourceFolder: fs.Dir = fs.cwd().openDir(folder, .{ .iterate = true }) catch return error.FolderError;
+    var sourceFolder = fs.cwd().openIterableDir(folder, .{}) catch return error.FolderError;
     defer sourceFolder.close();
 
-    var iterator: fs.Dir.Iterator = sourceFolder.iterate();
+    var iterator = sourceFolder.iterate();
     while (iterator.next() catch return error.FolderError) |target| {
-        var x: fs.Dir.Entry = target;
+        var x = target;
         if (x.kind == .Directory) {
             const source: []const u8 = std.fs.path.join(allocator, &[_][]const u8{ folder, x.name }) catch return error.RecursionError;
             const targetFolder: []const u8 = std.fs.path.join(allocator, &[_][]const u8{ dest, x.name }) catch return error.RecursionError;

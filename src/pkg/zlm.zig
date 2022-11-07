@@ -275,7 +275,7 @@ fn specializeOn(comptime Real: type) type {
             pub const unitX = Vec2.new(1, 0);
             pub const unitY = Vec2.new(0, 1);
 
-            usingnamespace VectorMixin(Vec2);
+            pub usingnamespace VectorMixin(Vec2);
 
             pub fn new(x: Real, y: Real) Vec2 {
                 return Vec2{
@@ -335,7 +335,7 @@ fn specializeOn(comptime Real: type) type {
             pub const unitY = Vec3.new(0, 1, 0);
             pub const unitZ = Vec3.new(0, 0, 1);
 
-            usingnamespace VectorMixin(Vec3);
+            pub usingnamespace VectorMixin(Vec3);
 
             pub fn new(x: Real, y: Real, z: Real) Vec3 {
                 return Vec3{
@@ -445,7 +445,7 @@ fn specializeOn(comptime Real: type) type {
             pub const black = Vec4.new(0, 0, 0, 1);
             pub const transparent = Vec4.new(0, 0, 0, 0);
 
-            usingnamespace VectorMixin(Vec4);
+            pub usingnamespace VectorMixin(Vec4);
 
             pub fn new(x: Real, y: Real, z: Real, w: Real) Vec4 {
                 return Vec4{
