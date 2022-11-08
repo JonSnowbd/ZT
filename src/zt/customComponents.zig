@@ -42,27 +42,27 @@ pub fn viewPort() ig.ImGuiID {
 
 /// If you ever need to format a string for use inside imgui, this will work the same as any format function.
 pub inline fn fmtTextForImgui(comptime fmt: []const u8, args: anytype) [:0]const u8 {
-    var alloc = zt.Allocators.ring();
-    return alloc.dupeZ(u8, std.fmt.allocPrint(alloc, fmt, args) catch unreachable) catch unreachable;
+    const alloc = zt.Allocators.ring();
+    return std.fmt.allocPrintZ(alloc, fmt, args) catch unreachable;
 }
 /// Uses a ring allocator to spit out imgui text using zig.ig's formatting library.
 pub fn text(comptime fmt: []const u8, args: anytype) void {
-    var textFormatted = fmtTextForImgui(fmt, args);
-    ig.igText("%s",textFormatted.ptr);
+    const textFormatted = fmtTextForImgui(fmt, args);
+    ig.igText("%s", textFormatted.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library, wrapping if needed.
 pub fn textWrap(comptime fmt: []const u8, args: anytype) void {
-    var textFormatted = fmtTextForImgui(fmt, args);
+    const textFormatted = fmtTextForImgui(fmt, args);
     ig.igTextWrapped("%s",textFormatted.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library, in the disabled color.
 pub fn textDisabled(comptime fmt: []const u8, args: anytype) void {
-    var textFormatted = fmtTextForImgui(fmt, args);
+    const textFormatted = fmtTextForImgui(fmt, args);
     ig.igTextDisabled("%s",textFormatted.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library with a custom color.
 pub fn textColor(comptime fmt: []const u8, color: ig.ImVec4, args: anytype) void {
-    var textFormatted = fmtTextForImgui(fmt, args);
+    const textFormatted = fmtTextForImgui(fmt, args);
     ig.igTextColored(color, "%s", textFormatted.ptr);
 }
 
