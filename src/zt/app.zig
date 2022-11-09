@@ -131,6 +131,17 @@ pub fn App(comptime Data: type) type {
                     std.debug.print("Failed to load icon {s}\n", .{path});
                 }
             }
+            pub fn setWindowIconFromMemory(self: *Context, image_data: []const u8) void {
+                stb.stbi_set_flip_vertically_on_load(0);
+                var image = glfw.GLFWimage{ .width = 0, .height = 0, .pixels = null };
+                image.pixels = stb.stbi_load_from_memory(image_data.ptr, @intCast(c_int, image_data.len), &image.width, &image.height, 0, 4);
+                if (image.width > 0 and image.height > 0) {
+                    glfw.glfwSetWindowIcon(self.window, 1, &image);
+                    stb.stbi_image_free(image.pixels);
+                } else {
+                    unreachable;
+                }
+            }
             /// Tells ZT to close the window
             pub fn close(self: *Context) void {
                 glfw.glfwSetWindowShouldClose(self.window, 1);
@@ -148,6 +159,12 @@ pub fn App(comptime Data: type) type {
             pub fn addFont(self: *Context, path: []const u8, pxSize: f32) *ig.ImFont {
                 var io = ig.igGetIO();
                 var newFont: *ig.ImFont = ig.ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, pxSize, null, ig.ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
+                self.rebuildFont();
+                return newFont;
+            }
+            pub fn addFontFromMemory(self: *Context, font_data: []const u8, pxSize: f32) *ig.ImFont {
+                var io = ig.igGetIO();
+                var newFont: *ig.ImFont = ig.ImFontAtlas_AddFontFromMemoryTTF(io.*.Fonts, font_data.ptr, @intCast(c_int, font_data.len), pxSize, null, ig.ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
                 self.rebuildFont();
                 return newFont;
             }
