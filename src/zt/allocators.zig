@@ -11,20 +11,13 @@ pub fn RingBufferGenerate(comptime size: usize) type {
         };
         var end_index: usize = 0;
         pub fn getAllocator(self: *Self) mem.Allocator {
-            return mem.Allocator{
-                .ptr = self,
-                .vtable = &mem.Allocator.VTable{
-                    .alloc = alloc,
-                    .resize = mem.Allocator.noResize,
-                    .free = mem.Allocator.noFree
-                }
-            };
+            return mem.Allocator{ .ptr = self, .vtable = &mem.Allocator.VTable{ .alloc = alloc, .resize = mem.Allocator.noResize, .free = mem.Allocator.noFree } };
         }
         fn alloc(ctx: *anyopaque, len: usize, ptr_align: u8, ret_addr: usize) ?[*]u8 {
             _ = ret_addr;
             var a: *Self = @ptrCast(*Self, ctx);
             const addr = @ptrToInt(&a.buffer) + end_index;
-            const adjusted_addr = if(ptr_align > 0) mem.alignForward(addr, @intCast(usize, ptr_align)) else addr;
+            const adjusted_addr = if (ptr_align > 0) mem.alignForward(addr, @intCast(usize, ptr_align)) else addr;
             const adjusted_index = end_index + (adjusted_addr - addr);
             const new_end_index = adjusted_index + len;
 

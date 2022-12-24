@@ -34,7 +34,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
         x = -4;
     }
 
-    render.sprite(ctx.data.inlined, .{}, 0, zt.math.vec2(32,32), zt.math.Vec4.white, null, null);
+    render.sprite(ctx.data.inlined, .{}, 0, zt.math.vec2(32, 32), zt.math.Vec4.white, null, null);
 
     // Text in the renderer is very rudimentary and not really intended for ingame use in world space.
     // All renderer does is add text to imgui's background drawlist. As such you should transform world to screenspace.

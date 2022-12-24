@@ -53,12 +53,12 @@ pub fn text(comptime fmt: []const u8, args: anytype) void {
 /// Uses a ring allocator to spit out imgui text using zig's formatting library, wrapping if needed.
 pub fn textWrap(comptime fmt: []const u8, args: anytype) void {
     const textFormatted = fmtTextForImgui(fmt, args);
-    ig.igTextWrapped("%s",textFormatted.ptr);
+    ig.igTextWrapped("%s", textFormatted.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library, in the disabled color.
 pub fn textDisabled(comptime fmt: []const u8, args: anytype) void {
     const textFormatted = fmtTextForImgui(fmt, args);
-    ig.igTextDisabled("%s",textFormatted.ptr);
+    ig.igTextDisabled("%s", textFormatted.ptr);
 }
 /// Uses a ring allocator to spit out imgui text using zig's formatting library with a custom color.
 pub fn textColor(comptime fmt: []const u8, color: ig.ImVec4, args: anytype) void {

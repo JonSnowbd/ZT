@@ -68,7 +68,7 @@ pub fn updateShader(self: *Self, shader: ?*zt.gl.Shader) void {
 
 /// The simplest sprite method. Passing null to normalized origin will draw top-left based. Passing null to source will
 /// draw the whole texture. Note; normalized origin is multiplicative. 1,1 will draw the texture from bottom right, providing
-/// beyond 0 and 1 is supported if the anchor needs to be 
+/// beyond 0 and 1 is supported if the anchor needs to be
 pub inline fn sprite(self: *Self, texture: zt.gl.Texture, pos: zt.math.Vec2, z: f32, size: zt.math.Vec2, color: zt.math.Vec4, normOrigin: ?zt.math.Vec2, src: ?zt.math.Rect) void {
     var offset: zt.math.Vec2 = if (normOrigin) |no| .{ .x = -(size.x * no.x), .y = -(size.y * no.y) } else .{};
     const source: zt.math.Rect =

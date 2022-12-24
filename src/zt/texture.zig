@@ -97,7 +97,7 @@ pub fn initMemory(slice: []const u8) !Self {
             gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, w, h, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, data);
         },
         else => {
-            std.debug.print("ERROR! Failed to compile memory texture with {any} channels.\n", .{ numChannels });
+            std.debug.print("ERROR! Failed to compile memory texture with {any} channels.\n", .{numChannels});
             gl.glBindTexture(gl.GL_TEXTURE_2D, 0);
             return error.FailedToInit;
         },
@@ -109,7 +109,7 @@ pub fn initMemory(slice: []const u8) !Self {
     gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Init isnt an explicit bind, so reset.
 
     return self;
-} 
+}
 pub fn deinit(self: *Self) void {
     gl.glDeleteTextures(1, &self.id);
     self.dead = true;

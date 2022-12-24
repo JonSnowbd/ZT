@@ -62,7 +62,7 @@ pub fn App(comptime Data: type) type {
             }
 
             /// Ticks forward timer, clears OpenGL, enqueues events, and dictates to imgui
-            /// that we are starting a new frame. Basically 
+            /// that we are starting a new frame. Basically
             pub fn beginFrame(self: *Context) void {
                 self.open = glfw.glfwWindowShouldClose(self.window) == 0;
                 self.time.tick();
@@ -118,7 +118,7 @@ pub fn App(comptime Data: type) type {
                 self.settings.vsync = on;
             }
             /// Give a path to a .png for the window icon. Note this does not affect the
-            /// binary icon, and you would rather want to use post builds specific to 
+            /// binary icon, and you would rather want to use post builds specific to
             /// each platform.
             pub fn setWindowIcon(self: *Context, path: []const u8) void {
                 stb.stbi_set_flip_vertically_on_load(0);
