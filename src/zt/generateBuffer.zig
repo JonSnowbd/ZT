@@ -70,7 +70,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             var stride: c_int = @intCast(c_int, @sizeOf(T));
 
             inline for (std.meta.fields(T)) |field, i| {
-                switch (field.field_type) {
+                switch (field.type) {
                     bool => {
                         gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_BOOL, gl.GL_FALSE, stride, @intToPtr(*allowzero anyopaque, currentOffset));
                         gl.glEnableVertexAttribArray(@intCast(c_uint, i));

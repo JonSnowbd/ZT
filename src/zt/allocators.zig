@@ -11,29 +11,34 @@ pub fn RingBufferGenerate(comptime size: usize) type {
         };
         var end_index: usize = 0;
         pub fn getAllocator(self: *Self) mem.Allocator {
-            return mem.Allocator.init(self, alloc, mem.Allocator.NoResize(Self).noResize, mem.Allocator.NoOpFree(Self).noOpFree);
+            return mem.Allocator{
+                .ptr = self,
+                .vtable = &mem.Allocator.VTable{
+                    .alloc = alloc,
+                    .resize = mem.Allocator.noResize,
+                    .free = mem.Allocator.noFree
+                }
+            };
         }
-        fn alloc(a: *Self, n: usize, ptr_align: u29, len_align: u29, ret_addr: usize) std.mem.Allocator.Error![]u8 {
+        fn alloc(ctx: *anyopaque, len: usize, ptr_align: u8, ret_addr: usize) ?[*]u8 {
             _ = ret_addr;
-            _ = len_align;
+            var a: *Self = @ptrCast(*Self, ctx);
             const addr = @ptrToInt(&a.buffer) + end_index;
-            const adjusted_addr = mem.alignForward(addr, ptr_align);
+            const adjusted_addr = if(ptr_align > 0) mem.alignForward(addr, @intCast(usize, ptr_align)) else addr;
             const adjusted_index = end_index + (adjusted_addr - addr);
-            const new_end_index = adjusted_index + n;
+            const new_end_index = adjusted_index + len;
 
             if (new_end_index > a.buffer.len) {
-                if (n > a.buffer.len) {
-                    std.debug.print("tmp allocated more than is in our temp allocator.", .{});
-                    return std.mem.Allocator.Error.OutOfMemory;
+                if (len > a.buffer.len) {
+                    std.debug.panic("tmp allocated more than is in our temp allocator.", .{});
+                    unreachable;
                 }
-                const result = a.buffer[0..n];
-                end_index = n;
-                return result;
+                end_index = len;
+                return @ptrCast([*]u8, a.buffer[0..len]);
             }
-            const result = a.buffer[adjusted_index..new_end_index];
             end_index = new_end_index;
 
-            return result;
+            return @ptrCast([*]u8, a.buffer[adjusted_index..new_end_index]);
         }
     };
 }
