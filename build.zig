@@ -1,4 +1,5 @@
 const std = @import("std");
+const glfw = @import("libs/mach-glfw/build.zig");
 
 fn getRelativePath() []const u8 {
     comptime {
@@ -8,122 +9,164 @@ fn getRelativePath() []const u8 {
     }
 }
 
-pub const stbPkg = std.build.Pkg{
-    .name = "stb_image",
-    .source = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/stb_image.zig" },
-};
-pub const glPkg = std.build.Pkg{
-    .name = "gl",
-    .source = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/gl.zig" },
-};
-pub const imguiPkg = std.build.Pkg{ .name = "imgui", .source = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/imgui.zig" } };
-pub const glfwPkg = std.build.Pkg{ .name = "glfw", .source = std.build.FileSource{ .path = getRelativePath() ++ "src/pkg/glfw.zig" } };
-pub const ztPkg = std.build.Pkg{ .name = "zt", .source = std.build.FileSource{ .path = getRelativePath() ++ "src/zt.zig" }, .dependencies = &[_]std.build.Pkg{
-    glfwPkg,
-    glPkg,
-    imguiPkg,
-    stbPkg,
-} };
+fn thisDir() []const u8 {
+    return std.fs.path.dirname(@src().file) orelse ".";
+}
 
 // Build here only exists to build the example. to use ZT you'll want to import this file and use the link function in
 // your build.zig
-pub fn build(b: *std.build.Builder) void {
+pub fn build(b: *std.build.Builder) !void {
+    // Standard target options allows the person running `zig build` to choose
+    // what target to build for. Here we do not override the defaults, which
+    // means any target is allowed, and the default is native. Other options
+    // for restricting supported target set are available.
     const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
 
-    const exe = b.addExecutable("example", "example/src/main.zig");
-    link(exe);
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
-    exe.install();
+    // Standard optimization options allow the person running `zig build` to select
+    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
+    // set a preferred release mode, allowing the user to decide how to optimize.
+    const optimize = b.standardOptimizeOption(.{});
+
+    const exe = b.addExecutable(.{
+        .name = "example",
+        // In this case the main source file is merely a path, however, in more
+        // complicated build scripts, this could be a generated file.
+        .root_source_file = .{ .path = "example/src/main.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
+
+    try link(b, exe);
+
+    b.installArtifact(exe);
 
     addBinaryContent("example/assets") catch unreachable;
 
-    // Run cmd
-    const run_cmd = exe.run();
+    // This *creates* a Run step in the build graph, to be executed when another
+    // step is evaluated that depends on it. The next line below will establish
+    // such a dependency.
+    const run_cmd = b.addRunArtifact(exe);
+
+    // By making the run step depend on the install step, it will be run from the
+    // installation directory rather than directly from within the cache directory.
+    // This is not necessary, however, if the application depends on other installed
+    // files, this ensures they will be present and in the expected location.
     run_cmd.step.dependOn(b.getInstallStep());
+
+    // This allows the user to pass arguments to the application in the build
+    // command itself, like this: `zig build run -- arg1 arg2 etc`
     if (b.args) |args| {
         run_cmd.addArgs(args);
     }
+
+    // This creates a build step. It will be visible in the `zig build --help` menu,
+    // and can be selected like this: `zig build run`
+    // This will evaluate the `run` step rather than the default, which is "install".
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
+
+    // Creates a step for unit testing. This only builds the test executable
+    // but does not run it.
+    const unit_tests = b.addTest(.{
+        .root_source_file = .{ .path = "src/main.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
+
+    const run_unit_tests = b.addRunArtifact(unit_tests);
+
+    // Similar to creating the run step earlier, this exposes a `test` step to
+    // the `zig build --help` menu, providing a way for the user to request
+    // running the unit tests.
+    const test_step = b.step("test", "Run unit tests");
+    test_step.dependOn(&run_unit_tests.step);
 }
 
-pub fn link(exe: *std.build.LibExeObjStep) void {
+pub fn link(b: *std.build.Builder, exe: *std.build.LibExeObjStep) !void {
     // Link step
-    exe.linkLibrary(imguiLibrary(exe));
-    exe.linkLibrary(glfwLibrary(exe));
-    exe.linkLibrary(glLibrary(exe));
-    exe.linkLibrary(stbLibrary(exe));
+    exe.linkLibrary(imguiLibrary(b, exe));
+    exe.linkLibrary(glLibrary(b, exe));
+    exe.linkLibrary(stbLibrary(b, exe));
 
-    exe.addPackage(glfwPkg);
-    exe.addPackage(glPkg);
-    exe.addPackage(stbPkg);
-    exe.addPackage(imguiPkg);
-    exe.addPackage(ztPkg);
+    const glfwModule = glfw.module(b);
+    const gl = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/gl.zig" } });
+    const stb_image = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/stb_image.zig" } });
+    const imgui = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/imgui.zig" } });
+    const zt = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/zt.zig" }, .dependencies = &.{
+        .{ .name = "glfw", .module = glfwModule },
+        .{ .name = "gl", .module = gl },
+        .{ .name = "stb_image", .module = stb_image },
+        .{ .name = "imgui", .module = imgui },
+    } });
+
+    exe.addModule("glfw", glfwModule);
+    exe.addModule("gl", gl);
+    exe.addModule("stb_image", stb_image);
+    exe.addModule("imgui", imgui);
+    exe.addModule("zt", zt);
+
+    try glfw.link(b, exe, .{});
 }
 
 // STB
-pub fn stbLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
-    comptime var path = getRelativePath();
+pub fn stbLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
+    comptime var path = thisDir();
 
-    var b = exe.builder;
-    var stb = b.addStaticLibrary("stb", null);
+    var stb = b.addStaticLibrary(.{ .name = "stb", .target = exe.target, .optimize = exe.optimize });
     stb.linkLibC();
 
     var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
-    if (b.is_release) flagContainer.append("-Os") catch unreachable;
+    if (exe.optimize != .Debug) flagContainer.append("-Os") catch unreachable;
 
-    stb.addCSourceFile(path ++ "src/dep/stb/stb_image_wrapper.c", flagContainer.items);
+    stb.addCSourceFile(path ++ "/src/dep/stb/stb_image_wrapper.c", flagContainer.items);
 
     return stb;
 }
 // OpenGL
-pub fn glLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
+pub fn glLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
 
-    var b = exe.builder;
     var target = exe.target;
-    var gl = b.addStaticLibrary("gl", null);
+    var gl = b.addStaticLibrary(.{ .name = "gl", .target = exe.target, .optimize = exe.optimize });
     gl.linkLibC();
 
     // Generate flags.
     var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
-    if (b.is_release) flagContainer.append("-Os") catch unreachable;
+    if (exe.optimize != .Debug) flagContainer.append("-Os") catch unreachable;
 
     // Link libraries.
     if (target.isWindows()) {
         gl.linkSystemLibrary("opengl32");
     }
     if (target.isLinux()) {
-        gl.linkSystemLibrary("gl");
+        gl.linkSystemLibrary("GL");
     }
     if (target.isDarwin()) {
+        gl.linkFramework("OpenGL");
         // !! Mac TODO
         // Here we need to add the include the system libs needed for mac opengl
         // Maybe also
     }
 
     // Include dirs.
-    gl.addIncludePath(path ++ "src/dep/gl/glad/include");
+    gl.addIncludePath(path ++ "/src/dep/gl/glad/include");
 
     // Add c.
-    gl.addCSourceFile(path ++ "src/dep/gl/glad/src/glad.c", flagContainer.items);
+    gl.addCSourceFile(path ++ "/src/dep/gl/glad/src/glad.c", flagContainer.items);
 
     return gl;
 }
 // ImGui
-pub fn imguiLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
+pub fn imguiLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     comptime var path = getRelativePath();
-    var b = exe.builder;
     var target = exe.target;
-    var imgui = b.addStaticLibrary("imgui", null);
+    var imgui = b.addStaticLibrary(.{ .name = "imgui", .target = exe.target, .optimize = exe.optimize });
     imgui.linkLibC();
     imgui.linkSystemLibrary("c++");
 
     // Generate flags.
     var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
-    if (b.is_release) flagContainer.append("-Os") catch unreachable;
+    if (exe.optimize != .Debug) flagContainer.append("-Os") catch unreachable;
     flagContainer.append("-Wno-return-type-c-linkage") catch unreachable;
     flagContainer.append("-fno-sanitize=undefined") catch unreachable;
 
@@ -141,91 +184,13 @@ pub fn imguiLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
     }
 
     // Include dirs.
-    imgui.addIncludePath(path ++ "src/dep/cimgui/imgui");
-    imgui.addIncludePath(path ++ "src/dep/cimgui");
+    imgui.addIncludePath(path ++ "/src/dep/cimgui/imgui");
+    imgui.addIncludePath(path ++ "/src/dep/cimgui");
 
     // Add C
-    imgui.addCSourceFiles(&.{ path ++ "src/dep/cimgui/imgui/imgui.cpp", path ++ "src/dep/cimgui/imgui/imgui_demo.cpp", path ++ "src/dep/cimgui/imgui/imgui_draw.cpp", path ++ "src/dep/cimgui/imgui/imgui_tables.cpp", path ++ "src/dep/cimgui/imgui/imgui_widgets.cpp", path ++ "src/dep/cimgui/cimgui.cpp" }, flagContainer.items);
+    imgui.addCSourceFiles(&.{ path ++ "/src/dep/cimgui/imgui/imgui.cpp", path ++ "/src/dep/cimgui/imgui/imgui_demo.cpp", path ++ "/src/dep/cimgui/imgui/imgui_draw.cpp", path ++ "/src/dep/cimgui/imgui/imgui_tables.cpp", path ++ "/src/dep/cimgui/imgui/imgui_widgets.cpp", path ++ "/src/dep/cimgui/cimgui.cpp" }, flagContainer.items);
 
     return imgui;
-}
-// GLFW
-pub fn glfwLibrary(exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
-    comptime var path = getRelativePath();
-    var b = exe.builder;
-    var target = exe.target;
-    var glfw = b.addStaticLibrary("glfw", null);
-    glfw.linkLibC();
-    var flagContainer: std.ArrayList([]const u8) = std.ArrayList([]const u8).init(std.heap.page_allocator);
-    if (b.is_release) flagContainer.append("-Os") catch unreachable;
-
-    // Include dirs.
-    glfw.addIncludePath(path ++ "src/dep/glfw/deps");
-    glfw.addIncludePath(path ++ "src/dep/glfw/include");
-
-    // For windows targets, link/add c.
-    if (target.isWindows()) {
-        if (b.is_release) {
-            exe.subsystem = .Windows; // Hide the Console on release.
-            exe.want_lto = false; // TODO: When _tls_index is no longer lost on lto, undo this.
-        }
-        flagContainer.append("-D_GLFW_WIN32") catch unreachable;
-        glfw.linkSystemLibrary("gdi32");
-        glfw.addCSourceFiles(&.{
-            path ++ "src/dep/glfw/src/win32_init.c",
-            path ++ "src/dep/glfw/src/win32_joystick.c",
-            path ++ "src/dep/glfw/src/win32_monitor.c",
-            path ++ "src/dep/glfw/src/win32_time.c",
-            path ++ "src/dep/glfw/src/win32_thread.c",
-            path ++ "src/dep/glfw/src/win32_window.c",
-            path ++ "src/dep/glfw/src/wgl_context.c",
-            path ++ "src/dep/glfw/src/egl_context.c",
-            path ++ "src/dep/glfw/src/osmesa_context.c",
-        }, flagContainer.items);
-    }
-
-    // For linux targets, link/add c.
-    if (target.isLinux()) {
-        glfw.subsystem = .Posix;
-        // Linux is a little too itchy to sanitize some glfw code that works but can hit UB
-        flagContainer.append("-fno-sanitize=undefined") catch unreachable;
-        flagContainer.append("-D_GLFW_X11") catch unreachable;
-        glfw.addSystemIncludePath("/usr/include/");
-        glfw.linkSystemLibrary("rt");
-        glfw.linkSystemLibrary("m");
-        glfw.linkSystemLibrary("x11");
-
-        glfw.addCSourceFiles(&.{
-            path ++ "src/dep/glfw/src/x11_init.c",
-            path ++ "src/dep/glfw/src/x11_monitor.c",
-            path ++ "src/dep/glfw/src/x11_window.c",
-            path ++ "src/dep/glfw/src/xkb_unicode.c",
-            path ++ "src/dep/glfw/src/posix_time.c",
-            path ++ "src/dep/glfw/src/posix_thread.c",
-            path ++ "src/dep/glfw/src/glx_context.c",
-            path ++ "src/dep/glfw/src/egl_context.c",
-            path ++ "src/dep/glfw/src/osmesa_context.c",
-            path ++ "src/dep/glfw/src/linux_joystick.c",
-        }, flagContainer.items);
-    }
-
-    if (target.isDarwin()) {
-        // !! Mac TODO
-        // Here we need to add the include dirs and c files that glfw
-        // depends on for specifically the mac platform.
-    }
-
-    // Shared C.
-    glfw.addCSourceFiles(&.{
-        path ++ "src/dep/glfw/src/context.c",
-        path ++ "src/dep/glfw/src/init.c",
-        path ++ "src/dep/glfw/src/input.c",
-        path ++ "src/dep/glfw/src/monitor.c",
-        path ++ "src/dep/glfw/src/vulkan.c",
-        path ++ "src/dep/glfw/src/window.c",
-    }, flagContainer.items);
-
-    return glfw;
 }
 
 pub const AddContentErrors = error{ PermissionError, WriteError, FileError, FolderError, RecursionError };
@@ -243,16 +208,17 @@ pub fn addBinaryContent(comptime baseContentPath: []const u8) AddContentErrors!v
     var sourceFolder = fs.cwd().openIterableDir(baseContentPath, .{}) catch return error.FolderError;
     defer sourceFolder.close();
     var iterator = sourceFolder.iterate();
+
     while (iterator.next() catch return error.FolderError) |target| {
         var x = target;
-        if (x.kind == .Directory) {
+        if (x.kind == .directory) {
             const source: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ baseContentPath, x.name }) catch return error.RecursionError;
             const targetFolder: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ zigBin, x.name }) catch return error.RecursionError;
             defer gpa.allocator().free(source);
             defer gpa.allocator().free(targetFolder);
             try innerAddContent(gpa.allocator(), source, targetFolder);
         }
-        if (x.kind == .File) {
+        if (x.kind == .file) {
             try copy(baseContentPath, zigBin, x.name);
         }
     }
@@ -264,14 +230,14 @@ fn innerAddContent(allocator: std.mem.Allocator, folder: []const u8, dest: []con
     var iterator = sourceFolder.iterate();
     while (iterator.next() catch return error.FolderError) |target| {
         var x = target;
-        if (x.kind == .Directory) {
+        if (x.kind == .directory) {
             const source: []const u8 = std.fs.path.join(allocator, &[_][]const u8{ folder, x.name }) catch return error.RecursionError;
             const targetFolder: []const u8 = std.fs.path.join(allocator, &[_][]const u8{ dest, x.name }) catch return error.RecursionError;
             defer allocator.free(source);
             defer allocator.free(targetFolder);
             try innerAddContent(allocator, source, targetFolder);
         }
-        if (x.kind == .File) {
+        if (x.kind == .file) {
             try copy(folder, dest, x.name);
         }
     }

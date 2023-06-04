@@ -7,3 +7,4 @@ zig-cache/
 /docgen_tmp/
 imgui.ini
 workspace
+**/.DS_Store

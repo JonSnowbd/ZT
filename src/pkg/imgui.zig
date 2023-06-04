@@ -1,4 +1,4 @@
-const zlm = @import("zlm.zig");
+pub const zlm = @import("./zlm.zig");
 const struct__iobuf = extern struct {
     _ptr: [*c]u8,
     _cnt: c_int,

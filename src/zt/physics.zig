@@ -1,5 +1,5 @@
 const std = @import("std");
-const math = @import("../pkg/zlm.zig");
+const math = @import("imgui").zlm;
 const assert = std.debug.assert;
 
 // Fair bit of code duplication here for specialized shape algorithms.
@@ -41,28 +41,28 @@ pub fn isPointInPolygon(point: math.Vec2, polyPoint: math.Vec2, vertices: []math
     return inside;
 }
 pub fn isCircleInPolygon(circlePos: math.Vec2, radius: f32, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
-    for (vertices) |vert, i| {
+    for (vertices, 0..) |vert, i| {
         var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
         if (isLineInCircle(vert.add(polygonPos), next, circlePos, radius)) return true;
     }
     return isPointInPolygon(circlePos, polygonPos, vertices);
 }
 pub fn isLineInPolygon(lineStart: math.Vec2, lineEnd: math.Vec2, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
-    for (vertices) |vert, i| {
+    for (vertices, 0..) |vert, i| {
         var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
         if (isLineInLine(lineStart, lineEnd, vert.add(polygonPos), next)) return true;
     }
     return false;
 }
 pub fn isPolygonInPolygon(polygonPos: math.Vec2, vertices: []math.Vec2, polygon2Pos: math.Vec2, vertices2: []math.Vec2) bool {
-    for (vertices) |vert, i| {
+    for (vertices, 0..) |vert, i| {
         var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
         if (isLineInPolygon(vert.add(polygonPos), next, polygon2Pos, vertices2)) return true;
     }
     return isPointInPolygon(polygonPos, polygon2Pos, vertices2);
 }
 pub fn isRectInPolygon(rectangle: math.Rect, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
-    for (vertices) |vert, i| {
+    for (vertices, 0..) |vert, i| {
         var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
         if (isLineInRect(vert.add(polygonPos), next, rectangle.position, rectangle.size)) return true;
     }
