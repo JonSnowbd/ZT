@@ -64,7 +64,7 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
     io.*.KeyMap[ig.ImGuiKey_Tab] = @enumToInt(glfw.Key.tab);
     io.*.KeyMap[ig.ImGuiKey_Home] = @enumToInt(glfw.Key.home);
     io.*.KeyMap[ig.ImGuiKey_Insert] = @enumToInt(glfw.Key.insert);
-    io.*.KeyMap[ig.ImGuiKey_KeyPadEnter] = @enumToInt(glfw.Key.kp_enter);
+    io.*.KeyMap[ig.ImGuiKey_KeypadEnter] = @enumToInt(glfw.Key.kp_enter);
     io.*.KeyMap[ig.ImGuiKey_Escape] = @enumToInt(glfw.Key.escape);
     io.*.KeyMap[ig.ImGuiKey_Backspace] = @enumToInt(glfw.Key.backspace);
     io.*.KeyMap[ig.ImGuiKey_End] = @enumToInt(glfw.Key.end);

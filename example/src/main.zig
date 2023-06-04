@@ -80,7 +80,7 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
     // Basic toggle
     const glfw = @import("glfw");
     var io = ig.igGetIO();
-    if (io.*.KeysDownDuration[@enumToInt(glfw.Key.grave_accent)] == 0.0) {
+    if (io.*.KeysData[@enumToInt(glfw.Key.grave_accent)].DownDuration == 0.0) {
         ctx.data.consoleOpen = !ctx.data.consoleOpen;
     }
     if (!ctx.data.consoleOpen) return;
