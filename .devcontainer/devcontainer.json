@@ -1,0 +1,17 @@
+{
+  "name": "Default Linux Universal",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ziglang.vscode-zig"
+      ]
+    }
+  },
+  "appPort": 7651,
+  "containerEnv": {
+    "SHELL": "/usr/bin/zsh"
+  }
+}

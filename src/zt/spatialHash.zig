@@ -1,5 +1,5 @@
 const std = @import("std");
-const math = @import("../pkg/zlm.zig");
+const math = @import("imgui").zlm;
 
 // @TODO: More settings to streamline spatial hash usage for other purposes. Maybe even
 // make it so you can provide your own coordinate type and functions?

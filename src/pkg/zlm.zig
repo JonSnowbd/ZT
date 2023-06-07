@@ -148,7 +148,7 @@ fn specializeOn(comptime Real: type) type {
                     if (components.len > 1) {
                         const fieldorder = "xyzw";
                         _ = fieldorder;
-                        inline for (components) |c, i| {
+                        inline for (components, 0..) |c, i| {
                             _ = c;
                             const slice = components[i .. i + 1];
                             const temp = if (comptime std.mem.eql(u8, slice, "0"))

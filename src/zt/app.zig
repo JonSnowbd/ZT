@@ -10,6 +10,11 @@ const ig = @import("imgui");
 
 var initialized: bool = false;
 
+/// Default GLFW error handling callback
+fn errorCallback(error_code: glfw.ErrorCode, description: [:0]const u8) void {
+    std.log.err("glfw: {}: {s}\n", .{ error_code, description });
+}
+
 pub fn App(comptime Data: type) type {
     return struct {
         const Self = @This();
@@ -49,7 +54,7 @@ pub fn App(comptime Data: type) type {
             allocator: std.mem.Allocator = undefined,
             data: Data = undefined,
             settings: Settings = .{},
-            window: ?*glfw.GLFWwindow = undefined,
+            window: ?glfw.Window = undefined,
             input: std.ArrayList(InputEvent) = undefined,
             time: TimeManager = undefined,
             open: bool = false,
@@ -57,16 +62,17 @@ pub fn App(comptime Data: type) type {
             pub fn deinit(self: *Context) void {
                 self.input.deinit();
                 ImGuiImplementation.Shutdown();
-                glfw.glfwTerminate();
+                glfw.terminate();
                 self.allocator.destroy(self);
             }
 
             /// Ticks forward timer, clears OpenGL, enqueues events, and dictates to imgui
             /// that we are starting a new frame. Basically
             pub fn beginFrame(self: *Context) void {
-                self.open = glfw.glfwWindowShouldClose(self.window) == 0;
+                self.open = !self.window.?.shouldClose();
                 self.time.tick();
-                glfw.glfwPollEvents();
+
+                glfw.pollEvents();
                 gl.glClear(gl.GL_COLOR_BUFFER_BIT);
                 ig.igNewFrame();
             }
@@ -84,36 +90,36 @@ pub fn App(comptime Data: type) type {
 
                 self.input.items.len = 0;
 
-                glfw.glfwSwapBuffers(self.window);
+                self.window.?.swapBuffers();
                 io.*.DeltaTime = self.time.dt;
                 if (self.settings.energySaving) {
                     if (self._updateSeconds > 0.0) {
                         self._updateSeconds -= self.time.dt;
                     } else {
-                        glfw.glfwWaitEvents();
+                        glfw.waitEvents();
                     }
                 }
             }
             /// Changes the context window's position. In some operating systems I believe this is
             /// a no-op
             pub fn setWindowPosition(self: *Context, x: c_int, y: c_int) void {
-                glfw.glfwSetWindowPos(self.window, x, y);
+                self.window.?.setPos(.{ .x = x, .y = y });
             }
             /// Changes the context window's size
             pub fn setWindowSize(self: *Context, width: c_int, height: c_int) void {
-                glfw.glfwSetWindowSize(self.window, width, height);
+                self.window.?.setSize(.{ .width = @intCast(u32, width), .height = @intCast(u32, height) });
             }
             /// Changes the context window's title(the text on the window's title bar, typically)
-            pub fn setWindowTitle(self: *Context, string: []const u8) void {
-                glfw.glfwSetWindowTitle(self.window, string.ptr);
+            pub fn setWindowTitle(self: *Context, string: [*:0]const u8) void {
+                self.window.?.setTitle(string);
             }
             /// If true, buffer swaps will happen each possible frame in line with your monitor hz,
             /// but if false, will buffer swap as fast as it can.
             pub fn setVsync(self: *Context, on: bool) void {
                 if (on) {
-                    glfw.glfwSwapInterval(1);
+                    glfw.swapInterval(1);
                 } else {
-                    glfw.glfwSwapInterval(0);
+                    glfw.swapInterval(0);
                 }
                 self.settings.vsync = on;
             }
@@ -121,19 +127,13 @@ pub fn App(comptime Data: type) type {
             /// binary icon, and you would rather want to use post builds specific to
             /// each platform.
             pub fn setWindowIcon(self: *Context, path: []const u8) void {
-                stb.stbi_set_flip_vertically_on_load(0);
-                var image = glfw.GLFWimage{ .width = 0, .height = 0, .pixels = null };
-                image.pixels = stb.stbi_load(path.ptr, &image.width, &image.height, 0, 4);
-                if (image.width > 0 and image.height > 0) {
-                    glfw.glfwSetWindowIcon(self.window, 1, &image);
-                    stb.stbi_image_free(image.pixels);
-                } else {
-                    std.debug.print("Failed to load icon {s}\n", .{path});
-                }
+                _ = self;
+                _ = path;
+                std.debug.print("ERROR: Loading icons not implemented\n", .{});
             }
             /// Tells ZT to close the window
             pub fn close(self: *Context) void {
-                glfw.glfwSetWindowShouldClose(self.window, 1);
+                self.window.?.setShouldClose(true);
             }
             /// If you have an animation that needs to play you can queue an amount of seconds that will ignore energy saving mode
             pub fn setAnimationFrames(self: *Context, seconds: f32) void {
@@ -185,13 +185,13 @@ pub fn App(comptime Data: type) type {
         /// other libraries without actually spinning up the context
         pub fn preInit() !void {
             if (!initialized) {
-                if (glfw.glfwInit() < 0) {
-                    std.debug.panic("Failed to init GLFW", .{});
+                glfw.setErrorCallback(errorCallback);
+
+                if (!glfw.init(.{})) {
+                    std.log.err("failed to initialize GLFW: {?s}", .{glfw.getErrorString()});
+                    std.process.exit(1);
                 }
 
-                glfw.glfwWindowHint(glfw.GLFW_CONTEXT_VERSION_MAJOR, 3);
-                glfw.glfwWindowHint(glfw.GLFW_CONTEXT_VERSION_MINOR, 3);
-                glfw.glfwWindowHint(glfw.GLFW_OPENGL_PROFILE, glfw.GLFW_OPENGL_CORE_PROFILE);
                 initialized = true;
             }
         }
@@ -207,73 +207,81 @@ pub fn App(comptime Data: type) type {
             self.allocator = applicationAllocator;
             self.input = std.ArrayList(InputEvent).init(applicationAllocator);
             try preInit();
-            self.window = glfw.glfwCreateWindow(800, 600, "ZT Application", null, null).?;
+
+            // Create our window
+
+            const hints = glfw.Window.Hints{ .context_version_major = 3, .context_version_minor = 3, .opengl_profile = glfw.Window.Hints.OpenGLProfile.opengl_core_profile };
+
+            self.window = glfw.Window.create(800, 600, "Hello, mach-glfw!", null, null, hints) orelse {
+                std.log.err("failed to create GLFW window: {?s}", .{glfw.getErrorString()});
+                std.process.exit(1);
+            };
+
             self.open = true;
-            glfw.glfwMakeContextCurrent(self.window);
+            glfw.makeContextCurrent(self.window);
 
             if (gl.gladLoadGL() < 0) {
                 return error.GladLoadError;
             }
+
             ImGuiImplementation.init("#version 330");
 
-            glfw.glfwSetWindowUserPointer(self.window, self);
-            _ = glfw.glfwSetFramebufferSizeCallback(self.window, windowSizeChanged);
-            _ = glfw.glfwSetKeyCallback(self.window, inputCallback);
-            _ = glfw.glfwSetCharCallback(self.window, charCallback);
-            _ = glfw.glfwSetMouseButtonCallback(self.window, mousebuttonCallback);
-            _ = glfw.glfwSetCursorPosCallback(self.window, cursorCallback);
-            _ = glfw.glfwSetScrollCallback(self.window, mouseWheelCallback);
-            _ = glfw.glfwSetWindowMaximizeCallback(self.window, windowMaximizeChanged);
+            self.window.?.setUserPointer(self);
+            _ = self.window.?.setFramebufferSizeCallback(windowSizeChanged);
+            _ = self.window.?.setKeyCallback(inputCallback);
+            _ = self.window.?.setCharCallback(charCallback);
+            _ = self.window.?.setMouseButtonCallback(mousebuttonCallback);
+            _ = self.window.?.setCursorPosCallback(cursorCallback);
+            _ = self.window.?.setScrollCallback(mouseWheelCallback);
+            _ = self.window.?.setMaximizeCallback(windowMaximizeChanged);
 
             gl.glClearColor(0.1, 0.1, 0.12, 1.0);
-
-            var width: c_int = 0;
-            var height: c_int = 0;
-            glfw.glfwGetWindowSize(self.window, &width, &height);
-            gl.glViewport(0, 0, width, height);
+            const size = self.window.?.getSize();
+            gl.glViewport(0, 0, @intCast(c_int, size.width), @intCast(c_int, size.height));
             var io = ig.igGetIO();
             io.*.ConfigFlags |= ig.ImGuiConfigFlags_DockingEnable;
-            io.*.DisplaySize = .{ .x = @intToFloat(f32, width), .y = @intToFloat(f32, height) };
+            io.*.DisplaySize = .{ .x = @intToFloat(f32, size.width), .y = @intToFloat(f32, size.height) };
             self.time = TimeManager.init();
             return self;
         }
 
         // Callbacks
-        fn windowSizeChanged(win: ?*glfw.GLFWwindow, newWidth: c_int, newHeight: c_int) callconv(.C) void {
+        fn windowSizeChanged(win: glfw.Window, newWidth: u32, newHeight: u32) void {
             _ = win;
-            gl.glViewport(0, 0, newWidth, newHeight);
+            gl.glViewport(0, 0, @intCast(c_int, newWidth), @intCast(c_int, newHeight));
             var io = ig.igGetIO();
             io.*.DisplaySize = .{ .x = @intToFloat(f32, newWidth), .y = @intToFloat(f32, newHeight) };
         }
-        fn windowMaximizeChanged(win: ?*glfw.GLFWwindow, maximized: c_int) callconv(.C) void {
+        fn windowMaximizeChanged(win: glfw.Window, maximized: bool) void {
             _ = maximized;
-            var width: c_int = 0;
-            var height: c_int = 0;
-            glfw.glfwGetWindowSize(win, &width, &height);
-            gl.glViewport(0, 0, width, height);
+            const size = win.getSize();
+            gl.glViewport(0, 0, @intCast(c_int, size.width), @intCast(c_int, size.height));
             var io = ig.igGetIO();
-            io.*.DisplaySize = .{ .x = @intToFloat(f32, width), .y = @intToFloat(f32, height) };
+            io.*.DisplaySize = .{ .x = @intToFloat(f32, size.width), .y = @intToFloat(f32, size.height) };
         }
-        fn inputCallback(win: ?*glfw.GLFWwindow, key: c_int, scan: c_int, action: c_int, mods: c_int) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+        fn inputCallback(win: glfw.Window, key: glfw.Key, scan: i32, action: glfw.Action, mods: glfw.Mods) void {
+            _ = mods;
+            var context: *Context = win.getUserPointer(Context).?;
             var io = ig.igGetIO();
             var pressed = false;
-            if (action == glfw.GLFW_PRESS or action == glfw.GLFW_REPEAT) {
+            if (action == glfw.Action.press or action == glfw.Action.repeat) {
                 pressed = true;
             }
-            io.*.KeysDown[@intCast(usize, key)] = pressed;
-            io.*.KeyShift = io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_LEFT_SHIFT)] or io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_RIGHT_SHIFT)];
-            io.*.KeyCtrl = io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_LEFT_CONTROL)] or io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_RIGHT_CONTROL)];
-            io.*.KeyAlt = io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_LEFT_ALT)] or io.*.KeysDown[@intCast(usize, glfw.GLFW_KEY_RIGHT_ALT)];
-            context.input.append(.{ .keyboard = .{
-                .key = key,
-                .scan = scan,
-                .action = action,
-                .mods = mods,
-            } }) catch unreachable;
+            io.*.KeysDown[@intCast(usize, @enumToInt(key))] = pressed;
+            io.*.KeyShift = io.*.KeysDown[@enumToInt(glfw.Key.left_shift)] or io.*.KeysDown[@enumToInt(glfw.Key.right_shift)];
+            io.*.KeyCtrl = io.*.KeysDown[@enumToInt(glfw.Key.left_control)] or io.*.KeysDown[@enumToInt(glfw.Key.right_control)];
+            io.*.KeyAlt = io.*.KeysDown[@enumToInt(glfw.Key.left_alt)] or io.*.KeysDown[@enumToInt(glfw.Key.right_alt)];
+            context.input.append(.{
+                .keyboard = .{
+                    .key = @enumToInt(key),
+                    .scan = scan,
+                    .action = @enumToInt(action),
+                    .mods = 0, // modsToInt(mods)
+                },
+            }) catch unreachable;
         }
-        fn mouseWheelCallback(win: ?*glfw.GLFWwindow, x: f64, y: f64) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+        fn mouseWheelCallback(win: glfw.Window, x: f64, y: f64) void {
+            var context: *Context = win.getUserPointer(Context).?;
             var io = ig.igGetIO();
             io.*.MouseWheel = @floatCast(f32, y);
             io.*.MouseWheelH = @floatCast(f32, x);
@@ -282,33 +290,36 @@ pub fn App(comptime Data: type) type {
                 .y = y,
             } }) catch unreachable;
         }
-        fn mousebuttonCallback(win: ?*glfw.GLFWwindow, key: c_int, action: c_int, mods: c_int) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+        fn mousebuttonCallback(win: glfw.Window, key: glfw.MouseButton, action: glfw.Action, mods: glfw.Mods) void {
+            _ = mods;
+            var context: *Context = win.getUserPointer(Context).?;
             var io = ig.igGetIO();
             var pressed = false;
-            if (action == glfw.GLFW_PRESS or action == glfw.GLFW_REPEAT) {
+            if (action == glfw.Action.press or action == glfw.Action.repeat) {
                 pressed = true;
             }
             switch (key) {
-                glfw.GLFW_MOUSE_BUTTON_LEFT => {
+                glfw.MouseButton.left => {
                     io.*.MouseDown[ig.ImGuiMouseButton_Left] = pressed;
                 },
-                glfw.GLFW_MOUSE_BUTTON_MIDDLE => {
+                glfw.MouseButton.middle => {
                     io.*.MouseDown[ig.ImGuiMouseButton_Middle] = pressed;
                 },
-                glfw.GLFW_MOUSE_BUTTON_RIGHT => {
+                glfw.MouseButton.right => {
                     io.*.MouseDown[ig.ImGuiMouseButton_Right] = pressed;
                 },
                 else => {},
             }
-            context.input.append(.{ .mouseButton = .{
-                .key = key,
-                .action = action,
-                .mods = mods,
-            } }) catch unreachable;
+            context.input.append(.{
+                .mouseButton = .{
+                    .key = @enumToInt(key),
+                    .action = @enumToInt(action),
+                    .mods = 0, // modsToInt(mods)
+                },
+            }) catch unreachable;
         }
-        fn cursorCallback(win: ?*glfw.GLFWwindow, x: f64, y: f64) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+        fn cursorCallback(win: glfw.Window, x: f64, y: f64) void {
+            var context: *Context = win.getUserPointer(Context).?;
             var io = ig.igGetIO();
             io.*.MousePos = .{ .x = @floatCast(f32, x), .y = @floatCast(f32, y) };
             context.input.append(.{ .mousePosition = .{
@@ -316,8 +327,8 @@ pub fn App(comptime Data: type) type {
                 .y = y,
             } }) catch unreachable;
         }
-        fn charCallback(win: ?*glfw.GLFWwindow, char: c_uint) callconv(.C) void {
-            var context: *Context = @ptrCast(*Context, @alignCast(@alignOf(*Context), glfw.glfwGetWindowUserPointer(win).?));
+        fn charCallback(win: glfw.Window, char: u21) void {
+            var context: *Context = win.getUserPointer(Context).?;
             var io = ig.igGetIO();
             ig.ImGuiIO_AddInputCharacter(io, char);
             context.input.append(.{ .character = .{

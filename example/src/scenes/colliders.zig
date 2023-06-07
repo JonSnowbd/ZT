@@ -74,7 +74,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
             poly.overlaps(polyPos, point, pointPos) or
             poly.overlaps(polyPos, rect, rectPos)) zt.math.Vec4.white else zt.math.vec4(0.0, 0.5, 0.5, 0.7);
 
-        for (poly.Polygon.vertices) |v, i| {
+        for (poly.Polygon.vertices, 0..) |v, i| {
             var next = if (i + 1 == poly.Polygon.vertices.len) poly.Polygon.vertices[0] else poly.Polygon.vertices[i + 1];
             var pos = v.add(polyPos);
             var nextPos = next.add(polyPos);

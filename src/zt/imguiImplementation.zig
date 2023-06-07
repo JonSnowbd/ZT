@@ -61,28 +61,28 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
 
     CreateDeviceObjects();
 
-    io.*.KeyMap[ig.ImGuiKey_Tab] = glfw.GLFW_KEY_TAB;
-    io.*.KeyMap[ig.ImGuiKey_Home] = glfw.GLFW_KEY_HOME;
-    io.*.KeyMap[ig.ImGuiKey_Insert] = glfw.GLFW_KEY_INSERT;
-    io.*.KeyMap[ig.ImGuiKey_KeyPadEnter] = glfw.GLFW_KEY_KP_ENTER;
-    io.*.KeyMap[ig.ImGuiKey_Escape] = glfw.GLFW_KEY_ESCAPE;
-    io.*.KeyMap[ig.ImGuiKey_Backspace] = glfw.GLFW_KEY_BACKSPACE;
-    io.*.KeyMap[ig.ImGuiKey_End] = glfw.GLFW_KEY_END;
-    io.*.KeyMap[ig.ImGuiKey_Enter] = glfw.GLFW_KEY_ENTER;
+    io.*.KeyMap[ig.ImGuiKey_Tab] = @enumToInt(glfw.Key.tab);
+    io.*.KeyMap[ig.ImGuiKey_Home] = @enumToInt(glfw.Key.home);
+    io.*.KeyMap[ig.ImGuiKey_Insert] = @enumToInt(glfw.Key.insert);
+    io.*.KeyMap[ig.ImGuiKey_KeypadEnter] = @enumToInt(glfw.Key.kp_enter);
+    io.*.KeyMap[ig.ImGuiKey_Escape] = @enumToInt(glfw.Key.escape);
+    io.*.KeyMap[ig.ImGuiKey_Backspace] = @enumToInt(glfw.Key.backspace);
+    io.*.KeyMap[ig.ImGuiKey_End] = @enumToInt(glfw.Key.end);
+    io.*.KeyMap[ig.ImGuiKey_Enter] = @enumToInt(glfw.Key.enter);
 
-    io.*.KeyMap[ig.ImGuiKey_LeftArrow] = glfw.GLFW_KEY_LEFT;
-    io.*.KeyMap[ig.ImGuiKey_RightArrow] = glfw.GLFW_KEY_RIGHT;
-    io.*.KeyMap[ig.ImGuiKey_UpArrow] = glfw.GLFW_KEY_UP;
-    io.*.KeyMap[ig.ImGuiKey_DownArrow] = glfw.GLFW_KEY_DOWN;
+    io.*.KeyMap[ig.ImGuiKey_LeftArrow] = @enumToInt(glfw.Key.left);
+    io.*.KeyMap[ig.ImGuiKey_RightArrow] = @enumToInt(glfw.Key.right);
+    io.*.KeyMap[ig.ImGuiKey_UpArrow] = @enumToInt(glfw.Key.up);
+    io.*.KeyMap[ig.ImGuiKey_DownArrow] = @enumToInt(glfw.Key.down);
 
-    io.*.KeyMap[ig.ImGuiKey_PageUp] = glfw.GLFW_KEY_PAGE_UP;
-    io.*.KeyMap[ig.ImGuiKey_PageDown] = glfw.GLFW_KEY_PAGE_DOWN;
-    io.*.KeyMap[ig.ImGuiKey_Space] = glfw.GLFW_KEY_SPACE;
-    io.*.KeyMap[ig.ImGuiKey_V] = glfw.GLFW_KEY_V;
-    io.*.KeyMap[ig.ImGuiKey_X] = glfw.GLFW_KEY_X;
-    io.*.KeyMap[ig.ImGuiKey_Z] = glfw.GLFW_KEY_Z;
-    io.*.KeyMap[ig.ImGuiKey_A] = glfw.GLFW_KEY_A;
-    io.*.KeyMap[ig.ImGuiKey_C] = glfw.GLFW_KEY_C;
+    io.*.KeyMap[ig.ImGuiKey_PageUp] = @enumToInt(glfw.Key.page_up);
+    io.*.KeyMap[ig.ImGuiKey_PageDown] = @enumToInt(glfw.Key.page_down);
+    io.*.KeyMap[ig.ImGuiKey_Space] = @enumToInt(glfw.Key.space);
+    io.*.KeyMap[ig.ImGuiKey_V] = @enumToInt(glfw.Key.v);
+    io.*.KeyMap[ig.ImGuiKey_X] = @enumToInt(glfw.Key.x);
+    io.*.KeyMap[ig.ImGuiKey_Z] = @enumToInt(glfw.Key.z);
+    io.*.KeyMap[ig.ImGuiKey_A] = @enumToInt(glfw.Key.a);
+    io.*.KeyMap[ig.ImGuiKey_C] = @enumToInt(glfw.Key.c);
 }
 
 pub fn Shutdown() void {
