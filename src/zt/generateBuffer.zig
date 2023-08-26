@@ -67,13 +67,13 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self.iboId);
 
             var currentOffset: usize = 0;
-            var stride: c_int = @intCast(c_int, @sizeOf(T));
+            var stride: c_int = @intCast(@sizeOf(T));
 
             inline for (std.meta.fields(T), 0..) |field, i| {
                 switch (field.type) {
                     bool => {
-                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_BOOL, gl.GL_FALSE, stride, @intToPtr(*allowzero anyopaque, currentOffset));
-                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@intCast(i), 1, gl.GL_BOOL, gl.GL_FALSE, stride, @as(*allowzero anyopaque, @ptrFromInt(currentOffset)));
+                        gl.glEnableVertexAttribArray(@as(c_uint, @intCast(i)));
                         currentOffset += @sizeOf(bool);
                     },
                     // TODO: Figure out opengl's api for bytes and shorts in uniforms.
@@ -98,33 +98,33 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                     //     currentOffset += @sizeOf(u16);
                     // },
                     i32 => {
-                        gl.glVertexAttribIPointer(@intCast(c_uint, i), 1, gl.GL_INT, stride, @intToPtr(*allowzero anyopaque, currentOffset));
-                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribIPointer(@as(c_uint, @intCast(i)), 1, gl.GL_INT, stride, @as(*allowzero anyopaque, @ptrFromInt(currentOffset)));
+                        gl.glEnableVertexAttribArray(@as(c_uint, @intCast(i)));
                         currentOffset += @sizeOf(i32);
                     },
                     u32 => {
-                        gl.glVertexAttribIPointer(@intCast(c_uint, i), 1, gl.GL_UNSIGNED_INT, stride, @intToPtr(*allowzero anyopaque, currentOffset));
-                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribIPointer(@as(c_uint, @intCast(i)), 1, gl.GL_UNSIGNED_INT, stride, @as(*allowzero anyopaque, @ptrFromInt(currentOffset)));
+                        gl.glEnableVertexAttribArray(@as(c_uint, @intCast(i)));
                         currentOffset += @sizeOf(u32);
                     },
                     f32 => {
-                        gl.glVertexAttribPointer(@intCast(c_uint, i), 1, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero anyopaque, currentOffset));
-                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@as(c_uint, @intCast(i)), 1, gl.GL_FLOAT, gl.GL_FALSE, stride, @as(*allowzero anyopaque, @ptrFromInt(currentOffset)));
+                        gl.glEnableVertexAttribArray(@as(c_uint, @intCast(i)));
                         currentOffset += 4;
                     },
                     zt.math.Vec2 => {
-                        gl.glVertexAttribPointer(@intCast(c_uint, i), 2, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero anyopaque, currentOffset));
-                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@as(c_uint, @intCast(i)), 2, gl.GL_FLOAT, gl.GL_FALSE, stride, @as(*allowzero anyopaque, @ptrFromInt(currentOffset)));
+                        gl.glEnableVertexAttribArray(@as(c_uint, @intCast(i)));
                         currentOffset += 8;
                     },
                     zt.math.Vec3 => {
-                        gl.glVertexAttribPointer(@intCast(c_uint, i), 3, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero anyopaque, currentOffset));
-                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@as(c_uint, @intCast(i)), 3, gl.GL_FLOAT, gl.GL_FALSE, stride, @as(*allowzero anyopaque, @ptrFromInt(currentOffset)));
+                        gl.glEnableVertexAttribArray(@as(c_uint, @intCast(i)));
                         currentOffset += 12;
                     },
                     zt.math.Vec4 => {
-                        gl.glVertexAttribPointer(@intCast(c_uint, i), 4, gl.GL_FLOAT, gl.GL_FALSE, stride, @intToPtr(*allowzero anyopaque, currentOffset));
-                        gl.glEnableVertexAttribArray(@intCast(c_uint, i));
+                        gl.glVertexAttribPointer(@as(c_uint, @intCast(i)), 4, gl.GL_FLOAT, gl.GL_FALSE, stride, @as(*allowzero anyopaque, @ptrFromInt(currentOffset)));
+                        gl.glEnableVertexAttribArray(@as(c_uint, @intCast(i)));
                         currentOffset += 16;
                     },
                     else => {
@@ -170,9 +170,9 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.vertices[self.vertCount + 1] = v2;
             self.vertices[self.vertCount + 2] = v3;
 
-            self.indices[self.indCount + 0] = (@intCast(c_uint, self.vertCount + 0));
-            self.indices[self.indCount + 1] = (@intCast(c_uint, self.vertCount + 1));
-            self.indices[self.indCount + 2] = (@intCast(c_uint, self.vertCount + 2));
+            self.indices[self.indCount + 0] = (@intCast(self.vertCount + 0));
+            self.indices[self.indCount + 1] = (@intCast(self.vertCount + 1));
+            self.indices[self.indCount + 2] = (@intCast(self.vertCount + 2));
 
             self.indCount += 3;
             self.vertCount += 3;
@@ -187,12 +187,12 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             self.vertices[self.vertCount + 2] = tr;
             self.vertices[self.vertCount + 3] = br;
 
-            self.indices[self.indCount + 0] = @intCast(c_uint, self.vertCount + 0);
-            self.indices[self.indCount + 1] = @intCast(c_uint, self.vertCount + 1);
-            self.indices[self.indCount + 2] = @intCast(c_uint, self.vertCount + 3);
-            self.indices[self.indCount + 3] = @intCast(c_uint, self.vertCount + 1);
-            self.indices[self.indCount + 4] = @intCast(c_uint, self.vertCount + 2);
-            self.indices[self.indCount + 5] = @intCast(c_uint, self.vertCount + 3);
+            self.indices[self.indCount + 0] = @intCast(self.vertCount + 0);
+            self.indices[self.indCount + 1] = @intCast(self.vertCount + 1);
+            self.indices[self.indCount + 2] = @intCast(self.vertCount + 3);
+            self.indices[self.indCount + 3] = @intCast(self.vertCount + 1);
+            self.indices[self.indCount + 4] = @intCast(self.vertCount + 2);
+            self.indices[self.indCount + 5] = @intCast(self.vertCount + 3);
 
             self.vertCount += 4;
             self.indCount += 6;
@@ -205,8 +205,8 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                 return;
             }
             self.bind();
-            var vertSize: c_longlong = @intCast(c_longlong, @sizeOf(T) * self.vertCount);
-            var indSize: c_longlong = @intCast(c_longlong, @sizeOf(c_uint) * self.indCount);
+            var vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
+            var indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
             gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_STATIC_DRAW);
             gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_STATIC_DRAW);
             self.unbind();
@@ -219,8 +219,8 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                 return;
             }
             self.bind();
-            var vertSize: c_longlong = @intCast(c_longlong, @sizeOf(T) * self.vertCount);
-            var indSize: c_longlong = @intCast(c_longlong, @sizeOf(c_uint) * self.indCount);
+            var vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
+            var indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
             gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_DYNAMIC_DRAW);
             gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_DYNAMIC_DRAW);
             self.unbind();
@@ -233,8 +233,8 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                 return;
             }
             self.bind();
-            var vertSize = @intCast(c_longlong, @sizeOf(T) * self.vertCount);
-            var indSize = @intCast(c_longlong, @sizeOf(c_uint) * self.indCount);
+            var vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
+            var indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
             gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_STREAM_DRAW);
             gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_STREAM_DRAW);
             self.unbind();
@@ -246,7 +246,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
         /// the current vertices every frame if so desired.
         pub fn flush(self: *@This()) void {
             self.bind();
-            gl.glDrawElements(gl.GL_TRIANGLES, @intCast(c_int, self.indCount), gl.GL_UNSIGNED_INT, null);
+            gl.glDrawElements(gl.GL_TRIANGLES, @intCast(self.indCount), gl.GL_UNSIGNED_INT, null);
             self.unbind();
             reportErr("Flushing the buffers:");
         }

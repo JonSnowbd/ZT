@@ -37,7 +37,7 @@ for your game is as smooth as it can be without deciding anything for you
 
 To work with ZT You will need:
 
-- Zig 0.10.* Main branch build
+- Zig 0.11.* Main branch build
 - Ubuntu: `sudo apt install build-essential xorg-dev`
 
 ### Current Status

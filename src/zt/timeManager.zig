@@ -18,7 +18,7 @@ pub fn tick(self: *Self) void {
     var lap = glfw.getTime();
 
     // No need to worry about overflow, unless a frame intends to last for over a month.
-    self.dt = @floatCast(f32, lap - self._previous);
+    self.dt = @as(f32, @floatCast(lap - self._previous));
     self.lifetime += self.dt;
 
     // Smoothly introduce new fps measurements.

@@ -1,5 +1,4 @@
 const std = @import("std");
-const glfw = @import("libs/mach-glfw/build.zig");
 
 fn getRelativePath() []const u8 {
     comptime {
@@ -82,13 +81,20 @@ pub fn build(b: *std.build.Builder) !void {
     test_step.dependOn(&run_unit_tests.step);
 }
 
-pub fn link(b: *std.build.Builder, exe: *std.build.LibExeObjStep) !void {
+pub fn link(b: *std.build.Builder, exe: *std.build.CompileStep) !void {
     // Link step
     exe.linkLibrary(imguiLibrary(b, exe));
     exe.linkLibrary(glLibrary(b, exe));
     exe.linkLibrary(stbLibrary(b, exe));
 
-    const glfwModule = glfw.module(b);
+    const glfw_dep = b.dependency("mach_glfw", .{
+        .target = exe.target,
+        .optimize = exe.optimize,
+    });
+    const glfwModule = glfw_dep.module("mach-glfw");
+    exe.addModule("mach-glfw", glfwModule);
+    const glfw = @import("mach_glfw");
+
     const gl = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/gl.zig" } });
     const stb_image = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/stb_image.zig" } });
     const imgui = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/imgui.zig" } });
@@ -105,11 +111,11 @@ pub fn link(b: *std.build.Builder, exe: *std.build.LibExeObjStep) !void {
     exe.addModule("imgui", imgui);
     exe.addModule("zt", zt);
 
-    try glfw.link(b, exe, .{});
+    try glfw.link(b, exe);
 }
 
 // STB
-pub fn stbLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
+pub fn stbLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build.CompileStep {
     comptime var path = thisDir();
 
     var stb = b.addStaticLibrary(.{ .name = "stb", .target = exe.target, .optimize = exe.optimize });
@@ -118,12 +124,12 @@ pub fn stbLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.bui
     var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
     if (exe.optimize != .Debug) flagContainer.append("-Os") catch unreachable;
 
-    stb.addCSourceFile(path ++ "/src/dep/stb/stb_image_wrapper.c", flagContainer.items);
+    stb.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/stb/stb_image_wrapper.c" }, .flags = flagContainer.items });
 
     return stb;
 }
 // OpenGL
-pub fn glLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
+pub fn glLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build.CompileStep {
     comptime var path = getRelativePath();
 
     var target = exe.target;
@@ -149,15 +155,15 @@ pub fn glLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.buil
     }
 
     // Include dirs.
-    gl.addIncludePath(path ++ "/src/dep/gl/glad/include");
+    gl.addIncludePath(.{ .path = path ++ "/src/dep/gl/glad/include" });
 
     // Add c.
-    gl.addCSourceFile(path ++ "/src/dep/gl/glad/src/glad.c", flagContainer.items);
+    gl.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/gl/glad/src/glad.c" }, .flags = flagContainer.items });
 
     return gl;
 }
 // ImGui
-pub fn imguiLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.build.LibExeObjStep {
+pub fn imguiLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build.CompileStep {
     comptime var path = getRelativePath();
     var target = exe.target;
     var imgui = b.addStaticLibrary(.{ .name = "imgui", .target = exe.target, .optimize = exe.optimize });
@@ -184,8 +190,8 @@ pub fn imguiLibrary(b: *std.build.Builder, exe: *std.build.LibExeObjStep) *std.b
     }
 
     // Include dirs.
-    imgui.addIncludePath(path ++ "/src/dep/cimgui/imgui");
-    imgui.addIncludePath(path ++ "/src/dep/cimgui");
+    imgui.addIncludePath(.{ .path = path ++ "/src/dep/cimgui/imgui" });
+    imgui.addIncludePath(.{ .path = path ++ "/src/dep/cimgui" });
 
     // Add C
     imgui.addCSourceFiles(&.{ path ++ "/src/dep/cimgui/imgui/imgui.cpp", path ++ "/src/dep/cimgui/imgui/imgui_demo.cpp", path ++ "/src/dep/cimgui/imgui/imgui_draw.cpp", path ++ "/src/dep/cimgui/imgui/imgui_tables.cpp", path ++ "/src/dep/cimgui/imgui/imgui_widgets.cpp", path ++ "/src/dep/cimgui/cimgui.cpp" }, flagContainer.items);

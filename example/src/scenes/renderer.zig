@@ -28,7 +28,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
     var x: i32 = -4;
     while (y <= 4) : (y += 1) {
         while (x <= 4) : (x += 1) {
-            const pos = zt.math.vec2(32 * @intToFloat(f32, x), 32 * @intToFloat(f32, y));
+            const pos = zt.math.vec2(32 * @as(f32, @floatFromInt(x)), 32 * @as(f32, @floatFromInt(y)));
             render.sprite(ctx.data.sheet, pos, 0, zt.math.vec2(32, 32), zt.math.Vec4.white, zt.math.vec2(0.5, 0.5), zt.math.rect(16, 0, 16, 16));
         }
         x = -4;

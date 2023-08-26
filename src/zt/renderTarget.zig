@@ -35,7 +35,7 @@ pub fn deinit(self: *Self) void {
 pub fn bind(self: *Self) void {
     gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.bufferId);
     gl.glGetIntegerv(gl.GL_VIEWPORT, &self._previous_viewport);
-    gl.glViewport(0, 0, @floatToInt(c_int, self.target.width), @floatToInt(c_int, self.target.height));
+    gl.glViewport(0, 0, @intFromFloat(self.target.width), @intFromFloat(self.target.height));
 }
 pub fn unbind(self: *Self) void {
     gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0);
@@ -45,8 +45,8 @@ pub fn resize(self: *Self, x: c_int, y: c_int) void {
     if (x != self._current_size[0] or y != self._current_size[1]) {
         self.target.bind();
         gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, x, y, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, null);
-        self.target.width = @intToFloat(f32, x);
-        self.target.height = @intToFloat(f32, y);
+        self.target.width = @floatFromInt(x);
+        self.target.height = @floatFromInt(y);
         self._current_size[0] = x;
         self._current_size[1] = y;
     }

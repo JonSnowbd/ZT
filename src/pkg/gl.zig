@@ -27,9 +27,9 @@ const khronos_boolean_enum_t = enum(c_int) {
     KHRONOS_BOOLEAN_ENUM_FORCE_SIZE = 2147483647,
     _,
 };
-const KHRONOS_FALSE = @enumToInt(khronos_boolean_enum_t.KHRONOS_FALSE);
-const KHRONOS_TRUE = @enumToInt(khronos_boolean_enum_t.KHRONOS_TRUE);
-const KHRONOS_BOOLEAN_ENUM_FORCE_SIZE = @enumToInt(khronos_boolean_enum_t.KHRONOS_BOOLEAN_ENUM_FORCE_SIZE);
+const KHRONOS_FALSE = @intFromEnum(khronos_boolean_enum_t.KHRONOS_FALSE);
+const KHRONOS_TRUE = @intFromEnum(khronos_boolean_enum_t.KHRONOS_TRUE);
+const KHRONOS_BOOLEAN_ENUM_FORCE_SIZE = @intFromEnum(khronos_boolean_enum_t.KHRONOS_BOOLEAN_ENUM_FORCE_SIZE);
 pub const GLenum = c_uint;
 pub const GLboolean = u8;
 pub const GLbitfield = c_uint;

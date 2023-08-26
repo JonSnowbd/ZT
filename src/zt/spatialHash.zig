@@ -269,7 +269,7 @@ test "speed testing spatial hash" {
         hash.addPoint(i, math.vec2(randX, randY));
     }
     var time = clock.lap();
-    std.debug.print(">> Took {d:.2}ms to create 10,000 points on a hash of usize.\n", .{@intToFloat(f64, time) / 1000000.0});
+    std.debug.print(">> Took {d:.2}ms to create 10,000 points on a hash of usize.\n", .{@as(f64, @floatFromInt(time)) / 1000000.0});
 
     while (i < 20000) : (i += 1) {
         var randX = rand.float(f32) * 200;
@@ -277,7 +277,7 @@ test "speed testing spatial hash" {
         hash.addPoint(i, math.vec2(randX, randY));
     }
     time = clock.lap();
-    std.debug.print(">> Took {d:.2}ms to create 10,000 more points on a hash of usize.\n", .{@intToFloat(f64, time) / 1000000.0});
+    std.debug.print(">> Took {d:.2}ms to create 10,000 more points on a hash of usize.\n", .{@as(f64, @floatFromInt(time)) / 1000000.0});
 
     i = 0;
     var visited: i32 = 0;
@@ -287,7 +287,7 @@ test "speed testing spatial hash" {
         }
     }
     time = clock.lap();
-    std.debug.print(">> Took {d:.2}ms to point iterate over a bucket 200 times, and visited {any} items.\n", .{ @intToFloat(f64, time) / 1000000.0, visited });
+    std.debug.print(">> Took {d:.2}ms to point iterate over a bucket 200 times, and visited {any} items.\n", .{ @as(f64, @floatFromInt(time)) / 1000000.0, visited });
 }
 
 test "spatial point insertion/remove/query" {

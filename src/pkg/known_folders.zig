@@ -26,6 +26,7 @@ pub const KnownFolder = enum {
 pub const Error = error{ ParseError, OutOfMemory };
 
 pub const KnownFolderConfig = struct {
+    xdg_force_default: bool = false,
     xdg_on_mac: bool = false,
 };
 
@@ -44,6 +45,7 @@ pub fn open(allocator: std.mem.Allocator, folder: KnownFolder, args: std.fs.Dir.
 /// Returns the path to the folder or, if the folder does not exist, `null`.
 pub fn getPath(allocator: std.mem.Allocator, folder: KnownFolder) Error!?[]const u8 {
     if (folder == .executable_dir) {
+        if (builtin.os.tag == .wasi) return null;
         return std.fs.selfExeDirPathAlloc(allocator) catch |err| switch (err) {
             error.OutOfMemory => return error.OutOfMemory,
             else => null,
@@ -68,7 +70,7 @@ pub fn getPath(allocator: std.mem.Allocator, folder: KnownFolder) Error!?[]const
                         &dir_path_ptr,
                     )) {
                         std.os.windows.S_OK => {
-                            defer std.os.windows.ole32.CoTaskMemFree(@ptrCast(*anyopaque, dir_path_ptr));
+                            defer std.os.windows.ole32.CoTaskMemFree(@ptrCast(dir_path_ptr));
                             const global_dir = std.unicode.utf16leToUtf8Alloc(allocator, std.mem.span(dir_path_ptr)) catch |err| switch (err) {
                                 error.UnexpectedSecondSurrogateHalf => return null,
                                 error.ExpectedSecondSurrogateHalf => return null,
@@ -134,24 +136,37 @@ pub fn getPath(allocator: std.mem.Allocator, folder: KnownFolder) Error!?[]const
 fn getPathXdg(allocator: std.mem.Allocator, arena: *std.heap.ArenaAllocator, folder: KnownFolder) Error!?[]const u8 {
     const folder_spec = xdg_folder_spec.get(folder);
 
-    var env_opt = std.os.getenv(folder_spec.env.name);
+    if (@hasDecl(root, "known_folders_config") and root.known_folders_config.xdg_force_default) {
+        if (folder_spec.default) |default| {
+            if (default[0] == '~') {
+                const home = std.os.getenv("HOME") orelse return null;
+                return try std.mem.concat(allocator, u8, &[_][]const u8{ home, default[1..] });
+            } else {
+                return try allocator.dupe(u8, default);
+            }
+        }
+    }
 
-    // TODO: add caching so we only need to read once in a run
-    if (env_opt == null and folder_spec.env.user_dir) block: {
+    const env_opt = env_opt: {
+        if (std.os.getenv(folder_spec.env.name)) |env_opt| break :env_opt env_opt;
+
+        if (!folder_spec.env.user_dir) break :env_opt null;
+
+        // TODO: add caching so we only need to read once in a run
         const config_dir_path = if (std.io.is_async) blk: {
-            var frame = arena.allocator().create(@Frame(getPathXdg)) catch break :block;
+            var frame = arena.allocator().create(@Frame(getPathXdg)) catch break :env_opt null;
             _ = @asyncCall(frame, {}, getPathXdg, .{ arena.allocator(), arena, .local_configuration });
-            break :blk (await frame) catch null orelse break :block;
+            break :blk (await frame) catch null orelse break :env_opt null;
         } else blk: {
-            break :blk getPathXdg(arena.allocator(), arena, .local_configuration) catch null orelse break :block;
+            break :blk getPathXdg(arena.allocator(), arena, .local_configuration) catch null orelse break :env_opt null;
         };
 
-        const config_dir = std.fs.cwd().openDir(config_dir_path, .{}) catch break :block;
-        const home = std.os.getenv("HOME") orelse break :block;
-        const user_dirs = config_dir.openFile("user-dirs.dirs", .{}) catch null orelse break :block;
+        const config_dir = std.fs.cwd().openDir(config_dir_path, .{}) catch break :env_opt null;
+        const home = std.os.getenv("HOME") orelse break :env_opt null;
+        const user_dirs = config_dir.openFile("user-dirs.dirs", .{}) catch null orelse break :env_opt null;
 
         var read: [1024 * 8]u8 = undefined;
-        _ = user_dirs.readAll(&read) catch null orelse break :block;
+        _ = user_dirs.readAll(&read) catch null orelse break :env_opt null;
         const start = folder_spec.env.name.len + "=\"$HOME".len;
 
         var line_it = std.mem.split(u8, &read, "\n");
@@ -164,17 +179,22 @@ fn getPathXdg(allocator: std.mem.Allocator, arena: *std.heap.ArenaAllocator, fol
 
                 var subdir = line[start..end];
 
-                env_opt = try std.mem.concat(arena.allocator(), u8, &[_][]const u8{ home, subdir });
-                break;
+                break :env_opt try std.mem.concat(arena.allocator(), u8, &[_][]const u8{ home, subdir });
             }
         }
-    }
+        break :env_opt null;
+    };
 
     if (env_opt) |env| {
         if (folder_spec.env.suffix) |suffix| {
             return try std.mem.concat(allocator, u8, &[_][]const u8{ env, suffix });
         } else {
-            return try allocator.dupe(u8, env);
+            if (std.mem.eql(u8, folder_spec.env.name, "XDG_CONFIG_DIRS")) {
+                var iter = std.mem.split(u8, env, ":");
+                return try allocator.dupe(u8, iter.next() orelse "");
+            } else {
+                return try allocator.dupe(u8, env);
+            }
         }
     } else {
         const default = folder_spec.default orelse return null;
@@ -329,7 +349,7 @@ test "query each known folders" {
 
 test "open each known folders" {
     inline for (std.meta.fields(KnownFolder)) |fld| {
-        var dir_or_null = open(std.testing.allocator, @field(KnownFolder, fld.name), .{ .iterate = false, .access_sub_paths = true }) catch |e| switch (e) {
+        var dir_or_null = open(std.testing.allocator, @field(KnownFolder, fld.name), .{ .access_sub_paths = true }) catch |e| switch (e) {
             error.FileNotFound => return,
             else => return e,
         };
