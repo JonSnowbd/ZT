@@ -73,10 +73,10 @@ pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
     const ti: std.builtin.Type = @typeInfo(@TypeOf(ptr.*));
     if (ti == .Array) {
         if (ti.Array.child == u8) {
-            return ig.igInputText(label.ptr, ptr, @intCast(usize, ti.Array.len), ig.ImGuiInputTextFlags_None, null, null);
+            return ig.igInputText(label.ptr, ptr, @intCast(ti.Array.len), ig.ImGuiInputTextFlags_None, null, null);
         }
     }
-    const fmax = std.math.f32_max;
+    const fmax = std.math.floatMax(f32);
     switch (@TypeOf(ptr)) {
         *bool => {
             return ig.igCheckbox(label.ptr, ptr);
@@ -84,16 +84,16 @@ pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
         *i32 => {
             const imin = std.math.minInt(i32);
             const imax = std.math.maxInt(i32);
-            return ig.igDragInt(label.ptr, ptr, speed, @intCast(c_int, imin), @intCast(c_int, imax), "%i", ig.ImGuiSliderFlags_NoRoundToFormat);
+            return ig.igDragInt(label.ptr, ptr, speed, @intCast(imin), @intCast(imax), "%i", ig.ImGuiSliderFlags_NoRoundToFormat);
         },
         *f32 => {
             return ig.igDragFloat(label.ptr, ptr, speed, -fmax, fmax, "%.2f", ig.ImGuiSliderFlags_NoRoundToFormat);
         },
         *usize => {
-            var cast = @intCast(c_int, ptr.*);
+            var cast = @as(c_int, @intCast(ptr.*));
             var result = ig.igInputInt(label.ptr, &cast, 1, 5, ig.ImGuiInputTextFlags_None);
             if (result) {
-                ptr.* = @intCast(usize, std.math.max(0, cast));
+                ptr.* = @intCast(std.math.max(0, cast));
             }
             return result;
         },
@@ -141,7 +141,7 @@ pub fn edit(label: []const u8, ptr: anytype) bool {
     const ti: std.builtin.Type = @typeInfo(@TypeOf(ptr.*));
     if (ti == .Array) {
         if (ti.Array.child == u8) {
-            return ig.igInputText(label.ptr, ptr, @intCast(usize, ti.Array.len), ig.ImGuiInputTextFlags_None, null, null);
+            return ig.igInputText(label.ptr, ptr, @intCast(ti.Array.len), ig.ImGuiInputTextFlags_None, null, null);
         }
     }
     switch (@TypeOf(ptr)) {
@@ -155,10 +155,10 @@ pub fn edit(label: []const u8, ptr: anytype) bool {
             return ig.igInputFloat(label.ptr, ptr, 1, 3, "%.2f", ig.ImGuiInputTextFlags_None);
         },
         *usize => {
-            var cast = @intCast(c_int, ptr.*);
+            var cast = @as(c_int, @intCast(ptr.*));
             var result = ig.igInputInt(label.ptr, &cast, 1, 5, ig.ImGuiInputTextFlags_None);
             if (result) {
-                ptr.* = @intCast(usize, std.math.max(0, cast));
+                ptr.* = @intCast(std.math.max(0, cast));
             }
             return result;
         },

@@ -29,7 +29,7 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
     var minor: gl.GLint = undefined;
     gl.glGetIntegerv(gl.GL_MAJOR_VERSION, &major);
     gl.glGetIntegerv(gl.GL_MINOR_VERSION, &minor);
-    g_GlVersion = @intCast(gl.GLuint, major * 1000 + minor);
+    g_GlVersion = @as(gl.GLuint, @intCast(major * 1000 + minor));
 
     // Setup back-end capabilities flags
     var io = ig.igGetIO();
@@ -61,28 +61,28 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
 
     CreateDeviceObjects();
 
-    io.*.KeyMap[ig.ImGuiKey_Tab] = @enumToInt(glfw.Key.tab);
-    io.*.KeyMap[ig.ImGuiKey_Home] = @enumToInt(glfw.Key.home);
-    io.*.KeyMap[ig.ImGuiKey_Insert] = @enumToInt(glfw.Key.insert);
-    io.*.KeyMap[ig.ImGuiKey_KeypadEnter] = @enumToInt(glfw.Key.kp_enter);
-    io.*.KeyMap[ig.ImGuiKey_Escape] = @enumToInt(glfw.Key.escape);
-    io.*.KeyMap[ig.ImGuiKey_Backspace] = @enumToInt(glfw.Key.backspace);
-    io.*.KeyMap[ig.ImGuiKey_End] = @enumToInt(glfw.Key.end);
-    io.*.KeyMap[ig.ImGuiKey_Enter] = @enumToInt(glfw.Key.enter);
+    io.*.KeyMap[ig.ImGuiKey_Tab] = @intFromEnum(glfw.Key.tab);
+    io.*.KeyMap[ig.ImGuiKey_Home] = @intFromEnum(glfw.Key.home);
+    io.*.KeyMap[ig.ImGuiKey_Insert] = @intFromEnum(glfw.Key.insert);
+    io.*.KeyMap[ig.ImGuiKey_KeypadEnter] = @intFromEnum(glfw.Key.kp_enter);
+    io.*.KeyMap[ig.ImGuiKey_Escape] = @intFromEnum(glfw.Key.escape);
+    io.*.KeyMap[ig.ImGuiKey_Backspace] = @intFromEnum(glfw.Key.backspace);
+    io.*.KeyMap[ig.ImGuiKey_End] = @intFromEnum(glfw.Key.end);
+    io.*.KeyMap[ig.ImGuiKey_Enter] = @intFromEnum(glfw.Key.enter);
 
-    io.*.KeyMap[ig.ImGuiKey_LeftArrow] = @enumToInt(glfw.Key.left);
-    io.*.KeyMap[ig.ImGuiKey_RightArrow] = @enumToInt(glfw.Key.right);
-    io.*.KeyMap[ig.ImGuiKey_UpArrow] = @enumToInt(glfw.Key.up);
-    io.*.KeyMap[ig.ImGuiKey_DownArrow] = @enumToInt(glfw.Key.down);
+    io.*.KeyMap[ig.ImGuiKey_LeftArrow] = @intFromEnum(glfw.Key.left);
+    io.*.KeyMap[ig.ImGuiKey_RightArrow] = @intFromEnum(glfw.Key.right);
+    io.*.KeyMap[ig.ImGuiKey_UpArrow] = @intFromEnum(glfw.Key.up);
+    io.*.KeyMap[ig.ImGuiKey_DownArrow] = @intFromEnum(glfw.Key.down);
 
-    io.*.KeyMap[ig.ImGuiKey_PageUp] = @enumToInt(glfw.Key.page_up);
-    io.*.KeyMap[ig.ImGuiKey_PageDown] = @enumToInt(glfw.Key.page_down);
-    io.*.KeyMap[ig.ImGuiKey_Space] = @enumToInt(glfw.Key.space);
-    io.*.KeyMap[ig.ImGuiKey_V] = @enumToInt(glfw.Key.v);
-    io.*.KeyMap[ig.ImGuiKey_X] = @enumToInt(glfw.Key.x);
-    io.*.KeyMap[ig.ImGuiKey_Z] = @enumToInt(glfw.Key.z);
-    io.*.KeyMap[ig.ImGuiKey_A] = @enumToInt(glfw.Key.a);
-    io.*.KeyMap[ig.ImGuiKey_C] = @enumToInt(glfw.Key.c);
+    io.*.KeyMap[ig.ImGuiKey_PageUp] = @intFromEnum(glfw.Key.page_up);
+    io.*.KeyMap[ig.ImGuiKey_PageDown] = @intFromEnum(glfw.Key.page_down);
+    io.*.KeyMap[ig.ImGuiKey_Space] = @intFromEnum(glfw.Key.space);
+    io.*.KeyMap[ig.ImGuiKey_V] = @intFromEnum(glfw.Key.v);
+    io.*.KeyMap[ig.ImGuiKey_X] = @intFromEnum(glfw.Key.x);
+    io.*.KeyMap[ig.ImGuiKey_Z] = @intFromEnum(glfw.Key.z);
+    io.*.KeyMap[ig.ImGuiKey_A] = @intFromEnum(glfw.Key.a);
+    io.*.KeyMap[ig.ImGuiKey_C] = @intFromEnum(glfw.Key.c);
 }
 
 pub fn Shutdown() void {
@@ -103,7 +103,7 @@ fn SetupRenderState(draw_data: *ig.ImDrawData, fb_width: c_int, fb_height: c_int
 
     // Setup viewport, orthographic projection matrix
     // Our visible imgui space lies from draw_data.DisplayPos (top left) to draw_data.DisplayPos+data_data.DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
-    gl.glViewport(0, 0, @intCast(gl.GLsizei, fb_width), @intCast(gl.GLsizei, fb_height));
+    gl.glViewport(0, 0, @as(gl.GLsizei, @intCast(fb_width)), @as(gl.GLsizei, @intCast(fb_height)));
     var L = draw_data.DisplayPos.x;
     var R = draw_data.DisplayPos.x + draw_data.DisplaySize.x;
     var T = draw_data.DisplayPos.y;
@@ -125,32 +125,32 @@ fn SetupRenderState(draw_data: *ig.ImDrawData, fb_width: c_int, fb_height: c_int
     gl.glBindVertexArray(vertex_array_object);
     gl.glBindBuffer(gl.GL_ARRAY_BUFFER, g_VboHandle);
     gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, g_ElementsHandle);
-    gl.glEnableVertexAttribArray(@intCast(c_uint, g_AttribLocationVtxPos));
-    gl.glEnableVertexAttribArray(@intCast(c_uint, g_AttribLocationVtxUV));
-    gl.glEnableVertexAttribArray(@intCast(c_uint, g_AttribLocationVtxColor));
+    gl.glEnableVertexAttribArray(@as(c_uint, @intCast(g_AttribLocationVtxPos)));
+    gl.glEnableVertexAttribArray(@as(c_uint, @intCast(g_AttribLocationVtxUV)));
+    gl.glEnableVertexAttribArray(@as(c_uint, @intCast(g_AttribLocationVtxColor)));
     gl.glVertexAttribPointer(
-        @intCast(c_uint, g_AttribLocationVtxPos),
+        @as(c_uint, @intCast(g_AttribLocationVtxPos)),
         2,
         gl.GL_FLOAT,
         gl.GL_FALSE,
         @sizeOf(ig.ImDrawVert),
-        @intToPtr(?*anyopaque, @offsetOf(ig.ImDrawVert, "pos")),
+        @as(?*anyopaque, @ptrFromInt(@offsetOf(ig.ImDrawVert, "pos"))),
     );
     gl.glVertexAttribPointer(
-        @intCast(c_uint, g_AttribLocationVtxUV),
+        @as(c_uint, @intCast(g_AttribLocationVtxUV)),
         2,
         gl.GL_FLOAT,
         gl.GL_FALSE,
         @sizeOf(ig.ImDrawVert),
-        @intToPtr(?*anyopaque, @offsetOf(ig.ImDrawVert, "uv")),
+        @as(?*anyopaque, @ptrFromInt(@offsetOf(ig.ImDrawVert, "uv"))),
     );
     gl.glVertexAttribPointer(
-        @intCast(c_uint, g_AttribLocationVtxColor),
+        @as(c_uint, @intCast(g_AttribLocationVtxColor)),
         4,
         gl.GL_UNSIGNED_BYTE,
         gl.GL_TRUE,
         @sizeOf(ig.ImDrawVert),
-        @intToPtr(?*anyopaque, @offsetOf(ig.ImDrawVert, "col")),
+        @as(?*anyopaque, @ptrFromInt(@offsetOf(ig.ImDrawVert, "col"))),
     );
 }
 
@@ -167,8 +167,8 @@ fn getGLInts(name: gl.GLenum, comptime N: comptime_int) [N]gl.GLint {
 
 pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
-    var fb_width = @floatToInt(c_int, draw_data.DisplaySize.x * draw_data.FramebufferScale.x);
-    var fb_height = @floatToInt(c_int, draw_data.DisplaySize.y * draw_data.FramebufferScale.y);
+    var fb_width = @as(c_int, @intFromFloat(draw_data.DisplaySize.x * draw_data.FramebufferScale.x));
+    var fb_height = @as(c_int, @intFromFloat(draw_data.DisplaySize.y * draw_data.FramebufferScale.y));
     if (fb_width <= 0 or fb_height <= 0)
         return;
 
@@ -180,12 +180,12 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
     var clip_scale = draw_data.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
 
     if (draw_data.CmdListsCount > 0) {
-        for (draw_data.CmdLists[0..@intCast(usize, draw_data.CmdListsCount)]) |cmd_list| {
+        for (draw_data.CmdLists[0..@as(usize, @intCast(draw_data.CmdListsCount))]) |cmd_list| {
             // Upload vertex/index buffers
-            gl.glBufferData(gl.GL_ARRAY_BUFFER, @intCast(gl.GLsizeiptr, cmd_list.*.VtxBuffer.Size * @sizeOf(ig.ImDrawVert)), cmd_list.*.VtxBuffer.Data, gl.GL_STREAM_DRAW);
-            gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, @intCast(gl.GLsizeiptr, cmd_list.*.IdxBuffer.Size * @sizeOf(ig.ImDrawIdx)), cmd_list.*.IdxBuffer.Data, gl.GL_STREAM_DRAW);
+            gl.glBufferData(gl.GL_ARRAY_BUFFER, @as(gl.GLsizeiptr, @intCast(cmd_list.*.VtxBuffer.Size * @sizeOf(ig.ImDrawVert))), cmd_list.*.VtxBuffer.Data, gl.GL_STREAM_DRAW);
+            gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, @as(gl.GLsizeiptr, @intCast(cmd_list.*.IdxBuffer.Size * @sizeOf(ig.ImDrawIdx))), cmd_list.*.IdxBuffer.Data, gl.GL_STREAM_DRAW);
 
-            for (cmd_list.*.CmdBuffer.Data[0..@intCast(usize, cmd_list.*.CmdBuffer.Size)]) |pcmd| {
+            for (cmd_list.*.CmdBuffer.Data[0..@as(usize, @intCast(cmd_list.*.CmdBuffer.Size))]) |pcmd| {
                 if (pcmd.UserCallback) |fnPtr| {
                     fnPtr(cmd_list, &pcmd);
                 } else {
@@ -197,26 +197,26 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
                         .w = (pcmd.ClipRect.w - clip_off.y) * clip_scale.y,
                     };
 
-                    if (clip_rect.x < @intToFloat(f32, fb_width) and clip_rect.y < @intToFloat(f32, fb_height) and clip_rect.z >= 0.0 and clip_rect.w >= 0.0) {
-                        gl.glScissor(@floatToInt(c_int, clip_rect.x), fb_height - @floatToInt(c_int, clip_rect.w), @floatToInt(c_int, clip_rect.z - clip_rect.x), @floatToInt(c_int, clip_rect.w - clip_rect.y));
+                    if (clip_rect.x < @as(f32, @floatFromInt(fb_width)) and clip_rect.y < @as(f32, @floatFromInt(fb_height)) and clip_rect.z >= 0.0 and clip_rect.w >= 0.0) {
+                        gl.glScissor(@as(c_int, @intFromFloat(clip_rect.x)), fb_height - @as(c_int, @intFromFloat(clip_rect.w)), @as(c_int, @intFromFloat(clip_rect.z - clip_rect.x)), @as(c_int, @intFromFloat(clip_rect.w - clip_rect.y)));
 
                         // Bind texture, Draw
-                        var texture = zt.gl.Texture.from(@intCast(gl.GLuint, @ptrToInt(pcmd.TextureId)), false);
+                        var texture = zt.gl.Texture.from(@as(gl.GLuint, @intCast(@intFromPtr(pcmd.TextureId))), false);
                         texture.bind();
                         if (g_GlVersion >= 3200) {
                             gl.glDrawElementsBaseVertex(
                                 gl.GL_TRIANGLES,
-                                @intCast(gl.GLsizei, pcmd.ElemCount),
+                                @as(gl.GLsizei, @intCast(pcmd.ElemCount)),
                                 if (@sizeOf(ig.ImDrawIdx) == 2) gl.GL_UNSIGNED_SHORT else gl.GL_UNSIGNED_INT,
-                                @intToPtr(?*const anyopaque, pcmd.IdxOffset * @sizeOf(ig.ImDrawIdx)),
-                                @intCast(gl.GLint, pcmd.VtxOffset),
+                                @as(?*const anyopaque, @ptrFromInt(pcmd.IdxOffset * @sizeOf(ig.ImDrawIdx))),
+                                @as(gl.GLint, @intCast(pcmd.VtxOffset)),
                             );
                         } else {
                             gl.glDrawElements(
                                 gl.GL_TRIANGLES,
-                                @intCast(gl.GLsizei, pcmd.ElemCount),
+                                @as(gl.GLsizei, @intCast(pcmd.ElemCount)),
                                 if (@sizeOf(ig.ImDrawIdx) == 2) gl.GL_UNSIGNED_SHORT else gl.GL_UNSIGNED_INT,
-                                @intToPtr(?*const anyopaque, pcmd.IdxOffset * @sizeOf(ig.ImDrawIdx)),
+                                @as(?*const anyopaque, @ptrFromInt(pcmd.IdxOffset * @sizeOf(ig.ImDrawIdx))),
                             );
                         }
                     }
@@ -248,7 +248,7 @@ fn CreateFontsTexture() bool {
     gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, pixels);
 
     // Store our identifier
-    io.*.Fonts.*.TexID = @intToPtr(*anyopaque, g_FontTexture);
+    io.*.Fonts.*.TexID = @as(*anyopaque, @ptrFromInt(g_FontTexture));
 
     return true;
 }

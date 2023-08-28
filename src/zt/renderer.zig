@@ -202,8 +202,8 @@ pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, ta
     }
     const twoPi: f32 = 2.0 * std.math.pi;
 
-    const addition: i32 = std.math.clamp(@floatToInt(i32, @round(radius / 100.0)) * 10, 0, 20);
-    const triCount: i32 = (@floatToInt(i32, twoPi) * self.resolution) + addition;
+    const addition: i32 = std.math.clamp(@as(i32, @intFromFloat(@round(radius / 100.0))) * 10, 0, 20);
+    const triCount: i32 = (@as(i32, @intFromFloat(twoPi)) * self.resolution) + addition;
     var i: i32 = 0;
 
     const source: zt.math.Rect =
@@ -219,12 +219,12 @@ pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, ta
             .tex = .{ .x = source.position.x, .y = source.position.y },
         };
         var l = Vertex{
-            .pos = zt.math.vec3(target.x + (radius * @cos(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * @sin(@intToFloat(f32, i) * twoPi / @intToFloat(f32, triCount))), z),
+            .pos = zt.math.vec3(target.x + (radius * @cos(@as(f32, @floatFromInt(i)) * twoPi / @as(f32, @floatFromInt(triCount)))), target.y + (radius * @sin(@as(f32, @floatFromInt(i)) * twoPi / @as(f32, @floatFromInt(triCount)))), z),
             .col = col,
             .tex = .{ .x = source.position.x + source.size.x, .y = source.position.y },
         };
         var r = Vertex{
-            .pos = zt.math.vec3(target.x + (radius * @cos(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), target.y + (radius * @sin(@intToFloat(f32, i + 1) * twoPi / @intToFloat(f32, triCount))), z),
+            .pos = zt.math.vec3(target.x + (radius * @cos(@as(f32, @floatFromInt(i + 1)) * twoPi / @as(f32, @floatFromInt(triCount)))), target.y + (radius * @sin(@as(f32, @floatFromInt(i + 1)) * twoPi / @as(f32, @floatFromInt(triCount)))), z),
             .col = col,
             .tex = .{ .x = source.position.x, .y = source.position.y + source.size.y },
         };
@@ -254,12 +254,12 @@ pub fn text(self: *Self, pos: zt.math.Vec2, string: []const u8, col: zt.math.Vec
     var drawlist = ig.igGetBackgroundDrawList_Nil();
 
     var colCast: [4]u8 = .{
-        @floatToInt(u8, 255 * col.x),
-        @floatToInt(u8, 255 * col.y),
-        @floatToInt(u8, 255 * col.z),
-        @floatToInt(u8, 255 * col.w),
+        @intFromFloat(255 * col.x),
+        @intFromFloat(255 * col.y),
+        @intFromFloat(255 * col.z),
+        @intFromFloat(255 * col.w),
     };
-    ig.ImDrawList_AddText_Vec2(drawlist, pos, @bitCast(ig.ImU32, colCast), string.ptr, null);
+    ig.ImDrawList_AddText_Vec2(drawlist, pos, @bitCast(colCast), string.ptr, null);
 }
 
 pub fn clear(self: *Self) void {

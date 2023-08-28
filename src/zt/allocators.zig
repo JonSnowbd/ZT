@@ -15,9 +15,9 @@ pub fn RingBufferGenerate(comptime size: usize) type {
         }
         fn alloc(ctx: *anyopaque, len: usize, ptr_align: u8, ret_addr: usize) ?[*]u8 {
             _ = ret_addr;
-            var a: *Self = @ptrCast(*Self, ctx);
-            const addr = @ptrToInt(&a.buffer) + end_index;
-            const adjusted_addr = if (ptr_align > 0) mem.alignForward(addr, @intCast(usize, ptr_align)) else addr;
+            var a: *Self = @ptrCast(ctx);
+            const addr = @intFromPtr(&a.buffer) + end_index;
+            const adjusted_addr = if (ptr_align > 0) mem.alignForward(usize, addr, @as(usize, @intCast(ptr_align))) else addr;
             const adjusted_index = end_index + (adjusted_addr - addr);
             const new_end_index = adjusted_index + len;
 
@@ -27,11 +27,11 @@ pub fn RingBufferGenerate(comptime size: usize) type {
                     unreachable;
                 }
                 end_index = len;
-                return @ptrCast([*]u8, a.buffer[0..len]);
+                return @as([*]u8, @ptrCast(a.buffer[0..len]));
             }
             end_index = new_end_index;
 
-            return @ptrCast([*]u8, a.buffer[adjusted_index..new_end_index]);
+            return @as([*]u8, @ptrCast(a.buffer[adjusted_index..new_end_index]));
         }
     };
 }

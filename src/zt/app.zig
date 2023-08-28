@@ -107,7 +107,7 @@ pub fn App(comptime Data: type) type {
             }
             /// Changes the context window's size
             pub fn setWindowSize(self: *Context, width: c_int, height: c_int) void {
-                self.window.?.setSize(.{ .width = @intCast(u32, width), .height = @intCast(u32, height) });
+                self.window.?.setSize(.{ .width = @intCast(width), .height = @intCast(height) });
             }
             /// Changes the context window's title(the text on the window's title bar, typically)
             pub fn setWindowTitle(self: *Context, string: [*:0]const u8) void {
@@ -157,7 +157,7 @@ pub fn App(comptime Data: type) type {
                 _ = self;
                 var io = ig.igGetIO();
                 // Delete the old texture
-                var texId = @intCast(c_uint, @ptrToInt(io.*.Fonts.*.TexID));
+                var texId = @as(c_uint, @intCast(@intFromPtr(io.*.Fonts.*.TexID)));
                 gl.glDeleteTextures(1, &texId);
 
                 // Generate new texture
@@ -176,7 +176,7 @@ pub fn App(comptime Data: type) type {
                     gl.glPixelStorei(gl.GL_UNPACK_ROW_LENGTH, 0);
                 gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, fontTexWidth, fontTexHeight, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, pixels);
                 // Store our identifier
-                io.*.Fonts.*.TexID = @intToPtr(*anyopaque, newTexId);
+                io.*.Fonts.*.TexID = @as(*anyopaque, @ptrFromInt(newTexId));
                 ImGuiImplementation.g_FontTexture = newTexId;
             }
         };
@@ -237,10 +237,10 @@ pub fn App(comptime Data: type) type {
 
             gl.glClearColor(0.1, 0.1, 0.12, 1.0);
             const size = self.window.?.getSize();
-            gl.glViewport(0, 0, @intCast(c_int, size.width), @intCast(c_int, size.height));
+            gl.glViewport(0, 0, @as(c_int, @intCast(size.width)), @as(c_int, @intCast(size.height)));
             var io = ig.igGetIO();
             io.*.ConfigFlags |= ig.ImGuiConfigFlags_DockingEnable;
-            io.*.DisplaySize = .{ .x = @intToFloat(f32, size.width), .y = @intToFloat(f32, size.height) };
+            io.*.DisplaySize = .{ .x = @as(f32, @floatFromInt(size.width)), .y = @as(f32, @floatFromInt(size.height)) };
             self.time = TimeManager.init();
             return self;
         }
@@ -248,16 +248,16 @@ pub fn App(comptime Data: type) type {
         // Callbacks
         fn windowSizeChanged(win: glfw.Window, newWidth: u32, newHeight: u32) void {
             _ = win;
-            gl.glViewport(0, 0, @intCast(c_int, newWidth), @intCast(c_int, newHeight));
+            gl.glViewport(0, 0, @as(c_int, @intCast(newWidth)), @as(c_int, @intCast(newHeight)));
             var io = ig.igGetIO();
-            io.*.DisplaySize = .{ .x = @intToFloat(f32, newWidth), .y = @intToFloat(f32, newHeight) };
+            io.*.DisplaySize = .{ .x = @as(f32, @floatFromInt(newWidth)), .y = @as(f32, @floatFromInt(newHeight)) };
         }
         fn windowMaximizeChanged(win: glfw.Window, maximized: bool) void {
             _ = maximized;
             const size = win.getSize();
-            gl.glViewport(0, 0, @intCast(c_int, size.width), @intCast(c_int, size.height));
+            gl.glViewport(0, 0, @as(c_int, @intCast(size.width)), @as(c_int, @intCast(size.height)));
             var io = ig.igGetIO();
-            io.*.DisplaySize = .{ .x = @intToFloat(f32, size.width), .y = @intToFloat(f32, size.height) };
+            io.*.DisplaySize = .{ .x = @as(f32, @floatFromInt(size.width)), .y = @as(f32, @floatFromInt(size.height)) };
         }
         fn inputCallback(win: glfw.Window, key: glfw.Key, scan: i32, action: glfw.Action, mods: glfw.Mods) void {
             _ = mods;
@@ -267,15 +267,15 @@ pub fn App(comptime Data: type) type {
             if (action == glfw.Action.press or action == glfw.Action.repeat) {
                 pressed = true;
             }
-            io.*.KeysDown[@intCast(usize, @enumToInt(key))] = pressed;
-            io.*.KeyShift = io.*.KeysDown[@enumToInt(glfw.Key.left_shift)] or io.*.KeysDown[@enumToInt(glfw.Key.right_shift)];
-            io.*.KeyCtrl = io.*.KeysDown[@enumToInt(glfw.Key.left_control)] or io.*.KeysDown[@enumToInt(glfw.Key.right_control)];
-            io.*.KeyAlt = io.*.KeysDown[@enumToInt(glfw.Key.left_alt)] or io.*.KeysDown[@enumToInt(glfw.Key.right_alt)];
+            io.*.KeysDown[@as(usize, @intCast(@intFromEnum(key)))] = pressed;
+            io.*.KeyShift = io.*.KeysDown[@intFromEnum(glfw.Key.left_shift)] or io.*.KeysDown[@intFromEnum(glfw.Key.right_shift)];
+            io.*.KeyCtrl = io.*.KeysDown[@intFromEnum(glfw.Key.left_control)] or io.*.KeysDown[@intFromEnum(glfw.Key.right_control)];
+            io.*.KeyAlt = io.*.KeysDown[@intFromEnum(glfw.Key.left_alt)] or io.*.KeysDown[@intFromEnum(glfw.Key.right_alt)];
             context.input.append(.{
                 .keyboard = .{
-                    .key = @enumToInt(key),
+                    .key = @intFromEnum(key),
                     .scan = scan,
-                    .action = @enumToInt(action),
+                    .action = @intFromEnum(action),
                     .mods = 0, // modsToInt(mods)
                 },
             }) catch unreachable;
@@ -283,8 +283,8 @@ pub fn App(comptime Data: type) type {
         fn mouseWheelCallback(win: glfw.Window, x: f64, y: f64) void {
             var context: *Context = win.getUserPointer(Context).?;
             var io = ig.igGetIO();
-            io.*.MouseWheel = @floatCast(f32, y);
-            io.*.MouseWheelH = @floatCast(f32, x);
+            io.*.MouseWheel = @as(f32, @floatCast(y));
+            io.*.MouseWheelH = @as(f32, @floatCast(x));
             context.input.append(.{ .mouseWheel = .{
                 .x = x,
                 .y = y,
@@ -312,8 +312,8 @@ pub fn App(comptime Data: type) type {
             }
             context.input.append(.{
                 .mouseButton = .{
-                    .key = @enumToInt(key),
-                    .action = @enumToInt(action),
+                    .key = @intFromEnum(key),
+                    .action = @intFromEnum(action),
                     .mods = 0, // modsToInt(mods)
                 },
             }) catch unreachable;
@@ -321,7 +321,7 @@ pub fn App(comptime Data: type) type {
         fn cursorCallback(win: glfw.Window, x: f64, y: f64) void {
             var context: *Context = win.getUserPointer(Context).?;
             var io = ig.igGetIO();
-            io.*.MousePos = .{ .x = @floatCast(f32, x), .y = @floatCast(f32, y) };
+            io.*.MousePos = .{ .x = @as(f32, @floatCast(x)), .y = @as(f32, @floatCast(y)) };
             context.input.append(.{ .mousePosition = .{
                 .x = x,
                 .y = y,

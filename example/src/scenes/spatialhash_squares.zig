@@ -150,7 +150,7 @@ fn control() void {
 
                 hash.addAABB(index, array.items[index].aabb.position, array.items[index].aabb.size);
             }
-            spawned += @intCast(i32, len);
+            spawned += @intCast(len);
         }
         if (ig.igBeginListBox("## INPUT STYLE", .{})) {
             if (ig.igSelectable_Bool("Point", currentStyle == .point, ig.ImGuiSelectableFlags_SpanAvailWidth, .{})) {

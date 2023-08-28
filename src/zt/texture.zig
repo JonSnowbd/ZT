@@ -27,8 +27,8 @@ pub fn init(filePath: []const u8) !Self {
     var data = stb.stbi_load(ownedFp.ptr, &w, &h, &numChannels, 0);
     var self = Self{};
 
-    self.width = @intToFloat(f32, w);
-    self.height = @intToFloat(f32, h);
+    self.width = @floatFromInt(w);
+    self.height = @floatFromInt(h);
 
     gl.glGenTextures(1, &self.id);
     gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
@@ -60,8 +60,8 @@ pub fn init(filePath: []const u8) !Self {
 }
 pub fn initBlank(width: c_int, height: c_int) Self {
     var self = Self{};
-    self.width = @intToFloat(f32, width);
-    self.height = @intToFloat(f32, height);
+    self.width = @floatFromInt(width);
+    self.height = @floatFromInt(height);
     gl.glGenTextures(1, &self.id);
     gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
     gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, null);
@@ -75,12 +75,12 @@ pub fn initMemory(slice: []const u8) !Self {
     var w: c_int = 0;
     var h: c_int = 0;
     var numChannels: c_int = 0;
-    var data = stb.stbi_load_from_memory(slice.ptr, @intCast(c_int, slice.len), &w, &h, &numChannels, 0);
+    var data = stb.stbi_load_from_memory(slice.ptr, @intCast(slice.len), &w, &h, &numChannels, 0);
 
     var self = Self{};
 
-    self.width = @intToFloat(f32, w);
-    self.height = @intToFloat(f32, h);
+    self.width = @floatFromInt(w);
+    self.height = @floatFromInt(h);
 
     gl.glGenTextures(1, &self.id);
     gl.glBindTexture(gl.GL_TEXTURE_2D, self.id);
@@ -121,8 +121,8 @@ fn updateInformation(self: *Self) void {
     var h: c_int = 0;
     gl.glGetTexLevelParameteriv(gl.GL_TEXTURE_2D, 0, gl.GL_TEXTURE_WIDTH, &w);
     gl.glGetTexLevelParameteriv(gl.GL_TEXTURE_2D, 0, gl.GL_TEXTURE_HEIGHT, &h);
-    self.width = @intToFloat(f32, w);
-    self.height = @intToFloat(f32, h);
+    self.width = @floatFromInt(w);
+    self.height = @floatFromInt(h);
 }
 pub fn bind(self: *Self) void {
     gl.glActiveTexture(gl.GL_TEXTURE0);
@@ -146,5 +146,5 @@ pub fn setLinearFilter(self: *Self) void {
 }
 /// Use this to get the correct Texture ID for use in imgui.
 pub fn imguiId(self: *Self) *anyopaque {
-    return @intToPtr(*anyopaque, self.id);
+    return @as(*anyopaque, @ptrFromInt(self.id));
 }

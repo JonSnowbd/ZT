@@ -730,7 +730,7 @@ fn specializeOn(comptime Real: type) type {
             }
 
             pub fn inlined(self: Mat4) [16]f32 {
-                return @bitCast([16]f32, self.fields);
+                return @as([16]f32, @bitCast(self.fields));
             }
 
             /// Batch matrix multiplication. Will multiply all matrices from "first" to "last".
@@ -749,7 +749,7 @@ fn specializeOn(comptime Real: type) type {
 
             pub fn invert(src: Mat4) ?Mat4 {
                 // https://github.com/stackgl/gl-mat4/blob/master/invert.js
-                const a = @bitCast([16]f32, src.fields);
+                const a = @as([16]f32, @bitCast(src.fields));
 
                 const a00 = a[0];
                 const a01 = a[1];
@@ -808,7 +808,7 @@ fn specializeOn(comptime Real: type) type {
                     (a20 * b03 - a21 * b01 + a22 * b00) * det, // 15
                 };
                 return Mat4{
-                    .fields = @bitCast([4][4]f32, out),
+                    .fields = @as([4][4]f32, @bitCast(out)),
                 };
             }
         };
