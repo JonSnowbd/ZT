@@ -45,7 +45,7 @@ var currentStyle: queryStyle = .point;
 
 pub fn update(ctx: *main.SampleApplication.Context) void {
     // Basic scene initialization:
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     sceneSetup(ctx);
 
     var render = ctx.data.render;
@@ -63,9 +63,9 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
         .point => {
             var mouse = render.screenToWorld(io.*.MousePos);
             render.sprite(ctx.data.sheet, mouse.sub(zt.math.vec2(-1, 1)), 0.0, zt.math.vec2(2, 2), zt.math.Vec4.white, null, zt.math.rect(131, 84, 2, 2));
-            var query = hash.queryPoint(mouse);
+            const query = hash.queryPoint(mouse);
             for (query) |i| {
-                var b: blip = array.items[i];
+                const b: blip = array.items[i];
 
                 if (zt.game.Physics.isPointInRect(mouse, b.aabb)) {
                     render.sprite(ctx.data.sheet, b.aabb.position, 0.0, b.aabb.size, zt.math.vec4(0.0, 1.0, 0.0, 0.5), null, zt.math.rect(131, 84, 2, 2));
@@ -77,13 +77,13 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
         // We simulate a line drawing by not dragging the start node when holding lmb, and querying the 2.
         .line => {
             const lineCol = zt.math.vec4(0.0, 0.0, 0.0, 1.0);
-            var mouse = render.screenToWorld(io.*.MousePos);
+            const mouse = render.screenToWorld(io.*.MousePos);
             if (!io.*.MouseDown[ig.ImGuiMouseButton_Left]) {
                 line_Q = mouse;
             } else {}
-            var query = hash.queryLine(line_Q, mouse);
+            const query = hash.queryLine(line_Q, mouse);
             for (query) |i| {
-                var b: blip = array.items[i];
+                const b: blip = array.items[i];
 
                 if (zt.game.Physics.isLineInRect(line_Q, mouse, b.aabb.position, b.aabb.size)) {
                     render.sprite(ctx.data.sheet, b.aabb.position, 0.0, b.aabb.size, zt.math.vec4(0.0, 1.0, 0.0, 0.5), null, zt.math.rect(131, 84, 2, 2));
@@ -101,9 +101,9 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
             } else {
                 rect_Q.size = mouse.sub(rect_Q.position);
             }
-            var query = hash.queryAABB(rect_Q.position, rect_Q.size);
+            const query = hash.queryAABB(rect_Q.position, rect_Q.size);
             for (query) |i| {
-                var b: blip = array.items[i];
+                const b: blip = array.items[i];
 
                 if (zt.game.Physics.isRectInRect(rect_Q.position, rect_Q.size, b.aabb.position, b.aabb.size)) {
                     render.sprite(ctx.data.sheet, b.aabb.position, 0.0, b.aabb.size, zt.math.vec4(0.0, 1.0, 0.0, 0.5), null, zt.math.rect(131, 84, 2, 2));
@@ -120,7 +120,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control() void {
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
     if (ig.igBegin("Spatial Hash Demo", null, ig.ImGuiWindowFlags_None)) {
         ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);
@@ -143,9 +143,9 @@ fn control() void {
         if (generation) |len| {
             var i: usize = 0;
             while (i < len) : (i += 1) {
-                var new = blip.generate(bounds);
+                const new = blip.generate(bounds);
 
-                var index = array.items.len;
+                const index = array.items.len;
                 array.append(new) catch unreachable;
 
                 hash.addAABB(index, array.items[index].aabb.position, array.items[index].aabb.size);
@@ -172,7 +172,7 @@ fn control() void {
 }
 
 fn sceneSetup(ctx: *main.SampleApplication.Context) void {
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     if (!inited) {
         var prng = std.rand.DefaultPrng.init(blk: {
             var seed: u64 = undefined;

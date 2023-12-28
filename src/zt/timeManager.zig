@@ -15,7 +15,7 @@ pub fn init() @This() {
     };
 }
 pub fn tick(self: *Self) void {
-    var lap = glfw.getTime();
+    const lap = glfw.getTime();
 
     // No need to worry about overflow, unless a frame intends to last for over a month.
     self.dt = @as(f32, @floatCast(lap - self._previous));
@@ -23,7 +23,7 @@ pub fn tick(self: *Self) void {
 
     // Smoothly introduce new fps measurements.
     const smoothing: f32 = 0.99;
-    var newFps = 1.0 / self.dt;
+    const newFps = 1.0 / self.dt;
     self.fps = (self.fps * smoothing) + (newFps * (1.0 - smoothing));
 
     self._previous = lap;

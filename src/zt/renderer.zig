@@ -109,25 +109,25 @@ pub fn spriteEx(self: *Self, texture: zt.gl.Texture, x: f32, y: f32, z: f32, w: 
         self.flush();
         self.currentTexture = texture;
     }
-    var start: zt.math.Vec3 = zt.math.Vec3.new(x, y, z);
-    var end: zt.math.Vec3 = zt.math.Vec3.new(x + w, y + h, z);
+    const start: zt.math.Vec3 = zt.math.Vec3.new(x, y, z);
+    const end: zt.math.Vec3 = zt.math.Vec3.new(x + w, y + h, z);
 
-    var tl = Vertex{
+    const tl = Vertex{
         .pos = .{ .x = start.x, .y = start.y, .z = start.z },
         .col = colTl,
         .tex = .{ .x = sx, .y = sy },
     };
-    var tr = Vertex{
+    const tr = Vertex{
         .pos = .{ .x = end.x, .y = start.y, .z = start.z },
         .col = colTr,
         .tex = .{ .x = sx + sw, .y = sy },
     };
-    var bl = Vertex{
+    const bl = Vertex{
         .pos = .{ .x = start.x, .y = end.y, .z = start.z },
         .col = colBl,
         .tex = .{ .x = sx, .y = sy + sh },
     };
-    var br = Vertex{
+    const br = Vertex{
         .pos = .{ .x = end.x, .y = end.y, .z = start.z },
         .col = colBr,
         .tex = .{ .x = sx + sw, .y = sy + sh },
@@ -159,25 +159,25 @@ pub fn line(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, star
         zt.math.rect(0, 0, 1, 1);
 
     const direction: zt.math.Vec2 = end.sub(start).normalize();
-    var leftOffset: zt.math.Vec3 = zt.math.vec3(direction.y, -direction.x, 0).scale(width * 0.5);
-    var rightOffset: zt.math.Vec3 = leftOffset.scale(-1);
+    const leftOffset: zt.math.Vec3 = zt.math.vec3(direction.y, -direction.x, 0).scale(width * 0.5);
+    const rightOffset: zt.math.Vec3 = leftOffset.scale(-1);
 
-    var tl = Vertex{
+    const tl = Vertex{
         .pos = zt.math.vec3(start.x, start.y, z).add(leftOffset),
         .col = colStarT,
         .tex = .{ .x = source.position.x, .y = source.position.y },
     };
-    var tr = Vertex{
+    const tr = Vertex{
         .pos = zt.math.vec3(start.x, start.y, z).add(rightOffset),
         .col = colStarT,
         .tex = .{ .x = source.position.x + source.size.x, .y = source.position.y },
     };
-    var bl = Vertex{
+    const bl = Vertex{
         .pos = zt.math.vec3(end.x, end.y, z).add(leftOffset),
         .col = colEnd,
         .tex = .{ .x = source.position.x, .y = source.position.y + source.size.y },
     };
-    var br = Vertex{
+    const br = Vertex{
         .pos = zt.math.vec3(end.x, end.y, z).add(rightOffset),
         .col = colEnd,
         .tex = .{ .x = source.position.x + source.size.x, .y = source.position.y + source.size.y },
@@ -213,17 +213,17 @@ pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, ta
         zt.math.rect(0, 0, 1, 1);
 
     while (i < triCount) : (i += 1) {
-        var c = Vertex{
+        const c = Vertex{
             .pos = zt.math.vec3(target.x, target.y, z),
             .col = col,
             .tex = .{ .x = source.position.x, .y = source.position.y },
         };
-        var l = Vertex{
+        const l = Vertex{
             .pos = zt.math.vec3(target.x + (radius * @cos(@as(f32, @floatFromInt(i)) * twoPi / @as(f32, @floatFromInt(triCount)))), target.y + (radius * @sin(@as(f32, @floatFromInt(i)) * twoPi / @as(f32, @floatFromInt(triCount)))), z),
             .col = col,
             .tex = .{ .x = source.position.x + source.size.x, .y = source.position.y },
         };
-        var r = Vertex{
+        const r = Vertex{
             .pos = zt.math.vec3(target.x + (radius * @cos(@as(f32, @floatFromInt(i + 1)) * twoPi / @as(f32, @floatFromInt(triCount)))), target.y + (radius * @sin(@as(f32, @floatFromInt(i + 1)) * twoPi / @as(f32, @floatFromInt(triCount)))), z),
             .col = col,
             .tex = .{ .x = source.position.x, .y = source.position.y + source.size.y },
@@ -251,9 +251,9 @@ pub fn rectangleHollow(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math
 pub fn text(self: *Self, pos: zt.math.Vec2, string: []const u8, col: zt.math.Vec4) void {
     _ = self;
     const ig = @import("imgui");
-    var drawlist = ig.igGetBackgroundDrawList_Nil();
+    const drawlist = ig.igGetBackgroundDrawList_Nil();
 
-    var colCast: [4]u8 = .{
+    const colCast: [4]u8 = .{
         @intFromFloat(255 * col.x),
         @intFromFloat(255 * col.y),
         @intFromFloat(255 * col.z),

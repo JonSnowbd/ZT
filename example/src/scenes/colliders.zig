@@ -23,7 +23,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
     control();
 
     var render = ctx.data.render;
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
 
     // It's important to set the render size, then the camera. This applies the matrices used to display all the sprites.
     render.updateRenderSize(io.*.DisplaySize);
@@ -63,7 +63,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
             point.overlaps(pointPos, rect, rectPos) or
             point.overlaps(pointPos, poly, polyPos)) zt.math.Vec4.white else zt.math.vec4(0.0, 0.5, 0.5, 0.7);
 
-        var renderPos = zt.math.rect(point.Point.x + pointPos.x - 1, point.Point.y + pointPos.y - 1, 2, 2);
+        const renderPos = zt.math.rect(point.Point.x + pointPos.x - 1, point.Point.y + pointPos.y - 1, 2, 2);
         render.rectangleHollow(ctx.data.sheet, zt.math.rect(131, 84, 2, 2), renderPos, 0, 4.0, col);
     }
 
@@ -75,9 +75,9 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
             poly.overlaps(polyPos, rect, rectPos)) zt.math.Vec4.white else zt.math.vec4(0.0, 0.5, 0.5, 0.7);
 
         for (poly.Polygon.vertices, 0..) |v, i| {
-            var next = if (i + 1 == poly.Polygon.vertices.len) poly.Polygon.vertices[0] else poly.Polygon.vertices[i + 1];
-            var pos = v.add(polyPos);
-            var nextPos = next.add(polyPos);
+            const next = if (i + 1 == poly.Polygon.vertices.len) poly.Polygon.vertices[0] else poly.Polygon.vertices[i + 1];
+            const pos = v.add(polyPos);
+            const nextPos = next.add(polyPos);
             render.line(ctx.data.sheet, zt.math.rect(131, 84, 2, 2), pos, nextPos, 0, 4.0, col, col);
         }
     }
@@ -86,7 +86,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control() void {
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
     if (ig.igBegin("Renderer Demo Settings", null, ig.ImGuiWindowFlags_None)) {
         ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);

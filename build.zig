@@ -1,5 +1,13 @@
 const std = @import("std");
 
+// zig 11 vs nightly compatibility
+fn openIterableDirAbsolute(path_: []const u8) !if (@hasDecl(std.fs, "openIterableDirAbsolute")) std.fs.IterableDir else std.fs.Dir {
+    const path = if (std.fs.path.isAbsolute(path_)) path_ else @panic("path is not absolute! Use: Build.pathFromRoot()");
+    if (@hasDecl(std.fs, "openIterableDirAbsolute")) {
+        return std.fs.openIterableDirAbsolute(path, .{});
+    } else return std.fs.openDirAbsolute(path, .{ .iterate = true });
+}
+
 fn getRelativePath() []const u8 {
     comptime {
         const src: std.builtin.SourceLocation = @src();
@@ -39,7 +47,7 @@ pub fn build(b: *std.build.Builder) !void {
 
     b.installArtifact(exe);
 
-    addBinaryContent("example/assets") catch unreachable;
+    addBinaryContent(b.pathFromRoot("example/assets")) catch unreachable;
 
     // This *creates* a Run step in the build graph, to be executed when another
     // step is evaluated that depends on it. The next line below will establish
@@ -95,8 +103,8 @@ pub fn link(b: *std.build.Builder, exe: *std.build.CompileStep) !void {
     exe.addModule("mach-glfw", glfwModule);
     const glfw = @import("mach_glfw");
 
-    const gl = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/gl.zig" } });
-    const stb_image = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/stb_image.zig" } });
+    const gl = b.addTranslateC(.{ .target = exe.target, .optimize = exe.optimize, .source_file = .{ .path = comptime thisDir() ++ "/src/dep/gl/glad/include/glad/glad.h" } }).addModule("glad");
+    const stb_image = b.addTranslateC(.{ .target = exe.target, .optimize = exe.optimize, .source_file = .{ .path = comptime thisDir() ++ "/src/dep/stb/stb_image.h" } }).addModule("stb_image");
     const imgui = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/imgui.zig" } });
     const zt = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/zt.zig" }, .dependencies = &.{
         .{ .name = "glfw", .module = glfwModule },
@@ -116,7 +124,7 @@ pub fn link(b: *std.build.Builder, exe: *std.build.CompileStep) !void {
 
 // STB
 pub fn stbLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build.CompileStep {
-    comptime var path = thisDir();
+    const path = comptime thisDir();
 
     var stb = b.addStaticLibrary(.{ .name = "stb", .target = exe.target, .optimize = exe.optimize });
     stb.linkLibC();
@@ -130,7 +138,7 @@ pub fn stbLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build
 }
 // OpenGL
 pub fn glLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build.CompileStep {
-    comptime var path = getRelativePath();
+    const path = comptime getRelativePath();
 
     var target = exe.target;
     var gl = b.addStaticLibrary(.{ .name = "gl", .target = exe.target, .optimize = exe.optimize });
@@ -164,7 +172,7 @@ pub fn glLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build.
 }
 // ImGui
 pub fn imguiLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build.CompileStep {
-    comptime var path = getRelativePath();
+    const path = comptime getRelativePath();
     var target = exe.target;
     var imgui = b.addStaticLibrary(.{ .name = "imgui", .target = exe.target, .optimize = exe.optimize });
     imgui.linkLibC();
@@ -194,7 +202,12 @@ pub fn imguiLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.bui
     imgui.addIncludePath(.{ .path = path ++ "/src/dep/cimgui" });
 
     // Add C
-    imgui.addCSourceFiles(&.{ path ++ "/src/dep/cimgui/imgui/imgui.cpp", path ++ "/src/dep/cimgui/imgui/imgui_demo.cpp", path ++ "/src/dep/cimgui/imgui/imgui_draw.cpp", path ++ "/src/dep/cimgui/imgui/imgui_tables.cpp", path ++ "/src/dep/cimgui/imgui/imgui_widgets.cpp", path ++ "/src/dep/cimgui/cimgui.cpp" }, flagContainer.items);
+    imgui.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/cimgui/imgui/imgui.cpp" }, .flags = flagContainer.items });
+    imgui.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/cimgui/imgui/imgui_demo.cpp" }, .flags = flagContainer.items });
+    imgui.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/cimgui/imgui/imgui_draw.cpp" }, .flags = flagContainer.items });
+    imgui.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/cimgui/imgui/imgui_tables.cpp" }, .flags = flagContainer.items });
+    imgui.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/cimgui/imgui/imgui_widgets.cpp" }, .flags = flagContainer.items });
+    imgui.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/cimgui/cimgui.cpp" }, .flags = flagContainer.items });
 
     return imgui;
 }
@@ -204,19 +217,19 @@ const fs = std.fs;
 
 /// Pass in a relative path to a folder, and its content is added to the zig-cache/bin output.
 /// TODO: Lookup where zig defines the output folder to make it more bulletproof.
-pub fn addBinaryContent(comptime baseContentPath: []const u8) AddContentErrors!void {
+pub fn addBinaryContent(baseContentPath: []const u8) AddContentErrors!void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
     const zigBin: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ "zig-out", "bin" }) catch return error.FolderError;
     defer gpa.allocator().free(zigBin);
     fs.cwd().makePath(zigBin) catch return error.FolderError;
 
-    var sourceFolder = fs.cwd().openIterableDir(baseContentPath, .{}) catch return error.FolderError;
+    var sourceFolder = openIterableDirAbsolute(baseContentPath) catch return error.FolderError;
     defer sourceFolder.close();
     var iterator = sourceFolder.iterate();
 
     while (iterator.next() catch return error.FolderError) |target| {
-        var x = target;
+        const x = target;
         if (x.kind == .directory) {
             const source: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ baseContentPath, x.name }) catch return error.RecursionError;
             const targetFolder: []const u8 = std.fs.path.join(gpa.allocator(), &[_][]const u8{ zigBin, x.name }) catch return error.RecursionError;
@@ -230,12 +243,12 @@ pub fn addBinaryContent(comptime baseContentPath: []const u8) AddContentErrors!v
     }
 }
 fn innerAddContent(allocator: std.mem.Allocator, folder: []const u8, dest: []const u8) AddContentErrors!void {
-    var sourceFolder = fs.cwd().openIterableDir(folder, .{}) catch return error.FolderError;
+    var sourceFolder = openIterableDirAbsolute(folder) catch return error.FolderError;
     defer sourceFolder.close();
 
     var iterator = sourceFolder.iterate();
     while (iterator.next() catch return error.FolderError) |target| {
-        var x = target;
+        const x = target;
         if (x.kind == .directory) {
             const source: []const u8 = std.fs.path.join(allocator, &[_][]const u8{ folder, x.name }) catch return error.RecursionError;
             const targetFolder: []const u8 = std.fs.path.join(allocator, &[_][]const u8{ dest, x.name }) catch return error.RecursionError;
@@ -261,8 +274,8 @@ fn copy(from: []const u8, to: []const u8, filename: []const u8) AddContentErrors
         return;
     };
 
-    var sstat = sfile.stat() catch return error.FileError;
-    var dstat = dfile.stat() catch return error.FileError;
+    const sstat = sfile.stat() catch return error.FileError;
+    const dstat = dfile.stat() catch return error.FileError;
 
     if (sstat.mtime > dstat.mtime) {
         dfile.close();

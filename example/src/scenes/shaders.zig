@@ -12,7 +12,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
     control();
 
     var render = ctx.data.render;
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     render.updateRenderSize(io.*.DisplaySize);
     render.updateCamera(.{}, scale, rotation);
 
@@ -34,7 +34,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control() void {
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
     if (ig.igBegin("Renderer Demo Settings", null, ig.ImGuiWindowFlags_None)) {
         ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);

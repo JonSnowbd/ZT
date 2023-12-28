@@ -37,8 +37,8 @@ pub fn main() !void {
     var context = try SampleApplication.begin(std.heap.c_allocator);
 
     // Lets customize!
-    var io = ig.igGetIO();
-    var font = context.addFont(zt.path("public-sans.ttf"), 14.0);
+    const io = ig.igGetIO();
+    const font = context.addFont(zt.path("public-sans.ttf"), 14.0);
     io.*.FontDefault = font;
 
     // Set up state
@@ -63,7 +63,7 @@ pub fn main() !void {
         inspectContext(context);
 
         // Call into the selected demo:
-        var index = std.math.clamp(context.data.currentScene, 0, scenes.len - 1);
+        const index = std.math.clamp(context.data.currentScene, 0, scenes.len - 1);
         scenes[index](context);
 
         context.endFrame();
@@ -79,7 +79,7 @@ fn inspectContext(ctx: *SampleApplication.Context) void {
 
     // Basic toggle
     const glfw = @import("glfw");
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     if (io.*.KeysData[@intFromEnum(glfw.Key.grave_accent)].DownDuration == 0.0) {
         ctx.data.consoleOpen = !ctx.data.consoleOpen;
     }
