@@ -18,7 +18,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
     control(ctx);
 
     var render = ctx.data.render;
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
 
     // It's important to set the render size, then the camera. This applies the matrices used to display all the sprites.
     render.updateRenderSize(io.*.DisplaySize);
@@ -61,7 +61,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control(ctx: *main.SampleApplication.Context) void {
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
     if (ig.igBegin("Renderer Demo Settings", null, ig.ImGuiWindowFlags_None)) {
         ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);

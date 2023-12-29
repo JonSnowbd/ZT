@@ -67,7 +67,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
             gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self.iboId);
 
             var currentOffset: usize = 0;
-            var stride: c_int = @intCast(@sizeOf(T));
+            const stride: c_int = @intCast(@sizeOf(T));
 
             inline for (std.meta.fields(T), 0..) |field, i| {
                 switch (field.type) {
@@ -205,8 +205,8 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                 return;
             }
             self.bind();
-            var vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
-            var indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
+            const vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
+            const indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
             gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_STATIC_DRAW);
             gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_STATIC_DRAW);
             self.unbind();
@@ -219,8 +219,8 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                 return;
             }
             self.bind();
-            var vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
-            var indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
+            const vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
+            const indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
             gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_DYNAMIC_DRAW);
             gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_DYNAMIC_DRAW);
             self.unbind();
@@ -233,8 +233,8 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
                 return;
             }
             self.bind();
-            var vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
-            var indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
+            const vertSize: c_longlong = @intCast(@sizeOf(T) * self.vertCount);
+            const indSize: c_longlong = @intCast(@sizeOf(c_uint) * self.indCount);
             gl.glBufferData(gl.GL_ARRAY_BUFFER, vertSize, &self.vertices, gl.GL_STREAM_DRAW);
             gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, indSize, &self.indices, gl.GL_STREAM_DRAW);
             self.unbind();
@@ -252,7 +252,7 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
         }
 
         pub fn setUniform(self: *@This(), comptime uniName: []const u8, uniform: anytype) void {
-            var loc: c_int = gl.glGetUniformLocation(self.shader.id, uniName.ptr);
+            const loc: c_int = gl.glGetUniformLocation(self.shader.id, uniName.ptr);
             self.shader.bind();
             if (loc != -1) {
                 switch (@TypeOf(uniform)) {

@@ -22,7 +22,7 @@ var g_ElementsHandle: c_uint = 0;
 
 // Functions
 pub fn init(glsl_version_opt: ?[:0]const u8) void {
-    var ctx = ig.igCreateContext(null);
+    const ctx = ig.igCreateContext(null);
     ig.igSetCurrentContext(ctx);
     // Query for GL version
     var major: gl.GLint = undefined;
@@ -32,7 +32,7 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
     g_GlVersion = @as(gl.GLuint, @intCast(major * 1000 + minor));
 
     // Setup back-end capabilities flags
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     io.*.BackendRendererName = "imgui_impl_opengl3";
     io.*.IniFilename = "workspace";
     // Sensible memory-friendly initial mouse position.
@@ -48,7 +48,7 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
     }
 
     std.debug.assert(glsl_version.len + 2 < g_GlslVersionStringMem.len);
-    std.mem.copy(u8, g_GlslVersionStringMem[0..glsl_version.len], glsl_version);
+    @memcpy(g_GlslVersionStringMem[0..glsl_version.len], glsl_version);
     g_GlslVersionStringMem[glsl_version.len] = '\n';
     g_GlslVersionStringMem[glsl_version.len + 1] = 0;
     g_GlslVersionString = g_GlslVersionStringMem[0..glsl_version.len];
@@ -104,10 +104,10 @@ fn SetupRenderState(draw_data: *ig.ImDrawData, fb_width: c_int, fb_height: c_int
     // Setup viewport, orthographic projection matrix
     // Our visible imgui space lies from draw_data.DisplayPos (top left) to draw_data.DisplayPos+data_data.DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
     gl.glViewport(0, 0, @as(gl.GLsizei, @intCast(fb_width)), @as(gl.GLsizei, @intCast(fb_height)));
-    var L = draw_data.DisplayPos.x;
-    var R = draw_data.DisplayPos.x + draw_data.DisplaySize.x;
-    var T = draw_data.DisplayPos.y;
-    var B = draw_data.DisplayPos.y + draw_data.DisplaySize.y;
+    const L = draw_data.DisplayPos.x;
+    const R = draw_data.DisplayPos.x + draw_data.DisplaySize.x;
+    const T = draw_data.DisplayPos.y;
+    const B = draw_data.DisplayPos.y + draw_data.DisplaySize.y;
     const ortho_projection = [4][4]f32{
         [4]f32{ 2.0 / (R - L), 0.0, 0.0, 0.0 },
         [4]f32{ 0.0, 2.0 / (T - B), 0.0, 0.0 },
@@ -155,20 +155,20 @@ fn SetupRenderState(draw_data: *ig.ImDrawData, fb_width: c_int, fb_height: c_int
 }
 
 fn getGLInt(name: gl.GLenum) gl.GLint {
-    var value: gl.GLint = undefined;
+    const value: gl.GLint = undefined;
     gl.glGetIntegerv(name, &value);
     return value;
 }
 fn getGLInts(name: gl.GLenum, comptime N: comptime_int) [N]gl.GLint {
-    var value: [N]gl.GLint = undefined;
+    const value: [N]gl.GLint = undefined;
     gl.glGetIntegerv(name, &value);
     return value;
 }
 
 pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
-    var fb_width = @as(c_int, @intFromFloat(draw_data.DisplaySize.x * draw_data.FramebufferScale.x));
-    var fb_height = @as(c_int, @intFromFloat(draw_data.DisplaySize.y * draw_data.FramebufferScale.y));
+    const fb_width = @as(c_int, @intFromFloat(draw_data.DisplaySize.x * draw_data.FramebufferScale.x));
+    const fb_height = @as(c_int, @intFromFloat(draw_data.DisplaySize.y * draw_data.FramebufferScale.y));
     if (fb_width <= 0 or fb_height <= 0)
         return;
 
@@ -176,8 +176,8 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
     gl.glGenVertexArrays(1, &vertex_array_object);
     SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
 
-    var clip_off = draw_data.DisplayPos; // (0,0) unless using multi-viewports
-    var clip_scale = draw_data.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
+    const clip_off = draw_data.DisplayPos; // (0,0) unless using multi-viewports
+    const clip_scale = draw_data.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
 
     if (draw_data.CmdListsCount > 0) {
         for (draw_data.CmdLists[0..@as(usize, @intCast(draw_data.CmdListsCount))]) |cmd_list| {
@@ -190,7 +190,7 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
                     fnPtr(cmd_list, &pcmd);
                 } else {
                     // Project scissor/clipping rectangles into framebuffer space
-                    var clip_rect = ig.ImVec4{
+                    const clip_rect = ig.ImVec4{
                         .x = (pcmd.ClipRect.x - clip_off.x) * clip_scale.x,
                         .y = (pcmd.ClipRect.y - clip_off.y) * clip_scale.y,
                         .z = (pcmd.ClipRect.z - clip_off.x) * clip_scale.x,

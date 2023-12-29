@@ -78,11 +78,11 @@ pub fn App(comptime Data: type) type {
             }
             /// Draws all the imgui commands, and flips the buffer to display the drawn image
             pub fn endFrame(self: *Context) void {
-                var io = ig.igGetIO();
+                const io = ig.igGetIO();
                 // Render
                 if (self.settings.imguiActive) {
                     ig.igRender();
-                    var dd = ig.igGetDrawData();
+                    const dd = ig.igGetDrawData();
                     ImGuiImplementation.RenderDrawData(dd);
                 } else {
                     ig.igEndFrame();
@@ -146,8 +146,8 @@ pub fn App(comptime Data: type) type {
                 glfw.glfwPostEmptyEvent();
             }
             pub fn addFont(self: *Context, path: []const u8, pxSize: f32) *ig.ImFont {
-                var io = ig.igGetIO();
-                var newFont: *ig.ImFont = ig.ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, pxSize, null, ig.ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
+                const io = ig.igGetIO();
+                const newFont: *ig.ImFont = ig.ImFontAtlas_AddFontFromFileTTF(io.*.Fonts, path.ptr, pxSize, null, ig.ImFontAtlas_GetGlyphRangesDefault(io.*.Fonts));
                 self.rebuildFont();
                 return newFont;
             }
@@ -155,9 +155,9 @@ pub fn App(comptime Data: type) type {
             /// This is also called for you when you add and remove fonts
             pub fn rebuildFont(self: *Context) void {
                 _ = self;
-                var io = ig.igGetIO();
+                const io = ig.igGetIO();
                 // Delete the old texture
-                var texId = @as(c_uint, @intCast(@intFromPtr(io.*.Fonts.*.TexID)));
+                const texId = @as(c_uint, @intCast(@intFromPtr(io.*.Fonts.*.TexID)));
                 gl.glDeleteTextures(1, &texId);
 
                 // Generate new texture
@@ -238,7 +238,7 @@ pub fn App(comptime Data: type) type {
             gl.glClearColor(0.1, 0.1, 0.12, 1.0);
             const size = self.window.?.getSize();
             gl.glViewport(0, 0, @as(c_int, @intCast(size.width)), @as(c_int, @intCast(size.height)));
-            var io = ig.igGetIO();
+            const io = ig.igGetIO();
             io.*.ConfigFlags |= ig.ImGuiConfigFlags_DockingEnable;
             io.*.DisplaySize = .{ .x = @as(f32, @floatFromInt(size.width)), .y = @as(f32, @floatFromInt(size.height)) };
             self.time = TimeManager.init();
@@ -249,20 +249,20 @@ pub fn App(comptime Data: type) type {
         fn windowSizeChanged(win: glfw.Window, newWidth: u32, newHeight: u32) void {
             _ = win;
             gl.glViewport(0, 0, @as(c_int, @intCast(newWidth)), @as(c_int, @intCast(newHeight)));
-            var io = ig.igGetIO();
+            const io = ig.igGetIO();
             io.*.DisplaySize = .{ .x = @as(f32, @floatFromInt(newWidth)), .y = @as(f32, @floatFromInt(newHeight)) };
         }
         fn windowMaximizeChanged(win: glfw.Window, maximized: bool) void {
             _ = maximized;
             const size = win.getSize();
             gl.glViewport(0, 0, @as(c_int, @intCast(size.width)), @as(c_int, @intCast(size.height)));
-            var io = ig.igGetIO();
+            const io = ig.igGetIO();
             io.*.DisplaySize = .{ .x = @as(f32, @floatFromInt(size.width)), .y = @as(f32, @floatFromInt(size.height)) };
         }
         fn inputCallback(win: glfw.Window, key: glfw.Key, scan: i32, action: glfw.Action, mods: glfw.Mods) void {
             _ = mods;
-            var context: *Context = win.getUserPointer(Context).?;
-            var io = ig.igGetIO();
+            const context: *Context = win.getUserPointer(Context).?;
+            const io = ig.igGetIO();
             var pressed = false;
             if (action == glfw.Action.press or action == glfw.Action.repeat) {
                 pressed = true;
@@ -281,8 +281,8 @@ pub fn App(comptime Data: type) type {
             }) catch unreachable;
         }
         fn mouseWheelCallback(win: glfw.Window, x: f64, y: f64) void {
-            var context: *Context = win.getUserPointer(Context).?;
-            var io = ig.igGetIO();
+            const context: *Context = win.getUserPointer(Context).?;
+            const io = ig.igGetIO();
             io.*.MouseWheel = @as(f32, @floatCast(y));
             io.*.MouseWheelH = @as(f32, @floatCast(x));
             context.input.append(.{ .mouseWheel = .{
@@ -292,8 +292,8 @@ pub fn App(comptime Data: type) type {
         }
         fn mousebuttonCallback(win: glfw.Window, key: glfw.MouseButton, action: glfw.Action, mods: glfw.Mods) void {
             _ = mods;
-            var context: *Context = win.getUserPointer(Context).?;
-            var io = ig.igGetIO();
+            const context: *Context = win.getUserPointer(Context).?;
+            const io = ig.igGetIO();
             var pressed = false;
             if (action == glfw.Action.press or action == glfw.Action.repeat) {
                 pressed = true;
@@ -319,8 +319,8 @@ pub fn App(comptime Data: type) type {
             }) catch unreachable;
         }
         fn cursorCallback(win: glfw.Window, x: f64, y: f64) void {
-            var context: *Context = win.getUserPointer(Context).?;
-            var io = ig.igGetIO();
+            const context: *Context = win.getUserPointer(Context).?;
+            const io = ig.igGetIO();
             io.*.MousePos = .{ .x = @as(f32, @floatCast(x)), .y = @as(f32, @floatCast(y)) };
             context.input.append(.{ .mousePosition = .{
                 .x = x,
@@ -328,8 +328,8 @@ pub fn App(comptime Data: type) type {
             } }) catch unreachable;
         }
         fn charCallback(win: glfw.Window, char: u21) void {
-            var context: *Context = win.getUserPointer(Context).?;
-            var io = ig.igGetIO();
+            const context: *Context = win.getUserPointer(Context).?;
+            const io = ig.igGetIO();
             ig.ImGuiIO_AddInputCharacter(io, char);
             context.input.append(.{ .character = .{
                 .value = char,

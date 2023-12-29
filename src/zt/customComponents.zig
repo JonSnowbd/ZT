@@ -21,17 +21,17 @@ pub fn viewPort() ig.ImGuiID {
         ig.ImGuiWindowFlags_NoInputs |
         ig.ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-    var mainView = ig.igGetMainViewport();
+    const mainView = ig.igGetMainViewport();
 
-    var pos: ig.ImVec2 = mainView.*.WorkPos;
-    var size: ig.ImVec2 = mainView.*.WorkSize;
+    const pos: ig.ImVec2 = mainView.*.WorkPos;
+    const size: ig.ImVec2 = mainView.*.WorkSize;
 
     ig.igSetNextWindowPos(pos, ig.ImGuiCond_Always, .{});
     ig.igSetNextWindowSize(size, ig.ImGuiCond_Always);
 
     ig.igPushStyleVar_Vec2(ig.ImGuiStyleVar_WindowPadding, .{});
     _ = ig.igBegin("###DockSpace", null, windowFlags);
-    var id = ig.igGetID_Str("DefaultDockingViewport");
+    const id = ig.igGetID_Str("DefaultDockingViewport");
     _ = ig.igDockSpace(id, .{}, dockNodeFlags, ig.ImGuiWindowClass_ImGuiWindowClass());
 
     ig.igEnd();
@@ -90,8 +90,8 @@ pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
             return ig.igDragFloat(label.ptr, ptr, speed, -fmax, fmax, "%.2f", ig.ImGuiSliderFlags_NoRoundToFormat);
         },
         *usize => {
-            var cast = @as(c_int, @intCast(ptr.*));
-            var result = ig.igInputInt(label.ptr, &cast, 1, 5, ig.ImGuiInputTextFlags_None);
+            const cast = @as(c_int, @intCast(ptr.*));
+            const result = ig.igInputInt(label.ptr, &cast, 1, 5, ig.ImGuiInputTextFlags_None);
             if (result) {
                 ptr.* = @intCast(std.math.max(0, cast));
             }
@@ -99,7 +99,7 @@ pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
         },
         *zt.math.Vec2 => {
             var cast: [2]f32 = .{ ptr.*.x, ptr.*.y };
-            var result = ig.igDragFloat2(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ig.ImGuiSliderFlags_NoRoundToFormat);
+            const result = ig.igDragFloat2(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ig.ImGuiSliderFlags_NoRoundToFormat);
             if (result) {
                 ptr.* = zt.math.vec2(cast[0], cast[1]);
             }
@@ -107,7 +107,7 @@ pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
         },
         *zt.math.Vec3 => {
             var cast: [3]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z };
-            var result = ig.igDragFloat3(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ig.ImGuiSliderFlags_NoRoundToFormat);
+            const result = ig.igDragFloat3(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ig.ImGuiSliderFlags_NoRoundToFormat);
             if (result) {
                 ptr.* = zt.math.vec3(cast[0], cast[1], cast[2]);
             }
@@ -115,7 +115,7 @@ pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
         },
         *zt.math.Vec4 => {
             var cast: [4]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z, ptr.*.w };
-            var result = ig.igColorEdit4(label.ptr, &cast, ig.ImGuiColorEditFlags_Float);
+            const result = ig.igColorEdit4(label.ptr, &cast, ig.ImGuiColorEditFlags_Float);
             if (result) {
                 ptr.* = zt.math.vec4(cast[0], cast[1], cast[2], cast[3]);
             }
@@ -123,7 +123,7 @@ pub fn editDrag(label: []const u8, speed: f32, ptr: anytype) bool {
         },
         *zt.math.Rect => {
             var cast: [4]f32 = .{ ptr.*.position.x, ptr.*.position.y, ptr.*.size.x, ptr.*.size.y };
-            var result = ig.igDragFloat4(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ig.ImGuiSliderFlags_NoRoundToFormat);
+            const result = ig.igDragFloat4(label.ptr, &cast, speed, -fmax, fmax, "%.2f", ig.ImGuiSliderFlags_NoRoundToFormat);
             if (result) {
                 ptr.* = zt.math.rect(cast[0], cast[1], cast[2], cast[3]);
             }
@@ -155,40 +155,40 @@ pub fn edit(label: []const u8, ptr: anytype) bool {
             return ig.igInputFloat(label.ptr, ptr, 1, 3, "%.2f", ig.ImGuiInputTextFlags_None);
         },
         *usize => {
-            var cast = @as(c_int, @intCast(ptr.*));
-            var result = ig.igInputInt(label.ptr, &cast, 1, 5, ig.ImGuiInputTextFlags_None);
+            const cast = @as(c_int, @intCast(ptr.*));
+            const result = ig.igInputInt(label.ptr, &cast, 1, 5, ig.ImGuiInputTextFlags_None);
             if (result) {
                 ptr.* = @intCast(std.math.max(0, cast));
             }
             return result;
         },
         *zt.math.Vec2 => {
-            var cast: [2]f32 = .{ ptr.*.x, ptr.*.y };
-            var result = ig.igInputFloat2(label.ptr, &cast, "%.2f", ig.ImGuiInputTextFlags_None);
+            const cast: [2]f32 = .{ ptr.*.x, ptr.*.y };
+            const result = ig.igInputFloat2(label.ptr, &cast, "%.2f", ig.ImGuiInputTextFlags_None);
             if (result) {
                 ptr.* = zt.math.vec2(cast[0], cast[1]);
             }
             return result;
         },
         *zt.math.Vec3 => {
-            var cast: [3]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z };
-            var result = ig.igInputFloat3(label.ptr, &cast, "%.2f", ig.ImGuiInputTextFlags_None);
+            const cast: [3]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z };
+            const result = ig.igInputFloat3(label.ptr, &cast, "%.2f", ig.ImGuiInputTextFlags_None);
             if (result) {
                 ptr.* = zt.math.vec3(cast[0], cast[1], cast[2]);
             }
             return result;
         },
         *zt.math.Vec4 => {
-            var cast: [4]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z, ptr.*.w };
-            var result = ig.igColorEdit4(label.ptr, &cast, ig.ImGuiColorEditFlags_Float);
+            const cast: [4]f32 = .{ ptr.*.x, ptr.*.y, ptr.*.z, ptr.*.w };
+            const result = ig.igColorEdit4(label.ptr, &cast, ig.ImGuiColorEditFlags_Float);
             if (result) {
                 ptr.* = zt.math.vec4(cast[0], cast[1], cast[2], cast[3]);
             }
             return result;
         },
         *zt.math.Rect => {
-            var cast: [4]f32 = .{ ptr.*.position.x, ptr.*.position.y, ptr.*.size.x, ptr.*.size.y };
-            var result = ig.igInputFloat4(label.ptr, &cast, "%.2f", ig.ImGuiInputTextFlags_None);
+            const cast: [4]f32 = .{ ptr.*.position.x, ptr.*.position.y, ptr.*.size.x, ptr.*.size.y };
+            const result = ig.igInputFloat4(label.ptr, &cast, "%.2f", ig.ImGuiInputTextFlags_None);
             if (result) {
                 ptr.* = zt.math.rect(cast[0], cast[1], cast[2], cast[3]);
             }

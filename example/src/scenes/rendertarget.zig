@@ -15,14 +15,14 @@ fn ensure() void {
 }
 
 pub fn update(ctx: *main.SampleApplication.Context) void {
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     ensure();
     control(ctx);
     var render = ctx.data.render;
     render.updateRenderSize(io.*.DisplaySize);
     render.updateCamera(.{}, zoom, rotation);
     render.sprite(ctx.data.sheet, .{}, 0, zt.math.vec2(32, 32), zt.math.Vec4.white, zt.math.vec2(0.5, 0.5), zt.math.rect(16, 0, 16, 16));
-    var pos = render.worldToScreen(.{}); // Cache where the rt is focused
+    const pos = render.worldToScreen(.{}); // Cache where the rt is focused
     render.flush();
 
     // And this is a screenspace transform!
@@ -33,7 +33,7 @@ pub fn update(ctx: *main.SampleApplication.Context) void {
 }
 
 fn control(ctx: *main.SampleApplication.Context) void {
-    var io = ig.igGetIO();
+    const io = ig.igGetIO();
     ig.igSetNextWindowPos(io.*.DisplaySize, ig.ImGuiCond_Appearing, .{ .x = 1, .y = 1 });
     if (ig.igBegin("RenderTarget Demo Settings", null, ig.ImGuiWindowFlags_None)) {
         ig.igPushItemWidth(ig.igGetWindowWidth() * 0.5);
@@ -48,12 +48,12 @@ fn control(ctx: *main.SampleApplication.Context) void {
     if (ig.igBegin("RenderTarget Demo Viewer", null, ig.ImGuiWindowFlags_NoScrollbar)) {
         var contentSpace: zt.math.Vec2 = .{};
         ig.igGetContentRegionAvail(&contentSpace);
-        var ratio = contentSpace.x / rt.?.target.width;
+        const ratio = contentSpace.x / rt.?.target.width;
 
         // With opengl and imgui, you need to flip the y source vectors.
-        var uv1 = zt.math.vec2(0, 1);
-        var uv2 = zt.math.vec2(1, 0);
-        var size = zt.math.vec2(contentSpace.x, rt.?.target.height * ratio);
+        const uv1 = zt.math.vec2(0, 1);
+        const uv2 = zt.math.vec2(1, 0);
+        const size = zt.math.vec2(contentSpace.x, rt.?.target.height * ratio);
         ig.igImage(rt.?.target.imguiId(), size, uv1, uv2, zt.math.Vec4.white, zt.math.Vec4.white);
 
         if (ig.igButton("Update RT", .{})) {

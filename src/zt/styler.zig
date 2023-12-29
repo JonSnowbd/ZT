@@ -6,7 +6,7 @@ const math = zt.math;
 /// Sets imgui style to be compact, does not affect colors. Recommended to follow this up
 /// with your own custom colors, or one from this file `styleColor*()`
 pub fn styleSizeCompact() void {
-    var style = ig.igGetStyle();
+    const style = ig.igGetStyle();
 
     // Paddings
     style.*.WindowPadding = .{ .x = 4, .y = 4 };
@@ -58,7 +58,7 @@ pub fn styleColorCustom(background: ig.ImVec4, foreground: ig.ImVec4, highlight:
     const sp1 = special;
     const sp2 = if (isLightTheme) special.brighten(-contrast) else special.brighten(contrast);
 
-    var style = ig.igGetStyle();
+    const style = ig.igGetStyle();
     style.*.Colors[ig.ImGuiCol_Text] = fg1;
     style.*.Colors[ig.ImGuiCol_TextDisabled] = fg0;
     style.*.Colors[ig.ImGuiCol_WindowBg] = bg0;

@@ -1,10 +1,16 @@
 .{
     .name = "ZT",
     .version = "0.1.0",
+    .paths = .{
+        "src",
+        "example",
+        "build.zig",
+        "build.zig.zon",
+    },
     .dependencies = .{
         .mach_glfw = .{
-         .url = "https://github.com/hexops/mach-glfw/archive/58a16012c33b047b9468cccb53ecd95835456121.tar.gz",
-         .hash = "1220dcf8c006b5bd91bb55c732eac6d95afe16247058f31348e1e2e071dfca7923db",
+            .url = "https://github.com/hexops/mach-glfw/archive/58a16012c33b047b9468cccb53ecd95835456121.tar.gz",
+            .hash = "1220dcf8c006b5bd91bb55c732eac6d95afe16247058f31348e1e2e071dfca7923db",
         },
         .xcode_frameworks = .{
             .url = "https://github.com/hexops/xcode-frameworks-pkg/archive/d486474a6af7fafd89e8314e0bf7eca4709f811b.tar.gz",
@@ -30,5 +36,5 @@
             .url = "https://pkg.machengine.org/x11-headers/991ad9bf599df04aaa5332e536712a8476838ee3.tar.gz",
             .hash = "12205bd95b9cc9cb08dd6b55f5842d8fae67a12eed01092c54f021060931815f711e",
         },
-    }
+    },
 }

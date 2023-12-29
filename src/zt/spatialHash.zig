@@ -1,6 +1,10 @@
 const std = @import("std");
 const math = @import("imgui").zlm;
 
+inline fn fabs(v: anytype) @TypeOf(v) {
+    return if (v < 0) -v else v; // TODO: only way to support zig11 vs nightly @fabs vs fabs(v)
+}
+
 // @TODO: More settings to streamline spatial hash usage for other purposes. Maybe even
 // make it so you can provide your own coordinate type and functions?
 pub const SpatialHashSettings = struct {
@@ -62,8 +66,8 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
 
         /// Adds the target to the spatial hash, into every bucket that it spans.
         pub fn addAABB(self: *Self, target: T, position: math.Vec2, size: math.Vec2) void {
-            var start = vecToIndex(position).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
-            var stop = vecToIndex(position.add(size)).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
+            const start = vecToIndex(position).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
+            const stop = vecToIndex(position.add(size)).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
             var current = start;
 
             while (current.x <= stop.x) {
@@ -111,8 +115,8 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
         /// what *could* be a possible collision.
         pub fn queryAABB(self: *Self, position: math.Vec2, size: math.Vec2) []T {
             self.holding.unmanaged.clearRetainingCapacity();
-            var start = vecToIndex(position).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
-            var stop = vecToIndex(position.add(size)).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
+            const start = vecToIndex(position).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
+            const stop = vecToIndex(position.add(size)).add(.{ .x = settings.bucketSize * 0.5, .y = settings.bucketSize * 0.5 });
             var current = start;
 
             while (current.x <= stop.x) {
@@ -218,7 +222,7 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
                 }
             }
 
-            if (@fabs(queryEnd.y - queryStart.y) < @fabs(queryEnd.x - queryStart.x)) {
+            if (fabs(queryEnd.y - queryStart.y) < fabs(queryEnd.x - queryStart.x)) {
                 if (queryStart.x > queryEnd.x) {
                     self.queryLineLow(queryEnd, queryStart);
                 } else {
@@ -264,16 +268,16 @@ test "speed testing spatial hash" {
     _ = clock.lap();
     var i: usize = 0;
     while (i < 10000) : (i += 1) {
-        var randX = rand.float(f32) * 200;
-        var randY = rand.float(f32) * 200;
+        const randX = rand.float(f32) * 200;
+        const randY = rand.float(f32) * 200;
         hash.addPoint(i, math.vec2(randX, randY));
     }
     var time = clock.lap();
     std.debug.print(">> Took {d:.2}ms to create 10,000 points on a hash of usize.\n", .{@as(f64, @floatFromInt(time)) / 1000000.0});
 
     while (i < 20000) : (i += 1) {
-        var randX = rand.float(f32) * 200;
-        var randY = rand.float(f32) * 200;
+        const randX = rand.float(f32) * 200;
+        const randY = rand.float(f32) * 200;
         hash.addPoint(i, math.vec2(randX, randY));
     }
     time = clock.lap();
@@ -293,27 +297,27 @@ test "speed testing spatial hash" {
 test "spatial point insertion/remove/query" {
     const assert = @import("std").debug.assert;
 
-    var hash = Generate(i32, .{ .bucketSize = 64 }).init(std.testing.allocator);
+    const hash = Generate(i32, .{ .bucketSize = 64 }).init(std.testing.allocator);
     defer hash.deinit();
 
     hash.addPoint(40, .{ .x = 20, .y = 20 });
     hash.addPoint(80, .{ .x = 100, .y = 100 });
 
     {
-        var data = hash.queryPoint(.{ .x = 10, .y = 10 });
+        const data = hash.queryPoint(.{ .x = 10, .y = 10 });
         assert(data.len == 1);
         assert(data[0] == 40);
     }
     {
         hash.addPoint(100, .{ .x = 40, .y = 40 });
-        var data = hash.queryPoint(.{ .x = 10, .y = 10 });
+        const data = hash.queryPoint(.{ .x = 10, .y = 10 });
         assert(data[0] == 40);
         assert(data[1] == 100);
         assert(data.len == 2);
     }
     {
         hash.removePoint(100, .{ .x = 40, .y = 40 });
-        var data = hash.queryPoint(.{ .x = 10, .y = 10 });
+        const data = hash.queryPoint(.{ .x = 10, .y = 10 });
         assert(data[0] == 40);
         assert(data.len == 1);
     }
@@ -321,24 +325,24 @@ test "spatial point insertion/remove/query" {
 
 test "spatial rect insertion/remove/query" {
     const assert = @import("std").debug.assert;
-    var hash = Generate(i32, .{ .bucketSize = 100 }).init(std.testing.allocator);
+    const hash = Generate(i32, .{ .bucketSize = 100 }).init(std.testing.allocator);
     defer hash.deinit();
 
     hash.addAABB(1, math.vec2(50, 50), math.vec2(100, 100));
     {
-        var data = hash.queryAABB(math.vec2(0, 0), math.vec2(150, 150));
+        const data = hash.queryAABB(math.vec2(0, 0), math.vec2(150, 150));
         assert(data.len == 1);
     }
 
     hash.addAABB(2, math.vec2(150, 150), math.vec2(100, 100));
     {
-        var data = hash.queryAABB(math.vec2(0, 0), math.vec2(100, 100));
+        const data = hash.queryAABB(math.vec2(0, 0), math.vec2(100, 100));
         assert(data.len == 2);
     }
 
     hash.removeAABB(2, math.vec2(150, 150), math.vec2(100, 100));
     {
-        var data = hash.queryAABB(math.vec2(0, 0), math.vec2(100, 100));
+        const data = hash.queryAABB(math.vec2(0, 0), math.vec2(100, 100));
         assert(data.len == 1);
     }
 }

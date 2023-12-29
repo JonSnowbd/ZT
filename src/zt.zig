@@ -36,7 +36,7 @@ pub const gl = struct {
 /// to it. Useful to keep relative file loading working properly(especially using `zig build run`)
 /// when ran from any location.
 pub fn makeCwd() !void {
-    var folder = (try known_folders.getPath(std.heap.c_allocator, known_folders.KnownFolder.executable_dir)).?;
+    const folder = (try known_folders.getPath(std.heap.c_allocator, known_folders.KnownFolder.executable_dir)).?;
     try std.os.chdir(folder);
 }
 
@@ -47,7 +47,7 @@ pub inline fn path(subpath: []const u8) []const u8 {
 }
 /// Same as path, but you own the memory.
 pub fn pathEx(allocator: std.mem.Allocator, subpath: []const u8) []const u8 {
-    var executablePath = known_folders.getPath(allocator, .executable_dir) catch unreachable;
+    const executablePath = known_folders.getPath(allocator, .executable_dir) catch unreachable;
     defer allocator.free(executablePath.?);
     return std.fs.path.joinZ(allocator, &[_][]const u8{ executablePath.?, subpath }) catch unreachable;
 }

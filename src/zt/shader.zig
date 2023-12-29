@@ -13,11 +13,11 @@ pub fn from(shaderID: c_uint) Self {
 pub fn init(vert: [*:0]const u8, frag: [*:0]const u8) Self {
     var self: Self = .{};
 
-    var vertId = gl.glCreateShader(gl.GL_VERTEX_SHADER);
+    const vertId = gl.glCreateShader(gl.GL_VERTEX_SHADER);
     gl.glShaderSource(vertId, 1, &vert, null);
     gl.glCompileShader(vertId);
 
-    var fragId = gl.glCreateShader(gl.GL_FRAGMENT_SHADER);
+    const fragId = gl.glCreateShader(gl.GL_FRAGMENT_SHADER);
     gl.glShaderSource(fragId, 1, &frag, null);
     gl.glCompileShader(fragId);
 

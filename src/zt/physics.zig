@@ -42,35 +42,35 @@ pub fn isPointInPolygon(point: math.Vec2, polyPoint: math.Vec2, vertices: []math
 }
 pub fn isCircleInPolygon(circlePos: math.Vec2, radius: f32, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
     for (vertices, 0..) |vert, i| {
-        var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
+        const next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
         if (isLineInCircle(vert.add(polygonPos), next, circlePos, radius)) return true;
     }
     return isPointInPolygon(circlePos, polygonPos, vertices);
 }
 pub fn isLineInPolygon(lineStart: math.Vec2, lineEnd: math.Vec2, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
     for (vertices, 0..) |vert, i| {
-        var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
+        const next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
         if (isLineInLine(lineStart, lineEnd, vert.add(polygonPos), next)) return true;
     }
     return false;
 }
 pub fn isPolygonInPolygon(polygonPos: math.Vec2, vertices: []math.Vec2, polygon2Pos: math.Vec2, vertices2: []math.Vec2) bool {
     for (vertices, 0..) |vert, i| {
-        var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
+        const next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
         if (isLineInPolygon(vert.add(polygonPos), next, polygon2Pos, vertices2)) return true;
     }
     return isPointInPolygon(polygonPos, polygon2Pos, vertices2);
 }
 pub fn isRectInPolygon(rectangle: math.Rect, polygonPos: math.Vec2, vertices: []math.Vec2) bool {
     for (vertices, 0..) |vert, i| {
-        var next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
+        const next = if (i + 1 == vertices.len) polygonPos.add(vertices[0]) else polygonPos.add(vertices[i + 1]);
         if (isLineInRect(vert.add(polygonPos), next, rectangle.position, rectangle.size)) return true;
     }
     return isPointInPolygon(rectangle.position, polygonPos, vertices);
 }
 pub fn isLineInLine(l1Start: math.Vec2, l1End: math.Vec2, l2Start: math.Vec2, l2End: math.Vec2) bool {
-    var uA: f32 = ((l2End.x - l2Start.x) * (l1Start.y - l2Start.y) - (l2End.y - l2Start.y) * (l1Start.x - l2Start.x)) / ((l2End.y - l2Start.y) * (l1End.x - l1Start.x) - (l2End.x - l2Start.x) * (l1End.y - l1Start.y));
-    var uB: f32 = ((l1End.x - l1Start.x) * (l1Start.y - l2Start.y) - (l1End.y - l1Start.y) * (l1Start.x - l2Start.x)) / ((l2End.y - l2Start.y) * (l1End.x - l1Start.x) - (l2End.x - l2Start.x) * (l1End.y - l1Start.y));
+    const uA: f32 = ((l2End.x - l2Start.x) * (l1Start.y - l2Start.y) - (l2End.y - l2Start.y) * (l1Start.x - l2Start.x)) / ((l2End.y - l2Start.y) * (l1End.x - l1Start.x) - (l2End.x - l2Start.x) * (l1End.y - l1Start.y));
+    const uB: f32 = ((l1End.x - l1Start.x) * (l1Start.y - l2Start.y) - (l1End.y - l1Start.y) * (l1Start.x - l2Start.x)) / ((l2End.y - l2Start.y) * (l1End.x - l1Start.x) - (l2End.x - l2Start.x) * (l1End.y - l1Start.y));
     return (uA >= 0 and uA <= 1 and uB >= 0 and uB <= 1);
 }
 pub fn isLineInRect(line1: math.Vec2, line2: math.Vec2, aabbPos: math.Vec2, aabbSize: math.Vec2) bool {
@@ -101,9 +101,9 @@ pub fn isCircleInRect(circPos: math.Vec2, radius: f32, rectPos: math.Vec2, rectS
         testY = rectPos.y + rectSize.y;
     }
 
-    var distX = circPos.x - testX;
-    var distY = circPos.y - testY;
-    var dist = std.math.sqrt((distX * distX) + (distY * distY));
+    const distX = circPos.x - testX;
+    const distY = circPos.y - testY;
+    const dist = std.math.sqrt((distX * distX) + (distY * distY));
 
     return dist <= radius;
 }
@@ -122,10 +122,10 @@ pub fn isLineInCircle(lineStart: math.Vec2, lineEnd: math.Vec2, circlePos: math.
     const closestX = lineStart.x + (dot * (lineEnd.x - lineStart.x));
     const closestY = lineStart.y + (dot * (lineEnd.y - lineStart.y));
 
-    var onSegment = isPointInLine(.{ .x = closestX, .y = closestY }, lineStart, lineEnd);
+    const onSegment = isPointInLine(.{ .x = closestX, .y = closestY }, lineStart, lineEnd);
     if (!onSegment) return false;
 
-    var closest = math.vec2(closestX - circlePos.x, closestY - circlePos.y);
+    const closest = math.vec2(closestX - circlePos.x, closestY - circlePos.y);
 
     return closest.length() <= radius;
 }
@@ -379,11 +379,11 @@ pub const Shape = union(enum) {
 };
 
 test "Overlap methods" {
-    var offsetPoint = Shape.point(.{ .x = -20 });
-    var testPoint = Shape.point(.{});
-    var testCircle = Shape.circle(10);
-    var testRectangle = Shape.rectangle(.{}, .{ .x = 10, .y = 10 });
-    var offsetRectangle = Shape.rectangle(.{ .x = 20 }, .{ .x = 10, .y = 10 });
+    const offsetPoint = Shape.point(.{ .x = -20 });
+    const testPoint = Shape.point(.{});
+    const testCircle = Shape.circle(10);
+    const testRectangle = Shape.rectangle(.{}, .{ .x = 10, .y = 10 });
+    const offsetRectangle = Shape.rectangle(.{ .x = 20 }, .{ .x = 10, .y = 10 });
 
     // Point -> Circle
     assert(isPointInCircle(.{}, .{}, 3));
@@ -401,13 +401,13 @@ test "Overlap methods" {
     assert(!Shape.overlaps(testPoint, .{}, offsetRectangle, .{}));
 
     // Point -> Poly
-    var polygons: []math.Vec2 = &.{
+    const polygons: []math.Vec2 = &.{
         math.vec2(-10, 0),
         math.vec2(0, -10),
         math.vec2(10, 0),
         math.vec2(0, 10),
     };
-    var testPoly = Shape{ .Polygon = .{ .vertices = polygons } };
+    const testPoly = Shape{ .Polygon = .{ .vertices = polygons } };
     assert(isPointInPolygon(.{}, .{}, polygons));
     assert(!isPointInPolygon(math.vec2(-8, -8), .{}, polygons));
     assert(Shape.overlaps(testPoint, .{}, testPoly, .{}));

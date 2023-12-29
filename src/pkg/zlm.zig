@@ -1,5 +1,9 @@
 const std = @import("std");
 
+inline fn fabs(v: anytype) @TypeOf(v) {
+    return if (v < 0) -v else v; // TODO: only way to make @fabs vs @abs work with zig-11 vs nightly
+}
+
 /// Makes all vector and matrix types generic against Real
 fn specializeOn(comptime Real: type) type {
     return struct {
@@ -103,7 +107,7 @@ fn specializeOn(comptime Real: type) type {
                 /// returns either a normalized vector (`length() = 1`) or `zero` if the vector
                 /// has length 0.
                 pub fn normalize(vec: Self) Self {
-                    var len = vec.length();
+                    const len = vec.length();
                     return if (len != 0.0)
                         vec.scale(1.0 / vec.length())
                     else
@@ -114,7 +118,7 @@ fn specializeOn(comptime Real: type) type {
                 pub fn abs(a: Self) Self {
                     var result: Self = undefined;
                     inline for (@typeInfo(Self).Struct.fields) |fld| {
-                        @field(result, fld.name) = @fabs(@field(a, fld.name));
+                        @field(result, fld.name) = fabs(@field(a, fld.name));
                     }
                     return result;
                 }
@@ -630,7 +634,7 @@ fn specializeOn(comptime Real: type) type {
             /// `aspect` is the screen aspect ratio (width / height)
             /// `near` is the distance of the near clip plane, whereas `far` is the distance to the far clip plane.
             pub fn createPerspective(fov: Real, aspect: Real, near: Real, far: Real) Mat4 {
-                std.debug.assert(@fabs(aspect - 0.001) > 0);
+                std.debug.assert(fabs(aspect - 0.001) > 0);
 
                 const tanHalfFovy = std.math.tan(fov / 2);
 
@@ -645,11 +649,11 @@ fn specializeOn(comptime Real: type) type {
 
             /// creates a rotation matrix around a certain axis.
             pub fn createAngleAxis(axis: Vec3, angle: Real) Mat4 {
-                var cos = std.math.cos(angle);
-                var sin = std.math.sin(angle);
-                var x = axis.x;
-                var y = axis.y;
-                var z = axis.z;
+                const cos = std.math.cos(angle);
+                const sin = std.math.sin(angle);
+                const x = axis.x;
+                const y = axis.y;
+                const z = axis.z;
 
                 return Mat4{
                     .fields = [4][4]Real{
@@ -664,8 +668,8 @@ fn specializeOn(comptime Real: type) type {
             pub fn createZRotation(radians: f32) Mat4 {
                 var result = Mat4.identity;
 
-                var val1 = @cos(radians);
-                var val2 = @sin(radians);
+                const val1 = @cos(radians);
+                const val2 = @sin(radians);
                 result.fields[0][0] = val1;
                 result.fields[0][1] = val2;
                 result.fields[1][0] = -val2;
