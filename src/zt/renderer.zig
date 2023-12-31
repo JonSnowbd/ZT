@@ -7,7 +7,7 @@ pub const VertShaderSource = @embedFile("shader/renderer.vertex");
 pub const FragShaderSource = @embedFile("shader/renderer.fragment");
 
 pub const Vertex = extern struct { pos: zt.math.Vec3, col: zt.math.Vec4, tex: zt.math.Vec2 };
-internal: zt.GenerateBuffer(Vertex, 4086) = undefined,
+internal: zt.GenerateBuffer(Vertex, 2048) = undefined,
 viewMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
 inverseViewMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
 projectionMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
@@ -16,6 +16,7 @@ defaultShader: zt.Shader = undefined,
 /// Internal render size, do not edit. Is set by `updateRenderSize`.
 buildSize: zt.math.Vec2 = .{},
 resolution: i32 = 2,
+drawCalls: i32 = 0,
 
 pub fn createShader(fragment: [*:0]const u8) zt.Shader {
     return zt.Shader.init(VertShaderSource, fragment);
@@ -27,17 +28,19 @@ pub fn init() Self {
         .projectionMatrix = zt.math.Mat4.createOrthogonal(0, 1280, 720, 0, -128, 128),
         .viewMatrix = zt.math.Mat4.identity,
     };
-    renderer.internal = zt.GenerateBuffer(Vertex, 4086).init(renderer.defaultShader);
+    renderer.internal = zt.GenerateBuffer(Vertex, 2048).init(renderer.defaultShader);
     return renderer;
 }
 pub fn deinit(self: *Self) void {
     self.internal.deinit();
 }
 /// Sets the render size, perfect to modify if you need to render into a differently sized frame buffer. Otherwise call
-/// this every frame to your `zt.App.width, height`
+/// this every frame to your `zt.App.width, height`. This is considered the 'start' of every frame you draw with this renderer,
+/// so as a side effect this resets the tracked number of draw calls, no other side effects.
 pub fn updateRenderSize(self: *Self, size: zt.math.Vec2) void {
     self.projectionMatrix = zt.math.Mat4.createOrthogonal(0, size.x, size.y, 0, -128, 128);
     self.buildSize = size;
+    self.drawCalls = 0;
 }
 /// Given a position, zoom, and rotation, this function emulates a traditional 2d camera by directly modifying
 /// the view matrix.
@@ -67,8 +70,7 @@ pub fn updateShader(self: *Self, shader: ?*zt.Shader) void {
 }
 
 /// The simplest sprite method. Passing null to normalized origin will draw top-left based. Passing null to source will
-/// draw the whole texture. Note; normalized origin is multiplicative. 1,1 will draw the texture from bottom right, providing
-/// beyond 0 and 1 is supported if the anchor needs to be
+/// draw the whole texture. Note; normalized origin is multiplicative, 1,1 will draw the texture from bottom right.
 pub inline fn sprite(self: *Self, texture: zt.Texture, pos: zt.math.Vec2, z: f32, size: zt.math.Vec2, color: zt.math.Vec4, normOrigin: ?zt.math.Vec2, src: ?zt.math.Rect) void {
     var offset: zt.math.Vec2 = if (normOrigin) |no| .{ .x = -(size.x * no.x), .y = -(size.y * no.y) } else .{};
     const source: zt.math.Rect =
@@ -271,6 +273,7 @@ pub fn flush(self: *Self) void {
     if (self.currentTexture == null or self.internal.indCount == 0) {
         return;
     }
+    self.drawCalls += 1;
     gl.glEnable(gl.GL_BLEND);
     gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
     self.internal.setUniform("View", self.viewMatrix);

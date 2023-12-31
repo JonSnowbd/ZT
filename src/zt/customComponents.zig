@@ -163,8 +163,8 @@ pub fn edit(label: []const u8, ptr: anytype) bool {
             return result;
         },
         *zt.math.Vec2 => {
-            const cast: [2]f32 = .{ ptr.*.x, ptr.*.y };
-            const result = ig.igInputFloat2(label.ptr, &cast, "%.2f", ig.ImGuiInputTextFlags_None);
+            var cast: [2]f32 = .{ ptr.*.x, ptr.*.y };
+            const result = ig.igInputFloat2(label.ptr, @ptrCast(&cast), "%.2f", ig.ImGuiInputTextFlags_None);
             if (result) {
                 ptr.* = zt.math.vec2(cast[0], cast[1]);
             }

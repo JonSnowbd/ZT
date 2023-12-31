@@ -8,12 +8,14 @@ const SceneInterface = @import("scene_interface.zig");
 const State = struct {
     demo: *SceneInterface.DemoContext = undefined,
     renderer: zt.Renderer,
+    minion_pos: zt.math.Vec2,
 };
 
 pub fn init(context: *SceneInterface.DemoContext) SceneInterface {
     const instance = std.heap.c_allocator.create(State) catch unreachable;
     instance.demo = context;
     instance.renderer = zt.Renderer.init();
+    instance.minion_pos = zt.math.Vec2.zero;
     return SceneInterface{
         .ptr = instance,
         .NameFn = name,
@@ -54,12 +56,15 @@ fn update(ptr: *anyopaque) void {
         x = -4;
     }
 
+    // And a lil guy on the z level chosen by the user
+    const minion_source = zt.math.rect(384, 0, 16, 16);
+    self.renderer.sprite(self.demo.sheet, self.minion_pos, 0, zt.math.vec2(tileSize, tileSize), zt.math.vec4(1.0, 0.0, 0.0, 1.0), zt.math.vec2(0.5, 0.5), minion_source);
+
     // IMPORTANT! Renderer is not integrated directly into zt so it is not listening for a frame end,
     // so flush it manually when youre done using it.
-
     self.renderer.flush();
 }
 fn side(ptr: *anyopaque) void {
     const self: *State = @ptrCast(@alignCast(ptr));
-    _ = self;
+    _ = zg.editDrag("Minion position", 0.5, &self.minion_pos);
 }

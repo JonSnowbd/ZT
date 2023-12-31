@@ -28,6 +28,7 @@ pub fn main() !void {
     scenes = std.ArrayList(SceneInterface).init(std.heap.c_allocator);
     scenes.append(@import("scene/imgui_demo_scene.zig").init(&demoContext)) catch unreachable;
     scenes.append(@import("scene/renderer_scene.zig").init(&demoContext)) catch unreachable;
+    scenes.append(@import("scene/dude_benchmark.zig").init(&demoContext)) catch unreachable;
 
     // Lets customize!
     const io = ig.igGetIO();
@@ -57,7 +58,7 @@ pub fn main() !void {
         const cameraMovement = zt.Button
             .asStick(zt.Button.W, zt.Button.S, zt.Button.A, zt.Button.D)
             .normalize()
-            .scale(200.0 * context.time.dt);
+            .scale(600.0 * context.time.dt);
 
         var dragCameraMovement = zt.math.Vec2.zero;
         if (zt.Button.MouseRightClick.down()) {
