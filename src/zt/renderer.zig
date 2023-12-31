@@ -7,27 +7,27 @@ pub const VertShaderSource = @embedFile("shader/renderer.vertex");
 pub const FragShaderSource = @embedFile("shader/renderer.fragment");
 
 pub const Vertex = extern struct { pos: zt.math.Vec3, col: zt.math.Vec4, tex: zt.math.Vec2 };
-internal: zt.gl.GenerateBuffer(Vertex, 4086) = undefined,
+internal: zt.GenerateBuffer(Vertex, 4086) = undefined,
 viewMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
 inverseViewMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
 projectionMatrix: zt.math.Mat4 = zt.math.Mat4.identity,
-currentTexture: ?zt.gl.Texture = null,
-defaultShader: zt.gl.Shader = undefined,
+currentTexture: ?zt.Texture = null,
+defaultShader: zt.Shader = undefined,
 /// Internal render size, do not edit. Is set by `updateRenderSize`.
 buildSize: zt.math.Vec2 = .{},
 resolution: i32 = 2,
 
-pub fn createShader(fragment: [*:0]const u8) zt.gl.Shader {
-    return zt.gl.Shader.init(VertShaderSource, fragment);
+pub fn createShader(fragment: [*:0]const u8) zt.Shader {
+    return zt.Shader.init(VertShaderSource, fragment);
 }
 
 pub fn init() @This() {
     var renderer = Self{
-        .defaultShader = zt.gl.Shader.init(VertShaderSource, FragShaderSource),
+        .defaultShader = zt.Shader.init(VertShaderSource, FragShaderSource),
         .projectionMatrix = zt.math.Mat4.createOrthogonal(0, 1280, 720, 0, -128, 128),
         .viewMatrix = zt.math.Mat4.identity,
     };
-    renderer.internal = zt.gl.GenerateBuffer(Vertex, 4086).init(renderer.defaultShader);
+    renderer.internal = zt.GenerateBuffer(Vertex, 4086).init(renderer.defaultShader);
     return renderer;
 }
 pub fn deinit(self: *Self) void {
@@ -57,7 +57,7 @@ pub fn updateCameraScreenSpace(self: *Self) void {
 }
 
 /// Sets the shader used by the internal buffer. Pass in null to revert to the default shader.
-pub fn updateShader(self: *Self, shader: ?*zt.gl.Shader) void {
+pub fn updateShader(self: *Self, shader: ?*zt.Shader) void {
     self.flush();
     if (shader) |realShader| {
         self.internal.shader = realShader.*;
@@ -69,7 +69,7 @@ pub fn updateShader(self: *Self, shader: ?*zt.gl.Shader) void {
 /// The simplest sprite method. Passing null to normalized origin will draw top-left based. Passing null to source will
 /// draw the whole texture. Note; normalized origin is multiplicative. 1,1 will draw the texture from bottom right, providing
 /// beyond 0 and 1 is supported if the anchor needs to be
-pub inline fn sprite(self: *Self, texture: zt.gl.Texture, pos: zt.math.Vec2, z: f32, size: zt.math.Vec2, color: zt.math.Vec4, normOrigin: ?zt.math.Vec2, src: ?zt.math.Rect) void {
+pub inline fn sprite(self: *Self, texture: zt.Texture, pos: zt.math.Vec2, z: f32, size: zt.math.Vec2, color: zt.math.Vec4, normOrigin: ?zt.math.Vec2, src: ?zt.math.Rect) void {
     var offset: zt.math.Vec2 = if (normOrigin) |no| .{ .x = -(size.x * no.x), .y = -(size.y * no.y) } else .{};
     const source: zt.math.Rect =
         if (src) |s|
@@ -85,7 +85,7 @@ pub inline fn sprite(self: *Self, texture: zt.gl.Texture, pos: zt.math.Vec2, z: 
 }
 /// If you want to submit the vertices yourself, this is the way to do it. Submit them in order: Top Left, Top Right,
 /// Bottom Left, Bottom Right.
-pub fn spriteManual(self: *Self, texture: zt.gl.Texture, tl: Vertex, tr: Vertex, bl: Vertex, br: Vertex) void {
+pub fn spriteManual(self: *Self, texture: zt.Texture, tl: Vertex, tr: Vertex, bl: Vertex, br: Vertex) void {
     if (self.currentTexture == null) {
         self.currentTexture = texture;
     } else if (self.currentTexture.?.id != texture.id) {
@@ -102,7 +102,7 @@ pub fn spriteManual(self: *Self, texture: zt.gl.Texture, tl: Vertex, tr: Vertex,
     };
 }
 /// Use this method if you want to avoid using zt math types such as Vec2, and would prefer to just input raw floats.
-pub fn spriteEx(self: *Self, texture: zt.gl.Texture, x: f32, y: f32, z: f32, w: f32, h: f32, sx: f32, sy: f32, sw: f32, sh: f32, colTl: zt.math.Vec4, colTr: zt.math.Vec4, colBl: zt.math.Vec4, colBr: zt.math.Vec4) void {
+pub fn spriteEx(self: *Self, texture: zt.Texture, x: f32, y: f32, z: f32, w: f32, h: f32, sx: f32, sy: f32, sw: f32, sh: f32, colTl: zt.math.Vec4, colTr: zt.math.Vec4, colBl: zt.math.Vec4, colBr: zt.math.Vec4) void {
     if (self.currentTexture == null) {
         self.currentTexture = texture;
     } else if (self.currentTexture.?.id != texture.id) {
@@ -145,7 +145,7 @@ pub fn spriteEx(self: *Self, texture: zt.gl.Texture, x: f32, y: f32, z: f32, w: 
 
 /// For expected blank line behaviour, sourceRect should point to a spot on the sheet that is pure white.
 /// Otherwise you can point wherever you want for a textured line.
-pub fn line(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, start: zt.math.Vec2, end: zt.math.Vec2, z: f32, width: f32, colStarT: zt.math.Vec4, colEnd: zt.math.Vec4) void {
+pub fn line(self: *Self, texture: zt.Texture, sourceRect: ?zt.math.Rect, start: zt.math.Vec2, end: zt.math.Vec2, z: f32, width: f32, colStarT: zt.math.Vec4, colEnd: zt.math.Vec4) void {
     if (self.currentTexture == null) {
         self.currentTexture = texture;
     } else if (self.currentTexture.?.id != texture.id) {
@@ -193,7 +193,7 @@ pub fn line(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, star
     };
 }
 
-pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, target: zt.math.Vec2, radius: f32, z: f32, col: zt.math.Vec4) void {
+pub fn circle(self: *Self, texture: zt.Texture, sourceRect: ?zt.math.Rect, target: zt.math.Vec2, radius: f32, z: f32, col: zt.math.Vec4) void {
     if (self.currentTexture == null) {
         self.currentTexture = texture;
     } else if (self.currentTexture.?.id != texture.id) {
@@ -237,7 +237,7 @@ pub fn circle(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, ta
 
 /// For expected blank line behaviour, sourceRect should point to a spot on the sheet that is pure white.
 /// It is not recommended to use this textured.
-pub fn rectangleHollow(self: *Self, texture: zt.gl.Texture, sourceRect: ?zt.math.Rect, target: zt.math.Rect, z: f32, thickness: f32, col: zt.math.Vec4) void {
+pub fn rectangleHollow(self: *Self, texture: zt.Texture, sourceRect: ?zt.math.Rect, target: zt.math.Rect, z: f32, thickness: f32, col: zt.math.Vec4) void {
     var tl = target.position;
     var tr = target.position.add(.{ .x = target.size.x });
     var bl = target.position.add(.{ .y = target.size.y });

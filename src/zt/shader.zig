@@ -3,7 +3,6 @@ const gl = @import("gl");
 const Self = @This();
 
 id: c_uint = 0,
-dead: bool = true,
 
 pub fn from(shaderID: c_uint) Self {
     return .{
@@ -31,13 +30,10 @@ pub fn init(vert: [*:0]const u8, frag: [*:0]const u8) Self {
 
     gl.glUseProgram(0);
 
-    self.dead = false;
-
     return self;
 }
 pub fn deinit(self: *Self) void {
     gl.glDeleteProgram(self.id);
-    self.dead = true;
 }
 pub fn bind(self: *Self) void {
     gl.glUseProgram(self.id);

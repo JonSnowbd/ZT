@@ -58,50 +58,58 @@ pub fn getPath(allocator: std.mem.Allocator, folder: KnownFolder) Error!?[]const
 
     switch (builtin.os.tag) {
         .windows => {
-            if (@import("builtin").zig_version.minor <= 11) {
-                const folder_spec = windows_folder_spec.get(folder);
+            const funcs = struct {
+                extern "shell32" fn SHGetKnownFolderPath(
+                    rfid: *const std.os.windows.GUID,
+                    dwFlags: std.os.windows.DWORD,
+                    hToken: ?std.os.windows.HANDLE,
+                    ppszPathL: *std.os.windows.PWSTR,
+                ) callconv(std.os.windows.WINAPI) std.os.windows.HRESULT;
+                extern "ole32" fn CoTaskMemFree(pv: std.os.windows.LPVOID) callconv(std.os.windows.WINAPI) void;
+            };
 
-                switch (folder_spec) {
-                    .by_guid => |guid| {
-                        var dir_path_ptr: [*:0]u16 = undefined;
-                        switch (std.os.windows.shell32.SHGetKnownFolderPath(
-                            &guid,
-                            std.os.windows.KF_FLAG_CREATE, // TODO: Chose sane option here?
-                            null,
-                            &dir_path_ptr,
-                        )) {
-                            std.os.windows.S_OK => {
-                                defer std.os.windows.ole32.CoTaskMemFree(@ptrCast(dir_path_ptr));
-                                const global_dir = std.unicode.utf16leToUtf8Alloc(allocator, std.mem.span(dir_path_ptr)) catch |err| switch (err) {
-                                    error.UnexpectedSecondSurrogateHalf => return null,
-                                    error.ExpectedSecondSurrogateHalf => return null,
-                                    error.DanglingSurrogateHalf => return null,
-                                    error.OutOfMemory => return error.OutOfMemory,
-                                };
-                                return global_dir;
-                            },
-                            std.os.windows.E_OUTOFMEMORY => return error.OutOfMemory,
-                            else => return null,
-                        }
-                    },
-                    .by_env => |env_path| {
-                        if (env_path.subdir) |sub_dir| {
-                            const root_path = std.process.getEnvVarOwned(arena.allocator(), env_path.env_var) catch |err| switch (err) {
-                                error.EnvironmentVariableNotFound => return null,
-                                error.InvalidUtf8 => return null,
-                                error.OutOfMemory => |e| return e,
+            const folder_spec = windows_folder_spec.get(folder);
+
+            switch (folder_spec) {
+                .by_guid => |guid| {
+                    var dir_path_ptr: [*:0]u16 = undefined;
+                    switch (funcs.SHGetKnownFolderPath(
+                        &guid,
+                        std.os.windows.KF_FLAG_CREATE, // TODO: Chose sane option here?
+                        null,
+                        &dir_path_ptr,
+                    )) {
+                        std.os.windows.S_OK => {
+                            defer funcs.CoTaskMemFree(@ptrCast(dir_path_ptr));
+                            const global_dir = std.unicode.utf16leToUtf8Alloc(allocator, std.mem.span(dir_path_ptr)) catch |err| switch (err) {
+                                error.UnexpectedSecondSurrogateHalf => return null,
+                                error.ExpectedSecondSurrogateHalf => return null,
+                                error.DanglingSurrogateHalf => return null,
+                                error.OutOfMemory => return error.OutOfMemory,
                             };
-                            return try std.fs.path.join(allocator, &[_][]const u8{ root_path, sub_dir });
-                        } else {
-                            return std.process.getEnvVarOwned(allocator, env_path.env_var) catch |err| switch (err) {
-                                error.EnvironmentVariableNotFound => return null,
-                                error.InvalidUtf8 => return null,
-                                error.OutOfMemory => |e| return e,
-                            };
-                        }
-                    },
-                }
-            } else @panic("TODO: implement!");
+                            return global_dir;
+                        },
+                        std.os.windows.E_OUTOFMEMORY => return error.OutOfMemory,
+                        else => return null,
+                    }
+                },
+                .by_env => |env_path| {
+                    if (env_path.subdir) |sub_dir| {
+                        const root_path = std.process.getEnvVarOwned(arena.allocator(), env_path.env_var) catch |err| switch (err) {
+                            error.EnvironmentVariableNotFound => return null,
+                            error.InvalidUtf8 => return null,
+                            error.OutOfMemory => |e| return e,
+                        };
+                        return try std.fs.path.join(allocator, &[_][]const u8{ root_path, sub_dir });
+                    } else {
+                        return std.process.getEnvVarOwned(allocator, env_path.env_var) catch |err| switch (err) {
+                            error.EnvironmentVariableNotFound => return null,
+                            error.InvalidUtf8 => return null,
+                            error.OutOfMemory => |e| return e,
+                        };
+                    }
+                },
+            }
         },
         .macos => {
             if (@hasDecl(root, "known_folders_config") and root.known_folders_config.xdg_on_mac) {
@@ -141,7 +149,7 @@ fn getPathXdg(allocator: std.mem.Allocator, arena: *std.heap.ArenaAllocator, fol
     if (@hasDecl(root, "known_folders_config") and root.known_folders_config.xdg_force_default) {
         if (folder_spec.default) |default| {
             if (default[0] == '~') {
-                const home = std.os.getenv("HOME") orelse return null;
+                const home = std.process.getEnvVarOwned(arena.allocator(), "HOME") catch null orelse return null;
                 return try std.mem.concat(allocator, u8, &[_][]const u8{ home, default[1..] });
             } else {
                 return try allocator.dupe(u8, default);
@@ -150,7 +158,7 @@ fn getPathXdg(allocator: std.mem.Allocator, arena: *std.heap.ArenaAllocator, fol
     }
 
     const env_opt = env_opt: {
-        if (std.os.getenv(folder_spec.env.name)) |env_opt| break :env_opt env_opt;
+        if (std.process.getEnvVarOwned(arena.allocator(), folder_spec.env.name) catch null) |env_opt| break :env_opt env_opt;
 
         if (!folder_spec.env.user_dir) break :env_opt null;
 
@@ -164,10 +172,10 @@ fn getPathXdg(allocator: std.mem.Allocator, arena: *std.heap.ArenaAllocator, fol
         };
 
         const config_dir = std.fs.cwd().openDir(config_dir_path, .{}) catch break :env_opt null;
-        const home = std.os.getenv("HOME") orelse break :env_opt null;
+        const home = std.process.getEnvVarOwned(arena.allocator(), "HOME") catch null orelse break :env_opt null;
         const user_dirs = config_dir.openFile("user-dirs.dirs", .{}) catch null orelse break :env_opt null;
 
-        const read: [1024 * 8]u8 = undefined;
+        var read: [1024 * 8]u8 = undefined;
         _ = user_dirs.readAll(&read) catch null orelse break :env_opt null;
         const start = folder_spec.env.name.len + "=\"$HOME".len;
 
@@ -192,7 +200,7 @@ fn getPathXdg(allocator: std.mem.Allocator, arena: *std.heap.ArenaAllocator, fol
             return try std.mem.concat(allocator, u8, &[_][]const u8{ env, suffix });
         } else {
             if (std.mem.eql(u8, folder_spec.env.name, "XDG_CONFIG_DIRS")) {
-                const iter = std.mem.split(u8, env, ":");
+                var iter = std.mem.split(u8, env, ":");
                 return try allocator.dupe(u8, iter.next() orelse "");
             } else {
                 return try allocator.dupe(u8, env);
@@ -201,7 +209,7 @@ fn getPathXdg(allocator: std.mem.Allocator, arena: *std.heap.ArenaAllocator, fol
     } else {
         const default = folder_spec.default orelse return null;
         if (default[0] == '~') {
-            const home = std.os.getenv("HOME") orelse return null;
+            const home = std.process.getEnvVarOwned(arena.allocator(), "HOME") catch null orelse return null;
             return try std.mem.concat(allocator, u8, &[_][]const u8{ home, default[1..] });
         } else {
             return try allocator.dupe(u8, default);
@@ -351,7 +359,7 @@ test "query each known folders" {
 
 test "open each known folders" {
     inline for (std.meta.fields(KnownFolder)) |fld| {
-        const dir_or_null = open(std.testing.allocator, @field(KnownFolder, fld.name), .{ .access_sub_paths = true }) catch |e| switch (e) {
+        var dir_or_null = open(std.testing.allocator, @field(KnownFolder, fld.name), .{ .access_sub_paths = true }) catch |e| switch (e) {
             error.FileNotFound => return,
             else => return e,
         };

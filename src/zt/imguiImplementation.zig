@@ -33,10 +33,10 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
 
     // Setup back-end capabilities flags
     const io = ig.igGetIO();
-    io.*.BackendRendererName = "imgui_impl_opengl3";
-    io.*.IniFilename = "workspace";
+    io.BackendRendererName = "imgui_impl_opengl3";
+    io.IniFilename = "workspace";
     // Sensible memory-friendly initial mouse position.
-    io.*.MousePos = .{ .x = 0, .y = 0 };
+    io.MousePos = .{ .x = 0, .y = 0 };
 
     // Store GLSL version string so we can refer to it later in case we recreate shaders.
     // Note: GLSL version is NOT the same as GL version. Leave this to NULL if unsure.
@@ -61,28 +61,28 @@ pub fn init(glsl_version_opt: ?[:0]const u8) void {
 
     CreateDeviceObjects();
 
-    io.*.KeyMap[ig.ImGuiKey_Tab] = @intFromEnum(glfw.Key.tab);
-    io.*.KeyMap[ig.ImGuiKey_Home] = @intFromEnum(glfw.Key.home);
-    io.*.KeyMap[ig.ImGuiKey_Insert] = @intFromEnum(glfw.Key.insert);
-    io.*.KeyMap[ig.ImGuiKey_KeypadEnter] = @intFromEnum(glfw.Key.kp_enter);
-    io.*.KeyMap[ig.ImGuiKey_Escape] = @intFromEnum(glfw.Key.escape);
-    io.*.KeyMap[ig.ImGuiKey_Backspace] = @intFromEnum(glfw.Key.backspace);
-    io.*.KeyMap[ig.ImGuiKey_End] = @intFromEnum(glfw.Key.end);
-    io.*.KeyMap[ig.ImGuiKey_Enter] = @intFromEnum(glfw.Key.enter);
+    // io.KeyMap[ig.ImGuiKey_Tab] = glfw.GLFW_KEY_TAB;
+    // io.KeyMap[ig.ImGuiKey_Home] = glfw.GLFW_KEY_HOME;
+    // io.KeyMap[ig.ImGuiKey_Insert] = glfw.GLFW_KEY_INSERT;
+    // io.KeyMap[ig.ImGuiKey_KeypadEnter] = glfw.GLFW_KEY_KP_ENTER;
+    // io.KeyMap[ig.ImGuiKey_Escape] = glfw.GLFW_KEY_ESCAPE;
+    // io.KeyMap[ig.ImGuiKey_Backspace] = glfw.GLFW_KEY_BACKSPACE;
+    // io.KeyMap[ig.ImGuiKey_End] = glfw.GLFW_KEY_END;
+    // io.KeyMap[ig.ImGuiKey_Enter] = glfw.GLFW_KEY_ENTER;
 
-    io.*.KeyMap[ig.ImGuiKey_LeftArrow] = @intFromEnum(glfw.Key.left);
-    io.*.KeyMap[ig.ImGuiKey_RightArrow] = @intFromEnum(glfw.Key.right);
-    io.*.KeyMap[ig.ImGuiKey_UpArrow] = @intFromEnum(glfw.Key.up);
-    io.*.KeyMap[ig.ImGuiKey_DownArrow] = @intFromEnum(glfw.Key.down);
+    // io.KeyMap[ig.ImGuiKey_LeftArrow] = glfw.GLFW_KEY_LEFT;
+    // io.KeyMap[ig.ImGuiKey_RightArrow] = glfw.GLFW_KEY_RIGHT;
+    // io.KeyMap[ig.ImGuiKey_UpArrow] = glfw.GLFW_KEY_UP;
+    // io.KeyMap[ig.ImGuiKey_DownArrow] = glfw.GLFW_KEY_DOWN;
 
-    io.*.KeyMap[ig.ImGuiKey_PageUp] = @intFromEnum(glfw.Key.page_up);
-    io.*.KeyMap[ig.ImGuiKey_PageDown] = @intFromEnum(glfw.Key.page_down);
-    io.*.KeyMap[ig.ImGuiKey_Space] = @intFromEnum(glfw.Key.space);
-    io.*.KeyMap[ig.ImGuiKey_V] = @intFromEnum(glfw.Key.v);
-    io.*.KeyMap[ig.ImGuiKey_X] = @intFromEnum(glfw.Key.x);
-    io.*.KeyMap[ig.ImGuiKey_Z] = @intFromEnum(glfw.Key.z);
-    io.*.KeyMap[ig.ImGuiKey_A] = @intFromEnum(glfw.Key.a);
-    io.*.KeyMap[ig.ImGuiKey_C] = @intFromEnum(glfw.Key.c);
+    // io.KeyMap[ig.ImGuiKey_PageUp] = glfw.GLFW_KEY_PAGE_UP;
+    // io.KeyMap[ig.ImGuiKey_PageDown] = glfw.GLFW_KEY_PAGE_DOWN;
+    // io.KeyMap[ig.ImGuiKey_Space] = glfw.GLFW_KEY_SPACE;
+    // io.KeyMap[ig.ImGuiKey_V] = glfw.GLFW_KEY_V;
+    // io.KeyMap[ig.ImGuiKey_X] = glfw.GLFW_KEY_X;
+    // io.KeyMap[ig.ImGuiKey_Z] = glfw.GLFW_KEY_Z;
+    // io.KeyMap[ig.ImGuiKey_A] = glfw.GLFW_KEY_A;
+    // io.KeyMap[ig.ImGuiKey_C] = glfw.GLFW_KEY_C;
 }
 
 pub fn Shutdown() void {
@@ -114,7 +114,7 @@ fn SetupRenderState(draw_data: *ig.ImDrawData, fb_width: c_int, fb_height: c_int
         [4]f32{ 0.0, 0.0, -1.0, 0.0 },
         [4]f32{ (R + L) / (L - R), (T + B) / (B - T), 0.0, 1.0 },
     };
-    var shader = zt.gl.Shader.from(g_ShaderHandle);
+    var shader = zt.Shader.from(g_ShaderHandle);
     shader.bind();
     gl.glUniform1i(g_AttribLocationTex, 0);
     gl.glUniformMatrix4fv(g_AttribLocationProjMtx, 1, gl.GL_FALSE, &ortho_projection[0][0]);
@@ -180,7 +180,7 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
     const clip_scale = draw_data.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
 
     if (draw_data.CmdListsCount > 0) {
-        for (draw_data.CmdLists[0..@as(usize, @intCast(draw_data.CmdListsCount))]) |cmd_list| {
+        for (draw_data.CmdLists.Data[0..@as(usize, @intCast(draw_data.CmdListsCount))]) |cmd_list| {
             // Upload vertex/index buffers
             gl.glBufferData(gl.GL_ARRAY_BUFFER, @as(gl.GLsizeiptr, @intCast(cmd_list.*.VtxBuffer.Size * @sizeOf(ig.ImDrawVert))), cmd_list.*.VtxBuffer.Data, gl.GL_STREAM_DRAW);
             gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, @as(gl.GLsizeiptr, @intCast(cmd_list.*.IdxBuffer.Size * @sizeOf(ig.ImDrawIdx))), cmd_list.*.IdxBuffer.Data, gl.GL_STREAM_DRAW);
@@ -201,7 +201,7 @@ pub fn RenderDrawData(draw_data: *ig.ImDrawData) void {
                         gl.glScissor(@as(c_int, @intFromFloat(clip_rect.x)), fb_height - @as(c_int, @intFromFloat(clip_rect.w)), @as(c_int, @intFromFloat(clip_rect.z - clip_rect.x)), @as(c_int, @intFromFloat(clip_rect.w - clip_rect.y)));
 
                         // Bind texture, Draw
-                        var texture = zt.gl.Texture.from(@as(gl.GLuint, @intCast(@intFromPtr(pcmd.TextureId))), false);
+                        var texture = zt.Texture.from(@as(gl.GLuint, @intCast(@intFromPtr(pcmd.TextureId))));
                         texture.bind();
                         if (g_GlVersion >= 3200) {
                             gl.glDrawElementsBaseVertex(
@@ -236,7 +236,7 @@ fn CreateFontsTexture() bool {
     var pixels: [*c]u8 = undefined;
     var width: i32 = undefined;
     var height: i32 = undefined;
-    ig.ImFontAtlas_GetTexDataAsRGBA32(io.*.Fonts, &pixels, &width, &height, null); // Load as RGBA 32-bit (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. If your ImTextureId represent a hig.igher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
+    ig.ImFontAtlas_GetTexDataAsRGBA32(io.Fonts, &pixels, &width, &height, null); // Load as RGBA 32-bit (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders. If your ImTextureId represent a hig.igher-level concept than just a GL texture id, consider calling GetTexDataAsAlpha8() instead to save on GPU memory.
 
     // Upload texture to graphics system
     gl.glGenTextures(1, &g_FontTexture);
@@ -248,7 +248,7 @@ fn CreateFontsTexture() bool {
     gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, width, height, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, pixels);
 
     // Store our identifier
-    io.*.Fonts.*.TexID = @as(*anyopaque, @ptrFromInt(g_FontTexture));
+    io.Fonts.*.TexID = @as(*anyopaque, @ptrFromInt(g_FontTexture));
 
     return true;
 }
@@ -257,7 +257,7 @@ fn DestroyFontsTexture() void {
     if (g_FontTexture != 0) {
         const io = ig.igGetIO();
         gl.glDeleteTextures(1, &g_FontTexture);
-        io.*.Fonts.*.TexID = null;
+        io.Fonts.*.TexID = null;
         g_FontTexture = 0;
     }
 }
@@ -441,4 +441,363 @@ fn DestroyDeviceObjects() void {
     }
 
     DestroyFontsTexture();
+}
+
+pub fn toImguiKey(glfw_key: c_int) c_uint {
+    switch (glfw_key) {
+        glfw.GLFW_KEY_TAB => {
+            return ig.ImGuiKey_Tab;
+        },
+        glfw.GLFW_KEY_LEFT => {
+            return ig.ImGuiKey_LeftArrow;
+        },
+        glfw.GLFW_KEY_RIGHT => {
+            return ig.ImGuiKey_RightArrow;
+        },
+        glfw.GLFW_KEY_UP => {
+            return ig.ImGuiKey_UpArrow;
+        },
+        glfw.GLFW_KEY_DOWN => {
+            return ig.ImGuiKey_DownArrow;
+        },
+        glfw.GLFW_KEY_PAGE_UP => {
+            return ig.ImGuiKey_PageUp;
+        },
+        glfw.GLFW_KEY_PAGE_DOWN => {
+            return ig.ImGuiKey_PageDown;
+        },
+        glfw.GLFW_KEY_HOME => {
+            return ig.ImGuiKey_Home;
+        },
+        glfw.GLFW_KEY_END => {
+            return ig.ImGuiKey_End;
+        },
+        glfw.GLFW_KEY_INSERT => {
+            return ig.ImGuiKey_Insert;
+        },
+        glfw.GLFW_KEY_DELETE => {
+            return ig.ImGuiKey_Delete;
+        },
+        glfw.GLFW_KEY_BACKSPACE => {
+            return ig.ImGuiKey_Backspace;
+        },
+        glfw.GLFW_KEY_SPACE => {
+            return ig.ImGuiKey_Space;
+        },
+        glfw.GLFW_KEY_ENTER => {
+            return ig.ImGuiKey_Enter;
+        },
+        glfw.GLFW_KEY_ESCAPE => {
+            return ig.ImGuiKey_Escape;
+        },
+        glfw.GLFW_KEY_APOSTROPHE => {
+            return ig.ImGuiKey_Apostrophe;
+        },
+        glfw.GLFW_KEY_COMMA => {
+            return ig.ImGuiKey_Comma;
+        },
+        glfw.GLFW_KEY_MINUS => {
+            return ig.ImGuiKey_Minus;
+        },
+        glfw.GLFW_KEY_PERIOD => {
+            return ig.ImGuiKey_Period;
+        },
+        glfw.GLFW_KEY_SLASH => {
+            return ig.ImGuiKey_Slash;
+        },
+        glfw.GLFW_KEY_SEMICOLON => {
+            return ig.ImGuiKey_Semicolon;
+        },
+        glfw.GLFW_KEY_EQUAL => {
+            return ig.ImGuiKey_Equal;
+        },
+        glfw.GLFW_KEY_LEFT_BRACKET => {
+            return ig.ImGuiKey_LeftBracket;
+        },
+        glfw.GLFW_KEY_BACKSLASH => {
+            return ig.ImGuiKey_Backslash;
+        },
+        glfw.GLFW_KEY_RIGHT_BRACKET => {
+            return ig.ImGuiKey_RightBracket;
+        },
+        glfw.GLFW_KEY_GRAVE_ACCENT => {
+            return ig.ImGuiKey_GraveAccent;
+        },
+        glfw.GLFW_KEY_CAPS_LOCK => {
+            return ig.ImGuiKey_CapsLock;
+        },
+        glfw.GLFW_KEY_SCROLL_LOCK => {
+            return ig.ImGuiKey_ScrollLock;
+        },
+        glfw.GLFW_KEY_NUM_LOCK => {
+            return ig.ImGuiKey_NumLock;
+        },
+        glfw.GLFW_KEY_PRINT_SCREEN => {
+            return ig.ImGuiKey_PrintScreen;
+        },
+        glfw.GLFW_KEY_PAUSE => {
+            return ig.ImGuiKey_Pause;
+        },
+        glfw.GLFW_KEY_KP_0 => {
+            return ig.ImGuiKey_Keypad0;
+        },
+        glfw.GLFW_KEY_KP_1 => {
+            return ig.ImGuiKey_Keypad1;
+        },
+        glfw.GLFW_KEY_KP_2 => {
+            return ig.ImGuiKey_Keypad2;
+        },
+        glfw.GLFW_KEY_KP_3 => {
+            return ig.ImGuiKey_Keypad3;
+        },
+        glfw.GLFW_KEY_KP_4 => {
+            return ig.ImGuiKey_Keypad4;
+        },
+        glfw.GLFW_KEY_KP_5 => {
+            return ig.ImGuiKey_Keypad5;
+        },
+        glfw.GLFW_KEY_KP_6 => {
+            return ig.ImGuiKey_Keypad6;
+        },
+        glfw.GLFW_KEY_KP_7 => {
+            return ig.ImGuiKey_Keypad7;
+        },
+        glfw.GLFW_KEY_KP_8 => {
+            return ig.ImGuiKey_Keypad8;
+        },
+        glfw.GLFW_KEY_KP_9 => {
+            return ig.ImGuiKey_Keypad9;
+        },
+        glfw.GLFW_KEY_KP_DECIMAL => {
+            return ig.ImGuiKey_KeypadDecimal;
+        },
+        glfw.GLFW_KEY_KP_DIVIDE => {
+            return ig.ImGuiKey_KeypadDivide;
+        },
+        glfw.GLFW_KEY_KP_MULTIPLY => {
+            return ig.ImGuiKey_KeypadMultiply;
+        },
+        glfw.GLFW_KEY_KP_SUBTRACT => {
+            return ig.ImGuiKey_KeypadSubtract;
+        },
+        glfw.GLFW_KEY_KP_ADD => {
+            return ig.ImGuiKey_KeypadAdd;
+        },
+        glfw.GLFW_KEY_KP_ENTER => {
+            return ig.ImGuiKey_KeypadEnter;
+        },
+        glfw.GLFW_KEY_KP_EQUAL => {
+            return ig.ImGuiKey_KeypadEqual;
+        },
+        glfw.GLFW_KEY_LEFT_SHIFT => {
+            return ig.ImGuiKey_LeftShift;
+        },
+        glfw.GLFW_KEY_LEFT_CONTROL => {
+            return ig.ImGuiKey_LeftCtrl;
+        },
+        glfw.GLFW_KEY_LEFT_ALT => {
+            return ig.ImGuiKey_LeftAlt;
+        },
+        glfw.GLFW_KEY_LEFT_SUPER => {
+            return ig.ImGuiKey_LeftSuper;
+        },
+        glfw.GLFW_KEY_RIGHT_SHIFT => {
+            return ig.ImGuiKey_RightShift;
+        },
+        glfw.GLFW_KEY_RIGHT_CONTROL => {
+            return ig.ImGuiKey_RightCtrl;
+        },
+        glfw.GLFW_KEY_RIGHT_ALT => {
+            return ig.ImGuiKey_RightAlt;
+        },
+        glfw.GLFW_KEY_RIGHT_SUPER => {
+            return ig.ImGuiKey_RightSuper;
+        },
+        glfw.GLFW_KEY_MENU => {
+            return ig.ImGuiKey_Menu;
+        },
+        glfw.GLFW_KEY_0 => {
+            return ig.ImGuiKey_0;
+        },
+        glfw.GLFW_KEY_1 => {
+            return ig.ImGuiKey_1;
+        },
+        glfw.GLFW_KEY_2 => {
+            return ig.ImGuiKey_2;
+        },
+        glfw.GLFW_KEY_3 => {
+            return ig.ImGuiKey_3;
+        },
+        glfw.GLFW_KEY_4 => {
+            return ig.ImGuiKey_4;
+        },
+        glfw.GLFW_KEY_5 => {
+            return ig.ImGuiKey_5;
+        },
+        glfw.GLFW_KEY_6 => {
+            return ig.ImGuiKey_6;
+        },
+        glfw.GLFW_KEY_7 => {
+            return ig.ImGuiKey_7;
+        },
+        glfw.GLFW_KEY_8 => {
+            return ig.ImGuiKey_8;
+        },
+        glfw.GLFW_KEY_9 => {
+            return ig.ImGuiKey_9;
+        },
+        glfw.GLFW_KEY_A => {
+            return ig.ImGuiKey_A;
+        },
+        glfw.GLFW_KEY_B => {
+            return ig.ImGuiKey_B;
+        },
+        glfw.GLFW_KEY_C => {
+            return ig.ImGuiKey_C;
+        },
+        glfw.GLFW_KEY_D => {
+            return ig.ImGuiKey_D;
+        },
+        glfw.GLFW_KEY_E => {
+            return ig.ImGuiKey_E;
+        },
+        glfw.GLFW_KEY_F => {
+            return ig.ImGuiKey_F;
+        },
+        glfw.GLFW_KEY_G => {
+            return ig.ImGuiKey_G;
+        },
+        glfw.GLFW_KEY_H => {
+            return ig.ImGuiKey_H;
+        },
+        glfw.GLFW_KEY_I => {
+            return ig.ImGuiKey_I;
+        },
+        glfw.GLFW_KEY_J => {
+            return ig.ImGuiKey_J;
+        },
+        glfw.GLFW_KEY_K => {
+            return ig.ImGuiKey_K;
+        },
+        glfw.GLFW_KEY_L => {
+            return ig.ImGuiKey_L;
+        },
+        glfw.GLFW_KEY_M => {
+            return ig.ImGuiKey_M;
+        },
+        glfw.GLFW_KEY_N => {
+            return ig.ImGuiKey_N;
+        },
+        glfw.GLFW_KEY_O => {
+            return ig.ImGuiKey_O;
+        },
+        glfw.GLFW_KEY_P => {
+            return ig.ImGuiKey_P;
+        },
+        glfw.GLFW_KEY_Q => {
+            return ig.ImGuiKey_Q;
+        },
+        glfw.GLFW_KEY_R => {
+            return ig.ImGuiKey_R;
+        },
+        glfw.GLFW_KEY_S => {
+            return ig.ImGuiKey_S;
+        },
+        glfw.GLFW_KEY_T => {
+            return ig.ImGuiKey_T;
+        },
+        glfw.GLFW_KEY_U => {
+            return ig.ImGuiKey_U;
+        },
+        glfw.GLFW_KEY_V => {
+            return ig.ImGuiKey_V;
+        },
+        glfw.GLFW_KEY_W => {
+            return ig.ImGuiKey_W;
+        },
+        glfw.GLFW_KEY_X => {
+            return ig.ImGuiKey_X;
+        },
+        glfw.GLFW_KEY_Y => {
+            return ig.ImGuiKey_Y;
+        },
+        glfw.GLFW_KEY_Z => {
+            return ig.ImGuiKey_Z;
+        },
+        glfw.GLFW_KEY_F1 => {
+            return ig.ImGuiKey_F1;
+        },
+        glfw.GLFW_KEY_F2 => {
+            return ig.ImGuiKey_F2;
+        },
+        glfw.GLFW_KEY_F3 => {
+            return ig.ImGuiKey_F3;
+        },
+        glfw.GLFW_KEY_F4 => {
+            return ig.ImGuiKey_F4;
+        },
+        glfw.GLFW_KEY_F5 => {
+            return ig.ImGuiKey_F5;
+        },
+        glfw.GLFW_KEY_F6 => {
+            return ig.ImGuiKey_F6;
+        },
+        glfw.GLFW_KEY_F7 => {
+            return ig.ImGuiKey_F7;
+        },
+        glfw.GLFW_KEY_F8 => {
+            return ig.ImGuiKey_F8;
+        },
+        glfw.GLFW_KEY_F9 => {
+            return ig.ImGuiKey_F9;
+        },
+        glfw.GLFW_KEY_F10 => {
+            return ig.ImGuiKey_F10;
+        },
+        glfw.GLFW_KEY_F11 => {
+            return ig.ImGuiKey_F11;
+        },
+        glfw.GLFW_KEY_F12 => {
+            return ig.ImGuiKey_F12;
+        },
+        glfw.GLFW_KEY_F13 => {
+            return ig.ImGuiKey_F13;
+        },
+        glfw.GLFW_KEY_F14 => {
+            return ig.ImGuiKey_F14;
+        },
+        glfw.GLFW_KEY_F15 => {
+            return ig.ImGuiKey_F15;
+        },
+        glfw.GLFW_KEY_F16 => {
+            return ig.ImGuiKey_F16;
+        },
+        glfw.GLFW_KEY_F17 => {
+            return ig.ImGuiKey_F17;
+        },
+        glfw.GLFW_KEY_F18 => {
+            return ig.ImGuiKey_F18;
+        },
+        glfw.GLFW_KEY_F19 => {
+            return ig.ImGuiKey_F19;
+        },
+        glfw.GLFW_KEY_F20 => {
+            return ig.ImGuiKey_F20;
+        },
+        glfw.GLFW_KEY_F21 => {
+            return ig.ImGuiKey_F21;
+        },
+        glfw.GLFW_KEY_F22 => {
+            return ig.ImGuiKey_F22;
+        },
+        glfw.GLFW_KEY_F23 => {
+            return ig.ImGuiKey_F23;
+        },
+        glfw.GLFW_KEY_F24 => {
+            return ig.ImGuiKey_F24;
+        },
+        else => {
+            return ig.ImGuiKey_None;
+        },
+    }
 }

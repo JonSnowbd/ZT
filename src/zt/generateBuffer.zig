@@ -48,11 +48,11 @@ pub fn GenerateBuffer(comptime T: type, comptime V: usize) type {
         // Worst case scenario every single draw is a quad, so * 6.
         indices: [IndexLimit]c_uint = undefined,
         indCount: usize = 0,
-        shader: zt.gl.Shader = undefined,
+        shader: zt.Shader = undefined,
 
         dirty: bool = true,
 
-        pub fn init(shader: zt.gl.Shader) @This() {
+        pub fn init(shader: zt.Shader) @This() {
             var self = @This(){};
             self.shader = shader;
 

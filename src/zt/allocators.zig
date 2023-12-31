@@ -36,7 +36,7 @@ pub fn RingBufferGenerate(comptime size: usize) type {
     };
 }
 
-var internal = RingBufferGenerate(1024 * 1024 * 3){};
+var internal = RingBufferGenerate(1024 * 1024 * 8){};
 /// You can use this to allocate temp memory that you never have to free.
 var internalBuffer: mem.Allocator = internal.getAllocator();
 

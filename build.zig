@@ -20,60 +20,31 @@ fn thisDir() []const u8 {
     return std.fs.path.dirname(@src().file) orelse ".";
 }
 
-// Build here only exists to build the example. to use ZT you'll want to import this file and use the link function in
-// your build.zig
 pub fn build(b: *std.build.Builder) !void {
-    // Standard target options allows the person running `zig build` to choose
-    // what target to build for. Here we do not override the defaults, which
-    // means any target is allowed, and the default is native. Other options
-    // for restricting supported target set are available.
     const target = b.standardTargetOptions(.{});
-
-    // Standard optimization options allow the person running `zig build` to select
-    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
-    // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
     const exe = b.addExecutable(.{
         .name = "example",
-        // In this case the main source file is merely a path, however, in more
-        // complicated build scripts, this could be a generated file.
         .root_source_file = .{ .path = "example/src/main.zig" },
         .target = target,
         .optimize = optimize,
     });
 
-    try link(b, exe);
+    link(b, exe);
 
     b.installArtifact(exe);
 
     addBinaryContent(b.pathFromRoot("example/assets")) catch unreachable;
-
-    // This *creates* a Run step in the build graph, to be executed when another
-    // step is evaluated that depends on it. The next line below will establish
-    // such a dependency.
     const run_cmd = b.addRunArtifact(exe);
-
-    // By making the run step depend on the install step, it will be run from the
-    // installation directory rather than directly from within the cache directory.
-    // This is not necessary, however, if the application depends on other installed
-    // files, this ensures they will be present and in the expected location.
     run_cmd.step.dependOn(b.getInstallStep());
-
-    // This allows the user to pass arguments to the application in the build
-    // command itself, like this: `zig build run -- arg1 arg2 etc`
     if (b.args) |args| {
         run_cmd.addArgs(args);
     }
 
-    // This creates a build step. It will be visible in the `zig build --help` menu,
-    // and can be selected like this: `zig build run`
-    // This will evaluate the `run` step rather than the default, which is "install".
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
 
-    // Creates a step for unit testing. This only builds the test executable
-    // but does not run it.
     const unit_tests = b.addTest(.{
         .root_source_file = .{ .path = "src/main.zig" },
         .target = target,
@@ -82,44 +53,101 @@ pub fn build(b: *std.build.Builder) !void {
 
     const run_unit_tests = b.addRunArtifact(unit_tests);
 
-    // Similar to creating the run step earlier, this exposes a `test` step to
-    // the `zig build --help` menu, providing a way for the user to request
-    // running the unit tests.
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_unit_tests.step);
 }
 
-pub fn link(b: *std.build.Builder, exe: *std.build.CompileStep) !void {
-    // Link step
-    exe.linkLibrary(imguiLibrary(b, exe));
-    exe.linkLibrary(glLibrary(b, exe));
-    exe.linkLibrary(stbLibrary(b, exe));
-
-    const glfw_dep = b.dependency("mach_glfw", .{
-        .target = exe.target,
-        .optimize = exe.optimize,
+/// Adds GLFW to the build step, returns the module created if you want to add it to other
+/// builds also.
+/// - Once this is used in your build.zig you can use `const glfw = @import("glfw");` in your zig
+/// code.
+/// - Compiles GLFW from source, and uses a curated zig file as a module.
+pub fn linkGlfw(b: *std.build.Builder, exe: *std.build.CompileStep) *std.Build.Module {
+    exe.linkLibrary(glfwLibrary(b, exe));
+    const glfw = b.createModule(.{
+        .source_file = .{
+            .path = comptime thisDir() ++ "/src/pkg/glfw.zig",
+        },
     });
-    const glfwModule = glfw_dep.module("mach-glfw");
-    exe.addModule("mach-glfw", glfwModule);
-    const glfw = @import("mach_glfw");
 
-    const gl = b.addTranslateC(.{ .target = exe.target, .optimize = exe.optimize, .source_file = .{ .path = comptime thisDir() ++ "/src/dep/gl/glad/include/glad/glad.h" } }).addModule("glad");
-    const stb_image = b.addTranslateC(.{ .target = exe.target, .optimize = exe.optimize, .source_file = .{ .path = comptime thisDir() ++ "/src/dep/stb/stb_image.h" } }).addModule("stb_image");
-    const imgui = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/pkg/imgui.zig" } });
-    const zt = b.createModule(.{ .source_file = .{ .path = comptime thisDir() ++ "/src/zt.zig" }, .dependencies = &.{
-        .{ .name = "glfw", .module = glfwModule },
-        .{ .name = "gl", .module = gl },
-        .{ .name = "stb_image", .module = stb_image },
-        .{ .name = "imgui", .module = imgui },
-    } });
+    exe.addModule("glfw", glfw);
 
-    exe.addModule("glfw", glfwModule);
+    return glfw;
+}
+/// Adds OpenGL 3.3 Core via GLAD to the build step, returns the module created if you want
+/// to add it to other builds also.
+/// - Once this is used in your build.zig you can use `const gl = @import("gl");` in your zig
+/// code.
+/// - Uses a curated zig file as a module.
+pub fn linkGl(b: *std.build.Builder, exe: *std.build.CompileStep) *std.Build.Module {
+    exe.linkLibrary(glLibrary(b, exe));
+    const gl = b.createModule(.{
+        .source_file = .{
+            .path = comptime thisDir() ++ "/src/pkg/gl.zig",
+        },
+    });
+
     exe.addModule("gl", gl);
-    exe.addModule("stb_image", stb_image);
-    exe.addModule("imgui", imgui);
-    exe.addModule("zt", zt);
 
-    try glfw.link(b, exe);
+    return gl;
+}
+/// Adds ImGui 1.90 to the build step, returns the module created if you want
+/// to add it to other builds also.
+/// - Once this is used in your build.zig you can use `const ig = @import("imgui");` in your zig
+/// code.
+/// - Compiles cimgui from source code, and uses a curated zig file as a module.
+pub fn linkImGui(b: *std.build.Builder, exe: *std.build.CompileStep) *std.Build.Module {
+    exe.linkLibrary(imguiLibrary(b, exe));
+    const imgui = b.createModule(.{
+        .source_file = .{
+            .path = comptime thisDir() ++ "/src/pkg/imgui.zig",
+        },
+    });
+
+    exe.addModule("imgui", imgui);
+
+    return imgui;
+}
+/// Adds STB Image to the build step, returns the module created if you want
+/// to add it to other builds also.
+/// - Once this is used in your build.zig you can use `const ig = @import("imgui");` in your zig
+/// code.
+/// - Compiles cimgui from source code, and uses a curated zig file as a module.
+pub fn linkSTBImage(b: *std.build.Builder, exe: *std.build.CompileStep) *std.Build.Module {
+    exe.linkLibrary(stbLibrary(b, exe));
+    const stb = b.createModule(.{
+        .source_file = .{
+            .path = comptime thisDir() ++ "/src/pkg/stb_image.zig",
+        },
+    });
+
+    exe.addModule("stb_image", stb);
+
+    return stb;
+}
+
+/// Automatically links STB/ImGui/GLFW/ZT into your build step. You don't need to link anything
+/// but this if your intention is to use `zt.App`
+pub fn link(b: *std.build.Builder, exe: *std.build.CompileStep) void {
+    // Link step
+    const stb_image = linkSTBImage(b, exe);
+    const imgui = linkImGui(b, exe);
+    const gl = linkGl(b, exe);
+    const glfw = linkGlfw(b, exe);
+
+    const zt = b.createModule(.{
+        .source_file = .{
+            .path = comptime thisDir() ++ "/src/zt.zig",
+        },
+        .dependencies = &.{
+            .{ .name = "glfw", .module = glfw },
+            .{ .name = "gl", .module = gl },
+            .{ .name = "stb_image", .module = stb_image },
+            .{ .name = "imgui", .module = imgui },
+        },
+    });
+
+    exe.addModule("zt", zt);
 }
 
 // STB
@@ -210,6 +238,55 @@ pub fn imguiLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.bui
     imgui.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/cimgui/cimgui.cpp" }, .flags = flagContainer.items });
 
     return imgui;
+}
+
+// glfw
+pub fn glfwLibrary(b: *std.build.Builder, exe: *std.build.CompileStep) *std.build.CompileStep {
+    const path = comptime getRelativePath();
+    var target = exe.target;
+    var glfw = b.addStaticLibrary(.{ .name = "glfw", .target = exe.target, .optimize = exe.optimize });
+    glfw.linkLibC();
+
+    // Generate flags.
+    var flagContainer = std.ArrayList([]const u8).init(std.heap.page_allocator);
+    if (exe.optimize != .Debug) flagContainer.append("-Os") catch unreachable;
+    flagContainer.append("-Wno-return-type-c-linkage") catch unreachable;
+    flagContainer.append("-fno-sanitize=undefined") catch unreachable;
+
+    glfw.addIncludePath(.{ .path = path ++ "/src/dep/glfw/deps" });
+    glfw.addIncludePath(.{ .path = path ++ "/src/dep/glfw/include" });
+
+    // Link libraries.
+    if (target.isWindows()) {
+        flagContainer.append("-D_GLFW_WIN32") catch unreachable;
+        glfw.linkSystemLibrary("gdi32");
+
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/win32_init.c" }, .flags = flagContainer.items });
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/win32_joystick.c" }, .flags = flagContainer.items });
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/win32_monitor.c" }, .flags = flagContainer.items });
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/win32_time.c" }, .flags = flagContainer.items });
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/win32_thread.c" }, .flags = flagContainer.items });
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/win32_window.c" }, .flags = flagContainer.items });
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/wgl_context.c" }, .flags = flagContainer.items });
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/egl_context.c" }, .flags = flagContainer.items });
+        glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/osmesa_context.c" }, .flags = flagContainer.items });
+    }
+
+    if (target.isDarwin()) {
+        // !! Mac TODO
+        // Here we need to add the include the system libs needed for mac glfw
+        // However, i do not own a mac to implement this on.
+    }
+
+    // Add C
+    glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/context.c" }, .flags = flagContainer.items });
+    glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/init.c" }, .flags = flagContainer.items });
+    glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/input.c" }, .flags = flagContainer.items });
+    glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/monitor.c" }, .flags = flagContainer.items });
+    glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/vulkan.c" }, .flags = flagContainer.items });
+    glfw.addCSourceFile(.{ .file = .{ .path = path ++ "/src/dep/glfw/src/window.c" }, .flags = flagContainer.items });
+
+    return glfw;
 }
 
 pub const AddContentErrors = error{ PermissionError, WriteError, FileError, FolderError, RecursionError };

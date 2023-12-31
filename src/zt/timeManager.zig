@@ -11,11 +11,11 @@ dt: f32 = 0.0,
 
 pub fn init() @This() {
     return .{
-        ._previous = glfw.getTime(),
+        ._previous = glfw.glfwGetTime(),
     };
 }
 pub fn tick(self: *Self) void {
-    const lap = glfw.getTime();
+    const lap = glfw.glfwGetTime();
 
     // No need to worry about overflow, unless a frame intends to last for over a month.
     self.dt = @as(f32, @floatCast(lap - self._previous));

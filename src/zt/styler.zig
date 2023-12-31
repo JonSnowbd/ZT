@@ -38,7 +38,7 @@ pub fn styleSizeCompact() void {
     style.*.WindowMenuButtonPosition = ig.ImGuiDir_None;
 }
 
-/// Provide 4 colors, contrast, and if it is a light theme, and reroute will automatically
+/// Provide 4 colors, contrast, and if it is a light theme, and zt will automatically
 /// style each of your imgui colors. If you're changing this and re-building often, prefer to use
 /// styleColorEditor() to toy with this in real time.
 pub fn styleColorCustom(background: ig.ImVec4, foreground: ig.ImVec4, highlight: ig.ImVec4, special: ig.ImVec4, contrast: f32, isLightTheme: bool) void {

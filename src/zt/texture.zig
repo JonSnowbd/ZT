@@ -6,15 +6,18 @@ const Self = @This();
 id: c_uint = undefined,
 width: f32 = undefined,
 height: f32 = undefined,
-dead: bool = true,
 
 /// Loads an already existing opengl texture from a c_uint
-/// inDepth optionally inspects the opengl texture to fill in texture width/height information.
-pub fn from(id: c_uint, inDepth: bool) Self {
-    var self: Self = .{ .id = id, .dead = false };
-    if (inDepth) {
-        self.updateInformation();
-    }
+/// inDepth inspects the opengl texture to fill in texture width/height information.
+pub fn from(id: c_uint) Self {
+    var self: Self = .{ .id = id };
+    self.bind();
+    var w: c_int = 0;
+    var h: c_int = 0;
+    gl.glGetTexLevelParameteriv(gl.GL_TEXTURE_2D, 0, gl.GL_TEXTURE_WIDTH, &w);
+    gl.glGetTexLevelParameteriv(gl.GL_TEXTURE_2D, 0, gl.GL_TEXTURE_HEIGHT, &h);
+    self.width = @floatFromInt(w);
+    self.height = @floatFromInt(h);
     return self;
 }
 /// Takes a file path and loads it into opengl using stb_image.
@@ -52,7 +55,6 @@ pub fn init(filePath: []const u8) !Self {
     }
     gl.glGenerateMipmap(gl.GL_TEXTURE_2D);
     stb.stbi_image_free(data);
-    self.dead = false;
 
     gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Init isnt an explicit bind, so reset.
 
@@ -104,7 +106,6 @@ pub fn initMemory(slice: []const u8) !Self {
     }
     gl.glGenerateMipmap(gl.GL_TEXTURE_2D);
     stb.stbi_image_free(data);
-    self.dead = false;
 
     gl.glBindTexture(gl.GL_TEXTURE_2D, 0); // Init isnt an explicit bind, so reset.
 
@@ -112,17 +113,6 @@ pub fn initMemory(slice: []const u8) !Self {
 }
 pub fn deinit(self: *Self) void {
     gl.glDeleteTextures(1, &self.id);
-    self.dead = true;
-}
-/// using Texture.from(c_uint) is a naive cast that wont query size to generate information.
-fn updateInformation(self: *Self) void {
-    self.bind();
-    var w: c_int = 0;
-    var h: c_int = 0;
-    gl.glGetTexLevelParameteriv(gl.GL_TEXTURE_2D, 0, gl.GL_TEXTURE_WIDTH, &w);
-    gl.glGetTexLevelParameteriv(gl.GL_TEXTURE_2D, 0, gl.GL_TEXTURE_HEIGHT, &h);
-    self.width = @floatFromInt(w);
-    self.height = @floatFromInt(h);
 }
 pub fn bind(self: *Self) void {
     gl.glActiveTexture(gl.GL_TEXTURE0);

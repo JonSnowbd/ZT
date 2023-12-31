@@ -37,13 +37,27 @@ for your game is as smooth as it can be without deciding anything for you
 
 To work with ZT You will need:
 
-- Zig 0.11.* Main branch build. Nightly might work as well (last tested `0.12.0-dev.1856+94c63f31f`).
+- Zig's nightly branch build. Avoid stable (unless I have been slacking in keeping this up to date...)
 - Ubuntu: `sudo apt install build-essential xorg-dev`
+
+## Massive changes
+
+- `zt.Button`, `zt.Axis`, and `zt.Stick` have been added, they are enums of all possible inputs, consolidated
+keyboard, mouse, and gamepad inputs. The members have methods for querying, and should cover a lot of functionality.
+For example `zt.Button.W.down()` will check if down. Check out the various 
+- `zt.App(ContextData)` is dead, the user should now handle their own data manager(or lack thereof). This
+simplifies the library and makes it easier to approach, whilst giving more freedom to the loop that the user implements.
+- It is now assumed that if youre linking `zt` that you are opting into the whole package, as such the library is no
+longer segmented, and is integrated more tightly with the `zt.Context` application path. This should not change anything
+for people using ZT for opengl/glfw/imgui packages.
+- `mach-glfw` has been cut out, sorry, the convenience of the wrapper was nice, but I want to return to zt being
+entirely self contained, and being different than mach's versioning targets is inconvenient.
+- Soon I will be attempting to automate the update of packages to keep this library clean and reliable.
 
 ### Current Status
 
-- ZT when used for the purpose of GL/ImGui libraries is very stable
-- ZT.App is still receiving breaking changes as I find where I can make
+- This package when used for the purpose of linking GLFW/GL/ImGui libraries is very stable
+- ZT is still receiving breaking changes as I find where I can make
 the library more flexible for casual use, but overall I find it convenient for
 applications and games
 
@@ -85,20 +99,12 @@ Then getting started is as easy as this:
 const std = @import("std");
 const zt = @import("zt");
 
-/// SampleData will be available through the context anywhere.
-const SampleData = struct {
-    yourData: i32 = 0,
-};
-
-const SampleApplication = zt.App(SampleData);
-
 pub fn main() !void {
-    var context = try SampleApplication.begin(std.heap.c_allocator);
+    var context = try zt.begin(std.heap.c_allocator);
     // Config here,
     while(context.open) {
         context.beginFrame();
-        // Application code here!
-        context.data.yourData += 1;
+        // Your app code here!
         context.endFrame();
     }
     // Unload here
@@ -110,13 +116,11 @@ For a more indepth example [see the example file that shows opengl rendering mix
 
 ## Gotcha:
 
-- ZT.App.begin sets its own GLFW user pointer! Its important too, so use something else for your storage, or if you really want the functionality,
+- ZT.Context sets its own GLFW user pointer! Its important too, so use something else for your storage, or if you really want the functionality,
 let me know and I'll see how I can enable your usecase within ZT.
 - By linking ZT the following packages are available to your app on both windows and ubuntu: `zt`, `gl`, `glfw`, `imgui`, `stb_image`
 - ImVec2 and ImVec4 are both substituted with zlm's Vec2 and Vec4 structs respectively, you can use both interchangeably.
-- Disabling power saving mode will let GLFW handle buffer flip timing, so likely will be at vsync fps rather than on every
-event, unless you disable vsync.
-- Need direct access to the input queue? Your context contains an ArrayList of tagged unions that summarizes every input event.
+- Need direct access to the input queue? The context contains an ArrayList of tagged unions that summarizes every input event.
 Try to use this instead of overriding GLFW event callbacks.
 
 ## Credits

@@ -48,7 +48,6 @@ pub fn Generate(comptime T: type, comptime spatialSettings: SpatialHashSettings)
                 .allocator = allocator,
                 .hashBins = HashType.init(allocator),
                 .holding = Bucket.init(allocator),
-                // .visualization = if (spatialSettings.visualizable) .{} else {},
             };
         }
         /// Deallocates all the memory associated with this spatial hash. Note if T is not a pointer,

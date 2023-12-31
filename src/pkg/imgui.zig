@@ -24,6 +24,8 @@ pub const __builtin_log2f = @import("std").zig.c_builtins.__builtin_log2f;
 pub const __builtin_log10 = @import("std").zig.c_builtins.__builtin_log10;
 pub const __builtin_log10f = @import("std").zig.c_builtins.__builtin_log10f;
 pub const __builtin_abs = @import("std").zig.c_builtins.__builtin_abs;
+pub const __builtin_labs = @import("std").zig.c_builtins.__builtin_labs;
+pub const __builtin_llabs = @import("std").zig.c_builtins.__builtin_llabs;
 pub const __builtin_fabs = @import("std").zig.c_builtins.__builtin_fabs;
 pub const __builtin_fabsf = @import("std").zig.c_builtins.__builtin_fabsf;
 pub const __builtin_floor = @import("std").zig.c_builtins.__builtin_floor;
@@ -53,674 +55,1106 @@ pub const __builtin_assume = @import("std").zig.c_builtins.__builtin_assume;
 pub const __builtin_unreachable = @import("std").zig.c_builtins.__builtin_unreachable;
 pub const __builtin_constant_p = @import("std").zig.c_builtins.__builtin_constant_p;
 pub const __builtin_mul_overflow = @import("std").zig.c_builtins.__builtin_mul_overflow;
-pub const __builtin_va_list = ?*anyopaque;
-pub const va_list = __builtin_va_list;
-pub const __isoc_va_list = __builtin_va_list;
-pub const off_t = c_longlong;
-pub const struct__IO_FILE = opaque {};
-pub const FILE = struct__IO_FILE;
-pub const union__G_fpos64_t = extern union {
-    __opaque: [16]u8,
-    __lldata: c_longlong,
-    __align: f64,
+pub const __builtin_va_list = [*c]u8;
+pub const __gnuc_va_list = __builtin_va_list;
+pub const va_list = __gnuc_va_list; // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:590:3: warning: TODO implement translation of stmt class GCCAsmStmtClass
+// C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:587:36: warning: unable to translate function, demoted to extern
+pub extern fn __debugbreak() void;
+pub extern fn __mingw_get_crt_info() [*c]const u8;
+pub const rsize_t = usize;
+pub const ptrdiff_t = c_longlong;
+pub const wchar_t = c_ushort;
+pub const wint_t = c_ushort;
+pub const wctype_t = c_ushort;
+pub const errno_t = c_int;
+pub const __time32_t = c_long;
+pub const __time64_t = c_longlong;
+pub const time_t = __time64_t;
+pub const struct_tagLC_ID = extern struct {
+    wLanguage: c_ushort = @import("std").mem.zeroes(c_ushort),
+    wCountry: c_ushort = @import("std").mem.zeroes(c_ushort),
+    wCodePage: c_ushort = @import("std").mem.zeroes(c_ushort),
 };
-pub const fpos_t = union__G_fpos64_t;
-pub extern const stdin: ?*FILE;
-pub extern const stdout: ?*FILE;
-pub extern const stderr: ?*FILE;
-pub extern fn fopen(noalias [*c]const u8, noalias [*c]const u8) ?*FILE;
-pub extern fn freopen(noalias [*c]const u8, noalias [*c]const u8, noalias ?*FILE) ?*FILE;
-pub extern fn fclose(?*FILE) c_int;
-pub extern fn remove([*c]const u8) c_int;
-pub extern fn rename([*c]const u8, [*c]const u8) c_int;
-pub extern fn feof(?*FILE) c_int;
-pub extern fn ferror(?*FILE) c_int;
-pub extern fn fflush(?*FILE) c_int;
-pub extern fn clearerr(?*FILE) void;
-pub extern fn fseek(?*FILE, c_long, c_int) c_int;
-pub extern fn ftell(?*FILE) c_long;
-pub extern fn rewind(?*FILE) void;
-pub extern fn fgetpos(noalias ?*FILE, noalias [*c]fpos_t) c_int;
-pub extern fn fsetpos(?*FILE, [*c]const fpos_t) c_int;
-pub extern fn fread(noalias ?*anyopaque, usize, usize, noalias ?*FILE) usize;
-pub extern fn fwrite(noalias ?*const anyopaque, usize, usize, noalias ?*FILE) usize;
-pub extern fn fgetc(?*FILE) c_int;
-pub extern fn getc(?*FILE) c_int;
+pub const LC_ID = struct_tagLC_ID;
+const struct_unnamed_1 = extern struct {
+    locale: [*c]u8 = @import("std").mem.zeroes([*c]u8),
+    wlocale: [*c]wchar_t = @import("std").mem.zeroes([*c]wchar_t),
+    refcount: [*c]c_int = @import("std").mem.zeroes([*c]c_int),
+    wrefcount: [*c]c_int = @import("std").mem.zeroes([*c]c_int),
+};
+pub const struct_lconv_2 = opaque {};
+pub const struct___lc_time_data = opaque {};
+pub const struct_threadlocaleinfostruct = extern struct {
+    refcount: c_int = @import("std").mem.zeroes(c_int),
+    lc_codepage: c_uint = @import("std").mem.zeroes(c_uint),
+    lc_collate_cp: c_uint = @import("std").mem.zeroes(c_uint),
+    lc_handle: [6]c_ulong = @import("std").mem.zeroes([6]c_ulong),
+    lc_id: [6]LC_ID = @import("std").mem.zeroes([6]LC_ID),
+    lc_category: [6]struct_unnamed_1 = @import("std").mem.zeroes([6]struct_unnamed_1),
+    lc_clike: c_int = @import("std").mem.zeroes(c_int),
+    mb_cur_max: c_int = @import("std").mem.zeroes(c_int),
+    lconv_intl_refcount: [*c]c_int = @import("std").mem.zeroes([*c]c_int),
+    lconv_num_refcount: [*c]c_int = @import("std").mem.zeroes([*c]c_int),
+    lconv_mon_refcount: [*c]c_int = @import("std").mem.zeroes([*c]c_int),
+    lconv: ?*struct_lconv_2 = @import("std").mem.zeroes(?*struct_lconv_2),
+    ctype1_refcount: [*c]c_int = @import("std").mem.zeroes([*c]c_int),
+    ctype1: [*c]c_ushort = @import("std").mem.zeroes([*c]c_ushort),
+    pctype: [*c]const c_ushort = @import("std").mem.zeroes([*c]const c_ushort),
+    pclmap: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    pcumap: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    lc_time_curr: ?*struct___lc_time_data = @import("std").mem.zeroes(?*struct___lc_time_data),
+};
+pub const struct_threadmbcinfostruct = opaque {};
+pub const pthreadlocinfo = [*c]struct_threadlocaleinfostruct;
+pub const pthreadmbcinfo = ?*struct_threadmbcinfostruct;
+pub const struct_localeinfo_struct = extern struct {
+    locinfo: pthreadlocinfo = @import("std").mem.zeroes(pthreadlocinfo),
+    mbcinfo: pthreadmbcinfo = @import("std").mem.zeroes(pthreadmbcinfo),
+};
+pub const _locale_tstruct = struct_localeinfo_struct;
+pub const _locale_t = [*c]struct_localeinfo_struct;
+pub const LPLC_ID = [*c]struct_tagLC_ID;
+pub const threadlocinfo = struct_threadlocaleinfostruct;
+pub const struct__iobuf = extern struct {
+    _ptr: [*c]u8 = @import("std").mem.zeroes([*c]u8),
+    _cnt: c_int = @import("std").mem.zeroes(c_int),
+    _base: [*c]u8 = @import("std").mem.zeroes([*c]u8),
+    _flag: c_int = @import("std").mem.zeroes(c_int),
+    _file: c_int = @import("std").mem.zeroes(c_int),
+    _charbuf: c_int = @import("std").mem.zeroes(c_int),
+    _bufsiz: c_int = @import("std").mem.zeroes(c_int),
+    _tmpfname: [*c]u8 = @import("std").mem.zeroes([*c]u8),
+};
+pub const FILE = struct__iobuf;
+pub const _off_t = c_long;
+pub const off32_t = c_long;
+pub const _off64_t = c_longlong;
+pub const off64_t = c_longlong;
+pub const off_t = off32_t;
+pub extern fn __acrt_iob_func(index: c_uint) [*c]FILE;
+pub extern fn __iob_func() [*c]FILE;
+pub const fpos_t = c_longlong;
+pub extern fn __mingw_sscanf(noalias _Src: [*c]const u8, noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn __mingw_vsscanf(noalias _Str: [*c]const u8, noalias Format: [*c]const u8, argp: va_list) c_int;
+pub extern fn __mingw_scanf(noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn __mingw_vscanf(noalias Format: [*c]const u8, argp: va_list) c_int;
+pub extern fn __mingw_fscanf(noalias _File: [*c]FILE, noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn __mingw_vfscanf(noalias fp: [*c]FILE, noalias Format: [*c]const u8, argp: va_list) c_int;
+pub extern fn __mingw_vsnprintf(noalias _DstBuf: [*c]u8, _MaxCount: usize, noalias _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn __mingw_snprintf(noalias s: [*c]u8, n: usize, noalias format: [*c]const u8, ...) c_int;
+pub const __mingw_printf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:184:15
+pub const __mingw_vprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:187:15
+pub const __mingw_fprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:190:15
+pub const __mingw_vfprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:193:15
+pub const __mingw_sprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:196:15
+pub const __mingw_vsprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:199:15
+pub const __mingw_asprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:202:15
+pub const __mingw_vasprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:205:15
+pub extern fn __ms_sscanf(noalias _Src: [*c]const u8, noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn __ms_scanf(noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn __ms_fscanf(noalias _File: [*c]FILE, noalias _Format: [*c]const u8, ...) c_int;
+pub const __ms_printf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:219:15
+pub const __ms_vprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:222:15
+pub const __ms_fprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:225:15
+pub const __ms_vfprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:228:15
+pub const __ms_sprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:231:15
+pub const __ms_vsprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:234:15
+// C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:290:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn sscanf(__source: [*c]const u8, __format: [*c]const u8, ...) c_int; // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:301:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn scanf(__format: [*c]const u8, ...) c_int; // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:312:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fscanf(__stream: [*c]FILE, __format: [*c]const u8, ...) c_int;
+pub fn vsscanf(arg___source: [*c]const u8, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __source = arg___source;
+    _ = &__source;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vsscanf(__source, __format, __local_argv);
+}
+pub fn vscanf(arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vfscanf(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), __format, __local_argv);
+}
+pub fn vfscanf(arg___stream: [*c]FILE, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vfscanf(__stream, __format, __local_argv);
+} // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:357:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fprintf(__stream: [*c]FILE, __format: [*c]const u8, ...) c_int; // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:368:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn printf(__format: [*c]const u8, ...) c_int; // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:396:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn sprintf(__stream: [*c]u8, __format: [*c]const u8, ...) c_int;
+pub fn vfprintf(arg___stream: [*c]FILE, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vfprintf(__stream, __format, __local_argv);
+}
+pub fn vprintf(arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vfprintf(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), __format, __local_argv);
+}
+pub fn vsprintf(arg___stream: [*c]u8, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vsprintf(__stream, __format, __local_argv);
+} // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:451:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn snprintf(__stream: [*c]u8, __n: usize, __format: [*c]const u8, ...) c_int;
+pub fn vsnprintf(arg___stream: [*c]u8, arg___n: usize, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __n = arg___n;
+    _ = &__n;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vsnprintf(__stream, __n, __format, __local_argv);
+}
+pub extern fn _filbuf(_File: [*c]FILE) c_int;
+pub extern fn _flsbuf(_Ch: c_int, _File: [*c]FILE) c_int;
+pub extern fn _fsopen(_Filename: [*c]const u8, _Mode: [*c]const u8, _ShFlag: c_int) [*c]FILE;
+pub extern fn clearerr(_File: [*c]FILE) void;
+pub extern fn fclose(_File: [*c]FILE) c_int;
+pub extern fn _fcloseall() c_int;
+pub extern fn _fdopen(_FileHandle: c_int, _Mode: [*c]const u8) [*c]FILE;
+pub extern fn feof(_File: [*c]FILE) c_int;
+pub extern fn ferror(_File: [*c]FILE) c_int;
+pub extern fn fflush(_File: [*c]FILE) c_int;
+pub extern fn fgetc(_File: [*c]FILE) c_int;
+pub extern fn _fgetchar() c_int;
+pub extern fn fgetpos(noalias _File: [*c]FILE, noalias _Pos: [*c]fpos_t) c_int;
+pub extern fn fgetpos64(noalias _File: [*c]FILE, noalias _Pos: [*c]fpos_t) c_int;
+pub extern fn fgets(noalias _Buf: [*c]u8, _MaxCount: c_int, noalias _File: [*c]FILE) [*c]u8;
+pub extern fn _fileno(_File: [*c]FILE) c_int;
+pub extern fn _tempnam(_DirName: [*c]const u8, _FilePrefix: [*c]const u8) [*c]u8;
+pub extern fn _flushall() c_int;
+pub extern fn fopen(_Filename: [*c]const u8, _Mode: [*c]const u8) [*c]FILE;
+pub extern fn fopen64(noalias filename: [*c]const u8, noalias mode: [*c]const u8) [*c]FILE;
+pub extern fn fputc(_Ch: c_int, _File: [*c]FILE) c_int;
+pub extern fn _fputchar(_Ch: c_int) c_int;
+pub extern fn fputs(noalias _Str: [*c]const u8, noalias _File: [*c]FILE) c_int;
+pub extern fn fread(_DstBuf: ?*anyopaque, _ElementSize: c_ulonglong, _Count: c_ulonglong, _File: [*c]FILE) c_ulonglong;
+pub extern fn freopen(noalias _Filename: [*c]const u8, noalias _Mode: [*c]const u8, noalias _File: [*c]FILE) [*c]FILE;
+pub extern fn fsetpos(_File: [*c]FILE, _Pos: [*c]const fpos_t) c_int;
+pub extern fn fsetpos64(_File: [*c]FILE, _Pos: [*c]const fpos_t) c_int;
+pub extern fn fseek(_File: [*c]FILE, _Offset: c_long, _Origin: c_int) c_int;
+pub extern fn ftell(_File: [*c]FILE) c_long;
+pub extern fn _fseeki64(_File: [*c]FILE, _Offset: c_longlong, _Origin: c_int) c_int;
+pub extern fn _ftelli64(_File: [*c]FILE) c_longlong;
+pub extern fn fseeko64(stream: [*c]FILE, offset: _off64_t, whence: c_int) c_int;
+pub extern fn fseeko(stream: [*c]FILE, offset: _off_t, whence: c_int) c_int;
+pub extern fn ftello(stream: [*c]FILE) _off_t;
+pub extern fn ftello64(stream: [*c]FILE) _off64_t;
+pub extern fn fwrite(_Str: ?*const anyopaque, _Size: c_ulonglong, _Count: c_ulonglong, _File: [*c]FILE) c_ulonglong;
+pub extern fn getc(_File: [*c]FILE) c_int;
 pub extern fn getchar() c_int;
-pub extern fn ungetc(c_int, ?*FILE) c_int;
-pub extern fn fputc(c_int, ?*FILE) c_int;
-pub extern fn putc(c_int, ?*FILE) c_int;
-pub extern fn putchar(c_int) c_int;
-pub extern fn fgets(noalias [*c]u8, c_int, noalias ?*FILE) [*c]u8;
-pub extern fn fputs(noalias [*c]const u8, noalias ?*FILE) c_int;
-pub extern fn puts([*c]const u8) c_int;
-pub extern fn printf(noalias [*c]const u8, ...) c_int;
-pub extern fn fprintf(noalias ?*FILE, noalias [*c]const u8, ...) c_int;
-pub extern fn sprintf(noalias [*c]u8, noalias [*c]const u8, ...) c_int;
-pub extern fn snprintf(noalias [*c]u8, usize, noalias [*c]const u8, ...) c_int;
-pub extern fn vprintf(noalias [*c]const u8, __isoc_va_list) c_int;
-pub extern fn vfprintf(noalias ?*FILE, noalias [*c]const u8, __isoc_va_list) c_int;
-pub extern fn vsprintf(noalias [*c]u8, noalias [*c]const u8, __isoc_va_list) c_int;
-pub extern fn vsnprintf(noalias [*c]u8, usize, noalias [*c]const u8, __isoc_va_list) c_int;
-pub extern fn scanf(noalias [*c]const u8, ...) c_int;
-pub extern fn fscanf(noalias ?*FILE, noalias [*c]const u8, ...) c_int;
-pub extern fn sscanf(noalias [*c]const u8, noalias [*c]const u8, ...) c_int;
-pub extern fn vscanf(noalias [*c]const u8, __isoc_va_list) c_int;
-pub extern fn vfscanf(noalias ?*FILE, noalias [*c]const u8, __isoc_va_list) c_int;
-pub extern fn vsscanf(noalias [*c]const u8, noalias [*c]const u8, __isoc_va_list) c_int;
-pub extern fn perror([*c]const u8) void;
-pub extern fn setvbuf(noalias ?*FILE, noalias [*c]u8, c_int, usize) c_int;
-pub extern fn setbuf(noalias ?*FILE, noalias [*c]u8) void;
-pub extern fn tmpnam([*c]u8) [*c]u8;
-pub extern fn tmpfile() ?*FILE;
-pub extern fn fmemopen(noalias ?*anyopaque, usize, noalias [*c]const u8) ?*FILE;
-pub extern fn open_memstream([*c][*c]u8, [*c]usize) ?*FILE;
-pub extern fn fdopen(c_int, [*c]const u8) ?*FILE;
-pub extern fn popen([*c]const u8, [*c]const u8) ?*FILE;
-pub extern fn pclose(?*FILE) c_int;
-pub extern fn fileno(?*FILE) c_int;
-pub extern fn fseeko(?*FILE, off_t, c_int) c_int;
-pub extern fn ftello(?*FILE) off_t;
-pub extern fn dprintf(c_int, noalias [*c]const u8, ...) c_int;
-pub extern fn vdprintf(c_int, noalias [*c]const u8, __isoc_va_list) c_int;
-pub extern fn flockfile(?*FILE) void;
-pub extern fn ftrylockfile(?*FILE) c_int;
-pub extern fn funlockfile(?*FILE) void;
-pub extern fn getc_unlocked(?*FILE) c_int;
-pub extern fn getchar_unlocked() c_int;
-pub extern fn putc_unlocked(c_int, ?*FILE) c_int;
-pub extern fn putchar_unlocked(c_int) c_int;
-pub extern fn getdelim(noalias [*c][*c]u8, noalias [*c]usize, c_int, noalias ?*FILE) isize;
-pub extern fn getline(noalias [*c][*c]u8, noalias [*c]usize, noalias ?*FILE) isize;
-pub extern fn renameat(c_int, [*c]const u8, c_int, [*c]const u8) c_int;
-pub extern fn ctermid([*c]u8) [*c]u8;
-pub extern fn tempnam([*c]const u8, [*c]const u8) [*c]u8;
-pub extern fn cuserid([*c]u8) [*c]u8;
-pub extern fn setlinebuf(?*FILE) void;
-pub extern fn setbuffer(?*FILE, [*c]u8, usize) void;
-pub extern fn fgetc_unlocked(?*FILE) c_int;
-pub extern fn fputc_unlocked(c_int, ?*FILE) c_int;
-pub extern fn fflush_unlocked(?*FILE) c_int;
-pub extern fn fread_unlocked(?*anyopaque, usize, usize, ?*FILE) usize;
-pub extern fn fwrite_unlocked(?*const anyopaque, usize, usize, ?*FILE) usize;
-pub extern fn clearerr_unlocked(?*FILE) void;
-pub extern fn feof_unlocked(?*FILE) c_int;
-pub extern fn ferror_unlocked(?*FILE) c_int;
-pub extern fn fileno_unlocked(?*FILE) c_int;
-pub extern fn getw(?*FILE) c_int;
-pub extern fn putw(c_int, ?*FILE) c_int;
-pub extern fn fgetln(?*FILE, [*c]usize) [*c]u8;
-pub extern fn asprintf([*c][*c]u8, [*c]const u8, ...) c_int;
-pub extern fn vasprintf([*c][*c]u8, [*c]const u8, __isoc_va_list) c_int;
-pub const int_least64_t = i64;
-pub const uint_least64_t = u64;
-pub const int_fast64_t = i64;
-pub const uint_fast64_t = u64;
-pub const int_least32_t = i32;
-pub const uint_least32_t = u32;
-pub const int_fast32_t = i32;
-pub const uint_fast32_t = u32;
-pub const int_least16_t = i16;
-pub const uint_least16_t = u16;
-pub const int_fast16_t = i16;
-pub const uint_fast16_t = u16;
+pub extern fn _getmaxstdio() c_int;
+pub extern fn gets(_Buffer: [*c]u8) [*c]u8;
+pub extern fn _getw(_File: [*c]FILE) c_int;
+pub extern fn perror(_ErrMsg: [*c]const u8) void;
+pub extern fn _pclose(_File: [*c]FILE) c_int;
+pub extern fn _popen(_Command: [*c]const u8, _Mode: [*c]const u8) [*c]FILE;
+pub extern fn putc(_Ch: c_int, _File: [*c]FILE) c_int;
+pub extern fn putchar(_Ch: c_int) c_int;
+pub extern fn puts(_Str: [*c]const u8) c_int;
+pub extern fn _putw(_Word: c_int, _File: [*c]FILE) c_int;
+pub extern fn remove(_Filename: [*c]const u8) c_int;
+pub extern fn rename(_OldFilename: [*c]const u8, _NewFilename: [*c]const u8) c_int;
+pub extern fn _unlink(_Filename: [*c]const u8) c_int;
+pub extern fn unlink(_Filename: [*c]const u8) c_int;
+pub extern fn rewind(_File: [*c]FILE) void;
+pub extern fn _rmtmp() c_int;
+pub extern fn setbuf(noalias _File: [*c]FILE, noalias _Buffer: [*c]u8) void;
+pub extern fn _setmaxstdio(_Max: c_int) c_int;
+pub extern fn _set_output_format(_Format: c_uint) c_uint;
+pub extern fn _get_output_format() c_uint;
+pub extern fn setvbuf(noalias _File: [*c]FILE, noalias _Buf: [*c]u8, _Mode: c_int, _Size: usize) c_int;
+pub extern fn _scprintf(noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn _snscanf(noalias _Src: [*c]const u8, _MaxCount: usize, noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn _vscprintf(noalias _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn tmpfile() [*c]FILE;
+pub extern fn tmpnam(_Buffer: [*c]u8) [*c]u8;
+pub extern fn ungetc(_Ch: c_int, _File: [*c]FILE) c_int;
+pub extern fn _snprintf(noalias _Dest: [*c]u8, _Count: usize, noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn _vsnprintf(noalias _Dest: [*c]u8, _Count: usize, noalias _Format: [*c]const u8, _Args: va_list) c_int;
+pub extern fn _set_printf_count_output(_Value: c_int) c_int;
+pub extern fn _get_printf_count_output() c_int;
+pub extern fn __mingw_swscanf(noalias _Src: [*c]const wchar_t, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __mingw_vswscanf(noalias _Str: [*c]const wchar_t, noalias Format: [*c]const wchar_t, argp: va_list) c_int;
+pub extern fn __mingw_wscanf(noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __mingw_vwscanf(noalias Format: [*c]const wchar_t, argp: va_list) c_int;
+pub extern fn __mingw_fwscanf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __mingw_vfwscanf(noalias fp: [*c]FILE, noalias Format: [*c]const wchar_t, argp: va_list) c_int;
+pub extern fn __mingw_fwprintf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __mingw_wprintf(noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __mingw_vfwprintf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn __mingw_vwprintf(noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn __mingw_snwprintf(noalias s: [*c]wchar_t, n: usize, noalias format: [*c]const wchar_t, ...) c_int;
+pub extern fn __mingw_vsnwprintf(noalias [*c]wchar_t, usize, noalias [*c]const wchar_t, va_list) c_int;
+pub extern fn __mingw_swprintf(noalias [*c]wchar_t, noalias [*c]const wchar_t, ...) c_int;
+pub extern fn __mingw_vswprintf(noalias [*c]wchar_t, noalias [*c]const wchar_t, va_list) c_int;
+pub extern fn __ms_swscanf(noalias _Src: [*c]const wchar_t, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __ms_wscanf(noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __ms_fwscanf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __ms_fwprintf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __ms_wprintf(noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn __ms_vfwprintf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn __ms_vwprintf(noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn __ms_swprintf(noalias [*c]wchar_t, noalias [*c]const wchar_t, ...) c_int;
+pub extern fn __ms_vswprintf(noalias [*c]wchar_t, noalias [*c]const wchar_t, va_list) c_int; // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1010:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn swscanf(__source: [*c]const wchar_t, __format: [*c]const wchar_t, ...) c_int; // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1021:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn wscanf(__format: [*c]const wchar_t, ...) c_int; // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1032:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fwscanf(__stream: [*c]FILE, __format: [*c]const wchar_t, ...) c_int;
+pub fn vswscanf(noalias arg___source: [*c]const wchar_t, noalias arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __source = arg___source;
+    _ = &__source;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vswscanf(__source, __format, __local_argv);
+}
+pub fn vwscanf(arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vfwscanf(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), __format, __local_argv);
+}
+pub fn vfwscanf(arg___stream: [*c]FILE, arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vfwscanf(__stream, __format, __local_argv);
+} // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1068:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fwprintf(__stream: [*c]FILE, __format: [*c]const wchar_t, ...) c_int; // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1079:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn wprintf(__format: [*c]const wchar_t, ...) c_int;
+pub fn vfwprintf(arg___stream: [*c]FILE, arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vfwprintf(__stream, __format, __local_argv);
+}
+pub fn vwprintf(arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vfwprintf(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), __format, __local_argv);
+} // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1118:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn snwprintf(__stream: [*c]wchar_t, __n: usize, __format: [*c]const wchar_t, ...) c_int;
+pub fn vsnwprintf(arg___stream: [*c]wchar_t, arg___n: usize, arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __n = arg___n;
+    _ = &__n;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __mingw_vsnwprintf(__stream, __n, __format, __local_argv);
+}
+pub extern fn _wfsopen(_Filename: [*c]const wchar_t, _Mode: [*c]const wchar_t, _ShFlag: c_int) [*c]FILE;
+pub extern fn fgetwc(_File: [*c]FILE) wint_t;
+pub extern fn _fgetwchar() wint_t;
+pub extern fn fputwc(_Ch: wchar_t, _File: [*c]FILE) wint_t;
+pub extern fn _fputwchar(_Ch: wchar_t) wint_t;
+pub extern fn getwc(_File: [*c]FILE) wint_t;
+pub extern fn getwchar() wint_t;
+pub extern fn putwc(_Ch: wchar_t, _File: [*c]FILE) wint_t;
+pub extern fn putwchar(_Ch: wchar_t) wint_t;
+pub extern fn ungetwc(_Ch: wint_t, _File: [*c]FILE) wint_t;
+pub extern fn fgetws(noalias _Dst: [*c]wchar_t, _SizeInWords: c_int, noalias _File: [*c]FILE) [*c]wchar_t;
+pub extern fn fputws(noalias _Str: [*c]const wchar_t, noalias _File: [*c]FILE) c_int;
+pub extern fn _getws(_String: [*c]wchar_t) [*c]wchar_t;
+pub extern fn _putws(_Str: [*c]const wchar_t) c_int;
+pub extern fn _scwprintf(noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _swprintf_c(noalias _DstBuf: [*c]wchar_t, _SizeInWords: usize, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _vswprintf_c(noalias _DstBuf: [*c]wchar_t, _SizeInWords: usize, noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _snwprintf(noalias _Dest: [*c]wchar_t, _Count: usize, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _vsnwprintf(noalias _Dest: [*c]wchar_t, _Count: usize, noalias _Format: [*c]const wchar_t, _Args: va_list) c_int;
+pub extern fn _vscwprintf(noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _swprintf(noalias _Dest: [*c]wchar_t, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _vswprintf(noalias _Dest: [*c]wchar_t, noalias _Format: [*c]const wchar_t, _Args: va_list) c_int;
+pub fn vswprintf(arg___stream: [*c]wchar_t, arg___count: usize, arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __count = arg___count;
+    _ = &__count;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return vsnwprintf(__stream, __count, __format, __local_argv);
+} // C:\dev\bin\zig\lib\libc\include\any-windows-any/swprintf.inl:34:5: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn swprintf(__stream: [*c]wchar_t, __count: usize, __format: [*c]const wchar_t, ...) c_int;
+pub extern fn _wtempnam(_Directory: [*c]const wchar_t, _FilePrefix: [*c]const wchar_t) [*c]wchar_t;
+pub extern fn _snwscanf(noalias _Src: [*c]const wchar_t, _MaxCount: usize, noalias _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _wfdopen(_FileHandle: c_int, _Mode: [*c]const wchar_t) [*c]FILE;
+pub extern fn _wfopen(noalias _Filename: [*c]const wchar_t, noalias _Mode: [*c]const wchar_t) [*c]FILE;
+pub extern fn _wfreopen(noalias _Filename: [*c]const wchar_t, noalias _Mode: [*c]const wchar_t, noalias _OldFile: [*c]FILE) [*c]FILE;
+pub extern fn _wperror(_ErrMsg: [*c]const wchar_t) void;
+pub extern fn _wpopen(_Command: [*c]const wchar_t, _Mode: [*c]const wchar_t) [*c]FILE;
+pub extern fn _wremove(_Filename: [*c]const wchar_t) c_int;
+pub extern fn _wtmpnam(_Buffer: [*c]wchar_t) [*c]wchar_t;
+pub extern fn _lock_file(_File: [*c]FILE) void;
+pub extern fn _unlock_file(_File: [*c]FILE) void;
+pub extern fn tempnam(_Directory: [*c]const u8, _FilePrefix: [*c]const u8) [*c]u8;
+pub extern fn fcloseall() c_int;
+pub extern fn fdopen(_FileHandle: c_int, _Format: [*c]const u8) [*c]FILE;
+pub extern fn fgetchar() c_int;
+pub extern fn fileno(_File: [*c]FILE) c_int;
+pub extern fn flushall() c_int;
+pub extern fn fputchar(_Ch: c_int) c_int;
+pub extern fn getw(_File: [*c]FILE) c_int;
+pub extern fn putw(_Ch: c_int, _File: [*c]FILE) c_int;
+pub extern fn rmtmp() c_int;
+pub extern fn __mingw_str_wide_utf8(wptr: [*c]const wchar_t, mbptr: [*c][*c]u8, buflen: [*c]usize) c_int;
+pub extern fn __mingw_str_utf8_wide(mbptr: [*c]const u8, wptr: [*c][*c]wchar_t, buflen: [*c]usize) c_int;
+pub extern fn __mingw_str_free(ptr: ?*anyopaque) void;
+pub extern fn _wspawnl(_Mode: c_int, _Filename: [*c]const wchar_t, _ArgList: [*c]const wchar_t, ...) isize;
+pub extern fn _wspawnle(_Mode: c_int, _Filename: [*c]const wchar_t, _ArgList: [*c]const wchar_t, ...) isize;
+pub extern fn _wspawnlp(_Mode: c_int, _Filename: [*c]const wchar_t, _ArgList: [*c]const wchar_t, ...) isize;
+pub extern fn _wspawnlpe(_Mode: c_int, _Filename: [*c]const wchar_t, _ArgList: [*c]const wchar_t, ...) isize;
+pub extern fn _wspawnv(_Mode: c_int, _Filename: [*c]const wchar_t, _ArgList: [*c]const [*c]const wchar_t) isize;
+pub extern fn _wspawnve(_Mode: c_int, _Filename: [*c]const wchar_t, _ArgList: [*c]const [*c]const wchar_t, _Env: [*c]const [*c]const wchar_t) isize;
+pub extern fn _wspawnvp(_Mode: c_int, _Filename: [*c]const wchar_t, _ArgList: [*c]const [*c]const wchar_t) isize;
+pub extern fn _wspawnvpe(_Mode: c_int, _Filename: [*c]const wchar_t, _ArgList: [*c]const [*c]const wchar_t, _Env: [*c]const [*c]const wchar_t) isize;
+pub extern fn _spawnv(_Mode: c_int, _Filename: [*c]const u8, _ArgList: [*c]const [*c]const u8) isize;
+pub extern fn _spawnve(_Mode: c_int, _Filename: [*c]const u8, _ArgList: [*c]const [*c]const u8, _Env: [*c]const [*c]const u8) isize;
+pub extern fn _spawnvp(_Mode: c_int, _Filename: [*c]const u8, _ArgList: [*c]const [*c]const u8) isize;
+pub extern fn _spawnvpe(_Mode: c_int, _Filename: [*c]const u8, _ArgList: [*c]const [*c]const u8, _Env: [*c]const [*c]const u8) isize;
+pub extern fn clearerr_s(_File: [*c]FILE) errno_t;
+pub extern fn fread_s(_DstBuf: ?*anyopaque, _DstSize: usize, _ElementSize: usize, _Count: usize, _File: [*c]FILE) usize;
+pub extern fn fprintf_s(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int;
+pub extern fn _fscanf_s_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn fscanf_s(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int;
+pub extern fn printf_s(_Format: [*c]const u8, ...) c_int;
+pub extern fn _scanf_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _scanf_s_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn scanf_s(_Format: [*c]const u8, ...) c_int;
+pub extern fn _snprintf_c(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
+pub extern fn _vsnprintf_c(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn _fscanf_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _sscanf_l(_Src: [*c]const u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _sscanf_s_l(_Src: [*c]const u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn sscanf_s(_Src: [*c]const u8, _Format: [*c]const u8, ...) c_int;
+pub extern fn _snscanf_s(_Src: [*c]const u8, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
+pub extern fn _snscanf_l(_Src: [*c]const u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _snscanf_s_l(_Src: [*c]const u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn vfprintf_s(_File: [*c]FILE, _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn vprintf_s(_Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn vsnprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn _vsnprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn vsprintf_s(_DstBuf: [*c]u8, _Size: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn sprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _Format: [*c]const u8, ...) c_int;
+pub extern fn _snprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
+pub extern fn _fprintf_p(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int;
+pub extern fn _printf_p(_Format: [*c]const u8, ...) c_int;
+pub extern fn _sprintf_p(_Dst: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
+pub extern fn _vfprintf_p(_File: [*c]FILE, _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn _vprintf_p(_Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn _vsprintf_p(_Dst: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn _scprintf_p(_Format: [*c]const u8, ...) c_int;
+pub extern fn _vscprintf_p(_Format: [*c]const u8, _ArgList: va_list) c_int;
+pub extern fn _printf_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _printf_p_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vprintf_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _vprintf_p_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _fprintf_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _fprintf_p_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vfprintf_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _vfprintf_p_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _sprintf_l(_DstBuf: [*c]u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _sprintf_p_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vsprintf_l(_DstBuf: [*c]u8, _Format: [*c]const u8, _locale_t, _ArgList: va_list) c_int;
+pub extern fn _vsprintf_p_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _scprintf_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _scprintf_p_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vscprintf_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _vscprintf_p_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _printf_s_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vprintf_s_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _fprintf_s_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vfprintf_s_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _sprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vsprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _snprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vsnprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _snprintf_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _snprintf_c_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn _vsnprintf_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _vsnprintf_c_l(_DstBuf: [*c]u8, _MaxCount: usize, [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn fopen_s(_File: [*c][*c]FILE, _Filename: [*c]const u8, _Mode: [*c]const u8) errno_t;
+pub extern fn freopen_s(_File: [*c][*c]FILE, _Filename: [*c]const u8, _Mode: [*c]const u8, _Stream: [*c]FILE) errno_t;
+pub extern fn gets_s([*c]u8, rsize_t) [*c]u8;
+pub extern fn tmpnam_s([*c]u8, rsize_t) errno_t;
+pub extern fn _getws_s(_Str: [*c]wchar_t, _SizeInWords: usize) [*c]wchar_t;
+pub extern fn fwprintf_s(_File: [*c]FILE, _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn wprintf_s(_Format: [*c]const wchar_t, ...) c_int;
+pub extern fn vfwprintf_s(_File: [*c]FILE, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn vwprintf_s(_Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn vswprintf_s(_Dst: [*c]wchar_t, _SizeInWords: usize, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn swprintf_s(_Dst: [*c]wchar_t, _SizeInWords: usize, _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _vsnwprintf_s(_DstBuf: [*c]wchar_t, _DstSizeInWords: usize, _MaxCount: usize, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _snwprintf_s(_DstBuf: [*c]wchar_t, _DstSizeInWords: usize, _MaxCount: usize, _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _wprintf_s_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vwprintf_s_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _fwprintf_s_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vfwprintf_s_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _swprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vswprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _snwprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vsnwprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _fwscanf_s_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn fwscanf_s(_File: [*c]FILE, _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _swscanf_s_l(_Src: [*c]const wchar_t, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn swscanf_s(_Src: [*c]const wchar_t, _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _snwscanf_s(_Src: [*c]const wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _snwscanf_s_l(_Src: [*c]const wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _wscanf_s_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn wscanf_s(_Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _wfopen_s(_File: [*c][*c]FILE, _Filename: [*c]const wchar_t, _Mode: [*c]const wchar_t) errno_t;
+pub extern fn _wfreopen_s(_File: [*c][*c]FILE, _Filename: [*c]const wchar_t, _Mode: [*c]const wchar_t, _OldFile: [*c]FILE) errno_t;
+pub extern fn _wtmpnam_s(_DstBuf: [*c]wchar_t, _SizeInWords: usize) errno_t;
+pub extern fn _fwprintf_p(_File: [*c]FILE, _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _wprintf_p(_Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _vfwprintf_p(_File: [*c]FILE, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _vwprintf_p(_Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _swprintf_p(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _vswprintf_p(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _scwprintf_p(_Format: [*c]const wchar_t, ...) c_int;
+pub extern fn _vscwprintf_p(_Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _wprintf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _wprintf_p_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vwprintf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _vwprintf_p_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _fwprintf_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _fwprintf_p_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vfwprintf_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _vfwprintf_p_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _swprintf_c_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _swprintf_p_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vswprintf_c_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _vswprintf_p_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _scwprintf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _scwprintf_p_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vscwprintf_p_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _snwprintf_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _vsnwprintf_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn __swprintf_l(_Dest: [*c]wchar_t, _Format: [*c]const wchar_t, _Plocinfo: _locale_t, ...) c_int;
+pub extern fn __vswprintf_l(_Dest: [*c]wchar_t, _Format: [*c]const wchar_t, _Plocinfo: _locale_t, _Args: va_list) c_int;
+pub extern fn _vscwprintf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn _fwscanf_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _swscanf_l(_Src: [*c]const wchar_t, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _snwscanf_l(_Src: [*c]const wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _wscanf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
 pub const int_least8_t = i8;
 pub const uint_least8_t = u8;
+pub const int_least16_t = c_short;
+pub const uint_least16_t = c_ushort;
+pub const int_least32_t = c_int;
+pub const uint_least32_t = c_uint;
+pub const int_least64_t = c_longlong;
+pub const uint_least64_t = c_ulonglong;
 pub const int_fast8_t = i8;
 pub const uint_fast8_t = u8;
+pub const int_fast16_t = c_short;
+pub const uint_fast16_t = c_ushort;
+pub const int_fast32_t = c_int;
+pub const uint_fast32_t = c_uint;
+pub const int_fast64_t = c_longlong;
+pub const uint_fast64_t = c_ulonglong;
 pub const intmax_t = c_longlong;
 pub const uintmax_t = c_ulonglong;
-pub const __gnuc_va_list = __builtin_va_list;
 pub const struct_ImVec4 = zlm.Vec4;
 pub const ImVec4 = struct_ImVec4;
 pub const ImTextureID = ?*anyopaque;
 pub const ImDrawIdx = c_ushort;
 pub const struct_ImVector_ImDrawIdx = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImDrawIdx,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImDrawIdx = @import("std").mem.zeroes([*c]ImDrawIdx),
 };
 pub const ImVector_ImDrawIdx = struct_ImVector_ImDrawIdx;
 pub const struct_ImVec2 = zlm.Vec2;
 pub const ImVec2 = struct_ImVec2;
 pub const ImU32 = c_uint;
 pub const struct_ImDrawVert = extern struct {
-    pos: ImVec2,
-    uv: ImVec2,
-    col: ImU32,
+    pos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    uv: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    col: ImU32 = @import("std").mem.zeroes(ImU32),
 };
 pub const ImDrawVert = struct_ImDrawVert;
 pub const struct_ImVector_ImDrawVert = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImDrawVert,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImDrawVert = @import("std").mem.zeroes([*c]ImDrawVert),
 };
 pub const ImVector_ImDrawVert = struct_ImVector_ImDrawVert;
 pub const ImDrawListFlags = c_int;
 pub const struct_ImVector_float = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]f32,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]f32 = @import("std").mem.zeroes([*c]f32),
 };
 pub const ImVector_float = struct_ImVector_float;
 pub const ImWchar16 = c_ushort;
 pub const ImWchar = ImWchar16;
 pub const struct_ImVector_ImWchar = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImWchar,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImWchar = @import("std").mem.zeroes([*c]ImWchar),
 };
-pub const ImVector_ImWchar = struct_ImVector_ImWchar; // libs/cimgui/cimgui.h:1250:18: warning: struct demoted to opaque type - has bitfield
+pub const ImVector_ImWchar = struct_ImVector_ImWchar; // cimgui.h:1292:18: warning: struct demoted to opaque type - has bitfield
 pub const struct_ImFontGlyph = opaque {};
 pub const ImFontGlyph = struct_ImFontGlyph;
 pub const struct_ImVector_ImFontGlyph = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: ?*ImFontGlyph,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: ?*ImFontGlyph = @import("std").mem.zeroes(?*ImFontGlyph),
 };
 pub const ImVector_ImFontGlyph = struct_ImVector_ImFontGlyph;
 pub const ImFontAtlasFlags = c_int;
 pub const struct_ImVector_ImFontPtr = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c][*c]ImFont,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c][*c]ImFont = @import("std").mem.zeroes([*c][*c]ImFont),
 };
 pub const ImVector_ImFontPtr = struct_ImVector_ImFontPtr;
 pub const struct_ImFontAtlasCustomRect = extern struct {
-    Width: c_ushort,
-    Height: c_ushort,
-    X: c_ushort,
-    Y: c_ushort,
-    GlyphID: c_uint,
-    GlyphAdvanceX: f32,
-    GlyphOffset: ImVec2,
-    Font: [*c]ImFont,
+    Width: c_ushort = @import("std").mem.zeroes(c_ushort),
+    Height: c_ushort = @import("std").mem.zeroes(c_ushort),
+    X: c_ushort = @import("std").mem.zeroes(c_ushort),
+    Y: c_ushort = @import("std").mem.zeroes(c_ushort),
+    GlyphID: c_uint = @import("std").mem.zeroes(c_uint),
+    GlyphAdvanceX: f32 = @import("std").mem.zeroes(f32),
+    GlyphOffset: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    Font: [*c]ImFont = @import("std").mem.zeroes([*c]ImFont),
 };
 pub const ImFontAtlasCustomRect = struct_ImFontAtlasCustomRect;
 pub const struct_ImVector_ImFontAtlasCustomRect = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImFontAtlasCustomRect,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImFontAtlasCustomRect = @import("std").mem.zeroes([*c]ImFontAtlasCustomRect),
 };
 pub const ImVector_ImFontAtlasCustomRect = struct_ImVector_ImFontAtlasCustomRect;
 pub const struct_ImFontConfig = extern struct {
-    FontData: ?*anyopaque,
-    FontDataSize: c_int,
-    FontDataOwnedByAtlas: bool,
-    FontNo: c_int,
-    SizePixels: f32,
-    OversampleH: c_int,
-    OversampleV: c_int,
-    PixelSnapH: bool,
-    GlyphExtraSpacing: ImVec2,
-    GlyphOffset: ImVec2,
-    GlyphRanges: [*c]const ImWchar,
-    GlyphMinAdvanceX: f32,
-    GlyphMaxAdvanceX: f32,
-    MergeMode: bool,
-    FontBuilderFlags: c_uint,
-    RasterizerMultiply: f32,
-    EllipsisChar: ImWchar,
-    Name: [40]u8,
-    DstFont: [*c]ImFont,
+    FontData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    FontDataSize: c_int = @import("std").mem.zeroes(c_int),
+    FontDataOwnedByAtlas: bool = @import("std").mem.zeroes(bool),
+    FontNo: c_int = @import("std").mem.zeroes(c_int),
+    SizePixels: f32 = @import("std").mem.zeroes(f32),
+    OversampleH: c_int = @import("std").mem.zeroes(c_int),
+    OversampleV: c_int = @import("std").mem.zeroes(c_int),
+    PixelSnapH: bool = @import("std").mem.zeroes(bool),
+    GlyphExtraSpacing: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    GlyphOffset: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    GlyphRanges: [*c]const ImWchar = @import("std").mem.zeroes([*c]const ImWchar),
+    GlyphMinAdvanceX: f32 = @import("std").mem.zeroes(f32),
+    GlyphMaxAdvanceX: f32 = @import("std").mem.zeroes(f32),
+    MergeMode: bool = @import("std").mem.zeroes(bool),
+    FontBuilderFlags: c_uint = @import("std").mem.zeroes(c_uint),
+    RasterizerMultiply: f32 = @import("std").mem.zeroes(f32),
+    RasterizerDensity: f32 = @import("std").mem.zeroes(f32),
+    EllipsisChar: ImWchar = @import("std").mem.zeroes(ImWchar),
+    Name: [40]u8 = @import("std").mem.zeroes([40]u8),
+    DstFont: [*c]ImFont = @import("std").mem.zeroes([*c]ImFont),
 };
 pub const ImFontConfig = struct_ImFontConfig;
 pub const struct_ImVector_ImFontConfig = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImFontConfig,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImFontConfig = @import("std").mem.zeroes([*c]ImFontConfig),
 };
 pub const ImVector_ImFontConfig = struct_ImVector_ImFontConfig;
 pub const struct_ImFontBuilderIO = extern struct {
-    FontBuilder_Build: ?*const fn ([*c]ImFontAtlas) callconv(.C) bool,
+    FontBuilder_Build: ?*const fn ([*c]ImFontAtlas) callconv(.C) bool = @import("std").mem.zeroes(?*const fn ([*c]ImFontAtlas) callconv(.C) bool),
 };
 pub const ImFontBuilderIO = struct_ImFontBuilderIO;
 pub const struct_ImFontAtlas = extern struct {
-    Flags: ImFontAtlasFlags,
-    TexID: ImTextureID,
-    TexDesiredWidth: c_int,
-    TexGlyphPadding: c_int,
-    Locked: bool,
-    UserData: ?*anyopaque,
-    TexReady: bool,
-    TexPixelsUseColors: bool,
-    TexPixelsAlpha8: [*c]u8,
-    TexPixelsRGBA32: [*c]c_uint,
-    TexWidth: c_int,
-    TexHeight: c_int,
-    TexUvScale: ImVec2,
-    TexUvWhitePixel: ImVec2,
-    Fonts: ImVector_ImFontPtr,
-    CustomRects: ImVector_ImFontAtlasCustomRect,
-    ConfigData: ImVector_ImFontConfig,
-    TexUvLines: [64]ImVec4,
-    FontBuilderIO: [*c]const ImFontBuilderIO,
-    FontBuilderFlags: c_uint,
-    PackIdMouseCursors: c_int,
-    PackIdLines: c_int,
+    Flags: ImFontAtlasFlags = @import("std").mem.zeroes(ImFontAtlasFlags),
+    TexID: ImTextureID = @import("std").mem.zeroes(ImTextureID),
+    TexDesiredWidth: c_int = @import("std").mem.zeroes(c_int),
+    TexGlyphPadding: c_int = @import("std").mem.zeroes(c_int),
+    Locked: bool = @import("std").mem.zeroes(bool),
+    UserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    TexReady: bool = @import("std").mem.zeroes(bool),
+    TexPixelsUseColors: bool = @import("std").mem.zeroes(bool),
+    TexPixelsAlpha8: [*c]u8 = @import("std").mem.zeroes([*c]u8),
+    TexPixelsRGBA32: [*c]c_uint = @import("std").mem.zeroes([*c]c_uint),
+    TexWidth: c_int = @import("std").mem.zeroes(c_int),
+    TexHeight: c_int = @import("std").mem.zeroes(c_int),
+    TexUvScale: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    TexUvWhitePixel: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    Fonts: ImVector_ImFontPtr = @import("std").mem.zeroes(ImVector_ImFontPtr),
+    CustomRects: ImVector_ImFontAtlasCustomRect = @import("std").mem.zeroes(ImVector_ImFontAtlasCustomRect),
+    ConfigData: ImVector_ImFontConfig = @import("std").mem.zeroes(ImVector_ImFontConfig),
+    TexUvLines: [64]ImVec4 = @import("std").mem.zeroes([64]ImVec4),
+    FontBuilderIO: [*c]const ImFontBuilderIO = @import("std").mem.zeroes([*c]const ImFontBuilderIO),
+    FontBuilderFlags: c_uint = @import("std").mem.zeroes(c_uint),
+    PackIdMouseCursors: c_int = @import("std").mem.zeroes(c_int),
+    PackIdLines: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const ImFontAtlas = struct_ImFontAtlas;
 pub const ImU8 = u8;
 pub const struct_ImFont = extern struct {
-    IndexAdvanceX: ImVector_float,
-    FallbackAdvanceX: f32,
-    FontSize: f32,
-    IndexLookup: ImVector_ImWchar,
-    Glyphs: ImVector_ImFontGlyph,
-    FallbackGlyph: ?*const ImFontGlyph,
-    ContainerAtlas: [*c]ImFontAtlas,
-    ConfigData: [*c]const ImFontConfig,
-    ConfigDataCount: c_short,
-    FallbackChar: ImWchar,
-    EllipsisChar: ImWchar,
-    EllipsisCharCount: c_short,
-    EllipsisWidth: f32,
-    EllipsisCharStep: f32,
-    DirtyLookupTables: bool,
-    Scale: f32,
-    Ascent: f32,
-    Descent: f32,
-    MetricsTotalSurface: c_int,
-    Used4kPagesMap: [2]ImU8,
+    IndexAdvanceX: ImVector_float = @import("std").mem.zeroes(ImVector_float),
+    FallbackAdvanceX: f32 = @import("std").mem.zeroes(f32),
+    FontSize: f32 = @import("std").mem.zeroes(f32),
+    IndexLookup: ImVector_ImWchar = @import("std").mem.zeroes(ImVector_ImWchar),
+    Glyphs: ImVector_ImFontGlyph = @import("std").mem.zeroes(ImVector_ImFontGlyph),
+    FallbackGlyph: ?*const ImFontGlyph = @import("std").mem.zeroes(?*const ImFontGlyph),
+    ContainerAtlas: [*c]ImFontAtlas = @import("std").mem.zeroes([*c]ImFontAtlas),
+    ConfigData: [*c]const ImFontConfig = @import("std").mem.zeroes([*c]const ImFontConfig),
+    ConfigDataCount: c_short = @import("std").mem.zeroes(c_short),
+    FallbackChar: ImWchar = @import("std").mem.zeroes(ImWchar),
+    EllipsisChar: ImWchar = @import("std").mem.zeroes(ImWchar),
+    EllipsisCharCount: c_short = @import("std").mem.zeroes(c_short),
+    EllipsisWidth: f32 = @import("std").mem.zeroes(f32),
+    EllipsisCharStep: f32 = @import("std").mem.zeroes(f32),
+    DirtyLookupTables: bool = @import("std").mem.zeroes(bool),
+    Scale: f32 = @import("std").mem.zeroes(f32),
+    Ascent: f32 = @import("std").mem.zeroes(f32),
+    Descent: f32 = @import("std").mem.zeroes(f32),
+    MetricsTotalSurface: c_int = @import("std").mem.zeroes(c_int),
+    Used4kPagesMap: [2]ImU8 = @import("std").mem.zeroes([2]ImU8),
 };
 pub const ImFont = struct_ImFont;
 pub const struct_ImVector_ImVec2 = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImVec2,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImVec2 = @import("std").mem.zeroes([*c]ImVec2),
 };
 pub const ImVector_ImVec2 = struct_ImVector_ImVec2;
 pub const struct_ImDrawListSharedData = extern struct {
-    TexUvWhitePixel: ImVec2,
-    Font: [*c]ImFont,
-    FontSize: f32,
-    CurveTessellationTol: f32,
-    CircleSegmentMaxError: f32,
-    ClipRectFullscreen: ImVec4,
-    InitialFlags: ImDrawListFlags,
-    TempBuffer: ImVector_ImVec2,
-    ArcFastVtx: [48]ImVec2,
-    ArcFastRadiusCutoff: f32,
-    CircleSegmentCounts: [64]ImU8,
-    TexUvLines: [*c]const ImVec4,
+    TexUvWhitePixel: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    Font: [*c]ImFont = @import("std").mem.zeroes([*c]ImFont),
+    FontSize: f32 = @import("std").mem.zeroes(f32),
+    CurveTessellationTol: f32 = @import("std").mem.zeroes(f32),
+    CircleSegmentMaxError: f32 = @import("std").mem.zeroes(f32),
+    ClipRectFullscreen: ImVec4 = @import("std").mem.zeroes(ImVec4),
+    InitialFlags: ImDrawListFlags = @import("std").mem.zeroes(ImDrawListFlags),
+    TempBuffer: ImVector_ImVec2 = @import("std").mem.zeroes(ImVector_ImVec2),
+    ArcFastVtx: [48]ImVec2 = @import("std").mem.zeroes([48]ImVec2),
+    ArcFastRadiusCutoff: f32 = @import("std").mem.zeroes(f32),
+    CircleSegmentCounts: [64]ImU8 = @import("std").mem.zeroes([64]ImU8),
+    TexUvLines: [*c]const ImVec4 = @import("std").mem.zeroes([*c]const ImVec4),
 };
 pub const ImDrawListSharedData = struct_ImDrawListSharedData;
 pub const struct_ImVector_ImVec4 = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImVec4,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImVec4 = @import("std").mem.zeroes([*c]ImVec4),
 };
 pub const ImVector_ImVec4 = struct_ImVector_ImVec4;
 pub const struct_ImVector_ImTextureID = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImTextureID,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImTextureID = @import("std").mem.zeroes([*c]ImTextureID),
 };
 pub const ImVector_ImTextureID = struct_ImVector_ImTextureID;
 pub const struct_ImDrawCmdHeader = extern struct {
-    ClipRect: ImVec4,
-    TextureId: ImTextureID,
-    VtxOffset: c_uint,
+    ClipRect: ImVec4 = @import("std").mem.zeroes(ImVec4),
+    TextureId: ImTextureID = @import("std").mem.zeroes(ImTextureID),
+    VtxOffset: c_uint = @import("std").mem.zeroes(c_uint),
 };
 pub const ImDrawCmdHeader = struct_ImDrawCmdHeader;
 pub const ImDrawChannel = struct_ImDrawChannel;
 pub const struct_ImVector_ImDrawChannel = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImDrawChannel,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImDrawChannel = @import("std").mem.zeroes([*c]ImDrawChannel),
 };
 pub const ImVector_ImDrawChannel = struct_ImVector_ImDrawChannel;
 pub const struct_ImDrawListSplitter = extern struct {
-    _Current: c_int,
-    _Count: c_int,
-    _Channels: ImVector_ImDrawChannel,
+    _Current: c_int = @import("std").mem.zeroes(c_int),
+    _Count: c_int = @import("std").mem.zeroes(c_int),
+    _Channels: ImVector_ImDrawChannel = @import("std").mem.zeroes(ImVector_ImDrawChannel),
 };
 pub const ImDrawListSplitter = struct_ImDrawListSplitter;
 pub const struct_ImDrawList = extern struct {
-    CmdBuffer: ImVector_ImDrawCmd,
-    IdxBuffer: ImVector_ImDrawIdx,
-    VtxBuffer: ImVector_ImDrawVert,
-    Flags: ImDrawListFlags,
-    _VtxCurrentIdx: c_uint,
-    _Data: [*c]ImDrawListSharedData,
-    _OwnerName: [*c]const u8,
-    _VtxWritePtr: [*c]ImDrawVert,
-    _IdxWritePtr: [*c]ImDrawIdx,
-    _ClipRectStack: ImVector_ImVec4,
-    _TextureIdStack: ImVector_ImTextureID,
-    _Path: ImVector_ImVec2,
-    _CmdHeader: ImDrawCmdHeader,
-    _Splitter: ImDrawListSplitter,
-    _FringeScale: f32,
+    CmdBuffer: ImVector_ImDrawCmd = @import("std").mem.zeroes(ImVector_ImDrawCmd),
+    IdxBuffer: ImVector_ImDrawIdx = @import("std").mem.zeroes(ImVector_ImDrawIdx),
+    VtxBuffer: ImVector_ImDrawVert = @import("std").mem.zeroes(ImVector_ImDrawVert),
+    Flags: ImDrawListFlags = @import("std").mem.zeroes(ImDrawListFlags),
+    _VtxCurrentIdx: c_uint = @import("std").mem.zeroes(c_uint),
+    _Data: [*c]ImDrawListSharedData = @import("std").mem.zeroes([*c]ImDrawListSharedData),
+    _OwnerName: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    _VtxWritePtr: [*c]ImDrawVert = @import("std").mem.zeroes([*c]ImDrawVert),
+    _IdxWritePtr: [*c]ImDrawIdx = @import("std").mem.zeroes([*c]ImDrawIdx),
+    _ClipRectStack: ImVector_ImVec4 = @import("std").mem.zeroes(ImVector_ImVec4),
+    _TextureIdStack: ImVector_ImTextureID = @import("std").mem.zeroes(ImVector_ImTextureID),
+    _Path: ImVector_ImVec2 = @import("std").mem.zeroes(ImVector_ImVec2),
+    _CmdHeader: ImDrawCmdHeader = @import("std").mem.zeroes(ImDrawCmdHeader),
+    _Splitter: ImDrawListSplitter = @import("std").mem.zeroes(ImDrawListSplitter),
+    _FringeScale: f32 = @import("std").mem.zeroes(f32),
 };
 pub const ImDrawList = struct_ImDrawList;
 pub const ImDrawCallback = ?*const fn ([*c]const ImDrawList, [*c]const ImDrawCmd) callconv(.C) void;
 pub const struct_ImDrawCmd = extern struct {
-    ClipRect: ImVec4,
-    TextureId: ImTextureID,
-    VtxOffset: c_uint,
-    IdxOffset: c_uint,
-    ElemCount: c_uint,
-    UserCallback: ImDrawCallback,
-    UserCallbackData: ?*anyopaque,
+    ClipRect: ImVec4 = @import("std").mem.zeroes(ImVec4),
+    TextureId: ImTextureID = @import("std").mem.zeroes(ImTextureID),
+    VtxOffset: c_uint = @import("std").mem.zeroes(c_uint),
+    IdxOffset: c_uint = @import("std").mem.zeroes(c_uint),
+    ElemCount: c_uint = @import("std").mem.zeroes(c_uint),
+    UserCallback: ImDrawCallback = @import("std").mem.zeroes(ImDrawCallback),
+    UserCallbackData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
 };
 pub const ImDrawCmd = struct_ImDrawCmd;
 pub const struct_ImVector_ImDrawCmd = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImDrawCmd,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImDrawCmd = @import("std").mem.zeroes([*c]ImDrawCmd),
 };
 pub const ImVector_ImDrawCmd = struct_ImVector_ImDrawCmd;
 pub const struct_ImDrawChannel = extern struct {
-    _CmdBuffer: ImVector_ImDrawCmd,
-    _IdxBuffer: ImVector_ImDrawIdx,
+    _CmdBuffer: ImVector_ImDrawCmd = @import("std").mem.zeroes(ImVector_ImDrawCmd),
+    _IdxBuffer: ImVector_ImDrawIdx = @import("std").mem.zeroes(ImVector_ImDrawIdx),
 };
+pub const struct_ImVector_ImDrawListPtr = extern struct {
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c][*c]ImDrawList = @import("std").mem.zeroes([*c][*c]ImDrawList),
+};
+pub const ImVector_ImDrawListPtr = struct_ImVector_ImDrawListPtr;
 pub const ImGuiID = c_uint;
 pub const ImGuiViewportFlags = c_int;
 pub const ImDrawData = struct_ImDrawData;
 pub const struct_ImGuiViewport = extern struct {
-    ID: ImGuiID,
-    Flags: ImGuiViewportFlags,
-    Pos: ImVec2,
-    Size: ImVec2,
-    WorkPos: ImVec2,
-    WorkSize: ImVec2,
-    DpiScale: f32,
-    ParentViewportId: ImGuiID,
-    DrawData: [*c]ImDrawData,
-    RendererUserData: ?*anyopaque,
-    PlatformUserData: ?*anyopaque,
-    PlatformHandle: ?*anyopaque,
-    PlatformHandleRaw: ?*anyopaque,
-    PlatformWindowCreated: bool,
-    PlatformRequestMove: bool,
-    PlatformRequestResize: bool,
-    PlatformRequestClose: bool,
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    Flags: ImGuiViewportFlags = @import("std").mem.zeroes(ImGuiViewportFlags),
+    Pos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    Size: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WorkPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WorkSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DpiScale: f32 = @import("std").mem.zeroes(f32),
+    ParentViewportId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DrawData: [*c]ImDrawData = @import("std").mem.zeroes([*c]ImDrawData),
+    RendererUserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    PlatformUserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    PlatformHandle: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    PlatformHandleRaw: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    PlatformWindowCreated: bool = @import("std").mem.zeroes(bool),
+    PlatformRequestMove: bool = @import("std").mem.zeroes(bool),
+    PlatformRequestResize: bool = @import("std").mem.zeroes(bool),
+    PlatformRequestClose: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiViewport = struct_ImGuiViewport;
 pub const struct_ImDrawData = extern struct {
-    Valid: bool,
-    CmdListsCount: c_int,
-    TotalIdxCount: c_int,
-    TotalVtxCount: c_int,
-    CmdLists: [*c][*c]ImDrawList,
-    DisplayPos: ImVec2,
-    DisplaySize: ImVec2,
-    FramebufferScale: ImVec2,
-    OwnerViewport: [*c]ImGuiViewport,
+    Valid: bool = @import("std").mem.zeroes(bool),
+    CmdListsCount: c_int = @import("std").mem.zeroes(c_int),
+    TotalIdxCount: c_int = @import("std").mem.zeroes(c_int),
+    TotalVtxCount: c_int = @import("std").mem.zeroes(c_int),
+    CmdLists: ImVector_ImDrawListPtr = @import("std").mem.zeroes(ImVector_ImDrawListPtr),
+    DisplayPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DisplaySize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    FramebufferScale: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    OwnerViewport: [*c]ImGuiViewport = @import("std").mem.zeroes([*c]ImGuiViewport),
 };
 pub const struct_ImVector_ImU32 = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImU32,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImU32 = @import("std").mem.zeroes([*c]ImU32),
 };
 pub const ImVector_ImU32 = struct_ImVector_ImU32;
 pub const struct_ImFontGlyphRangesBuilder = extern struct {
-    UsedChars: ImVector_ImU32,
+    UsedChars: ImVector_ImU32 = @import("std").mem.zeroes(ImVector_ImU32),
 };
 pub const ImFontGlyphRangesBuilder = struct_ImFontGlyphRangesBuilder;
 pub const struct_ImColor = extern struct {
-    Value: ImVec4,
+    Value: ImVec4 = @import("std").mem.zeroes(ImVec4),
 };
 pub const ImColor = struct_ImColor;
 pub const ImGuiConfigFlags = c_int;
 pub const ImGuiBackendFlags = c_int;
 pub const struct_ImGuiPlatformImeData = extern struct {
-    WantVisible: bool,
-    InputPos: ImVec2,
-    InputLineHeight: f32,
+    WantVisible: bool = @import("std").mem.zeroes(bool),
+    InputPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    InputLineHeight: f32 = @import("std").mem.zeroes(f32),
 };
 pub const ImGuiPlatformImeData = struct_ImGuiPlatformImeData;
 pub const ImGuiContext = struct_ImGuiContext;
 pub const ImGuiKeyChord = c_int;
 pub const struct_ImGuiKeyData = extern struct {
-    Down: bool,
-    DownDuration: f32,
-    DownDurationPrev: f32,
-    AnalogValue: f32,
+    Down: bool = @import("std").mem.zeroes(bool),
+    DownDuration: f32 = @import("std").mem.zeroes(f32),
+    DownDurationPrev: f32 = @import("std").mem.zeroes(f32),
+    AnalogValue: f32 = @import("std").mem.zeroes(f32),
 };
 pub const ImGuiKeyData = struct_ImGuiKeyData;
 pub const ImU16 = c_ushort;
 pub const ImS8 = i8;
 pub const struct_ImGuiIO = extern struct {
-    ConfigFlags: ImGuiConfigFlags,
-    BackendFlags: ImGuiBackendFlags,
-    DisplaySize: ImVec2,
-    DeltaTime: f32,
-    IniSavingRate: f32,
-    IniFilename: [*c]const u8,
-    LogFilename: [*c]const u8,
-    MouseDoubleClickTime: f32,
-    MouseDoubleClickMaxDist: f32,
-    MouseDragThreshold: f32,
-    KeyRepeatDelay: f32,
-    KeyRepeatRate: f32,
-    HoverDelayNormal: f32,
-    HoverDelayShort: f32,
-    UserData: ?*anyopaque,
-    Fonts: [*c]ImFontAtlas,
-    FontGlobalScale: f32,
-    FontAllowUserScaling: bool,
-    FontDefault: [*c]ImFont,
-    DisplayFramebufferScale: ImVec2,
-    ConfigDockingNoSplit: bool,
-    ConfigDockingWithShift: bool,
-    ConfigDockingAlwaysTabBar: bool,
-    ConfigDockingTransparentPayload: bool,
-    ConfigViewportsNoAutoMerge: bool,
-    ConfigViewportsNoTaskBarIcon: bool,
-    ConfigViewportsNoDecoration: bool,
-    ConfigViewportsNoDefaultParent: bool,
-    MouseDrawCursor: bool,
-    ConfigMacOSXBehaviors: bool,
-    ConfigInputTrickleEventQueue: bool,
-    ConfigInputTextCursorBlink: bool,
-    ConfigInputTextEnterKeepActive: bool,
-    ConfigDragClickToInputText: bool,
-    ConfigWindowsResizeFromEdges: bool,
-    ConfigWindowsMoveFromTitleBarOnly: bool,
-    ConfigMemoryCompactTimer: f32,
-    ConfigDebugBeginReturnValueOnce: bool,
-    ConfigDebugBeginReturnValueLoop: bool,
-    BackendPlatformName: [*c]const u8,
-    BackendRendererName: [*c]const u8,
-    BackendPlatformUserData: ?*anyopaque,
-    BackendRendererUserData: ?*anyopaque,
-    BackendLanguageUserData: ?*anyopaque,
-    GetClipboardTextFn: ?*const fn (?*anyopaque) callconv(.C) [*c]const u8,
-    SetClipboardTextFn: ?*const fn (?*anyopaque, [*c]const u8) callconv(.C) void,
-    ClipboardUserData: ?*anyopaque,
-    SetPlatformImeDataFn: ?*const fn ([*c]ImGuiViewport, [*c]ImGuiPlatformImeData) callconv(.C) void,
-    _UnusedPadding: ?*anyopaque,
-    WantCaptureMouse: bool,
-    WantCaptureKeyboard: bool,
-    WantTextInput: bool,
-    WantSetMousePos: bool,
-    WantSaveIniSettings: bool,
-    NavActive: bool,
-    NavVisible: bool,
-    Framerate: f32,
-    MetricsRenderVertices: c_int,
-    MetricsRenderIndices: c_int,
-    MetricsRenderWindows: c_int,
-    MetricsActiveWindows: c_int,
-    MetricsActiveAllocations: c_int,
-    MouseDelta: ImVec2,
-    KeyMap: [652]c_int,
-    KeysDown: [652]bool,
-    NavInputs: [16]f32,
-    Ctx: [*c]ImGuiContext,
-    MousePos: ImVec2,
-    MouseDown: [5]bool,
-    MouseWheel: f32,
-    MouseWheelH: f32,
-    MouseSource: ImGuiMouseSource,
-    MouseHoveredViewport: ImGuiID,
-    KeyCtrl: bool,
-    KeyShift: bool,
-    KeyAlt: bool,
-    KeySuper: bool,
-    KeyMods: ImGuiKeyChord,
-    KeysData: [652]ImGuiKeyData,
-    WantCaptureMouseUnlessPopupClose: bool,
-    MousePosPrev: ImVec2,
-    MouseClickedPos: [5]ImVec2,
-    MouseClickedTime: [5]f64,
-    MouseClicked: [5]bool,
-    MouseDoubleClicked: [5]bool,
-    MouseClickedCount: [5]ImU16,
-    MouseClickedLastCount: [5]ImU16,
-    MouseReleased: [5]bool,
-    MouseDownOwned: [5]bool,
-    MouseDownOwnedUnlessPopupClose: [5]bool,
-    MouseWheelRequestAxisSwap: bool,
-    MouseDownDuration: [5]f32,
-    MouseDownDurationPrev: [5]f32,
-    MouseDragMaxDistanceAbs: [5]ImVec2,
-    MouseDragMaxDistanceSqr: [5]f32,
-    PenPressure: f32,
-    AppFocusLost: bool,
-    AppAcceptingEvents: bool,
-    BackendUsingLegacyKeyArrays: ImS8,
-    BackendUsingLegacyNavInputArray: bool,
-    InputQueueSurrogate: ImWchar16,
-    InputQueueCharacters: ImVector_ImWchar,
+    ConfigFlags: ImGuiConfigFlags = @import("std").mem.zeroes(ImGuiConfigFlags),
+    BackendFlags: ImGuiBackendFlags = @import("std").mem.zeroes(ImGuiBackendFlags),
+    DisplaySize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DeltaTime: f32 = @import("std").mem.zeroes(f32),
+    IniSavingRate: f32 = @import("std").mem.zeroes(f32),
+    IniFilename: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    LogFilename: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    UserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    Fonts: [*c]ImFontAtlas = @import("std").mem.zeroes([*c]ImFontAtlas),
+    FontGlobalScale: f32 = @import("std").mem.zeroes(f32),
+    FontAllowUserScaling: bool = @import("std").mem.zeroes(bool),
+    FontDefault: [*c]ImFont = @import("std").mem.zeroes([*c]ImFont),
+    DisplayFramebufferScale: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    ConfigDockingNoSplit: bool = @import("std").mem.zeroes(bool),
+    ConfigDockingWithShift: bool = @import("std").mem.zeroes(bool),
+    ConfigDockingAlwaysTabBar: bool = @import("std").mem.zeroes(bool),
+    ConfigDockingTransparentPayload: bool = @import("std").mem.zeroes(bool),
+    ConfigViewportsNoAutoMerge: bool = @import("std").mem.zeroes(bool),
+    ConfigViewportsNoTaskBarIcon: bool = @import("std").mem.zeroes(bool),
+    ConfigViewportsNoDecoration: bool = @import("std").mem.zeroes(bool),
+    ConfigViewportsNoDefaultParent: bool = @import("std").mem.zeroes(bool),
+    MouseDrawCursor: bool = @import("std").mem.zeroes(bool),
+    ConfigMacOSXBehaviors: bool = @import("std").mem.zeroes(bool),
+    ConfigInputTrickleEventQueue: bool = @import("std").mem.zeroes(bool),
+    ConfigInputTextCursorBlink: bool = @import("std").mem.zeroes(bool),
+    ConfigInputTextEnterKeepActive: bool = @import("std").mem.zeroes(bool),
+    ConfigDragClickToInputText: bool = @import("std").mem.zeroes(bool),
+    ConfigWindowsResizeFromEdges: bool = @import("std").mem.zeroes(bool),
+    ConfigWindowsMoveFromTitleBarOnly: bool = @import("std").mem.zeroes(bool),
+    ConfigMemoryCompactTimer: f32 = @import("std").mem.zeroes(f32),
+    MouseDoubleClickTime: f32 = @import("std").mem.zeroes(f32),
+    MouseDoubleClickMaxDist: f32 = @import("std").mem.zeroes(f32),
+    MouseDragThreshold: f32 = @import("std").mem.zeroes(f32),
+    KeyRepeatDelay: f32 = @import("std").mem.zeroes(f32),
+    KeyRepeatRate: f32 = @import("std").mem.zeroes(f32),
+    ConfigDebugBeginReturnValueOnce: bool = @import("std").mem.zeroes(bool),
+    ConfigDebugBeginReturnValueLoop: bool = @import("std").mem.zeroes(bool),
+    ConfigDebugIgnoreFocusLoss: bool = @import("std").mem.zeroes(bool),
+    ConfigDebugIniSettings: bool = @import("std").mem.zeroes(bool),
+    BackendPlatformName: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    BackendRendererName: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    BackendPlatformUserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    BackendRendererUserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    BackendLanguageUserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    GetClipboardTextFn: ?*const fn (?*anyopaque) callconv(.C) [*c]const u8 = @import("std").mem.zeroes(?*const fn (?*anyopaque) callconv(.C) [*c]const u8),
+    SetClipboardTextFn: ?*const fn (?*anyopaque, [*c]const u8) callconv(.C) void = @import("std").mem.zeroes(?*const fn (?*anyopaque, [*c]const u8) callconv(.C) void),
+    ClipboardUserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    SetPlatformImeDataFn: ?*const fn ([*c]ImGuiViewport, [*c]ImGuiPlatformImeData) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, [*c]ImGuiPlatformImeData) callconv(.C) void),
+    PlatformLocaleDecimalPoint: ImWchar = @import("std").mem.zeroes(ImWchar),
+    WantCaptureMouse: bool = @import("std").mem.zeroes(bool),
+    WantCaptureKeyboard: bool = @import("std").mem.zeroes(bool),
+    WantTextInput: bool = @import("std").mem.zeroes(bool),
+    WantSetMousePos: bool = @import("std").mem.zeroes(bool),
+    WantSaveIniSettings: bool = @import("std").mem.zeroes(bool),
+    NavActive: bool = @import("std").mem.zeroes(bool),
+    NavVisible: bool = @import("std").mem.zeroes(bool),
+    Framerate: f32 = @import("std").mem.zeroes(f32),
+    MetricsRenderVertices: c_int = @import("std").mem.zeroes(c_int),
+    MetricsRenderIndices: c_int = @import("std").mem.zeroes(c_int),
+    MetricsRenderWindows: c_int = @import("std").mem.zeroes(c_int),
+    MetricsActiveWindows: c_int = @import("std").mem.zeroes(c_int),
+    MouseDelta: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    _UnusedPadding: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    Ctx: [*c]ImGuiContext = @import("std").mem.zeroes([*c]ImGuiContext),
+    MousePos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    MouseDown: [5]bool = @import("std").mem.zeroes([5]bool),
+    MouseWheel: f32 = @import("std").mem.zeroes(f32),
+    MouseWheelH: f32 = @import("std").mem.zeroes(f32),
+    MouseSource: ImGuiMouseSource = @import("std").mem.zeroes(ImGuiMouseSource),
+    MouseHoveredViewport: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    KeyCtrl: bool = @import("std").mem.zeroes(bool),
+    KeyShift: bool = @import("std").mem.zeroes(bool),
+    KeyAlt: bool = @import("std").mem.zeroes(bool),
+    KeySuper: bool = @import("std").mem.zeroes(bool),
+    KeyMods: ImGuiKeyChord = @import("std").mem.zeroes(ImGuiKeyChord),
+    KeysData: [154]ImGuiKeyData = @import("std").mem.zeroes([154]ImGuiKeyData),
+    WantCaptureMouseUnlessPopupClose: bool = @import("std").mem.zeroes(bool),
+    MousePosPrev: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    MouseClickedPos: [5]ImVec2 = @import("std").mem.zeroes([5]ImVec2),
+    MouseClickedTime: [5]f64 = @import("std").mem.zeroes([5]f64),
+    MouseClicked: [5]bool = @import("std").mem.zeroes([5]bool),
+    MouseDoubleClicked: [5]bool = @import("std").mem.zeroes([5]bool),
+    MouseClickedCount: [5]ImU16 = @import("std").mem.zeroes([5]ImU16),
+    MouseClickedLastCount: [5]ImU16 = @import("std").mem.zeroes([5]ImU16),
+    MouseReleased: [5]bool = @import("std").mem.zeroes([5]bool),
+    MouseDownOwned: [5]bool = @import("std").mem.zeroes([5]bool),
+    MouseDownOwnedUnlessPopupClose: [5]bool = @import("std").mem.zeroes([5]bool),
+    MouseWheelRequestAxisSwap: bool = @import("std").mem.zeroes(bool),
+    MouseDownDuration: [5]f32 = @import("std").mem.zeroes([5]f32),
+    MouseDownDurationPrev: [5]f32 = @import("std").mem.zeroes([5]f32),
+    MouseDragMaxDistanceAbs: [5]ImVec2 = @import("std").mem.zeroes([5]ImVec2),
+    MouseDragMaxDistanceSqr: [5]f32 = @import("std").mem.zeroes([5]f32),
+    PenPressure: f32 = @import("std").mem.zeroes(f32),
+    AppFocusLost: bool = @import("std").mem.zeroes(bool),
+    AppAcceptingEvents: bool = @import("std").mem.zeroes(bool),
+    BackendUsingLegacyKeyArrays: ImS8 = @import("std").mem.zeroes(ImS8),
+    BackendUsingLegacyNavInputArray: bool = @import("std").mem.zeroes(bool),
+    InputQueueSurrogate: ImWchar16 = @import("std").mem.zeroes(ImWchar16),
+    InputQueueCharacters: ImVector_ImWchar = @import("std").mem.zeroes(ImVector_ImWchar),
 };
 pub const ImGuiIO = struct_ImGuiIO;
 pub const ImU64 = c_ulonglong;
 pub const struct_ImGuiPlatformMonitor = extern struct {
-    MainPos: ImVec2,
-    MainSize: ImVec2,
-    WorkPos: ImVec2,
-    WorkSize: ImVec2,
-    DpiScale: f32,
+    MainPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    MainSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WorkPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WorkSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DpiScale: f32 = @import("std").mem.zeroes(f32),
+    PlatformHandle: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
 };
 pub const ImGuiPlatformMonitor = struct_ImGuiPlatformMonitor;
 pub const struct_ImVector_ImGuiPlatformMonitor = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiPlatformMonitor,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiPlatformMonitor = @import("std").mem.zeroes([*c]ImGuiPlatformMonitor),
 };
 pub const ImVector_ImGuiPlatformMonitor = struct_ImVector_ImGuiPlatformMonitor;
 pub const struct_ImVector_ImGuiViewportPtr = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c][*c]ImGuiViewport,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c][*c]ImGuiViewport = @import("std").mem.zeroes([*c][*c]ImGuiViewport),
 };
 pub const ImVector_ImGuiViewportPtr = struct_ImVector_ImGuiViewportPtr;
 pub const struct_ImGuiPlatformIO = extern struct {
-    Platform_CreateWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void,
-    Platform_DestroyWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void,
-    Platform_ShowWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void,
-    Platform_SetWindowPos: ?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void,
-    Platform_GetWindowPos: ?*const fn ([*c]ImGuiViewport) callconv(.C) ImVec2,
-    Platform_SetWindowSize: ?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void,
-    Platform_GetWindowSize: ?*const fn ([*c]ImGuiViewport) callconv(.C) ImVec2,
-    Platform_SetWindowFocus: ?*const fn ([*c]ImGuiViewport) callconv(.C) void,
-    Platform_GetWindowFocus: ?*const fn ([*c]ImGuiViewport) callconv(.C) bool,
-    Platform_GetWindowMinimized: ?*const fn ([*c]ImGuiViewport) callconv(.C) bool,
-    Platform_SetWindowTitle: ?*const fn ([*c]ImGuiViewport, [*c]const u8) callconv(.C) void,
-    Platform_SetWindowAlpha: ?*const fn ([*c]ImGuiViewport, f32) callconv(.C) void,
-    Platform_UpdateWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void,
-    Platform_RenderWindow: ?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void,
-    Platform_SwapBuffers: ?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void,
-    Platform_GetWindowDpiScale: ?*const fn ([*c]ImGuiViewport) callconv(.C) f32,
-    Platform_OnChangedViewport: ?*const fn ([*c]ImGuiViewport) callconv(.C) void,
-    Platform_CreateVkSurface: ?*const fn ([*c]ImGuiViewport, ImU64, ?*const anyopaque, [*c]ImU64) callconv(.C) c_int,
-    Renderer_CreateWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void,
-    Renderer_DestroyWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void,
-    Renderer_SetWindowSize: ?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void,
-    Renderer_RenderWindow: ?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void,
-    Renderer_SwapBuffers: ?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void,
-    Monitors: ImVector_ImGuiPlatformMonitor,
-    Viewports: ImVector_ImGuiViewportPtr,
+    Platform_CreateWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) void),
+    Platform_DestroyWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) void),
+    Platform_ShowWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) void),
+    Platform_SetWindowPos: ?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void),
+    Platform_GetWindowPos: ?*const fn ([*c]ImGuiViewport) callconv(.C) ImVec2 = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) ImVec2),
+    Platform_SetWindowSize: ?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void),
+    Platform_GetWindowSize: ?*const fn ([*c]ImGuiViewport) callconv(.C) ImVec2 = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) ImVec2),
+    Platform_SetWindowFocus: ?*const fn ([*c]ImGuiViewport) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) void),
+    Platform_GetWindowFocus: ?*const fn ([*c]ImGuiViewport) callconv(.C) bool = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) bool),
+    Platform_GetWindowMinimized: ?*const fn ([*c]ImGuiViewport) callconv(.C) bool = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) bool),
+    Platform_SetWindowTitle: ?*const fn ([*c]ImGuiViewport, [*c]const u8) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, [*c]const u8) callconv(.C) void),
+    Platform_SetWindowAlpha: ?*const fn ([*c]ImGuiViewport, f32) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, f32) callconv(.C) void),
+    Platform_UpdateWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) void),
+    Platform_RenderWindow: ?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void),
+    Platform_SwapBuffers: ?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void),
+    Platform_GetWindowDpiScale: ?*const fn ([*c]ImGuiViewport) callconv(.C) f32 = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) f32),
+    Platform_OnChangedViewport: ?*const fn ([*c]ImGuiViewport) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) void),
+    Platform_CreateVkSurface: ?*const fn ([*c]ImGuiViewport, ImU64, ?*const anyopaque, [*c]ImU64) callconv(.C) c_int = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, ImU64, ?*const anyopaque, [*c]ImU64) callconv(.C) c_int),
+    Renderer_CreateWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) void),
+    Renderer_DestroyWindow: ?*const fn ([*c]ImGuiViewport) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport) callconv(.C) void),
+    Renderer_SetWindowSize: ?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, ImVec2) callconv(.C) void),
+    Renderer_RenderWindow: ?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void),
+    Renderer_SwapBuffers: ?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiViewport, ?*anyopaque) callconv(.C) void),
+    Monitors: ImVector_ImGuiPlatformMonitor = @import("std").mem.zeroes(ImVector_ImGuiPlatformMonitor),
+    Viewports: ImVector_ImGuiViewportPtr = @import("std").mem.zeroes(ImVector_ImGuiViewportPtr),
 };
 pub const ImGuiPlatformIO = struct_ImGuiPlatformIO;
 pub const ImGuiDir = c_int;
+pub const ImGuiHoveredFlags = c_int;
 pub const struct_ImGuiStyle = extern struct {
-    Alpha: f32,
-    DisabledAlpha: f32,
-    WindowPadding: ImVec2,
-    WindowRounding: f32,
-    WindowBorderSize: f32,
-    WindowMinSize: ImVec2,
-    WindowTitleAlign: ImVec2,
-    WindowMenuButtonPosition: ImGuiDir,
-    ChildRounding: f32,
-    ChildBorderSize: f32,
-    PopupRounding: f32,
-    PopupBorderSize: f32,
-    FramePadding: ImVec2,
-    FrameRounding: f32,
-    FrameBorderSize: f32,
-    ItemSpacing: ImVec2,
-    ItemInnerSpacing: ImVec2,
-    CellPadding: ImVec2,
-    TouchExtraPadding: ImVec2,
-    IndentSpacing: f32,
-    ColumnsMinSpacing: f32,
-    ScrollbarSize: f32,
-    ScrollbarRounding: f32,
-    GrabMinSize: f32,
-    GrabRounding: f32,
-    LogSliderDeadzone: f32,
-    TabRounding: f32,
-    TabBorderSize: f32,
-    TabMinWidthForCloseButton: f32,
-    ColorButtonPosition: ImGuiDir,
-    ButtonTextAlign: ImVec2,
-    SelectableTextAlign: ImVec2,
-    SeparatorTextBorderSize: f32,
-    SeparatorTextAlign: ImVec2,
-    SeparatorTextPadding: ImVec2,
-    DisplayWindowPadding: ImVec2,
-    DisplaySafeAreaPadding: ImVec2,
-    MouseCursorScale: f32,
-    AntiAliasedLines: bool,
-    AntiAliasedLinesUseTex: bool,
-    AntiAliasedFill: bool,
-    CurveTessellationTol: f32,
-    CircleTessellationMaxError: f32,
-    Colors: [55]ImVec4,
+    Alpha: f32 = @import("std").mem.zeroes(f32),
+    DisabledAlpha: f32 = @import("std").mem.zeroes(f32),
+    WindowPadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WindowRounding: f32 = @import("std").mem.zeroes(f32),
+    WindowBorderSize: f32 = @import("std").mem.zeroes(f32),
+    WindowMinSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WindowTitleAlign: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WindowMenuButtonPosition: ImGuiDir = @import("std").mem.zeroes(ImGuiDir),
+    ChildRounding: f32 = @import("std").mem.zeroes(f32),
+    ChildBorderSize: f32 = @import("std").mem.zeroes(f32),
+    PopupRounding: f32 = @import("std").mem.zeroes(f32),
+    PopupBorderSize: f32 = @import("std").mem.zeroes(f32),
+    FramePadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    FrameRounding: f32 = @import("std").mem.zeroes(f32),
+    FrameBorderSize: f32 = @import("std").mem.zeroes(f32),
+    ItemSpacing: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    ItemInnerSpacing: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    CellPadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    TouchExtraPadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    IndentSpacing: f32 = @import("std").mem.zeroes(f32),
+    ColumnsMinSpacing: f32 = @import("std").mem.zeroes(f32),
+    ScrollbarSize: f32 = @import("std").mem.zeroes(f32),
+    ScrollbarRounding: f32 = @import("std").mem.zeroes(f32),
+    GrabMinSize: f32 = @import("std").mem.zeroes(f32),
+    GrabRounding: f32 = @import("std").mem.zeroes(f32),
+    LogSliderDeadzone: f32 = @import("std").mem.zeroes(f32),
+    TabRounding: f32 = @import("std").mem.zeroes(f32),
+    TabBorderSize: f32 = @import("std").mem.zeroes(f32),
+    TabMinWidthForCloseButton: f32 = @import("std").mem.zeroes(f32),
+    TabBarBorderSize: f32 = @import("std").mem.zeroes(f32),
+    TableAngledHeadersAngle: f32 = @import("std").mem.zeroes(f32),
+    ColorButtonPosition: ImGuiDir = @import("std").mem.zeroes(ImGuiDir),
+    ButtonTextAlign: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    SelectableTextAlign: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    SeparatorTextBorderSize: f32 = @import("std").mem.zeroes(f32),
+    SeparatorTextAlign: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    SeparatorTextPadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DisplayWindowPadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DisplaySafeAreaPadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DockingSeparatorSize: f32 = @import("std").mem.zeroes(f32),
+    MouseCursorScale: f32 = @import("std").mem.zeroes(f32),
+    AntiAliasedLines: bool = @import("std").mem.zeroes(bool),
+    AntiAliasedLinesUseTex: bool = @import("std").mem.zeroes(bool),
+    AntiAliasedFill: bool = @import("std").mem.zeroes(bool),
+    CurveTessellationTol: f32 = @import("std").mem.zeroes(f32),
+    CircleTessellationMaxError: f32 = @import("std").mem.zeroes(f32),
+    Colors: [55]ImVec4 = @import("std").mem.zeroes([55]ImVec4),
+    HoverStationaryDelay: f32 = @import("std").mem.zeroes(f32),
+    HoverDelayShort: f32 = @import("std").mem.zeroes(f32),
+    HoverDelayNormal: f32 = @import("std").mem.zeroes(f32),
+    HoverFlagsForTooltipMouse: ImGuiHoveredFlags = @import("std").mem.zeroes(ImGuiHoveredFlags),
+    HoverFlagsForTooltipNav: ImGuiHoveredFlags = @import("std").mem.zeroes(ImGuiHoveredFlags),
 };
 pub const ImGuiStyle = struct_ImGuiStyle;
 pub const struct_ImGuiInputEventMousePos = extern struct {
-    PosX: f32,
-    PosY: f32,
-    MouseSource: ImGuiMouseSource,
+    PosX: f32 = @import("std").mem.zeroes(f32),
+    PosY: f32 = @import("std").mem.zeroes(f32),
+    MouseSource: ImGuiMouseSource = @import("std").mem.zeroes(ImGuiMouseSource),
 };
 pub const ImGuiInputEventMousePos = struct_ImGuiInputEventMousePos;
 pub const struct_ImGuiInputEventMouseWheel = extern struct {
-    WheelX: f32,
-    WheelY: f32,
-    MouseSource: ImGuiMouseSource,
+    WheelX: f32 = @import("std").mem.zeroes(f32),
+    WheelY: f32 = @import("std").mem.zeroes(f32),
+    MouseSource: ImGuiMouseSource = @import("std").mem.zeroes(ImGuiMouseSource),
 };
 pub const ImGuiInputEventMouseWheel = struct_ImGuiInputEventMouseWheel;
 pub const struct_ImGuiInputEventMouseButton = extern struct {
-    Button: c_int,
-    Down: bool,
-    MouseSource: ImGuiMouseSource,
+    Button: c_int = @import("std").mem.zeroes(c_int),
+    Down: bool = @import("std").mem.zeroes(bool),
+    MouseSource: ImGuiMouseSource = @import("std").mem.zeroes(ImGuiMouseSource),
 };
 pub const ImGuiInputEventMouseButton = struct_ImGuiInputEventMouseButton;
 pub const struct_ImGuiInputEventMouseViewport = extern struct {
-    HoveredViewportID: ImGuiID,
+    HoveredViewportID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
 };
 pub const ImGuiInputEventMouseViewport = struct_ImGuiInputEventMouseViewport;
 pub const struct_ImGuiInputEventKey = extern struct {
-    Key: ImGuiKey,
-    Down: bool,
-    AnalogValue: f32,
+    Key: ImGuiKey = @import("std").mem.zeroes(ImGuiKey),
+    Down: bool = @import("std").mem.zeroes(bool),
+    AnalogValue: f32 = @import("std").mem.zeroes(f32),
 };
 pub const ImGuiInputEventKey = struct_ImGuiInputEventKey;
 pub const struct_ImGuiInputEventText = extern struct {
-    Char: c_uint,
+    Char: c_uint = @import("std").mem.zeroes(c_uint),
 };
 pub const ImGuiInputEventText = struct_ImGuiInputEventText;
 pub const struct_ImGuiInputEventAppFocused = extern struct {
-    Focused: bool,
+    Focused: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiInputEventAppFocused = struct_ImGuiInputEventAppFocused;
-const union_unnamed_1 = extern union {
+const union_unnamed_3 = extern union {
     MousePos: ImGuiInputEventMousePos,
     MouseWheel: ImGuiInputEventMouseWheel,
     MouseButton: ImGuiInputEventMouseButton,
@@ -730,1162 +1164,1227 @@ const union_unnamed_1 = extern union {
     AppFocused: ImGuiInputEventAppFocused,
 };
 pub const struct_ImGuiInputEvent = extern struct {
-    Type: ImGuiInputEventType,
-    Source: ImGuiInputSource,
-    EventId: ImU32,
-    unnamed_0: union_unnamed_1,
-    AddedByTestEngine: bool,
+    Type: ImGuiInputEventType = @import("std").mem.zeroes(ImGuiInputEventType),
+    Source: ImGuiInputSource = @import("std").mem.zeroes(ImGuiInputSource),
+    EventId: ImU32 = @import("std").mem.zeroes(ImU32),
+    unnamed_0: union_unnamed_3 = @import("std").mem.zeroes(union_unnamed_3),
+    AddedByTestEngine: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiInputEvent = struct_ImGuiInputEvent;
 pub const struct_ImVector_ImGuiInputEvent = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiInputEvent,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiInputEvent = @import("std").mem.zeroes([*c]ImGuiInputEvent),
 };
 pub const ImVector_ImGuiInputEvent = struct_ImVector_ImGuiInputEvent;
 pub const ImGuiWindowFlags = c_int;
+pub const ImGuiChildFlags = c_int;
 pub const ImGuiTabItemFlags = c_int;
 pub const ImGuiDockNodeFlags = c_int;
 pub const struct_ImGuiWindowClass = extern struct {
-    ClassId: ImGuiID,
-    ParentViewportId: ImGuiID,
-    ViewportFlagsOverrideSet: ImGuiViewportFlags,
-    ViewportFlagsOverrideClear: ImGuiViewportFlags,
-    TabItemFlagsOverrideSet: ImGuiTabItemFlags,
-    DockNodeFlagsOverrideSet: ImGuiDockNodeFlags,
-    DockingAlwaysTabBar: bool,
-    DockingAllowUnclassed: bool,
+    ClassId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ParentViewportId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ViewportFlagsOverrideSet: ImGuiViewportFlags = @import("std").mem.zeroes(ImGuiViewportFlags),
+    ViewportFlagsOverrideClear: ImGuiViewportFlags = @import("std").mem.zeroes(ImGuiViewportFlags),
+    TabItemFlagsOverrideSet: ImGuiTabItemFlags = @import("std").mem.zeroes(ImGuiTabItemFlags),
+    DockNodeFlagsOverrideSet: ImGuiDockNodeFlags = @import("std").mem.zeroes(ImGuiDockNodeFlags),
+    DockingAlwaysTabBar: bool = @import("std").mem.zeroes(bool),
+    DockingAllowUnclassed: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiWindowClass = struct_ImGuiWindowClass;
-pub const struct_ImVector_ImDrawListPtr = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c][*c]ImDrawList,
-};
-pub const ImVector_ImDrawListPtr = struct_ImVector_ImDrawListPtr;
 pub const struct_ImDrawDataBuilder = extern struct {
-    Layers: [2]ImVector_ImDrawListPtr,
+    Layers: [2][*c]ImVector_ImDrawListPtr = @import("std").mem.zeroes([2][*c]ImVector_ImDrawListPtr),
+    LayerData1: ImVector_ImDrawListPtr = @import("std").mem.zeroes(ImVector_ImDrawListPtr),
 };
 pub const ImDrawDataBuilder = struct_ImDrawDataBuilder;
 pub const struct_ImGuiViewportP = extern struct {
-    _ImGuiViewport: ImGuiViewport,
-    Window: ?*ImGuiWindow,
-    Idx: c_int,
-    LastFrameActive: c_int,
-    LastFocusedStampCount: c_int,
-    LastNameHash: ImGuiID,
-    LastPos: ImVec2,
-    Alpha: f32,
-    LastAlpha: f32,
-    LastFocusedHadNavWindow: bool,
-    PlatformMonitor: c_short,
-    DrawListsLastFrame: [2]c_int,
-    DrawLists: [2][*c]ImDrawList,
-    DrawDataP: ImDrawData,
-    DrawDataBuilder: ImDrawDataBuilder,
-    LastPlatformPos: ImVec2,
-    LastPlatformSize: ImVec2,
-    LastRendererSize: ImVec2,
-    WorkOffsetMin: ImVec2,
-    WorkOffsetMax: ImVec2,
-    BuildWorkOffsetMin: ImVec2,
-    BuildWorkOffsetMax: ImVec2,
+    _ImGuiViewport: ImGuiViewport = @import("std").mem.zeroes(ImGuiViewport),
+    Window: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    Idx: c_int = @import("std").mem.zeroes(c_int),
+    LastFrameActive: c_int = @import("std").mem.zeroes(c_int),
+    LastFocusedStampCount: c_int = @import("std").mem.zeroes(c_int),
+    LastNameHash: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    LastPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    Alpha: f32 = @import("std").mem.zeroes(f32),
+    LastAlpha: f32 = @import("std").mem.zeroes(f32),
+    LastFocusedHadNavWindow: bool = @import("std").mem.zeroes(bool),
+    PlatformMonitor: c_short = @import("std").mem.zeroes(c_short),
+    BgFgDrawListsLastFrame: [2]c_int = @import("std").mem.zeroes([2]c_int),
+    BgFgDrawLists: [2][*c]ImDrawList = @import("std").mem.zeroes([2][*c]ImDrawList),
+    DrawDataP: ImDrawData = @import("std").mem.zeroes(ImDrawData),
+    DrawDataBuilder: ImDrawDataBuilder = @import("std").mem.zeroes(ImDrawDataBuilder),
+    LastPlatformPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    LastPlatformSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    LastRendererSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WorkOffsetMin: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WorkOffsetMax: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BuildWorkOffsetMin: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BuildWorkOffsetMax: ImVec2 = @import("std").mem.zeroes(ImVec2),
 };
-pub const ImGuiViewportP = struct_ImGuiViewportP; // libs/cimgui/cimgui.h:2736:15: warning: struct demoted to opaque type - has bitfield
+pub const ImGuiViewportP = struct_ImGuiViewportP; // cimgui.h:2869:15: warning: struct demoted to opaque type - has bitfield
 pub const struct_ImGuiWindow = opaque {};
 pub const ImGuiWindow = struct_ImGuiWindow;
 pub const struct_ImVector_ImGuiWindowPtr = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]?*ImGuiWindow,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]?*ImGuiWindow = @import("std").mem.zeroes([*c]?*ImGuiWindow),
 };
 pub const ImVector_ImGuiWindowPtr = struct_ImVector_ImGuiWindowPtr;
 pub const ImGuiItemFlags = c_int;
 pub const ImGuiItemStatusFlags = c_int;
 pub const struct_ImRect = extern struct {
-    Min: ImVec2,
-    Max: ImVec2,
+    Min: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    Max: ImVec2 = @import("std").mem.zeroes(ImVec2),
 };
 pub const ImRect = struct_ImRect;
 pub const struct_ImGuiLastItemData = extern struct {
-    ID: ImGuiID,
-    InFlags: ImGuiItemFlags,
-    StatusFlags: ImGuiItemStatusFlags,
-    Rect: ImRect,
-    NavRect: ImRect,
-    DisplayRect: ImRect,
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    InFlags: ImGuiItemFlags = @import("std").mem.zeroes(ImGuiItemFlags),
+    StatusFlags: ImGuiItemStatusFlags = @import("std").mem.zeroes(ImGuiItemStatusFlags),
+    Rect: ImRect = @import("std").mem.zeroes(ImRect),
+    NavRect: ImRect = @import("std").mem.zeroes(ImRect),
+    DisplayRect: ImRect = @import("std").mem.zeroes(ImRect),
 };
 pub const ImGuiLastItemData = struct_ImGuiLastItemData;
 pub const struct_ImGuiStackSizes = extern struct {
-    SizeOfIDStack: c_short,
-    SizeOfColorStack: c_short,
-    SizeOfStyleVarStack: c_short,
-    SizeOfFontStack: c_short,
-    SizeOfFocusScopeStack: c_short,
-    SizeOfGroupStack: c_short,
-    SizeOfItemFlagsStack: c_short,
-    SizeOfBeginPopupStack: c_short,
-    SizeOfDisabledStack: c_short,
+    SizeOfIDStack: c_short = @import("std").mem.zeroes(c_short),
+    SizeOfColorStack: c_short = @import("std").mem.zeroes(c_short),
+    SizeOfStyleVarStack: c_short = @import("std").mem.zeroes(c_short),
+    SizeOfFontStack: c_short = @import("std").mem.zeroes(c_short),
+    SizeOfFocusScopeStack: c_short = @import("std").mem.zeroes(c_short),
+    SizeOfGroupStack: c_short = @import("std").mem.zeroes(c_short),
+    SizeOfItemFlagsStack: c_short = @import("std").mem.zeroes(c_short),
+    SizeOfBeginPopupStack: c_short = @import("std").mem.zeroes(c_short),
+    SizeOfDisabledStack: c_short = @import("std").mem.zeroes(c_short),
 };
 pub const ImGuiStackSizes = struct_ImGuiStackSizes;
 pub const struct_ImGuiWindowStackData = extern struct {
-    Window: ?*ImGuiWindow,
-    ParentLastItemDataBackup: ImGuiLastItemData,
-    StackSizesOnBegin: ImGuiStackSizes,
+    Window: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    ParentLastItemDataBackup: ImGuiLastItemData = @import("std").mem.zeroes(ImGuiLastItemData),
+    StackSizesOnBegin: ImGuiStackSizes = @import("std").mem.zeroes(ImGuiStackSizes),
 };
 pub const ImGuiWindowStackData = struct_ImGuiWindowStackData;
 pub const struct_ImVector_ImGuiWindowStackData = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiWindowStackData,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiWindowStackData = @import("std").mem.zeroes([*c]ImGuiWindowStackData),
 };
 pub const ImVector_ImGuiWindowStackData = struct_ImVector_ImGuiWindowStackData;
-const union_unnamed_2 = extern union {
+const union_unnamed_4 = extern union {
     val_i: c_int,
     val_f: f32,
     val_p: ?*anyopaque,
 };
 pub const struct_ImGuiStoragePair = extern struct {
-    key: ImGuiID,
-    unnamed_0: union_unnamed_2,
+    key: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    unnamed_0: union_unnamed_4 = @import("std").mem.zeroes(union_unnamed_4),
 };
 pub const ImGuiStoragePair = struct_ImGuiStoragePair;
 pub const struct_ImVector_ImGuiStoragePair = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiStoragePair,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiStoragePair = @import("std").mem.zeroes([*c]ImGuiStoragePair),
 };
 pub const ImVector_ImGuiStoragePair = struct_ImVector_ImGuiStoragePair;
 pub const struct_ImGuiStorage = extern struct {
-    Data: ImVector_ImGuiStoragePair,
+    Data: ImVector_ImGuiStoragePair = @import("std").mem.zeroes(ImVector_ImGuiStoragePair),
 };
 pub const ImGuiStorage = struct_ImGuiStorage;
 pub const struct_ImGuiKeyOwnerData = extern struct {
-    OwnerCurr: ImGuiID,
-    OwnerNext: ImGuiID,
-    LockThisFrame: bool,
-    LockUntilRelease: bool,
+    OwnerCurr: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    OwnerNext: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    LockThisFrame: bool = @import("std").mem.zeroes(bool),
+    LockUntilRelease: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiKeyOwnerData = struct_ImGuiKeyOwnerData;
 pub const ImS16 = c_short;
 pub const ImGuiKeyRoutingIndex = ImS16;
 pub const struct_ImGuiKeyRoutingData = extern struct {
-    NextEntryIndex: ImGuiKeyRoutingIndex,
-    Mods: ImU16,
-    RoutingNextScore: ImU8,
-    RoutingCurr: ImGuiID,
-    RoutingNext: ImGuiID,
+    NextEntryIndex: ImGuiKeyRoutingIndex = @import("std").mem.zeroes(ImGuiKeyRoutingIndex),
+    Mods: ImU16 = @import("std").mem.zeroes(ImU16),
+    RoutingNextScore: ImU8 = @import("std").mem.zeroes(ImU8),
+    RoutingCurr: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    RoutingNext: ImGuiID = @import("std").mem.zeroes(ImGuiID),
 };
 pub const ImGuiKeyRoutingData = struct_ImGuiKeyRoutingData;
 pub const struct_ImVector_ImGuiKeyRoutingData = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiKeyRoutingData,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiKeyRoutingData = @import("std").mem.zeroes([*c]ImGuiKeyRoutingData),
 };
 pub const ImVector_ImGuiKeyRoutingData = struct_ImVector_ImGuiKeyRoutingData;
 pub const struct_ImGuiKeyRoutingTable = extern struct {
-    Index: [140]ImGuiKeyRoutingIndex,
-    Entries: ImVector_ImGuiKeyRoutingData,
-    EntriesNext: ImVector_ImGuiKeyRoutingData,
+    Index: [154]ImGuiKeyRoutingIndex = @import("std").mem.zeroes([154]ImGuiKeyRoutingIndex),
+    Entries: ImVector_ImGuiKeyRoutingData = @import("std").mem.zeroes(ImVector_ImGuiKeyRoutingData),
+    EntriesNext: ImVector_ImGuiKeyRoutingData = @import("std").mem.zeroes(ImVector_ImGuiKeyRoutingData),
 };
 pub const ImGuiKeyRoutingTable = struct_ImGuiKeyRoutingTable;
 pub const ImGuiNextItemDataFlags = c_int;
+pub const ImS64 = c_longlong;
+pub const ImGuiSelectionUserData = ImS64;
 pub const ImGuiCond = c_int;
 pub const struct_ImGuiNextItemData = extern struct {
-    Flags: ImGuiNextItemDataFlags,
-    Width: f32,
-    FocusScopeId: ImGuiID,
-    OpenCond: ImGuiCond,
-    OpenVal: bool,
+    Flags: ImGuiNextItemDataFlags = @import("std").mem.zeroes(ImGuiNextItemDataFlags),
+    ItemFlags: ImGuiItemFlags = @import("std").mem.zeroes(ImGuiItemFlags),
+    Width: f32 = @import("std").mem.zeroes(f32),
+    SelectionUserData: ImGuiSelectionUserData = @import("std").mem.zeroes(ImGuiSelectionUserData),
+    OpenCond: ImGuiCond = @import("std").mem.zeroes(ImGuiCond),
+    OpenVal: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiNextItemData = struct_ImGuiNextItemData;
 pub const ImGuiNextWindowDataFlags = c_int;
 pub const struct_ImGuiSizeCallbackData = extern struct {
-    UserData: ?*anyopaque,
-    Pos: ImVec2,
-    CurrentSize: ImVec2,
-    DesiredSize: ImVec2,
+    UserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    Pos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    CurrentSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DesiredSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
 };
 pub const ImGuiSizeCallbackData = struct_ImGuiSizeCallbackData;
 pub const ImGuiSizeCallback = ?*const fn ([*c]ImGuiSizeCallbackData) callconv(.C) void;
 pub const struct_ImGuiNextWindowData = extern struct {
-    Flags: ImGuiNextWindowDataFlags,
-    PosCond: ImGuiCond,
-    SizeCond: ImGuiCond,
-    CollapsedCond: ImGuiCond,
-    DockCond: ImGuiCond,
-    PosVal: ImVec2,
-    PosPivotVal: ImVec2,
-    SizeVal: ImVec2,
-    ContentSizeVal: ImVec2,
-    ScrollVal: ImVec2,
-    PosUndock: bool,
-    CollapsedVal: bool,
-    SizeConstraintRect: ImRect,
-    SizeCallback: ImGuiSizeCallback,
-    SizeCallbackUserData: ?*anyopaque,
-    BgAlphaVal: f32,
-    ViewportId: ImGuiID,
-    DockId: ImGuiID,
-    WindowClass: ImGuiWindowClass,
-    MenuBarOffsetMinVal: ImVec2,
+    Flags: ImGuiNextWindowDataFlags = @import("std").mem.zeroes(ImGuiNextWindowDataFlags),
+    PosCond: ImGuiCond = @import("std").mem.zeroes(ImGuiCond),
+    SizeCond: ImGuiCond = @import("std").mem.zeroes(ImGuiCond),
+    CollapsedCond: ImGuiCond = @import("std").mem.zeroes(ImGuiCond),
+    DockCond: ImGuiCond = @import("std").mem.zeroes(ImGuiCond),
+    PosVal: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    PosPivotVal: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    SizeVal: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    ContentSizeVal: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    ScrollVal: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    ChildFlags: ImGuiChildFlags = @import("std").mem.zeroes(ImGuiChildFlags),
+    PosUndock: bool = @import("std").mem.zeroes(bool),
+    CollapsedVal: bool = @import("std").mem.zeroes(bool),
+    SizeConstraintRect: ImRect = @import("std").mem.zeroes(ImRect),
+    SizeCallback: ImGuiSizeCallback = @import("std").mem.zeroes(ImGuiSizeCallback),
+    SizeCallbackUserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    BgAlphaVal: f32 = @import("std").mem.zeroes(f32),
+    ViewportId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DockId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    WindowClass: ImGuiWindowClass = @import("std").mem.zeroes(ImGuiWindowClass),
+    MenuBarOffsetMinVal: ImVec2 = @import("std").mem.zeroes(ImVec2),
 };
 pub const ImGuiNextWindowData = struct_ImGuiNextWindowData;
 pub const ImGuiCol = c_int;
 pub const struct_ImGuiColorMod = extern struct {
-    Col: ImGuiCol,
-    BackupValue: ImVec4,
+    Col: ImGuiCol = @import("std").mem.zeroes(ImGuiCol),
+    BackupValue: ImVec4 = @import("std").mem.zeroes(ImVec4),
 };
 pub const ImGuiColorMod = struct_ImGuiColorMod;
 pub const struct_ImVector_ImGuiColorMod = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiColorMod,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiColorMod = @import("std").mem.zeroes([*c]ImGuiColorMod),
 };
 pub const ImVector_ImGuiColorMod = struct_ImVector_ImGuiColorMod;
 pub const ImGuiStyleVar = c_int;
-const union_unnamed_3 = extern union {
+const union_unnamed_5 = extern union {
     BackupInt: [2]c_int,
     BackupFloat: [2]f32,
 };
 pub const struct_ImGuiStyleMod = extern struct {
-    VarIdx: ImGuiStyleVar,
-    unnamed_0: union_unnamed_3,
+    VarIdx: ImGuiStyleVar = @import("std").mem.zeroes(ImGuiStyleVar),
+    unnamed_0: union_unnamed_5 = @import("std").mem.zeroes(union_unnamed_5),
 };
 pub const ImGuiStyleMod = struct_ImGuiStyleMod;
 pub const struct_ImVector_ImGuiStyleMod = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiStyleMod,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiStyleMod = @import("std").mem.zeroes([*c]ImGuiStyleMod),
 };
 pub const ImVector_ImGuiStyleMod = struct_ImVector_ImGuiStyleMod;
 pub const struct_ImVector_ImGuiID = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiID,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiID = @import("std").mem.zeroes([*c]ImGuiID),
 };
 pub const ImVector_ImGuiID = struct_ImVector_ImGuiID;
 pub const struct_ImVector_ImGuiItemFlags = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiItemFlags,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiItemFlags = @import("std").mem.zeroes([*c]ImGuiItemFlags),
 };
 pub const ImVector_ImGuiItemFlags = struct_ImVector_ImGuiItemFlags;
 pub const struct_ImVec1 = extern struct {
-    x: f32,
+    x: f32 = @import("std").mem.zeroes(f32),
 };
 pub const ImVec1 = struct_ImVec1;
 pub const struct_ImGuiGroupData = extern struct {
-    WindowID: ImGuiID,
-    BackupCursorPos: ImVec2,
-    BackupCursorMaxPos: ImVec2,
-    BackupIndent: ImVec1,
-    BackupGroupOffset: ImVec1,
-    BackupCurrLineSize: ImVec2,
-    BackupCurrLineTextBaseOffset: f32,
-    BackupActiveIdIsAlive: ImGuiID,
-    BackupActiveIdPreviousFrameIsAlive: bool,
-    BackupHoveredIdIsAlive: bool,
-    EmitItem: bool,
+    WindowID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    BackupCursorPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BackupCursorMaxPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BackupCursorPosPrevLine: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BackupIndent: ImVec1 = @import("std").mem.zeroes(ImVec1),
+    BackupGroupOffset: ImVec1 = @import("std").mem.zeroes(ImVec1),
+    BackupCurrLineSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BackupCurrLineTextBaseOffset: f32 = @import("std").mem.zeroes(f32),
+    BackupActiveIdIsAlive: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    BackupActiveIdPreviousFrameIsAlive: bool = @import("std").mem.zeroes(bool),
+    BackupHoveredIdIsAlive: bool = @import("std").mem.zeroes(bool),
+    BackupIsSameLine: bool = @import("std").mem.zeroes(bool),
+    EmitItem: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiGroupData = struct_ImGuiGroupData;
 pub const struct_ImVector_ImGuiGroupData = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiGroupData,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiGroupData = @import("std").mem.zeroes([*c]ImGuiGroupData),
 };
 pub const ImVector_ImGuiGroupData = struct_ImVector_ImGuiGroupData;
 pub const struct_ImGuiPopupData = extern struct {
-    PopupId: ImGuiID,
-    Window: ?*ImGuiWindow,
-    BackupNavWindow: ?*ImGuiWindow,
-    ParentNavLayer: c_int,
-    OpenFrameCount: c_int,
-    OpenParentId: ImGuiID,
-    OpenPopupPos: ImVec2,
-    OpenMousePos: ImVec2,
+    PopupId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    Window: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    BackupNavWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    ParentNavLayer: c_int = @import("std").mem.zeroes(c_int),
+    OpenFrameCount: c_int = @import("std").mem.zeroes(c_int),
+    OpenParentId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    OpenPopupPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    OpenMousePos: ImVec2 = @import("std").mem.zeroes(ImVec2),
 };
 pub const ImGuiPopupData = struct_ImGuiPopupData;
 pub const struct_ImVector_ImGuiPopupData = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiPopupData,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiPopupData = @import("std").mem.zeroes([*c]ImGuiPopupData),
 };
 pub const ImVector_ImGuiPopupData = struct_ImVector_ImGuiPopupData;
+pub const struct_ImGuiNavTreeNodeData = extern struct {
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    InFlags: ImGuiItemFlags = @import("std").mem.zeroes(ImGuiItemFlags),
+    NavRect: ImRect = @import("std").mem.zeroes(ImRect),
+};
+pub const ImGuiNavTreeNodeData = struct_ImGuiNavTreeNodeData;
+pub const struct_ImVector_ImGuiNavTreeNodeData = extern struct {
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiNavTreeNodeData = @import("std").mem.zeroes([*c]ImGuiNavTreeNodeData),
+};
+pub const ImVector_ImGuiNavTreeNodeData = struct_ImVector_ImGuiNavTreeNodeData;
 pub const struct_ImVector_ImGuiViewportPPtr = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c][*c]ImGuiViewportP,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c][*c]ImGuiViewportP = @import("std").mem.zeroes([*c][*c]ImGuiViewportP),
 };
 pub const ImVector_ImGuiViewportPPtr = struct_ImVector_ImGuiViewportPPtr;
 pub const ImGuiActivateFlags = c_int;
-pub const ImGuiNavMoveFlags = c_int;
-pub const ImGuiScrollFlags = c_int;
 pub const struct_ImGuiNavItemData = extern struct {
-    Window: ?*ImGuiWindow,
-    ID: ImGuiID,
-    FocusScopeId: ImGuiID,
-    RectRel: ImRect,
-    InFlags: ImGuiItemFlags,
-    DistBox: f32,
-    DistCenter: f32,
-    DistAxial: f32,
+    Window: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    FocusScopeId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    RectRel: ImRect = @import("std").mem.zeroes(ImRect),
+    InFlags: ImGuiItemFlags = @import("std").mem.zeroes(ImGuiItemFlags),
+    SelectionUserData: ImGuiSelectionUserData = @import("std").mem.zeroes(ImGuiSelectionUserData),
+    DistBox: f32 = @import("std").mem.zeroes(f32),
+    DistCenter: f32 = @import("std").mem.zeroes(f32),
+    DistAxial: f32 = @import("std").mem.zeroes(f32),
 };
 pub const ImGuiNavItemData = struct_ImGuiNavItemData;
-pub const ImGuiMouseCursor = c_int;
+pub const ImGuiNavMoveFlags = c_int;
+pub const ImGuiScrollFlags = c_int;
 pub const ImGuiDragDropFlags = c_int;
 pub const struct_ImGuiPayload = extern struct {
-    Data: ?*anyopaque,
-    DataSize: c_int,
-    SourceId: ImGuiID,
-    SourceParentId: ImGuiID,
-    DataFrameCount: c_int,
-    DataType: [33]u8,
-    Preview: bool,
-    Delivery: bool,
+    Data: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    DataSize: c_int = @import("std").mem.zeroes(c_int),
+    SourceId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    SourceParentId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DataFrameCount: c_int = @import("std").mem.zeroes(c_int),
+    DataType: [33]u8 = @import("std").mem.zeroes([33]u8),
+    Preview: bool = @import("std").mem.zeroes(bool),
+    Delivery: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiPayload = struct_ImGuiPayload;
 pub const struct_ImVector_unsigned_char = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]u8,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]u8 = @import("std").mem.zeroes([*c]u8),
 };
 pub const ImVector_unsigned_char = struct_ImVector_unsigned_char;
 pub const struct_ImGuiListClipper = extern struct {
-    Ctx: [*c]ImGuiContext,
-    DisplayStart: c_int,
-    DisplayEnd: c_int,
-    ItemsCount: c_int,
-    ItemsHeight: f32,
-    StartPosY: f32,
-    TempData: ?*anyopaque,
+    Ctx: [*c]ImGuiContext = @import("std").mem.zeroes([*c]ImGuiContext),
+    DisplayStart: c_int = @import("std").mem.zeroes(c_int),
+    DisplayEnd: c_int = @import("std").mem.zeroes(c_int),
+    ItemsCount: c_int = @import("std").mem.zeroes(c_int),
+    ItemsHeight: f32 = @import("std").mem.zeroes(f32),
+    StartPosY: f32 = @import("std").mem.zeroes(f32),
+    TempData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
 };
 pub const ImGuiListClipper = struct_ImGuiListClipper;
 pub const struct_ImGuiListClipperRange = extern struct {
-    Min: c_int,
-    Max: c_int,
-    PosToIndexConvert: bool,
-    PosToIndexOffsetMin: ImS8,
-    PosToIndexOffsetMax: ImS8,
+    Min: c_int = @import("std").mem.zeroes(c_int),
+    Max: c_int = @import("std").mem.zeroes(c_int),
+    PosToIndexConvert: bool = @import("std").mem.zeroes(bool),
+    PosToIndexOffsetMin: ImS8 = @import("std").mem.zeroes(ImS8),
+    PosToIndexOffsetMax: ImS8 = @import("std").mem.zeroes(ImS8),
 };
 pub const ImGuiListClipperRange = struct_ImGuiListClipperRange;
 pub const struct_ImVector_ImGuiListClipperRange = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiListClipperRange,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiListClipperRange = @import("std").mem.zeroes([*c]ImGuiListClipperRange),
 };
 pub const ImVector_ImGuiListClipperRange = struct_ImVector_ImGuiListClipperRange;
 pub const struct_ImGuiListClipperData = extern struct {
-    ListClipper: [*c]ImGuiListClipper,
-    LossynessOffset: f32,
-    StepNo: c_int,
-    ItemsFrozen: c_int,
-    Ranges: ImVector_ImGuiListClipperRange,
+    ListClipper: [*c]ImGuiListClipper = @import("std").mem.zeroes([*c]ImGuiListClipper),
+    LossynessOffset: f32 = @import("std").mem.zeroes(f32),
+    StepNo: c_int = @import("std").mem.zeroes(c_int),
+    ItemsFrozen: c_int = @import("std").mem.zeroes(c_int),
+    Ranges: ImVector_ImGuiListClipperRange = @import("std").mem.zeroes(ImVector_ImGuiListClipperRange),
 };
 pub const ImGuiListClipperData = struct_ImGuiListClipperData;
 pub const struct_ImVector_ImGuiListClipperData = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiListClipperData,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiListClipperData = @import("std").mem.zeroes([*c]ImGuiListClipperData),
 };
 pub const ImVector_ImGuiListClipperData = struct_ImVector_ImGuiListClipperData;
 pub const ImGuiTableFlags = c_int;
 pub const struct_ImGuiTableTempData = extern struct {
-    TableIndex: c_int,
-    LastTimeActive: f32,
-    UserOuterSize: ImVec2,
-    DrawSplitter: ImDrawListSplitter,
-    HostBackupWorkRect: ImRect,
-    HostBackupParentWorkRect: ImRect,
-    HostBackupPrevLineSize: ImVec2,
-    HostBackupCurrLineSize: ImVec2,
-    HostBackupCursorMaxPos: ImVec2,
-    HostBackupColumnsOffset: ImVec1,
-    HostBackupItemWidth: f32,
-    HostBackupItemWidthStackSize: c_int,
+    TableIndex: c_int = @import("std").mem.zeroes(c_int),
+    LastTimeActive: f32 = @import("std").mem.zeroes(f32),
+    AngledheadersExtraWidth: f32 = @import("std").mem.zeroes(f32),
+    UserOuterSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DrawSplitter: ImDrawListSplitter = @import("std").mem.zeroes(ImDrawListSplitter),
+    HostBackupWorkRect: ImRect = @import("std").mem.zeroes(ImRect),
+    HostBackupParentWorkRect: ImRect = @import("std").mem.zeroes(ImRect),
+    HostBackupPrevLineSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    HostBackupCurrLineSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    HostBackupCursorMaxPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    HostBackupColumnsOffset: ImVec1 = @import("std").mem.zeroes(ImVec1),
+    HostBackupItemWidth: f32 = @import("std").mem.zeroes(f32),
+    HostBackupItemWidthStackSize: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const ImGuiTableTempData = struct_ImGuiTableTempData;
 pub const ImGuiTableColumnFlags = c_int;
 pub const ImGuiTableColumnIdx = ImS16;
-pub const ImGuiTableDrawChannelIdx = ImU16; // libs/cimgui/cimgui.h:2895:10: warning: struct demoted to opaque type - has bitfield
+pub const ImGuiTableDrawChannelIdx = ImU16; // cimgui.h:3030:10: warning: struct demoted to opaque type - has bitfield
 pub const struct_ImGuiTableColumn = opaque {};
 pub const ImGuiTableColumn = struct_ImGuiTableColumn;
 pub const struct_ImSpan_ImGuiTableColumn = extern struct {
-    Data: ?*ImGuiTableColumn,
-    DataEnd: ?*ImGuiTableColumn,
+    Data: ?*ImGuiTableColumn = @import("std").mem.zeroes(?*ImGuiTableColumn),
+    DataEnd: ?*ImGuiTableColumn = @import("std").mem.zeroes(?*ImGuiTableColumn),
 };
 pub const ImSpan_ImGuiTableColumn = struct_ImSpan_ImGuiTableColumn;
 pub const struct_ImSpan_ImGuiTableColumnIdx = extern struct {
-    Data: [*c]ImGuiTableColumnIdx,
-    DataEnd: [*c]ImGuiTableColumnIdx,
+    Data: [*c]ImGuiTableColumnIdx = @import("std").mem.zeroes([*c]ImGuiTableColumnIdx),
+    DataEnd: [*c]ImGuiTableColumnIdx = @import("std").mem.zeroes([*c]ImGuiTableColumnIdx),
 };
 pub const ImSpan_ImGuiTableColumnIdx = struct_ImSpan_ImGuiTableColumnIdx;
 pub const struct_ImGuiTableCellData = extern struct {
-    BgColor: ImU32,
-    Column: ImGuiTableColumnIdx,
+    BgColor: ImU32 = @import("std").mem.zeroes(ImU32),
+    Column: ImGuiTableColumnIdx = @import("std").mem.zeroes(ImGuiTableColumnIdx),
 };
 pub const ImGuiTableCellData = struct_ImGuiTableCellData;
 pub const struct_ImSpan_ImGuiTableCellData = extern struct {
-    Data: [*c]ImGuiTableCellData,
-    DataEnd: [*c]ImGuiTableCellData,
+    Data: [*c]ImGuiTableCellData = @import("std").mem.zeroes([*c]ImGuiTableCellData),
+    DataEnd: [*c]ImGuiTableCellData = @import("std").mem.zeroes([*c]ImGuiTableCellData),
 };
 pub const ImSpan_ImGuiTableCellData = struct_ImSpan_ImGuiTableCellData;
-pub const ImBitArrayPtr = [*c]ImU32; // libs/cimgui/cimgui.h:2948:24: warning: struct demoted to opaque type - has bitfield
+pub const ImBitArrayPtr = [*c]ImU32; // cimgui.h:3086:24: warning: struct demoted to opaque type - has bitfield
 pub const struct_ImGuiTable = opaque {};
 pub const ImGuiTable = struct_ImGuiTable;
 pub const struct_ImVector_ImGuiTableTempData = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiTableTempData,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiTableTempData = @import("std").mem.zeroes([*c]ImGuiTableTempData),
 };
 pub const ImVector_ImGuiTableTempData = struct_ImVector_ImGuiTableTempData;
 pub const struct_ImVector_ImGuiTable = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: ?*ImGuiTable,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: ?*ImGuiTable = @import("std").mem.zeroes(?*ImGuiTable),
 };
 pub const ImVector_ImGuiTable = struct_ImVector_ImGuiTable;
 pub const ImPoolIdx = c_int;
 pub const struct_ImPool_ImGuiTable = extern struct {
-    Buf: ImVector_ImGuiTable,
-    Map: ImGuiStorage,
-    FreeIdx: ImPoolIdx,
-    AliveCount: ImPoolIdx,
+    Buf: ImVector_ImGuiTable = @import("std").mem.zeroes(ImVector_ImGuiTable),
+    Map: ImGuiStorage = @import("std").mem.zeroes(ImGuiStorage),
+    FreeIdx: ImPoolIdx = @import("std").mem.zeroes(ImPoolIdx),
+    AliveCount: ImPoolIdx = @import("std").mem.zeroes(ImPoolIdx),
 };
 pub const ImPool_ImGuiTable = struct_ImPool_ImGuiTable;
 pub const ImS32 = c_int;
 pub const struct_ImGuiTabItem = extern struct {
-    ID: ImGuiID,
-    Flags: ImGuiTabItemFlags,
-    Window: ?*ImGuiWindow,
-    LastFrameVisible: c_int,
-    LastFrameSelected: c_int,
-    Offset: f32,
-    Width: f32,
-    ContentWidth: f32,
-    RequestedWidth: f32,
-    NameOffset: ImS32,
-    BeginOrder: ImS16,
-    IndexDuringLayout: ImS16,
-    WantClose: bool,
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    Flags: ImGuiTabItemFlags = @import("std").mem.zeroes(ImGuiTabItemFlags),
+    Window: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    LastFrameVisible: c_int = @import("std").mem.zeroes(c_int),
+    LastFrameSelected: c_int = @import("std").mem.zeroes(c_int),
+    Offset: f32 = @import("std").mem.zeroes(f32),
+    Width: f32 = @import("std").mem.zeroes(f32),
+    ContentWidth: f32 = @import("std").mem.zeroes(f32),
+    RequestedWidth: f32 = @import("std").mem.zeroes(f32),
+    NameOffset: ImS32 = @import("std").mem.zeroes(ImS32),
+    BeginOrder: ImS16 = @import("std").mem.zeroes(ImS16),
+    IndexDuringLayout: ImS16 = @import("std").mem.zeroes(ImS16),
+    WantClose: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiTabItem = struct_ImGuiTabItem;
 pub const struct_ImVector_ImGuiTabItem = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiTabItem,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiTabItem = @import("std").mem.zeroes([*c]ImGuiTabItem),
 };
 pub const ImVector_ImGuiTabItem = struct_ImVector_ImGuiTabItem;
 pub const ImGuiTabBarFlags = c_int;
 pub const struct_ImVector_char = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]u8,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]u8 = @import("std").mem.zeroes([*c]u8),
 };
 pub const ImVector_char = struct_ImVector_char;
 pub const struct_ImGuiTextBuffer = extern struct {
-    Buf: ImVector_char,
+    Buf: ImVector_char = @import("std").mem.zeroes(ImVector_char),
 };
 pub const ImGuiTextBuffer = struct_ImGuiTextBuffer;
 pub const struct_ImGuiTabBar = extern struct {
-    Tabs: ImVector_ImGuiTabItem,
-    Flags: ImGuiTabBarFlags,
-    ID: ImGuiID,
-    SelectedTabId: ImGuiID,
-    NextSelectedTabId: ImGuiID,
-    VisibleTabId: ImGuiID,
-    CurrFrameVisible: c_int,
-    PrevFrameVisible: c_int,
-    BarRect: ImRect,
-    CurrTabsContentsHeight: f32,
-    PrevTabsContentsHeight: f32,
-    WidthAllTabs: f32,
-    WidthAllTabsIdeal: f32,
-    ScrollingAnim: f32,
-    ScrollingTarget: f32,
-    ScrollingTargetDistToVisibility: f32,
-    ScrollingSpeed: f32,
-    ScrollingRectMinX: f32,
-    ScrollingRectMaxX: f32,
-    ReorderRequestTabId: ImGuiID,
-    ReorderRequestOffset: ImS16,
-    BeginCount: ImS8,
-    WantLayout: bool,
-    VisibleTabWasSubmitted: bool,
-    TabsAddedNew: bool,
-    TabsActiveCount: ImS16,
-    LastTabItemIdx: ImS16,
-    ItemSpacingY: f32,
-    FramePadding: ImVec2,
-    BackupCursorPos: ImVec2,
-    TabsNames: ImGuiTextBuffer,
+    Tabs: ImVector_ImGuiTabItem = @import("std").mem.zeroes(ImVector_ImGuiTabItem),
+    Flags: ImGuiTabBarFlags = @import("std").mem.zeroes(ImGuiTabBarFlags),
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    SelectedTabId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NextSelectedTabId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    VisibleTabId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    CurrFrameVisible: c_int = @import("std").mem.zeroes(c_int),
+    PrevFrameVisible: c_int = @import("std").mem.zeroes(c_int),
+    BarRect: ImRect = @import("std").mem.zeroes(ImRect),
+    CurrTabsContentsHeight: f32 = @import("std").mem.zeroes(f32),
+    PrevTabsContentsHeight: f32 = @import("std").mem.zeroes(f32),
+    WidthAllTabs: f32 = @import("std").mem.zeroes(f32),
+    WidthAllTabsIdeal: f32 = @import("std").mem.zeroes(f32),
+    ScrollingAnim: f32 = @import("std").mem.zeroes(f32),
+    ScrollingTarget: f32 = @import("std").mem.zeroes(f32),
+    ScrollingTargetDistToVisibility: f32 = @import("std").mem.zeroes(f32),
+    ScrollingSpeed: f32 = @import("std").mem.zeroes(f32),
+    ScrollingRectMinX: f32 = @import("std").mem.zeroes(f32),
+    ScrollingRectMaxX: f32 = @import("std").mem.zeroes(f32),
+    SeparatorMinX: f32 = @import("std").mem.zeroes(f32),
+    SeparatorMaxX: f32 = @import("std").mem.zeroes(f32),
+    ReorderRequestTabId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ReorderRequestOffset: ImS16 = @import("std").mem.zeroes(ImS16),
+    BeginCount: ImS8 = @import("std").mem.zeroes(ImS8),
+    WantLayout: bool = @import("std").mem.zeroes(bool),
+    VisibleTabWasSubmitted: bool = @import("std").mem.zeroes(bool),
+    TabsAddedNew: bool = @import("std").mem.zeroes(bool),
+    TabsActiveCount: ImS16 = @import("std").mem.zeroes(ImS16),
+    LastTabItemIdx: ImS16 = @import("std").mem.zeroes(ImS16),
+    ItemSpacingY: f32 = @import("std").mem.zeroes(f32),
+    FramePadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BackupCursorPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    TabsNames: ImGuiTextBuffer = @import("std").mem.zeroes(ImGuiTextBuffer),
 };
 pub const ImGuiTabBar = struct_ImGuiTabBar;
 pub const struct_ImVector_ImGuiTabBar = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiTabBar,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiTabBar = @import("std").mem.zeroes([*c]ImGuiTabBar),
 };
 pub const ImVector_ImGuiTabBar = struct_ImVector_ImGuiTabBar;
 pub const struct_ImPool_ImGuiTabBar = extern struct {
-    Buf: ImVector_ImGuiTabBar,
-    Map: ImGuiStorage,
-    FreeIdx: ImPoolIdx,
-    AliveCount: ImPoolIdx,
+    Buf: ImVector_ImGuiTabBar = @import("std").mem.zeroes(ImVector_ImGuiTabBar),
+    Map: ImGuiStorage = @import("std").mem.zeroes(ImGuiStorage),
+    FreeIdx: ImPoolIdx = @import("std").mem.zeroes(ImPoolIdx),
+    AliveCount: ImPoolIdx = @import("std").mem.zeroes(ImPoolIdx),
 };
 pub const ImPool_ImGuiTabBar = struct_ImPool_ImGuiTabBar;
 pub const struct_ImGuiPtrOrIndex = extern struct {
-    Ptr: ?*anyopaque,
-    Index: c_int,
+    Ptr: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    Index: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const ImGuiPtrOrIndex = struct_ImGuiPtrOrIndex;
 pub const struct_ImVector_ImGuiPtrOrIndex = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiPtrOrIndex,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiPtrOrIndex = @import("std").mem.zeroes([*c]ImGuiPtrOrIndex),
 };
 pub const ImVector_ImGuiPtrOrIndex = struct_ImVector_ImGuiPtrOrIndex;
 pub const struct_ImGuiShrinkWidthItem = extern struct {
-    Index: c_int,
-    Width: f32,
-    InitialWidth: f32,
+    Index: c_int = @import("std").mem.zeroes(c_int),
+    Width: f32 = @import("std").mem.zeroes(f32),
+    InitialWidth: f32 = @import("std").mem.zeroes(f32),
 };
 pub const ImGuiShrinkWidthItem = struct_ImGuiShrinkWidthItem;
 pub const struct_ImVector_ImGuiShrinkWidthItem = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiShrinkWidthItem,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiShrinkWidthItem = @import("std").mem.zeroes([*c]ImGuiShrinkWidthItem),
 };
 pub const ImVector_ImGuiShrinkWidthItem = struct_ImVector_ImGuiShrinkWidthItem;
+pub const ImGuiMouseCursor = c_int;
 pub const struct_StbUndoRecord = extern struct {
-    where: c_int,
-    insert_length: c_int,
-    delete_length: c_int,
-    char_storage: c_int,
+    where: c_int = @import("std").mem.zeroes(c_int),
+    insert_length: c_int = @import("std").mem.zeroes(c_int),
+    delete_length: c_int = @import("std").mem.zeroes(c_int),
+    char_storage: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const StbUndoRecord = struct_StbUndoRecord;
 pub const struct_StbUndoState = extern struct {
-    undo_rec: [99]StbUndoRecord,
-    undo_char: [999]ImWchar,
-    undo_point: c_short,
-    redo_point: c_short,
-    undo_char_point: c_int,
-    redo_char_point: c_int,
+    undo_rec: [99]StbUndoRecord = @import("std").mem.zeroes([99]StbUndoRecord),
+    undo_char: [999]ImWchar = @import("std").mem.zeroes([999]ImWchar),
+    undo_point: c_short = @import("std").mem.zeroes(c_short),
+    redo_point: c_short = @import("std").mem.zeroes(c_short),
+    undo_char_point: c_int = @import("std").mem.zeroes(c_int),
+    redo_char_point: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const StbUndoState = struct_StbUndoState;
 pub const struct_STB_TexteditState = extern struct {
-    cursor: c_int,
-    select_start: c_int,
-    select_end: c_int,
-    insert_mode: u8,
-    row_count_per_page: c_int,
-    cursor_at_end_of_line: u8,
-    initialized: u8,
-    has_preferred_x: u8,
-    single_line: u8,
-    padding1: u8,
-    padding2: u8,
-    padding3: u8,
-    preferred_x: f32,
-    undostate: StbUndoState,
+    cursor: c_int = @import("std").mem.zeroes(c_int),
+    select_start: c_int = @import("std").mem.zeroes(c_int),
+    select_end: c_int = @import("std").mem.zeroes(c_int),
+    insert_mode: u8 = @import("std").mem.zeroes(u8),
+    row_count_per_page: c_int = @import("std").mem.zeroes(c_int),
+    cursor_at_end_of_line: u8 = @import("std").mem.zeroes(u8),
+    initialized: u8 = @import("std").mem.zeroes(u8),
+    has_preferred_x: u8 = @import("std").mem.zeroes(u8),
+    single_line: u8 = @import("std").mem.zeroes(u8),
+    padding1: u8 = @import("std").mem.zeroes(u8),
+    padding2: u8 = @import("std").mem.zeroes(u8),
+    padding3: u8 = @import("std").mem.zeroes(u8),
+    preferred_x: f32 = @import("std").mem.zeroes(f32),
+    undostate: StbUndoState = @import("std").mem.zeroes(StbUndoState),
 };
 pub const STB_TexteditState = struct_STB_TexteditState;
 pub const ImGuiInputTextFlags = c_int;
 pub const struct_ImGuiInputTextState = extern struct {
-    Ctx: [*c]ImGuiContext,
-    ID: ImGuiID,
-    CurLenW: c_int,
-    CurLenA: c_int,
-    TextW: ImVector_ImWchar,
-    TextA: ImVector_char,
-    InitialTextA: ImVector_char,
-    TextAIsValid: bool,
-    BufCapacityA: c_int,
-    ScrollX: f32,
-    Stb: STB_TexteditState,
-    CursorAnim: f32,
-    CursorFollow: bool,
-    SelectedAllMouseLock: bool,
-    Edited: bool,
-    Flags: ImGuiInputTextFlags,
+    Ctx: [*c]ImGuiContext = @import("std").mem.zeroes([*c]ImGuiContext),
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    CurLenW: c_int = @import("std").mem.zeroes(c_int),
+    CurLenA: c_int = @import("std").mem.zeroes(c_int),
+    TextW: ImVector_ImWchar = @import("std").mem.zeroes(ImVector_ImWchar),
+    TextA: ImVector_char = @import("std").mem.zeroes(ImVector_char),
+    InitialTextA: ImVector_char = @import("std").mem.zeroes(ImVector_char),
+    TextAIsValid: bool = @import("std").mem.zeroes(bool),
+    BufCapacityA: c_int = @import("std").mem.zeroes(c_int),
+    ScrollX: f32 = @import("std").mem.zeroes(f32),
+    Stb: STB_TexteditState = @import("std").mem.zeroes(STB_TexteditState),
+    CursorAnim: f32 = @import("std").mem.zeroes(f32),
+    CursorFollow: bool = @import("std").mem.zeroes(bool),
+    SelectedAllMouseLock: bool = @import("std").mem.zeroes(bool),
+    Edited: bool = @import("std").mem.zeroes(bool),
+    Flags: ImGuiInputTextFlags = @import("std").mem.zeroes(ImGuiInputTextFlags),
 };
 pub const ImGuiInputTextState = struct_ImGuiInputTextState;
 pub const struct_ImGuiInputTextDeactivatedState = extern struct {
-    ID: ImGuiID,
-    TextA: ImVector_char,
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    TextA: ImVector_char = @import("std").mem.zeroes(ImVector_char),
 };
 pub const ImGuiInputTextDeactivatedState = struct_ImGuiInputTextDeactivatedState;
 pub const ImGuiColorEditFlags = c_int;
 pub const ImGuiLayoutType = c_int;
 pub const struct_ImGuiComboPreviewData = extern struct {
-    PreviewRect: ImRect,
-    BackupCursorPos: ImVec2,
-    BackupCursorMaxPos: ImVec2,
-    BackupCursorPosPrevLine: ImVec2,
-    BackupPrevLineTextBaseOffset: f32,
-    BackupLayout: ImGuiLayoutType,
+    PreviewRect: ImRect = @import("std").mem.zeroes(ImRect),
+    BackupCursorPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BackupCursorMaxPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BackupCursorPosPrevLine: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    BackupPrevLineTextBaseOffset: f32 = @import("std").mem.zeroes(f32),
+    BackupLayout: ImGuiLayoutType = @import("std").mem.zeroes(ImGuiLayoutType),
 };
 pub const ImGuiComboPreviewData = struct_ImGuiComboPreviewData;
+pub const ImGuiTypingSelectFlags = c_int;
+pub const struct_ImGuiTypingSelectRequest = extern struct {
+    Flags: ImGuiTypingSelectFlags = @import("std").mem.zeroes(ImGuiTypingSelectFlags),
+    SearchBufferLen: c_int = @import("std").mem.zeroes(c_int),
+    SearchBuffer: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    SelectRequest: bool = @import("std").mem.zeroes(bool),
+    SingleCharMode: bool = @import("std").mem.zeroes(bool),
+    SingleCharSize: ImS8 = @import("std").mem.zeroes(ImS8),
+};
+pub const ImGuiTypingSelectRequest = struct_ImGuiTypingSelectRequest;
+pub const struct_ImGuiTypingSelectState = extern struct {
+    Request: ImGuiTypingSelectRequest = @import("std").mem.zeroes(ImGuiTypingSelectRequest),
+    SearchBuffer: [64]u8 = @import("std").mem.zeroes([64]u8),
+    FocusScope: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    LastRequestFrame: c_int = @import("std").mem.zeroes(c_int),
+    LastRequestTime: f32 = @import("std").mem.zeroes(f32),
+    SingleCharModeLock: bool = @import("std").mem.zeroes(bool),
+};
+pub const ImGuiTypingSelectState = struct_ImGuiTypingSelectState;
 pub const struct_ImGuiDockRequest = opaque {};
 pub const ImGuiDockRequest = struct_ImGuiDockRequest;
 pub const struct_ImVector_ImGuiDockRequest = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: ?*ImGuiDockRequest,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: ?*ImGuiDockRequest = @import("std").mem.zeroes(?*ImGuiDockRequest),
 };
 pub const ImVector_ImGuiDockRequest = struct_ImVector_ImGuiDockRequest;
 pub const struct_ImGuiDockNodeSettings = opaque {};
 pub const ImGuiDockNodeSettings = struct_ImGuiDockNodeSettings;
 pub const struct_ImVector_ImGuiDockNodeSettings = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: ?*ImGuiDockNodeSettings,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: ?*ImGuiDockNodeSettings = @import("std").mem.zeroes(?*ImGuiDockNodeSettings),
 };
 pub const ImVector_ImGuiDockNodeSettings = struct_ImVector_ImGuiDockNodeSettings;
 pub const struct_ImGuiDockContext = extern struct {
-    Nodes: ImGuiStorage,
-    Requests: ImVector_ImGuiDockRequest,
-    NodesSettings: ImVector_ImGuiDockNodeSettings,
-    WantFullRebuild: bool,
+    Nodes: ImGuiStorage = @import("std").mem.zeroes(ImGuiStorage),
+    Requests: ImVector_ImGuiDockRequest = @import("std").mem.zeroes(ImVector_ImGuiDockRequest),
+    NodesSettings: ImVector_ImGuiDockNodeSettings = @import("std").mem.zeroes(ImVector_ImGuiDockNodeSettings),
+    WantFullRebuild: bool = @import("std").mem.zeroes(bool),
 };
-pub const ImGuiDockContext = struct_ImGuiDockContext; // libs/cimgui/cimgui.h:2167:24: warning: struct demoted to opaque type - has bitfield
+pub const ImGuiDockContext = struct_ImGuiDockContext; // cimgui.h:2265:24: warning: struct demoted to opaque type - has bitfield
 pub const struct_ImGuiDockNode = opaque {};
 pub const ImGuiDockNode = struct_ImGuiDockNode;
 pub const struct_ImGuiSettingsHandler = extern struct {
-    TypeName: [*c]const u8,
-    TypeHash: ImGuiID,
-    ClearAllFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void,
-    ReadInitFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void,
-    ReadOpenFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, [*c]const u8) callconv(.C) ?*anyopaque,
-    ReadLineFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, ?*anyopaque, [*c]const u8) callconv(.C) void,
-    ApplyAllFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void,
-    WriteAllFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, [*c]ImGuiTextBuffer) callconv(.C) void,
-    UserData: ?*anyopaque,
+    TypeName: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    TypeHash: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ClearAllFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void),
+    ReadInitFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void),
+    ReadOpenFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, [*c]const u8) callconv(.C) ?*anyopaque = @import("std").mem.zeroes(?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, [*c]const u8) callconv(.C) ?*anyopaque),
+    ReadLineFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, ?*anyopaque, [*c]const u8) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, ?*anyopaque, [*c]const u8) callconv(.C) void),
+    ApplyAllFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler) callconv(.C) void),
+    WriteAllFn: ?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, [*c]ImGuiTextBuffer) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiContext, [*c]ImGuiSettingsHandler, [*c]ImGuiTextBuffer) callconv(.C) void),
+    UserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
 };
 pub const ImGuiSettingsHandler = struct_ImGuiSettingsHandler;
 pub const struct_ImVector_ImGuiSettingsHandler = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiSettingsHandler,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiSettingsHandler = @import("std").mem.zeroes([*c]ImGuiSettingsHandler),
 };
 pub const ImVector_ImGuiSettingsHandler = struct_ImVector_ImGuiSettingsHandler;
 pub const struct_ImChunkStream_ImGuiWindowSettings = extern struct {
-    Buf: ImVector_char,
+    Buf: ImVector_char = @import("std").mem.zeroes(ImVector_char),
 };
 pub const ImChunkStream_ImGuiWindowSettings = struct_ImChunkStream_ImGuiWindowSettings;
 pub const struct_ImChunkStream_ImGuiTableSettings = extern struct {
-    Buf: ImVector_char,
+    Buf: ImVector_char = @import("std").mem.zeroes(ImVector_char),
 };
 pub const ImChunkStream_ImGuiTableSettings = struct_ImChunkStream_ImGuiTableSettings;
 pub const ImGuiContextHookCallback = ?*const fn ([*c]ImGuiContext, [*c]ImGuiContextHook) callconv(.C) void;
 pub const struct_ImGuiContextHook = extern struct {
-    HookId: ImGuiID,
-    Type: ImGuiContextHookType,
-    Owner: ImGuiID,
-    Callback: ImGuiContextHookCallback,
-    UserData: ?*anyopaque,
+    HookId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    Type: ImGuiContextHookType = @import("std").mem.zeroes(ImGuiContextHookType),
+    Owner: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    Callback: ImGuiContextHookCallback = @import("std").mem.zeroes(ImGuiContextHookCallback),
+    UserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
 };
 pub const ImGuiContextHook = struct_ImGuiContextHook;
 pub const struct_ImVector_ImGuiContextHook = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiContextHook,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiContextHook = @import("std").mem.zeroes([*c]ImGuiContextHook),
 };
 pub const ImVector_ImGuiContextHook = struct_ImVector_ImGuiContextHook;
-pub const ImFileHandle = ?*FILE;
+pub const ImFileHandle = [*c]FILE;
 pub const ImGuiDebugLogFlags = c_int;
 pub const struct_ImVector_int = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]c_int,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]c_int = @import("std").mem.zeroes([*c]c_int),
 };
 pub const ImVector_int = struct_ImVector_int;
 pub const struct_ImGuiTextIndex = extern struct {
-    LineOffsets: ImVector_int,
-    EndOffset: c_int,
+    LineOffsets: ImVector_int = @import("std").mem.zeroes(ImVector_int),
+    EndOffset: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const ImGuiTextIndex = struct_ImGuiTextIndex;
 pub const struct_ImGuiMetricsConfig = extern struct {
-    ShowDebugLog: bool,
-    ShowStackTool: bool,
-    ShowWindowsRects: bool,
-    ShowWindowsBeginOrder: bool,
-    ShowTablesRects: bool,
-    ShowDrawCmdMesh: bool,
-    ShowDrawCmdBoundingBoxes: bool,
-    ShowAtlasTintedWithTextColor: bool,
-    ShowDockingNodes: bool,
-    ShowWindowsRectsType: c_int,
-    ShowTablesRectsType: c_int,
+    ShowDebugLog: bool = @import("std").mem.zeroes(bool),
+    ShowIDStackTool: bool = @import("std").mem.zeroes(bool),
+    ShowWindowsRects: bool = @import("std").mem.zeroes(bool),
+    ShowWindowsBeginOrder: bool = @import("std").mem.zeroes(bool),
+    ShowTablesRects: bool = @import("std").mem.zeroes(bool),
+    ShowDrawCmdMesh: bool = @import("std").mem.zeroes(bool),
+    ShowDrawCmdBoundingBoxes: bool = @import("std").mem.zeroes(bool),
+    ShowAtlasTintedWithTextColor: bool = @import("std").mem.zeroes(bool),
+    ShowDockingNodes: bool = @import("std").mem.zeroes(bool),
+    ShowWindowsRectsType: c_int = @import("std").mem.zeroes(c_int),
+    ShowTablesRectsType: c_int = @import("std").mem.zeroes(c_int),
 };
-pub const ImGuiMetricsConfig = struct_ImGuiMetricsConfig; // libs/cimgui/cimgui.h:2309:19: warning: struct demoted to opaque type - has bitfield
+pub const ImGuiMetricsConfig = struct_ImGuiMetricsConfig; // cimgui.h:2427:19: warning: struct demoted to opaque type - has bitfield
 pub const struct_ImGuiStackLevelInfo = opaque {};
 pub const ImGuiStackLevelInfo = struct_ImGuiStackLevelInfo;
 pub const struct_ImVector_ImGuiStackLevelInfo = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: ?*ImGuiStackLevelInfo,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: ?*ImGuiStackLevelInfo = @import("std").mem.zeroes(?*ImGuiStackLevelInfo),
 };
 pub const ImVector_ImGuiStackLevelInfo = struct_ImVector_ImGuiStackLevelInfo;
-pub const struct_ImGuiStackTool = extern struct {
-    LastActiveFrame: c_int,
-    StackLevel: c_int,
-    QueryId: ImGuiID,
-    Results: ImVector_ImGuiStackLevelInfo,
-    CopyToClipboardOnCtrlC: bool,
-    CopyToClipboardLastTime: f32,
+pub const struct_ImGuiIDStackTool = extern struct {
+    LastActiveFrame: c_int = @import("std").mem.zeroes(c_int),
+    StackLevel: c_int = @import("std").mem.zeroes(c_int),
+    QueryId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    Results: ImVector_ImGuiStackLevelInfo = @import("std").mem.zeroes(ImVector_ImGuiStackLevelInfo),
+    CopyToClipboardOnCtrlC: bool = @import("std").mem.zeroes(bool),
+    CopyToClipboardLastTime: f32 = @import("std").mem.zeroes(f32),
 };
-pub const ImGuiStackTool = struct_ImGuiStackTool;
+pub const ImGuiIDStackTool = struct_ImGuiIDStackTool;
+pub const struct_ImGuiDebugAllocEntry = extern struct {
+    FrameCount: c_int = @import("std").mem.zeroes(c_int),
+    AllocCount: ImS16 = @import("std").mem.zeroes(ImS16),
+    FreeCount: ImS16 = @import("std").mem.zeroes(ImS16),
+};
+pub const ImGuiDebugAllocEntry = struct_ImGuiDebugAllocEntry;
+pub const struct_ImGuiDebugAllocInfo = extern struct {
+    TotalAllocCount: c_int = @import("std").mem.zeroes(c_int),
+    TotalFreeCount: c_int = @import("std").mem.zeroes(c_int),
+    LastEntriesIdx: ImS16 = @import("std").mem.zeroes(ImS16),
+    LastEntriesBuf: [6]ImGuiDebugAllocEntry = @import("std").mem.zeroes([6]ImGuiDebugAllocEntry),
+};
+pub const ImGuiDebugAllocInfo = struct_ImGuiDebugAllocInfo;
 pub const struct_ImGuiContext = extern struct {
-    Initialized: bool,
-    FontAtlasOwnedByContext: bool,
-    IO: ImGuiIO,
-    PlatformIO: ImGuiPlatformIO,
-    Style: ImGuiStyle,
-    ConfigFlagsCurrFrame: ImGuiConfigFlags,
-    ConfigFlagsLastFrame: ImGuiConfigFlags,
-    Font: [*c]ImFont,
-    FontSize: f32,
-    FontBaseSize: f32,
-    DrawListSharedData: ImDrawListSharedData,
-    Time: f64,
-    FrameCount: c_int,
-    FrameCountEnded: c_int,
-    FrameCountPlatformEnded: c_int,
-    FrameCountRendered: c_int,
-    WithinFrameScope: bool,
-    WithinFrameScopeWithImplicitWindow: bool,
-    WithinEndChild: bool,
-    GcCompactAll: bool,
-    TestEngineHookItems: bool,
-    TestEngine: ?*anyopaque,
-    InputEventsQueue: ImVector_ImGuiInputEvent,
-    InputEventsTrail: ImVector_ImGuiInputEvent,
-    InputEventsNextMouseSource: ImGuiMouseSource,
-    InputEventsNextEventId: ImU32,
-    Windows: ImVector_ImGuiWindowPtr,
-    WindowsFocusOrder: ImVector_ImGuiWindowPtr,
-    WindowsTempSortBuffer: ImVector_ImGuiWindowPtr,
-    CurrentWindowStack: ImVector_ImGuiWindowStackData,
-    WindowsById: ImGuiStorage,
-    WindowsActiveCount: c_int,
-    WindowsHoverPadding: ImVec2,
-    CurrentWindow: ?*ImGuiWindow,
-    HoveredWindow: ?*ImGuiWindow,
-    HoveredWindowUnderMovingWindow: ?*ImGuiWindow,
-    MovingWindow: ?*ImGuiWindow,
-    WheelingWindow: ?*ImGuiWindow,
-    WheelingWindowRefMousePos: ImVec2,
-    WheelingWindowStartFrame: c_int,
-    WheelingWindowReleaseTimer: f32,
-    WheelingWindowWheelRemainder: ImVec2,
-    WheelingAxisAvg: ImVec2,
-    DebugHookIdInfo: ImGuiID,
-    HoveredId: ImGuiID,
-    HoveredIdPreviousFrame: ImGuiID,
-    HoveredIdAllowOverlap: bool,
-    HoveredIdDisabled: bool,
-    HoveredIdTimer: f32,
-    HoveredIdNotActiveTimer: f32,
-    ActiveId: ImGuiID,
-    ActiveIdIsAlive: ImGuiID,
-    ActiveIdTimer: f32,
-    ActiveIdIsJustActivated: bool,
-    ActiveIdAllowOverlap: bool,
-    ActiveIdNoClearOnFocusLoss: bool,
-    ActiveIdHasBeenPressedBefore: bool,
-    ActiveIdHasBeenEditedBefore: bool,
-    ActiveIdHasBeenEditedThisFrame: bool,
-    ActiveIdClickOffset: ImVec2,
-    ActiveIdWindow: ?*ImGuiWindow,
-    ActiveIdSource: ImGuiInputSource,
-    ActiveIdMouseButton: c_int,
-    ActiveIdPreviousFrame: ImGuiID,
-    ActiveIdPreviousFrameIsAlive: bool,
-    ActiveIdPreviousFrameHasBeenEditedBefore: bool,
-    ActiveIdPreviousFrameWindow: ?*ImGuiWindow,
-    LastActiveId: ImGuiID,
-    LastActiveIdTimer: f32,
-    KeysOwnerData: [140]ImGuiKeyOwnerData,
-    KeysRoutingTable: ImGuiKeyRoutingTable,
-    ActiveIdUsingNavDirMask: ImU32,
-    ActiveIdUsingAllKeyboardKeys: bool,
-    ActiveIdUsingNavInputMask: ImU32,
-    CurrentFocusScopeId: ImGuiID,
-    CurrentItemFlags: ImGuiItemFlags,
-    DebugLocateId: ImGuiID,
-    NextItemData: ImGuiNextItemData,
-    LastItemData: ImGuiLastItemData,
-    NextWindowData: ImGuiNextWindowData,
-    ColorStack: ImVector_ImGuiColorMod,
-    StyleVarStack: ImVector_ImGuiStyleMod,
-    FontStack: ImVector_ImFontPtr,
-    FocusScopeStack: ImVector_ImGuiID,
-    ItemFlagsStack: ImVector_ImGuiItemFlags,
-    GroupStack: ImVector_ImGuiGroupData,
-    OpenPopupStack: ImVector_ImGuiPopupData,
-    BeginPopupStack: ImVector_ImGuiPopupData,
-    BeginMenuCount: c_int,
-    Viewports: ImVector_ImGuiViewportPPtr,
-    CurrentDpiScale: f32,
-    CurrentViewport: [*c]ImGuiViewportP,
-    MouseViewport: [*c]ImGuiViewportP,
-    MouseLastHoveredViewport: [*c]ImGuiViewportP,
-    PlatformLastFocusedViewportId: ImGuiID,
-    FallbackMonitor: ImGuiPlatformMonitor,
-    ViewportFocusedStampCount: c_int,
-    NavWindow: ?*ImGuiWindow,
-    NavId: ImGuiID,
-    NavFocusScopeId: ImGuiID,
-    NavActivateId: ImGuiID,
-    NavActivateDownId: ImGuiID,
-    NavActivatePressedId: ImGuiID,
-    NavActivateFlags: ImGuiActivateFlags,
-    NavJustMovedToId: ImGuiID,
-    NavJustMovedToFocusScopeId: ImGuiID,
-    NavJustMovedToKeyMods: ImGuiKeyChord,
-    NavNextActivateId: ImGuiID,
-    NavNextActivateFlags: ImGuiActivateFlags,
-    NavInputSource: ImGuiInputSource,
-    NavLayer: ImGuiNavLayer,
-    NavIdIsAlive: bool,
-    NavMousePosDirty: bool,
-    NavDisableHighlight: bool,
-    NavDisableMouseHover: bool,
-    NavAnyRequest: bool,
-    NavInitRequest: bool,
-    NavInitRequestFromMove: bool,
-    NavInitResultId: ImGuiID,
-    NavInitResultRectRel: ImRect,
-    NavMoveSubmitted: bool,
-    NavMoveScoringItems: bool,
-    NavMoveForwardToNextFrame: bool,
-    NavMoveFlags: ImGuiNavMoveFlags,
-    NavMoveScrollFlags: ImGuiScrollFlags,
-    NavMoveKeyMods: ImGuiKeyChord,
-    NavMoveDir: ImGuiDir,
-    NavMoveDirForDebug: ImGuiDir,
-    NavMoveClipDir: ImGuiDir,
-    NavScoringRect: ImRect,
-    NavScoringNoClipRect: ImRect,
-    NavScoringDebugCount: c_int,
-    NavTabbingDir: c_int,
-    NavTabbingCounter: c_int,
-    NavMoveResultLocal: ImGuiNavItemData,
-    NavMoveResultLocalVisible: ImGuiNavItemData,
-    NavMoveResultOther: ImGuiNavItemData,
-    NavTabbingResultFirst: ImGuiNavItemData,
-    ConfigNavWindowingKeyNext: ImGuiKeyChord,
-    ConfigNavWindowingKeyPrev: ImGuiKeyChord,
-    NavWindowingTarget: ?*ImGuiWindow,
-    NavWindowingTargetAnim: ?*ImGuiWindow,
-    NavWindowingListWindow: ?*ImGuiWindow,
-    NavWindowingTimer: f32,
-    NavWindowingHighlightAlpha: f32,
-    NavWindowingToggleLayer: bool,
-    NavWindowingAccumDeltaPos: ImVec2,
-    NavWindowingAccumDeltaSize: ImVec2,
-    DimBgRatio: f32,
-    MouseCursor: ImGuiMouseCursor,
-    DragDropActive: bool,
-    DragDropWithinSource: bool,
-    DragDropWithinTarget: bool,
-    DragDropSourceFlags: ImGuiDragDropFlags,
-    DragDropSourceFrameCount: c_int,
-    DragDropMouseButton: c_int,
-    DragDropPayload: ImGuiPayload,
-    DragDropTargetRect: ImRect,
-    DragDropTargetId: ImGuiID,
-    DragDropAcceptFlags: ImGuiDragDropFlags,
-    DragDropAcceptIdCurrRectSurface: f32,
-    DragDropAcceptIdCurr: ImGuiID,
-    DragDropAcceptIdPrev: ImGuiID,
-    DragDropAcceptFrameCount: c_int,
-    DragDropHoldJustPressedId: ImGuiID,
-    DragDropPayloadBufHeap: ImVector_unsigned_char,
-    DragDropPayloadBufLocal: [16]u8,
-    ClipperTempDataStacked: c_int,
-    ClipperTempData: ImVector_ImGuiListClipperData,
-    CurrentTable: ?*ImGuiTable,
-    TablesTempDataStacked: c_int,
-    TablesTempData: ImVector_ImGuiTableTempData,
-    Tables: ImPool_ImGuiTable,
-    TablesLastTimeActive: ImVector_float,
-    DrawChannelsTempMergeBuffer: ImVector_ImDrawChannel,
-    CurrentTabBar: [*c]ImGuiTabBar,
-    TabBars: ImPool_ImGuiTabBar,
-    CurrentTabBarStack: ImVector_ImGuiPtrOrIndex,
-    ShrinkWidthBuffer: ImVector_ImGuiShrinkWidthItem,
-    HoverDelayId: ImGuiID,
-    HoverDelayIdPreviousFrame: ImGuiID,
-    HoverDelayTimer: f32,
-    HoverDelayClearTimer: f32,
-    MouseLastValidPos: ImVec2,
-    InputTextState: ImGuiInputTextState,
-    InputTextDeactivatedState: ImGuiInputTextDeactivatedState,
-    InputTextPasswordFont: ImFont,
-    TempInputId: ImGuiID,
-    ColorEditOptions: ImGuiColorEditFlags,
-    ColorEditCurrentID: ImGuiID,
-    ColorEditSavedID: ImGuiID,
-    ColorEditSavedHue: f32,
-    ColorEditSavedSat: f32,
-    ColorEditSavedColor: ImU32,
-    ColorPickerRef: ImVec4,
-    ComboPreviewData: ImGuiComboPreviewData,
-    SliderGrabClickOffset: f32,
-    SliderCurrentAccum: f32,
-    SliderCurrentAccumDirty: bool,
-    DragCurrentAccumDirty: bool,
-    DragCurrentAccum: f32,
-    DragSpeedDefaultRatio: f32,
-    ScrollbarClickDeltaToGrabCenter: f32,
-    DisabledAlphaBackup: f32,
-    DisabledStackSize: c_short,
-    TooltipOverrideCount: c_short,
-    ClipboardHandlerData: ImVector_char,
-    MenusIdSubmittedThisFrame: ImVector_ImGuiID,
-    PlatformImeData: ImGuiPlatformImeData,
-    PlatformImeDataPrev: ImGuiPlatformImeData,
-    PlatformImeViewport: ImGuiID,
-    PlatformLocaleDecimalPoint: u8,
-    DockContext: ImGuiDockContext,
-    DockNodeWindowMenuHandler: ?*const fn ([*c]ImGuiContext, ?*ImGuiDockNode, [*c]ImGuiTabBar) callconv(.C) void,
-    SettingsLoaded: bool,
-    SettingsDirtyTimer: f32,
-    SettingsIniData: ImGuiTextBuffer,
-    SettingsHandlers: ImVector_ImGuiSettingsHandler,
-    SettingsWindows: ImChunkStream_ImGuiWindowSettings,
-    SettingsTables: ImChunkStream_ImGuiTableSettings,
-    Hooks: ImVector_ImGuiContextHook,
-    HookIdNext: ImGuiID,
-    LocalizationTable: [8][*c]const u8,
-    LogEnabled: bool,
-    LogType: ImGuiLogType,
-    LogFile: ImFileHandle,
-    LogBuffer: ImGuiTextBuffer,
-    LogNextPrefix: [*c]const u8,
-    LogNextSuffix: [*c]const u8,
-    LogLinePosY: f32,
-    LogLineFirstItem: bool,
-    LogDepthRef: c_int,
-    LogDepthToExpand: c_int,
-    LogDepthToExpandDefault: c_int,
-    DebugLogFlags: ImGuiDebugLogFlags,
-    DebugLogBuf: ImGuiTextBuffer,
-    DebugLogIndex: ImGuiTextIndex,
-    DebugLogClipperAutoDisableFrames: ImU8,
-    DebugLocateFrames: ImU8,
-    DebugBeginReturnValueCullDepth: ImS8,
-    DebugItemPickerActive: bool,
-    DebugItemPickerMouseButton: ImU8,
-    DebugItemPickerBreakId: ImGuiID,
-    DebugMetricsConfig: ImGuiMetricsConfig,
-    DebugStackTool: ImGuiStackTool,
-    DebugHoveredDockNode: ?*ImGuiDockNode,
-    FramerateSecPerFrame: [60]f32,
-    FramerateSecPerFrameIdx: c_int,
-    FramerateSecPerFrameCount: c_int,
-    FramerateSecPerFrameAccum: f32,
-    WantCaptureMouseNextFrame: c_int,
-    WantCaptureKeyboardNextFrame: c_int,
-    WantTextInputNextFrame: c_int,
-    TempBuffer: ImVector_char,
+    Initialized: bool = @import("std").mem.zeroes(bool),
+    FontAtlasOwnedByContext: bool = @import("std").mem.zeroes(bool),
+    IO: ImGuiIO = @import("std").mem.zeroes(ImGuiIO),
+    PlatformIO: ImGuiPlatformIO = @import("std").mem.zeroes(ImGuiPlatformIO),
+    Style: ImGuiStyle = @import("std").mem.zeroes(ImGuiStyle),
+    ConfigFlagsCurrFrame: ImGuiConfigFlags = @import("std").mem.zeroes(ImGuiConfigFlags),
+    ConfigFlagsLastFrame: ImGuiConfigFlags = @import("std").mem.zeroes(ImGuiConfigFlags),
+    Font: [*c]ImFont = @import("std").mem.zeroes([*c]ImFont),
+    FontSize: f32 = @import("std").mem.zeroes(f32),
+    FontBaseSize: f32 = @import("std").mem.zeroes(f32),
+    DrawListSharedData: ImDrawListSharedData = @import("std").mem.zeroes(ImDrawListSharedData),
+    Time: f64 = @import("std").mem.zeroes(f64),
+    FrameCount: c_int = @import("std").mem.zeroes(c_int),
+    FrameCountEnded: c_int = @import("std").mem.zeroes(c_int),
+    FrameCountPlatformEnded: c_int = @import("std").mem.zeroes(c_int),
+    FrameCountRendered: c_int = @import("std").mem.zeroes(c_int),
+    WithinFrameScope: bool = @import("std").mem.zeroes(bool),
+    WithinFrameScopeWithImplicitWindow: bool = @import("std").mem.zeroes(bool),
+    WithinEndChild: bool = @import("std").mem.zeroes(bool),
+    GcCompactAll: bool = @import("std").mem.zeroes(bool),
+    TestEngineHookItems: bool = @import("std").mem.zeroes(bool),
+    TestEngine: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    InputEventsQueue: ImVector_ImGuiInputEvent = @import("std").mem.zeroes(ImVector_ImGuiInputEvent),
+    InputEventsTrail: ImVector_ImGuiInputEvent = @import("std").mem.zeroes(ImVector_ImGuiInputEvent),
+    InputEventsNextMouseSource: ImGuiMouseSource = @import("std").mem.zeroes(ImGuiMouseSource),
+    InputEventsNextEventId: ImU32 = @import("std").mem.zeroes(ImU32),
+    Windows: ImVector_ImGuiWindowPtr = @import("std").mem.zeroes(ImVector_ImGuiWindowPtr),
+    WindowsFocusOrder: ImVector_ImGuiWindowPtr = @import("std").mem.zeroes(ImVector_ImGuiWindowPtr),
+    WindowsTempSortBuffer: ImVector_ImGuiWindowPtr = @import("std").mem.zeroes(ImVector_ImGuiWindowPtr),
+    CurrentWindowStack: ImVector_ImGuiWindowStackData = @import("std").mem.zeroes(ImVector_ImGuiWindowStackData),
+    WindowsById: ImGuiStorage = @import("std").mem.zeroes(ImGuiStorage),
+    WindowsActiveCount: c_int = @import("std").mem.zeroes(c_int),
+    WindowsHoverPadding: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    CurrentWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    HoveredWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    HoveredWindowUnderMovingWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    MovingWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    WheelingWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    WheelingWindowRefMousePos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WheelingWindowStartFrame: c_int = @import("std").mem.zeroes(c_int),
+    WheelingWindowScrolledFrame: c_int = @import("std").mem.zeroes(c_int),
+    WheelingWindowReleaseTimer: f32 = @import("std").mem.zeroes(f32),
+    WheelingWindowWheelRemainder: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    WheelingAxisAvg: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DebugHookIdInfo: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    HoveredId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    HoveredIdPreviousFrame: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    HoveredIdAllowOverlap: bool = @import("std").mem.zeroes(bool),
+    HoveredIdDisabled: bool = @import("std").mem.zeroes(bool),
+    HoveredIdTimer: f32 = @import("std").mem.zeroes(f32),
+    HoveredIdNotActiveTimer: f32 = @import("std").mem.zeroes(f32),
+    ActiveId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ActiveIdIsAlive: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ActiveIdTimer: f32 = @import("std").mem.zeroes(f32),
+    ActiveIdIsJustActivated: bool = @import("std").mem.zeroes(bool),
+    ActiveIdAllowOverlap: bool = @import("std").mem.zeroes(bool),
+    ActiveIdNoClearOnFocusLoss: bool = @import("std").mem.zeroes(bool),
+    ActiveIdHasBeenPressedBefore: bool = @import("std").mem.zeroes(bool),
+    ActiveIdHasBeenEditedBefore: bool = @import("std").mem.zeroes(bool),
+    ActiveIdHasBeenEditedThisFrame: bool = @import("std").mem.zeroes(bool),
+    ActiveIdClickOffset: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    ActiveIdWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    ActiveIdSource: ImGuiInputSource = @import("std").mem.zeroes(ImGuiInputSource),
+    ActiveIdMouseButton: c_int = @import("std").mem.zeroes(c_int),
+    ActiveIdPreviousFrame: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ActiveIdPreviousFrameIsAlive: bool = @import("std").mem.zeroes(bool),
+    ActiveIdPreviousFrameHasBeenEditedBefore: bool = @import("std").mem.zeroes(bool),
+    ActiveIdPreviousFrameWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    LastActiveId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    LastActiveIdTimer: f32 = @import("std").mem.zeroes(f32),
+    KeysOwnerData: [154]ImGuiKeyOwnerData = @import("std").mem.zeroes([154]ImGuiKeyOwnerData),
+    KeysRoutingTable: ImGuiKeyRoutingTable = @import("std").mem.zeroes(ImGuiKeyRoutingTable),
+    ActiveIdUsingNavDirMask: ImU32 = @import("std").mem.zeroes(ImU32),
+    ActiveIdUsingAllKeyboardKeys: bool = @import("std").mem.zeroes(bool),
+    CurrentFocusScopeId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    CurrentItemFlags: ImGuiItemFlags = @import("std").mem.zeroes(ImGuiItemFlags),
+    DebugLocateId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NextItemData: ImGuiNextItemData = @import("std").mem.zeroes(ImGuiNextItemData),
+    LastItemData: ImGuiLastItemData = @import("std").mem.zeroes(ImGuiLastItemData),
+    NextWindowData: ImGuiNextWindowData = @import("std").mem.zeroes(ImGuiNextWindowData),
+    DebugShowGroupRects: bool = @import("std").mem.zeroes(bool),
+    ColorStack: ImVector_ImGuiColorMod = @import("std").mem.zeroes(ImVector_ImGuiColorMod),
+    StyleVarStack: ImVector_ImGuiStyleMod = @import("std").mem.zeroes(ImVector_ImGuiStyleMod),
+    FontStack: ImVector_ImFontPtr = @import("std").mem.zeroes(ImVector_ImFontPtr),
+    FocusScopeStack: ImVector_ImGuiID = @import("std").mem.zeroes(ImVector_ImGuiID),
+    ItemFlagsStack: ImVector_ImGuiItemFlags = @import("std").mem.zeroes(ImVector_ImGuiItemFlags),
+    GroupStack: ImVector_ImGuiGroupData = @import("std").mem.zeroes(ImVector_ImGuiGroupData),
+    OpenPopupStack: ImVector_ImGuiPopupData = @import("std").mem.zeroes(ImVector_ImGuiPopupData),
+    BeginPopupStack: ImVector_ImGuiPopupData = @import("std").mem.zeroes(ImVector_ImGuiPopupData),
+    NavTreeNodeStack: ImVector_ImGuiNavTreeNodeData = @import("std").mem.zeroes(ImVector_ImGuiNavTreeNodeData),
+    BeginMenuCount: c_int = @import("std").mem.zeroes(c_int),
+    Viewports: ImVector_ImGuiViewportPPtr = @import("std").mem.zeroes(ImVector_ImGuiViewportPPtr),
+    CurrentDpiScale: f32 = @import("std").mem.zeroes(f32),
+    CurrentViewport: [*c]ImGuiViewportP = @import("std").mem.zeroes([*c]ImGuiViewportP),
+    MouseViewport: [*c]ImGuiViewportP = @import("std").mem.zeroes([*c]ImGuiViewportP),
+    MouseLastHoveredViewport: [*c]ImGuiViewportP = @import("std").mem.zeroes([*c]ImGuiViewportP),
+    PlatformLastFocusedViewportId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    FallbackMonitor: ImGuiPlatformMonitor = @import("std").mem.zeroes(ImGuiPlatformMonitor),
+    ViewportCreatedCount: c_int = @import("std").mem.zeroes(c_int),
+    PlatformWindowsCreatedCount: c_int = @import("std").mem.zeroes(c_int),
+    ViewportFocusedStampCount: c_int = @import("std").mem.zeroes(c_int),
+    NavWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    NavId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NavFocusScopeId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NavActivateId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NavActivateDownId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NavActivatePressedId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NavActivateFlags: ImGuiActivateFlags = @import("std").mem.zeroes(ImGuiActivateFlags),
+    NavJustMovedToId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NavJustMovedToFocusScopeId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NavJustMovedToKeyMods: ImGuiKeyChord = @import("std").mem.zeroes(ImGuiKeyChord),
+    NavNextActivateId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    NavNextActivateFlags: ImGuiActivateFlags = @import("std").mem.zeroes(ImGuiActivateFlags),
+    NavInputSource: ImGuiInputSource = @import("std").mem.zeroes(ImGuiInputSource),
+    NavLayer: ImGuiNavLayer = @import("std").mem.zeroes(ImGuiNavLayer),
+    NavLastValidSelectionUserData: ImGuiSelectionUserData = @import("std").mem.zeroes(ImGuiSelectionUserData),
+    NavIdIsAlive: bool = @import("std").mem.zeroes(bool),
+    NavMousePosDirty: bool = @import("std").mem.zeroes(bool),
+    NavDisableHighlight: bool = @import("std").mem.zeroes(bool),
+    NavDisableMouseHover: bool = @import("std").mem.zeroes(bool),
+    NavAnyRequest: bool = @import("std").mem.zeroes(bool),
+    NavInitRequest: bool = @import("std").mem.zeroes(bool),
+    NavInitRequestFromMove: bool = @import("std").mem.zeroes(bool),
+    NavInitResult: ImGuiNavItemData = @import("std").mem.zeroes(ImGuiNavItemData),
+    NavMoveSubmitted: bool = @import("std").mem.zeroes(bool),
+    NavMoveScoringItems: bool = @import("std").mem.zeroes(bool),
+    NavMoveForwardToNextFrame: bool = @import("std").mem.zeroes(bool),
+    NavMoveFlags: ImGuiNavMoveFlags = @import("std").mem.zeroes(ImGuiNavMoveFlags),
+    NavMoveScrollFlags: ImGuiScrollFlags = @import("std").mem.zeroes(ImGuiScrollFlags),
+    NavMoveKeyMods: ImGuiKeyChord = @import("std").mem.zeroes(ImGuiKeyChord),
+    NavMoveDir: ImGuiDir = @import("std").mem.zeroes(ImGuiDir),
+    NavMoveDirForDebug: ImGuiDir = @import("std").mem.zeroes(ImGuiDir),
+    NavMoveClipDir: ImGuiDir = @import("std").mem.zeroes(ImGuiDir),
+    NavScoringRect: ImRect = @import("std").mem.zeroes(ImRect),
+    NavScoringNoClipRect: ImRect = @import("std").mem.zeroes(ImRect),
+    NavScoringDebugCount: c_int = @import("std").mem.zeroes(c_int),
+    NavTabbingDir: c_int = @import("std").mem.zeroes(c_int),
+    NavTabbingCounter: c_int = @import("std").mem.zeroes(c_int),
+    NavMoveResultLocal: ImGuiNavItemData = @import("std").mem.zeroes(ImGuiNavItemData),
+    NavMoveResultLocalVisible: ImGuiNavItemData = @import("std").mem.zeroes(ImGuiNavItemData),
+    NavMoveResultOther: ImGuiNavItemData = @import("std").mem.zeroes(ImGuiNavItemData),
+    NavTabbingResultFirst: ImGuiNavItemData = @import("std").mem.zeroes(ImGuiNavItemData),
+    ConfigNavWindowingKeyNext: ImGuiKeyChord = @import("std").mem.zeroes(ImGuiKeyChord),
+    ConfigNavWindowingKeyPrev: ImGuiKeyChord = @import("std").mem.zeroes(ImGuiKeyChord),
+    NavWindowingTarget: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    NavWindowingTargetAnim: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    NavWindowingListWindow: ?*ImGuiWindow = @import("std").mem.zeroes(?*ImGuiWindow),
+    NavWindowingTimer: f32 = @import("std").mem.zeroes(f32),
+    NavWindowingHighlightAlpha: f32 = @import("std").mem.zeroes(f32),
+    NavWindowingToggleLayer: bool = @import("std").mem.zeroes(bool),
+    NavWindowingAccumDeltaPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    NavWindowingAccumDeltaSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    DimBgRatio: f32 = @import("std").mem.zeroes(f32),
+    DragDropActive: bool = @import("std").mem.zeroes(bool),
+    DragDropWithinSource: bool = @import("std").mem.zeroes(bool),
+    DragDropWithinTarget: bool = @import("std").mem.zeroes(bool),
+    DragDropSourceFlags: ImGuiDragDropFlags = @import("std").mem.zeroes(ImGuiDragDropFlags),
+    DragDropSourceFrameCount: c_int = @import("std").mem.zeroes(c_int),
+    DragDropMouseButton: c_int = @import("std").mem.zeroes(c_int),
+    DragDropPayload: ImGuiPayload = @import("std").mem.zeroes(ImGuiPayload),
+    DragDropTargetRect: ImRect = @import("std").mem.zeroes(ImRect),
+    DragDropTargetId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DragDropAcceptFlags: ImGuiDragDropFlags = @import("std").mem.zeroes(ImGuiDragDropFlags),
+    DragDropAcceptIdCurrRectSurface: f32 = @import("std").mem.zeroes(f32),
+    DragDropAcceptIdCurr: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DragDropAcceptIdPrev: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DragDropAcceptFrameCount: c_int = @import("std").mem.zeroes(c_int),
+    DragDropHoldJustPressedId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DragDropPayloadBufHeap: ImVector_unsigned_char = @import("std").mem.zeroes(ImVector_unsigned_char),
+    DragDropPayloadBufLocal: [16]u8 = @import("std").mem.zeroes([16]u8),
+    ClipperTempDataStacked: c_int = @import("std").mem.zeroes(c_int),
+    ClipperTempData: ImVector_ImGuiListClipperData = @import("std").mem.zeroes(ImVector_ImGuiListClipperData),
+    CurrentTable: ?*ImGuiTable = @import("std").mem.zeroes(?*ImGuiTable),
+    TablesTempDataStacked: c_int = @import("std").mem.zeroes(c_int),
+    TablesTempData: ImVector_ImGuiTableTempData = @import("std").mem.zeroes(ImVector_ImGuiTableTempData),
+    Tables: ImPool_ImGuiTable = @import("std").mem.zeroes(ImPool_ImGuiTable),
+    TablesLastTimeActive: ImVector_float = @import("std").mem.zeroes(ImVector_float),
+    DrawChannelsTempMergeBuffer: ImVector_ImDrawChannel = @import("std").mem.zeroes(ImVector_ImDrawChannel),
+    CurrentTabBar: [*c]ImGuiTabBar = @import("std").mem.zeroes([*c]ImGuiTabBar),
+    TabBars: ImPool_ImGuiTabBar = @import("std").mem.zeroes(ImPool_ImGuiTabBar),
+    CurrentTabBarStack: ImVector_ImGuiPtrOrIndex = @import("std").mem.zeroes(ImVector_ImGuiPtrOrIndex),
+    ShrinkWidthBuffer: ImVector_ImGuiShrinkWidthItem = @import("std").mem.zeroes(ImVector_ImGuiShrinkWidthItem),
+    HoverItemDelayId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    HoverItemDelayIdPreviousFrame: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    HoverItemDelayTimer: f32 = @import("std").mem.zeroes(f32),
+    HoverItemDelayClearTimer: f32 = @import("std").mem.zeroes(f32),
+    HoverItemUnlockedStationaryId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    HoverWindowUnlockedStationaryId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    MouseCursor: ImGuiMouseCursor = @import("std").mem.zeroes(ImGuiMouseCursor),
+    MouseStationaryTimer: f32 = @import("std").mem.zeroes(f32),
+    MouseLastValidPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    InputTextState: ImGuiInputTextState = @import("std").mem.zeroes(ImGuiInputTextState),
+    InputTextDeactivatedState: ImGuiInputTextDeactivatedState = @import("std").mem.zeroes(ImGuiInputTextDeactivatedState),
+    InputTextPasswordFont: ImFont = @import("std").mem.zeroes(ImFont),
+    TempInputId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ColorEditOptions: ImGuiColorEditFlags = @import("std").mem.zeroes(ImGuiColorEditFlags),
+    ColorEditCurrentID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ColorEditSavedID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ColorEditSavedHue: f32 = @import("std").mem.zeroes(f32),
+    ColorEditSavedSat: f32 = @import("std").mem.zeroes(f32),
+    ColorEditSavedColor: ImU32 = @import("std").mem.zeroes(ImU32),
+    ColorPickerRef: ImVec4 = @import("std").mem.zeroes(ImVec4),
+    ComboPreviewData: ImGuiComboPreviewData = @import("std").mem.zeroes(ImGuiComboPreviewData),
+    WindowResizeBorderExpectedRect: ImRect = @import("std").mem.zeroes(ImRect),
+    WindowResizeRelativeMode: bool = @import("std").mem.zeroes(bool),
+    SliderGrabClickOffset: f32 = @import("std").mem.zeroes(f32),
+    SliderCurrentAccum: f32 = @import("std").mem.zeroes(f32),
+    SliderCurrentAccumDirty: bool = @import("std").mem.zeroes(bool),
+    DragCurrentAccumDirty: bool = @import("std").mem.zeroes(bool),
+    DragCurrentAccum: f32 = @import("std").mem.zeroes(f32),
+    DragSpeedDefaultRatio: f32 = @import("std").mem.zeroes(f32),
+    ScrollbarClickDeltaToGrabCenter: f32 = @import("std").mem.zeroes(f32),
+    DisabledAlphaBackup: f32 = @import("std").mem.zeroes(f32),
+    DisabledStackSize: c_short = @import("std").mem.zeroes(c_short),
+    LockMarkEdited: c_short = @import("std").mem.zeroes(c_short),
+    TooltipOverrideCount: c_short = @import("std").mem.zeroes(c_short),
+    ClipboardHandlerData: ImVector_char = @import("std").mem.zeroes(ImVector_char),
+    MenusIdSubmittedThisFrame: ImVector_ImGuiID = @import("std").mem.zeroes(ImVector_ImGuiID),
+    TypingSelectState: ImGuiTypingSelectState = @import("std").mem.zeroes(ImGuiTypingSelectState),
+    PlatformImeData: ImGuiPlatformImeData = @import("std").mem.zeroes(ImGuiPlatformImeData),
+    PlatformImeDataPrev: ImGuiPlatformImeData = @import("std").mem.zeroes(ImGuiPlatformImeData),
+    PlatformImeViewport: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DockContext: ImGuiDockContext = @import("std").mem.zeroes(ImGuiDockContext),
+    DockNodeWindowMenuHandler: ?*const fn ([*c]ImGuiContext, ?*ImGuiDockNode, [*c]ImGuiTabBar) callconv(.C) void = @import("std").mem.zeroes(?*const fn ([*c]ImGuiContext, ?*ImGuiDockNode, [*c]ImGuiTabBar) callconv(.C) void),
+    SettingsLoaded: bool = @import("std").mem.zeroes(bool),
+    SettingsDirtyTimer: f32 = @import("std").mem.zeroes(f32),
+    SettingsIniData: ImGuiTextBuffer = @import("std").mem.zeroes(ImGuiTextBuffer),
+    SettingsHandlers: ImVector_ImGuiSettingsHandler = @import("std").mem.zeroes(ImVector_ImGuiSettingsHandler),
+    SettingsWindows: ImChunkStream_ImGuiWindowSettings = @import("std").mem.zeroes(ImChunkStream_ImGuiWindowSettings),
+    SettingsTables: ImChunkStream_ImGuiTableSettings = @import("std").mem.zeroes(ImChunkStream_ImGuiTableSettings),
+    Hooks: ImVector_ImGuiContextHook = @import("std").mem.zeroes(ImVector_ImGuiContextHook),
+    HookIdNext: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    LocalizationTable: [11][*c]const u8 = @import("std").mem.zeroes([11][*c]const u8),
+    LogEnabled: bool = @import("std").mem.zeroes(bool),
+    LogType: ImGuiLogType = @import("std").mem.zeroes(ImGuiLogType),
+    LogFile: ImFileHandle = @import("std").mem.zeroes(ImFileHandle),
+    LogBuffer: ImGuiTextBuffer = @import("std").mem.zeroes(ImGuiTextBuffer),
+    LogNextPrefix: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    LogNextSuffix: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    LogLinePosY: f32 = @import("std").mem.zeroes(f32),
+    LogLineFirstItem: bool = @import("std").mem.zeroes(bool),
+    LogDepthRef: c_int = @import("std").mem.zeroes(c_int),
+    LogDepthToExpand: c_int = @import("std").mem.zeroes(c_int),
+    LogDepthToExpandDefault: c_int = @import("std").mem.zeroes(c_int),
+    DebugLogFlags: ImGuiDebugLogFlags = @import("std").mem.zeroes(ImGuiDebugLogFlags),
+    DebugLogBuf: ImGuiTextBuffer = @import("std").mem.zeroes(ImGuiTextBuffer),
+    DebugLogIndex: ImGuiTextIndex = @import("std").mem.zeroes(ImGuiTextIndex),
+    DebugLogClipperAutoDisableFrames: ImU8 = @import("std").mem.zeroes(ImU8),
+    DebugLocateFrames: ImU8 = @import("std").mem.zeroes(ImU8),
+    DebugBeginReturnValueCullDepth: ImS8 = @import("std").mem.zeroes(ImS8),
+    DebugItemPickerActive: bool = @import("std").mem.zeroes(bool),
+    DebugItemPickerMouseButton: ImU8 = @import("std").mem.zeroes(ImU8),
+    DebugItemPickerBreakId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DebugMetricsConfig: ImGuiMetricsConfig = @import("std").mem.zeroes(ImGuiMetricsConfig),
+    DebugIDStackTool: ImGuiIDStackTool = @import("std").mem.zeroes(ImGuiIDStackTool),
+    DebugAllocInfo: ImGuiDebugAllocInfo = @import("std").mem.zeroes(ImGuiDebugAllocInfo),
+    DebugHoveredDockNode: ?*ImGuiDockNode = @import("std").mem.zeroes(?*ImGuiDockNode),
+    FramerateSecPerFrame: [60]f32 = @import("std").mem.zeroes([60]f32),
+    FramerateSecPerFrameIdx: c_int = @import("std").mem.zeroes(c_int),
+    FramerateSecPerFrameCount: c_int = @import("std").mem.zeroes(c_int),
+    FramerateSecPerFrameAccum: f32 = @import("std").mem.zeroes(f32),
+    WantCaptureMouseNextFrame: c_int = @import("std").mem.zeroes(c_int),
+    WantCaptureKeyboardNextFrame: c_int = @import("std").mem.zeroes(c_int),
+    WantTextInputNextFrame: c_int = @import("std").mem.zeroes(c_int),
+    TempBuffer: ImVector_char = @import("std").mem.zeroes(ImVector_char),
 };
 pub const struct_ImGuiInputTextCallbackData = extern struct {
-    Ctx: [*c]ImGuiContext,
-    EventFlag: ImGuiInputTextFlags,
-    Flags: ImGuiInputTextFlags,
-    UserData: ?*anyopaque,
-    EventChar: ImWchar,
-    EventKey: ImGuiKey,
-    Buf: [*c]u8,
-    BufTextLen: c_int,
-    BufSize: c_int,
-    BufDirty: bool,
-    CursorPos: c_int,
-    SelectionStart: c_int,
-    SelectionEnd: c_int,
+    Ctx: [*c]ImGuiContext = @import("std").mem.zeroes([*c]ImGuiContext),
+    EventFlag: ImGuiInputTextFlags = @import("std").mem.zeroes(ImGuiInputTextFlags),
+    Flags: ImGuiInputTextFlags = @import("std").mem.zeroes(ImGuiInputTextFlags),
+    UserData: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
+    EventChar: ImWchar = @import("std").mem.zeroes(ImWchar),
+    EventKey: ImGuiKey = @import("std").mem.zeroes(ImGuiKey),
+    Buf: [*c]u8 = @import("std").mem.zeroes([*c]u8),
+    BufTextLen: c_int = @import("std").mem.zeroes(c_int),
+    BufSize: c_int = @import("std").mem.zeroes(c_int),
+    BufDirty: bool = @import("std").mem.zeroes(bool),
+    CursorPos: c_int = @import("std").mem.zeroes(c_int),
+    SelectionStart: c_int = @import("std").mem.zeroes(c_int),
+    SelectionEnd: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const ImGuiInputTextCallbackData = struct_ImGuiInputTextCallbackData;
 pub const struct_ImGuiOnceUponAFrame = extern struct {
-    RefFrame: c_int,
+    RefFrame: c_int = @import("std").mem.zeroes(c_int),
 };
-pub const ImGuiOnceUponAFrame = struct_ImGuiOnceUponAFrame; // libs/cimgui/cimgui.h:1062:24: warning: struct demoted to opaque type - has bitfield
+pub const ImGuiOnceUponAFrame = struct_ImGuiOnceUponAFrame; // cimgui.h:1101:24: warning: struct demoted to opaque type - has bitfield
 pub const struct_ImGuiTableColumnSortSpecs = opaque {};
 pub const ImGuiTableColumnSortSpecs = struct_ImGuiTableColumnSortSpecs;
 pub const struct_ImGuiTableSortSpecs = extern struct {
-    Specs: ?*const ImGuiTableColumnSortSpecs,
-    SpecsCount: c_int,
-    SpecsDirty: bool,
+    Specs: ?*const ImGuiTableColumnSortSpecs = @import("std").mem.zeroes(?*const ImGuiTableColumnSortSpecs),
+    SpecsCount: c_int = @import("std").mem.zeroes(c_int),
+    SpecsDirty: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiTableSortSpecs = struct_ImGuiTableSortSpecs;
 pub const struct_ImGuiTextRange = extern struct {
-    b: [*c]const u8,
-    e: [*c]const u8,
+    b: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    e: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
 };
 pub const ImGuiTextRange = struct_ImGuiTextRange;
 pub const struct_ImVector_ImGuiTextRange = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiTextRange,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiTextRange = @import("std").mem.zeroes([*c]ImGuiTextRange),
 };
 pub const ImVector_ImGuiTextRange = struct_ImVector_ImGuiTextRange;
 pub const struct_ImGuiTextFilter = extern struct {
-    InputBuf: [256]u8,
-    Filters: ImVector_ImGuiTextRange,
-    CountGrep: c_int,
+    InputBuf: [256]u8 = @import("std").mem.zeroes([256]u8),
+    Filters: ImVector_ImGuiTextRange = @import("std").mem.zeroes(ImVector_ImGuiTextRange),
+    CountGrep: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const ImGuiTextFilter = struct_ImGuiTextFilter;
 pub const struct_ImBitVector = extern struct {
-    Storage: ImVector_ImU32,
+    Storage: ImVector_ImU32 = @import("std").mem.zeroes(ImVector_ImU32),
 };
 pub const ImBitVector = struct_ImBitVector;
 pub const ImGuiDataType = c_int;
 pub const struct_ImGuiDataVarInfo = extern struct {
-    Type: ImGuiDataType,
-    Count: ImU32,
-    Offset: ImU32,
+    Type: ImGuiDataType = @import("std").mem.zeroes(ImGuiDataType),
+    Count: ImU32 = @import("std").mem.zeroes(ImU32),
+    Offset: ImU32 = @import("std").mem.zeroes(ImU32),
 };
 pub const ImGuiDataVarInfo = struct_ImGuiDataVarInfo;
 pub const struct_ImGuiDataTypeInfo = extern struct {
-    Size: usize,
-    Name: [*c]const u8,
-    PrintFmt: [*c]const u8,
-    ScanFmt: [*c]const u8,
+    Size: usize = @import("std").mem.zeroes(usize),
+    Name: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    PrintFmt: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
+    ScanFmt: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
 };
 pub const ImGuiDataTypeInfo = struct_ImGuiDataTypeInfo;
 pub const struct_ImGuiInputTextDeactivateData = opaque {};
 pub const ImGuiInputTextDeactivateData = struct_ImGuiInputTextDeactivateData;
 pub const struct_ImGuiLocEntry = extern struct {
-    Key: ImGuiLocKey,
-    Text: [*c]const u8,
+    Key: ImGuiLocKey = @import("std").mem.zeroes(ImGuiLocKey),
+    Text: [*c]const u8 = @import("std").mem.zeroes([*c]const u8),
 };
 pub const ImGuiLocEntry = struct_ImGuiLocEntry;
 pub const struct_ImGuiMenuColumns = extern struct {
-    TotalWidth: ImU32,
-    NextTotalWidth: ImU32,
-    Spacing: ImU16,
-    OffsetIcon: ImU16,
-    OffsetLabel: ImU16,
-    OffsetShortcut: ImU16,
-    OffsetMark: ImU16,
-    Widths: [4]ImU16,
+    TotalWidth: ImU32 = @import("std").mem.zeroes(ImU32),
+    NextTotalWidth: ImU32 = @import("std").mem.zeroes(ImU32),
+    Spacing: ImU16 = @import("std").mem.zeroes(ImU16),
+    OffsetIcon: ImU16 = @import("std").mem.zeroes(ImU16),
+    OffsetLabel: ImU16 = @import("std").mem.zeroes(ImU16),
+    OffsetShortcut: ImU16 = @import("std").mem.zeroes(ImU16),
+    OffsetMark: ImU16 = @import("std").mem.zeroes(ImU16),
+    Widths: [4]ImU16 = @import("std").mem.zeroes([4]ImU16),
 };
 pub const ImGuiMenuColumns = struct_ImGuiMenuColumns;
 pub const ImGuiOldColumnFlags = c_int;
 pub const struct_ImGuiOldColumnData = extern struct {
-    OffsetNorm: f32,
-    OffsetNormBeforeResize: f32,
-    Flags: ImGuiOldColumnFlags,
-    ClipRect: ImRect,
+    OffsetNorm: f32 = @import("std").mem.zeroes(f32),
+    OffsetNormBeforeResize: f32 = @import("std").mem.zeroes(f32),
+    Flags: ImGuiOldColumnFlags = @import("std").mem.zeroes(ImGuiOldColumnFlags),
+    ClipRect: ImRect = @import("std").mem.zeroes(ImRect),
 };
 pub const ImGuiOldColumnData = struct_ImGuiOldColumnData;
 pub const struct_ImVector_ImGuiOldColumnData = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiOldColumnData,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiOldColumnData = @import("std").mem.zeroes([*c]ImGuiOldColumnData),
 };
 pub const ImVector_ImGuiOldColumnData = struct_ImVector_ImGuiOldColumnData;
 pub const struct_ImGuiOldColumns = extern struct {
-    ID: ImGuiID,
-    Flags: ImGuiOldColumnFlags,
-    IsFirstFrame: bool,
-    IsBeingResized: bool,
-    Current: c_int,
-    Count: c_int,
-    OffMinX: f32,
-    OffMaxX: f32,
-    LineMinY: f32,
-    LineMaxY: f32,
-    HostCursorPosY: f32,
-    HostCursorMaxPosX: f32,
-    HostInitialClipRect: ImRect,
-    HostBackupClipRect: ImRect,
-    HostBackupParentWorkRect: ImRect,
-    Columns: ImVector_ImGuiOldColumnData,
-    Splitter: ImDrawListSplitter,
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    Flags: ImGuiOldColumnFlags = @import("std").mem.zeroes(ImGuiOldColumnFlags),
+    IsFirstFrame: bool = @import("std").mem.zeroes(bool),
+    IsBeingResized: bool = @import("std").mem.zeroes(bool),
+    Current: c_int = @import("std").mem.zeroes(c_int),
+    Count: c_int = @import("std").mem.zeroes(c_int),
+    OffMinX: f32 = @import("std").mem.zeroes(f32),
+    OffMaxX: f32 = @import("std").mem.zeroes(f32),
+    LineMinY: f32 = @import("std").mem.zeroes(f32),
+    LineMaxY: f32 = @import("std").mem.zeroes(f32),
+    HostCursorPosY: f32 = @import("std").mem.zeroes(f32),
+    HostCursorMaxPosX: f32 = @import("std").mem.zeroes(f32),
+    HostInitialClipRect: ImRect = @import("std").mem.zeroes(ImRect),
+    HostBackupClipRect: ImRect = @import("std").mem.zeroes(ImRect),
+    HostBackupParentWorkRect: ImRect = @import("std").mem.zeroes(ImRect),
+    Columns: ImVector_ImGuiOldColumnData = @import("std").mem.zeroes(ImVector_ImGuiOldColumnData),
+    Splitter: ImDrawListSplitter = @import("std").mem.zeroes(ImDrawListSplitter),
 };
 pub const ImGuiOldColumns = struct_ImGuiOldColumns;
 pub const struct_ImGuiTableInstanceData = extern struct {
-    TableInstanceID: ImGuiID,
-    LastOuterHeight: f32,
-    LastFirstRowHeight: f32,
-    LastFrozenHeight: f32,
+    TableInstanceID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    LastOuterHeight: f32 = @import("std").mem.zeroes(f32),
+    LastTopHeadersRowHeight: f32 = @import("std").mem.zeroes(f32),
+    LastFrozenHeight: f32 = @import("std").mem.zeroes(f32),
+    HoveredRowLast: c_int = @import("std").mem.zeroes(c_int),
+    HoveredRowNext: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const ImGuiTableInstanceData = struct_ImGuiTableInstanceData;
 pub const struct_ImGuiTableSettings = extern struct {
-    ID: ImGuiID,
-    SaveFlags: ImGuiTableFlags,
-    RefScale: f32,
-    ColumnsCount: ImGuiTableColumnIdx,
-    ColumnsCountMax: ImGuiTableColumnIdx,
-    WantApply: bool,
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    SaveFlags: ImGuiTableFlags = @import("std").mem.zeroes(ImGuiTableFlags),
+    RefScale: f32 = @import("std").mem.zeroes(f32),
+    ColumnsCount: ImGuiTableColumnIdx = @import("std").mem.zeroes(ImGuiTableColumnIdx),
+    ColumnsCountMax: ImGuiTableColumnIdx = @import("std").mem.zeroes(ImGuiTableColumnIdx),
+    WantApply: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiTableSettings = struct_ImGuiTableSettings;
 pub const struct_ImGuiTableColumnsSettings = opaque {};
 pub const ImGuiTableColumnsSettings = struct_ImGuiTableColumnsSettings;
 pub const struct_ImGuiWindowTempData = extern struct {
-    CursorPos: ImVec2,
-    CursorPosPrevLine: ImVec2,
-    CursorStartPos: ImVec2,
-    CursorMaxPos: ImVec2,
-    IdealMaxPos: ImVec2,
-    CurrLineSize: ImVec2,
-    PrevLineSize: ImVec2,
-    CurrLineTextBaseOffset: f32,
-    PrevLineTextBaseOffset: f32,
-    IsSameLine: bool,
-    IsSetPos: bool,
-    Indent: ImVec1,
-    ColumnsOffset: ImVec1,
-    GroupOffset: ImVec1,
-    CursorStartPosLossyness: ImVec2,
-    NavLayerCurrent: ImGuiNavLayer,
-    NavLayersActiveMask: c_short,
-    NavLayersActiveMaskNext: c_short,
-    NavHideHighlightOneFrame: bool,
-    NavHasScroll: bool,
-    MenuBarAppending: bool,
-    MenuBarOffset: ImVec2,
-    MenuColumns: ImGuiMenuColumns,
-    TreeDepth: c_int,
-    TreeJumpToParentOnPopMask: ImU32,
-    ChildWindows: ImVector_ImGuiWindowPtr,
-    StateStorage: [*c]ImGuiStorage,
-    CurrentColumns: [*c]ImGuiOldColumns,
-    CurrentTableIdx: c_int,
-    LayoutType: ImGuiLayoutType,
-    ParentLayoutType: ImGuiLayoutType,
-    ItemWidth: f32,
-    TextWrapPos: f32,
-    ItemWidthStack: ImVector_float,
-    TextWrapPosStack: ImVector_float,
+    CursorPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    CursorPosPrevLine: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    CursorStartPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    CursorMaxPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    IdealMaxPos: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    CurrLineSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    PrevLineSize: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    CurrLineTextBaseOffset: f32 = @import("std").mem.zeroes(f32),
+    PrevLineTextBaseOffset: f32 = @import("std").mem.zeroes(f32),
+    IsSameLine: bool = @import("std").mem.zeroes(bool),
+    IsSetPos: bool = @import("std").mem.zeroes(bool),
+    Indent: ImVec1 = @import("std").mem.zeroes(ImVec1),
+    ColumnsOffset: ImVec1 = @import("std").mem.zeroes(ImVec1),
+    GroupOffset: ImVec1 = @import("std").mem.zeroes(ImVec1),
+    CursorStartPosLossyness: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    NavLayerCurrent: ImGuiNavLayer = @import("std").mem.zeroes(ImGuiNavLayer),
+    NavLayersActiveMask: c_short = @import("std").mem.zeroes(c_short),
+    NavLayersActiveMaskNext: c_short = @import("std").mem.zeroes(c_short),
+    NavIsScrollPushableX: bool = @import("std").mem.zeroes(bool),
+    NavHideHighlightOneFrame: bool = @import("std").mem.zeroes(bool),
+    NavWindowHasScrollY: bool = @import("std").mem.zeroes(bool),
+    MenuBarAppending: bool = @import("std").mem.zeroes(bool),
+    MenuBarOffset: ImVec2 = @import("std").mem.zeroes(ImVec2),
+    MenuColumns: ImGuiMenuColumns = @import("std").mem.zeroes(ImGuiMenuColumns),
+    TreeDepth: c_int = @import("std").mem.zeroes(c_int),
+    TreeJumpToParentOnPopMask: ImU32 = @import("std").mem.zeroes(ImU32),
+    ChildWindows: ImVector_ImGuiWindowPtr = @import("std").mem.zeroes(ImVector_ImGuiWindowPtr),
+    StateStorage: [*c]ImGuiStorage = @import("std").mem.zeroes([*c]ImGuiStorage),
+    CurrentColumns: [*c]ImGuiOldColumns = @import("std").mem.zeroes([*c]ImGuiOldColumns),
+    CurrentTableIdx: c_int = @import("std").mem.zeroes(c_int),
+    LayoutType: ImGuiLayoutType = @import("std").mem.zeroes(ImGuiLayoutType),
+    ParentLayoutType: ImGuiLayoutType = @import("std").mem.zeroes(ImGuiLayoutType),
+    ItemWidth: f32 = @import("std").mem.zeroes(f32),
+    TextWrapPos: f32 = @import("std").mem.zeroes(f32),
+    ItemWidthStack: ImVector_float = @import("std").mem.zeroes(ImVector_float),
+    TextWrapPosStack: ImVector_float = @import("std").mem.zeroes(ImVector_float),
 };
 pub const ImGuiWindowTempData = struct_ImGuiWindowTempData;
 pub const struct_ImVec2ih = extern struct {
-    x: c_short,
-    y: c_short,
+    x: c_short = @import("std").mem.zeroes(c_short),
+    y: c_short = @import("std").mem.zeroes(c_short),
 };
 pub const ImVec2ih = struct_ImVec2ih;
 pub const struct_ImGuiWindowSettings = extern struct {
-    ID: ImGuiID,
-    Pos: ImVec2ih,
-    Size: ImVec2ih,
-    ViewportPos: ImVec2ih,
-    ViewportId: ImGuiID,
-    DockId: ImGuiID,
-    ClassId: ImGuiID,
-    DockOrder: c_short,
-    Collapsed: bool,
-    WantApply: bool,
-    WantDelete: bool,
+    ID: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    Pos: ImVec2ih = @import("std").mem.zeroes(ImVec2ih),
+    Size: ImVec2ih = @import("std").mem.zeroes(ImVec2ih),
+    ViewportPos: ImVec2ih = @import("std").mem.zeroes(ImVec2ih),
+    ViewportId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DockId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    ClassId: ImGuiID = @import("std").mem.zeroes(ImGuiID),
+    DockOrder: c_short = @import("std").mem.zeroes(c_short),
+    Collapsed: bool = @import("std").mem.zeroes(bool),
+    IsChild: bool = @import("std").mem.zeroes(bool),
+    WantApply: bool = @import("std").mem.zeroes(bool),
+    WantDelete: bool = @import("std").mem.zeroes(bool),
 };
 pub const ImGuiWindowSettings = struct_ImGuiWindowSettings;
 pub const struct_ImVector_const_charPtr = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c][*c]const u8,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c][*c]const u8 = @import("std").mem.zeroes([*c][*c]const u8),
 };
 pub const ImVector_const_charPtr = struct_ImVector_const_charPtr;
 pub const ImGuiMouseButton = c_int;
@@ -1895,13 +2394,11 @@ pub const ImDrawFlags = c_int;
 pub const ImGuiButtonFlags = c_int;
 pub const ImGuiComboFlags = c_int;
 pub const ImGuiFocusedFlags = c_int;
-pub const ImGuiHoveredFlags = c_int;
 pub const ImGuiPopupFlags = c_int;
 pub const ImGuiSelectableFlags = c_int;
 pub const ImGuiSliderFlags = c_int;
 pub const ImGuiTableRowFlags = c_int;
 pub const ImGuiTreeNodeFlags = c_int;
-pub const ImS64 = c_longlong;
 pub const ImWchar32 = c_uint;
 pub const ImGuiInputTextCallback = ?*const fn ([*c]ImGuiInputTextCallbackData) callconv(.C) c_int;
 pub const ImGuiMemAllocFunc = ?*const fn (usize, ?*anyopaque) callconv(.C) ?*anyopaque;
@@ -1923,14 +2420,13 @@ pub const ImGuiWindowFlags_NoFocusOnAppearing: c_int = 4096;
 pub const ImGuiWindowFlags_NoBringToFrontOnFocus: c_int = 8192;
 pub const ImGuiWindowFlags_AlwaysVerticalScrollbar: c_int = 16384;
 pub const ImGuiWindowFlags_AlwaysHorizontalScrollbar: c_int = 32768;
-pub const ImGuiWindowFlags_AlwaysUseWindowPadding: c_int = 65536;
-pub const ImGuiWindowFlags_NoNavInputs: c_int = 262144;
-pub const ImGuiWindowFlags_NoNavFocus: c_int = 524288;
-pub const ImGuiWindowFlags_UnsavedDocument: c_int = 1048576;
-pub const ImGuiWindowFlags_NoDocking: c_int = 2097152;
-pub const ImGuiWindowFlags_NoNav: c_int = 786432;
+pub const ImGuiWindowFlags_NoNavInputs: c_int = 65536;
+pub const ImGuiWindowFlags_NoNavFocus: c_int = 131072;
+pub const ImGuiWindowFlags_UnsavedDocument: c_int = 262144;
+pub const ImGuiWindowFlags_NoDocking: c_int = 524288;
+pub const ImGuiWindowFlags_NoNav: c_int = 196608;
 pub const ImGuiWindowFlags_NoDecoration: c_int = 43;
-pub const ImGuiWindowFlags_NoInputs: c_int = 786944;
+pub const ImGuiWindowFlags_NoInputs: c_int = 197120;
 pub const ImGuiWindowFlags_NavFlattened: c_int = 8388608;
 pub const ImGuiWindowFlags_ChildWindow: c_int = 16777216;
 pub const ImGuiWindowFlags_Tooltip: c_int = 33554432;
@@ -1939,6 +2435,16 @@ pub const ImGuiWindowFlags_Modal: c_int = 134217728;
 pub const ImGuiWindowFlags_ChildMenu: c_int = 268435456;
 pub const ImGuiWindowFlags_DockNodeHost: c_int = 536870912;
 pub const ImGuiWindowFlags_ = c_uint;
+pub const ImGuiChildFlags_None: c_int = 0;
+pub const ImGuiChildFlags_Border: c_int = 1;
+pub const ImGuiChildFlags_AlwaysUseWindowPadding: c_int = 2;
+pub const ImGuiChildFlags_ResizeX: c_int = 4;
+pub const ImGuiChildFlags_ResizeY: c_int = 8;
+pub const ImGuiChildFlags_AutoResizeX: c_int = 16;
+pub const ImGuiChildFlags_AutoResizeY: c_int = 32;
+pub const ImGuiChildFlags_AlwaysAutoResize: c_int = 64;
+pub const ImGuiChildFlags_FrameStyle: c_int = 128;
+pub const ImGuiChildFlags_ = c_uint;
 pub const ImGuiInputTextFlags_None: c_int = 0;
 pub const ImGuiInputTextFlags_CharsDecimal: c_int = 1;
 pub const ImGuiInputTextFlags_CharsHexadecimal: c_int = 2;
@@ -1965,7 +2471,7 @@ pub const ImGuiInputTextFlags_ = c_uint;
 pub const ImGuiTreeNodeFlags_None: c_int = 0;
 pub const ImGuiTreeNodeFlags_Selected: c_int = 1;
 pub const ImGuiTreeNodeFlags_Framed: c_int = 2;
-pub const ImGuiTreeNodeFlags_AllowItemOverlap: c_int = 4;
+pub const ImGuiTreeNodeFlags_AllowOverlap: c_int = 4;
 pub const ImGuiTreeNodeFlags_NoTreePushOnOpen: c_int = 8;
 pub const ImGuiTreeNodeFlags_NoAutoOpenOnLog: c_int = 16;
 pub const ImGuiTreeNodeFlags_DefaultOpen: c_int = 32;
@@ -1976,7 +2482,8 @@ pub const ImGuiTreeNodeFlags_Bullet: c_int = 512;
 pub const ImGuiTreeNodeFlags_FramePadding: c_int = 1024;
 pub const ImGuiTreeNodeFlags_SpanAvailWidth: c_int = 2048;
 pub const ImGuiTreeNodeFlags_SpanFullWidth: c_int = 4096;
-pub const ImGuiTreeNodeFlags_NavLeftJumpsBackHere: c_int = 8192;
+pub const ImGuiTreeNodeFlags_SpanAllColumns: c_int = 8192;
+pub const ImGuiTreeNodeFlags_NavLeftJumpsBackHere: c_int = 16384;
 pub const ImGuiTreeNodeFlags_CollapsingHeader: c_int = 26;
 pub const ImGuiTreeNodeFlags_ = c_uint;
 pub const ImGuiPopupFlags_None: c_int = 0;
@@ -1996,7 +2503,7 @@ pub const ImGuiSelectableFlags_DontClosePopups: c_int = 1;
 pub const ImGuiSelectableFlags_SpanAllColumns: c_int = 2;
 pub const ImGuiSelectableFlags_AllowDoubleClick: c_int = 4;
 pub const ImGuiSelectableFlags_Disabled: c_int = 8;
-pub const ImGuiSelectableFlags_AllowItemOverlap: c_int = 16;
+pub const ImGuiSelectableFlags_AllowOverlap: c_int = 16;
 pub const ImGuiSelectableFlags_ = c_uint;
 pub const ImGuiComboFlags_None: c_int = 0;
 pub const ImGuiComboFlags_PopupAlignLeft: c_int = 1;
@@ -2006,6 +2513,7 @@ pub const ImGuiComboFlags_HeightLarge: c_int = 8;
 pub const ImGuiComboFlags_HeightLargest: c_int = 16;
 pub const ImGuiComboFlags_NoArrowButton: c_int = 32;
 pub const ImGuiComboFlags_NoPreview: c_int = 64;
+pub const ImGuiComboFlags_WidthFitPreview: c_int = 128;
 pub const ImGuiComboFlags_HeightMask_: c_int = 30;
 pub const ImGuiComboFlags_ = c_uint;
 pub const ImGuiTabBarFlags_None: c_int = 0;
@@ -2065,6 +2573,7 @@ pub const ImGuiTableFlags_ScrollX: c_int = 16777216;
 pub const ImGuiTableFlags_ScrollY: c_int = 33554432;
 pub const ImGuiTableFlags_SortMulti: c_int = 67108864;
 pub const ImGuiTableFlags_SortTristate: c_int = 134217728;
+pub const ImGuiTableFlags_HighlightHoveredColumn: c_int = 268435456;
 pub const ImGuiTableFlags_SizingMask_: c_int = 57344;
 pub const ImGuiTableFlags_ = c_uint;
 pub const ImGuiTableColumnFlags_None: c_int = 0;
@@ -2086,6 +2595,7 @@ pub const ImGuiTableColumnFlags_PreferSortAscending: c_int = 16384;
 pub const ImGuiTableColumnFlags_PreferSortDescending: c_int = 32768;
 pub const ImGuiTableColumnFlags_IndentEnable: c_int = 65536;
 pub const ImGuiTableColumnFlags_IndentDisable: c_int = 131072;
+pub const ImGuiTableColumnFlags_AngledHeader: c_int = 262144;
 pub const ImGuiTableColumnFlags_IsEnabled: c_int = 16777216;
 pub const ImGuiTableColumnFlags_IsVisible: c_int = 33554432;
 pub const ImGuiTableColumnFlags_IsSorted: c_int = 67108864;
@@ -2119,22 +2629,28 @@ pub const ImGuiHoveredFlags_NoPopupHierarchy: c_int = 8;
 pub const ImGuiHoveredFlags_DockHierarchy: c_int = 16;
 pub const ImGuiHoveredFlags_AllowWhenBlockedByPopup: c_int = 32;
 pub const ImGuiHoveredFlags_AllowWhenBlockedByActiveItem: c_int = 128;
-pub const ImGuiHoveredFlags_AllowWhenOverlapped: c_int = 256;
-pub const ImGuiHoveredFlags_AllowWhenDisabled: c_int = 512;
-pub const ImGuiHoveredFlags_NoNavOverride: c_int = 1024;
-pub const ImGuiHoveredFlags_RectOnly: c_int = 416;
+pub const ImGuiHoveredFlags_AllowWhenOverlappedByItem: c_int = 256;
+pub const ImGuiHoveredFlags_AllowWhenOverlappedByWindow: c_int = 512;
+pub const ImGuiHoveredFlags_AllowWhenDisabled: c_int = 1024;
+pub const ImGuiHoveredFlags_NoNavOverride: c_int = 2048;
+pub const ImGuiHoveredFlags_AllowWhenOverlapped: c_int = 768;
+pub const ImGuiHoveredFlags_RectOnly: c_int = 928;
 pub const ImGuiHoveredFlags_RootAndChildWindows: c_int = 3;
-pub const ImGuiHoveredFlags_DelayNormal: c_int = 2048;
-pub const ImGuiHoveredFlags_DelayShort: c_int = 4096;
-pub const ImGuiHoveredFlags_NoSharedDelay: c_int = 8192;
+pub const ImGuiHoveredFlags_ForTooltip: c_int = 4096;
+pub const ImGuiHoveredFlags_Stationary: c_int = 8192;
+pub const ImGuiHoveredFlags_DelayNone: c_int = 16384;
+pub const ImGuiHoveredFlags_DelayShort: c_int = 32768;
+pub const ImGuiHoveredFlags_DelayNormal: c_int = 65536;
+pub const ImGuiHoveredFlags_NoSharedDelay: c_int = 131072;
 pub const ImGuiHoveredFlags_ = c_uint;
 pub const ImGuiDockNodeFlags_None: c_int = 0;
 pub const ImGuiDockNodeFlags_KeepAliveOnly: c_int = 1;
-pub const ImGuiDockNodeFlags_NoDockingInCentralNode: c_int = 4;
+pub const ImGuiDockNodeFlags_NoDockingOverCentralNode: c_int = 4;
 pub const ImGuiDockNodeFlags_PassthruCentralNode: c_int = 8;
-pub const ImGuiDockNodeFlags_NoSplit: c_int = 16;
+pub const ImGuiDockNodeFlags_NoDockingSplit: c_int = 16;
 pub const ImGuiDockNodeFlags_NoResize: c_int = 32;
 pub const ImGuiDockNodeFlags_AutoHideTabBar: c_int = 64;
+pub const ImGuiDockNodeFlags_NoUndocking: c_int = 128;
 pub const ImGuiDockNodeFlags_ = c_uint;
 pub const ImGuiDragDropFlags_None: c_int = 0;
 pub const ImGuiDragDropFlags_SourceNoPreviewTooltip: c_int = 1;
@@ -2171,179 +2687,175 @@ pub const ImGuiSortDirection_None: c_int = 0;
 pub const ImGuiSortDirection_Ascending: c_int = 1;
 pub const ImGuiSortDirection_Descending: c_int = 2;
 pub const ImGuiSortDirection_ = c_uint;
-pub const ImGuiKey_None: c_int = 0;
-pub const ImGuiKey_Tab: c_int = 512;
-pub const ImGuiKey_LeftArrow: c_int = 513;
-pub const ImGuiKey_RightArrow: c_int = 514;
-pub const ImGuiKey_UpArrow: c_int = 515;
-pub const ImGuiKey_DownArrow: c_int = 516;
-pub const ImGuiKey_PageUp: c_int = 517;
-pub const ImGuiKey_PageDown: c_int = 518;
-pub const ImGuiKey_Home: c_int = 519;
-pub const ImGuiKey_End: c_int = 520;
-pub const ImGuiKey_Insert: c_int = 521;
-pub const ImGuiKey_Delete: c_int = 522;
-pub const ImGuiKey_Backspace: c_int = 523;
-pub const ImGuiKey_Space: c_int = 524;
-pub const ImGuiKey_Enter: c_int = 525;
-pub const ImGuiKey_Escape: c_int = 526;
-pub const ImGuiKey_LeftCtrl: c_int = 527;
-pub const ImGuiKey_LeftShift: c_int = 528;
-pub const ImGuiKey_LeftAlt: c_int = 529;
-pub const ImGuiKey_LeftSuper: c_int = 530;
-pub const ImGuiKey_RightCtrl: c_int = 531;
-pub const ImGuiKey_RightShift: c_int = 532;
-pub const ImGuiKey_RightAlt: c_int = 533;
-pub const ImGuiKey_RightSuper: c_int = 534;
-pub const ImGuiKey_Menu: c_int = 535;
-pub const ImGuiKey_0: c_int = 536;
-pub const ImGuiKey_1: c_int = 537;
-pub const ImGuiKey_2: c_int = 538;
-pub const ImGuiKey_3: c_int = 539;
-pub const ImGuiKey_4: c_int = 540;
-pub const ImGuiKey_5: c_int = 541;
-pub const ImGuiKey_6: c_int = 542;
-pub const ImGuiKey_7: c_int = 543;
-pub const ImGuiKey_8: c_int = 544;
-pub const ImGuiKey_9: c_int = 545;
-pub const ImGuiKey_A: c_int = 546;
-pub const ImGuiKey_B: c_int = 547;
-pub const ImGuiKey_C: c_int = 548;
-pub const ImGuiKey_D: c_int = 549;
-pub const ImGuiKey_E: c_int = 550;
-pub const ImGuiKey_F: c_int = 551;
-pub const ImGuiKey_G: c_int = 552;
-pub const ImGuiKey_H: c_int = 553;
-pub const ImGuiKey_I: c_int = 554;
-pub const ImGuiKey_J: c_int = 555;
-pub const ImGuiKey_K: c_int = 556;
-pub const ImGuiKey_L: c_int = 557;
-pub const ImGuiKey_M: c_int = 558;
-pub const ImGuiKey_N: c_int = 559;
-pub const ImGuiKey_O: c_int = 560;
-pub const ImGuiKey_P: c_int = 561;
-pub const ImGuiKey_Q: c_int = 562;
-pub const ImGuiKey_R: c_int = 563;
-pub const ImGuiKey_S: c_int = 564;
-pub const ImGuiKey_T: c_int = 565;
-pub const ImGuiKey_U: c_int = 566;
-pub const ImGuiKey_V: c_int = 567;
-pub const ImGuiKey_W: c_int = 568;
-pub const ImGuiKey_X: c_int = 569;
-pub const ImGuiKey_Y: c_int = 570;
-pub const ImGuiKey_Z: c_int = 571;
-pub const ImGuiKey_F1: c_int = 572;
-pub const ImGuiKey_F2: c_int = 573;
-pub const ImGuiKey_F3: c_int = 574;
-pub const ImGuiKey_F4: c_int = 575;
-pub const ImGuiKey_F5: c_int = 576;
-pub const ImGuiKey_F6: c_int = 577;
-pub const ImGuiKey_F7: c_int = 578;
-pub const ImGuiKey_F8: c_int = 579;
-pub const ImGuiKey_F9: c_int = 580;
-pub const ImGuiKey_F10: c_int = 581;
-pub const ImGuiKey_F11: c_int = 582;
-pub const ImGuiKey_F12: c_int = 583;
-pub const ImGuiKey_Apostrophe: c_int = 584;
-pub const ImGuiKey_Comma: c_int = 585;
-pub const ImGuiKey_Minus: c_int = 586;
-pub const ImGuiKey_Period: c_int = 587;
-pub const ImGuiKey_Slash: c_int = 588;
-pub const ImGuiKey_Semicolon: c_int = 589;
-pub const ImGuiKey_Equal: c_int = 590;
-pub const ImGuiKey_LeftBracket: c_int = 591;
-pub const ImGuiKey_Backslash: c_int = 592;
-pub const ImGuiKey_RightBracket: c_int = 593;
-pub const ImGuiKey_GraveAccent: c_int = 594;
-pub const ImGuiKey_CapsLock: c_int = 595;
-pub const ImGuiKey_ScrollLock: c_int = 596;
-pub const ImGuiKey_NumLock: c_int = 597;
-pub const ImGuiKey_PrintScreen: c_int = 598;
-pub const ImGuiKey_Pause: c_int = 599;
-pub const ImGuiKey_Keypad0: c_int = 600;
-pub const ImGuiKey_Keypad1: c_int = 601;
-pub const ImGuiKey_Keypad2: c_int = 602;
-pub const ImGuiKey_Keypad3: c_int = 603;
-pub const ImGuiKey_Keypad4: c_int = 604;
-pub const ImGuiKey_Keypad5: c_int = 605;
-pub const ImGuiKey_Keypad6: c_int = 606;
-pub const ImGuiKey_Keypad7: c_int = 607;
-pub const ImGuiKey_Keypad8: c_int = 608;
-pub const ImGuiKey_Keypad9: c_int = 609;
-pub const ImGuiKey_KeypadDecimal: c_int = 610;
-pub const ImGuiKey_KeypadDivide: c_int = 611;
-pub const ImGuiKey_KeypadMultiply: c_int = 612;
-pub const ImGuiKey_KeypadSubtract: c_int = 613;
-pub const ImGuiKey_KeypadAdd: c_int = 614;
-pub const ImGuiKey_KeypadEnter: c_int = 615;
-pub const ImGuiKey_KeypadEqual: c_int = 616;
-pub const ImGuiKey_GamepadStart: c_int = 617;
-pub const ImGuiKey_GamepadBack: c_int = 618;
-pub const ImGuiKey_GamepadFaceLeft: c_int = 619;
-pub const ImGuiKey_GamepadFaceRight: c_int = 620;
-pub const ImGuiKey_GamepadFaceUp: c_int = 621;
-pub const ImGuiKey_GamepadFaceDown: c_int = 622;
-pub const ImGuiKey_GamepadDpadLeft: c_int = 623;
-pub const ImGuiKey_GamepadDpadRight: c_int = 624;
-pub const ImGuiKey_GamepadDpadUp: c_int = 625;
-pub const ImGuiKey_GamepadDpadDown: c_int = 626;
-pub const ImGuiKey_GamepadL1: c_int = 627;
-pub const ImGuiKey_GamepadR1: c_int = 628;
-pub const ImGuiKey_GamepadL2: c_int = 629;
-pub const ImGuiKey_GamepadR2: c_int = 630;
-pub const ImGuiKey_GamepadL3: c_int = 631;
-pub const ImGuiKey_GamepadR3: c_int = 632;
-pub const ImGuiKey_GamepadLStickLeft: c_int = 633;
-pub const ImGuiKey_GamepadLStickRight: c_int = 634;
-pub const ImGuiKey_GamepadLStickUp: c_int = 635;
-pub const ImGuiKey_GamepadLStickDown: c_int = 636;
-pub const ImGuiKey_GamepadRStickLeft: c_int = 637;
-pub const ImGuiKey_GamepadRStickRight: c_int = 638;
-pub const ImGuiKey_GamepadRStickUp: c_int = 639;
-pub const ImGuiKey_GamepadRStickDown: c_int = 640;
-pub const ImGuiKey_MouseLeft: c_int = 641;
-pub const ImGuiKey_MouseRight: c_int = 642;
-pub const ImGuiKey_MouseMiddle: c_int = 643;
-pub const ImGuiKey_MouseX1: c_int = 644;
-pub const ImGuiKey_MouseX2: c_int = 645;
-pub const ImGuiKey_MouseWheelX: c_int = 646;
-pub const ImGuiKey_MouseWheelY: c_int = 647;
-pub const ImGuiKey_ReservedForModCtrl: c_int = 648;
-pub const ImGuiKey_ReservedForModShift: c_int = 649;
-pub const ImGuiKey_ReservedForModAlt: c_int = 650;
-pub const ImGuiKey_ReservedForModSuper: c_int = 651;
-pub const ImGuiKey_COUNT: c_int = 652;
-pub const ImGuiMod_None: c_int = 0;
-pub const ImGuiMod_Ctrl: c_int = 4096;
-pub const ImGuiMod_Shift: c_int = 8192;
-pub const ImGuiMod_Alt: c_int = 16384;
-pub const ImGuiMod_Super: c_int = 32768;
-pub const ImGuiMod_Shortcut: c_int = 2048;
-pub const ImGuiMod_Mask_: c_int = 63488;
+pub const ImGuiKey_None: c_uint = 0;
+pub const ImGuiKey_Tab: c_uint = 512;
+pub const ImGuiKey_LeftArrow: c_uint = 513;
+pub const ImGuiKey_RightArrow: c_uint = 514;
+pub const ImGuiKey_UpArrow: c_uint = 515;
+pub const ImGuiKey_DownArrow: c_uint = 516;
+pub const ImGuiKey_PageUp: c_uint = 517;
+pub const ImGuiKey_PageDown: c_uint = 518;
+pub const ImGuiKey_Home: c_uint = 519;
+pub const ImGuiKey_End: c_uint = 520;
+pub const ImGuiKey_Insert: c_uint = 521;
+pub const ImGuiKey_Delete: c_uint = 522;
+pub const ImGuiKey_Backspace: c_uint = 523;
+pub const ImGuiKey_Space: c_uint = 524;
+pub const ImGuiKey_Enter: c_uint = 525;
+pub const ImGuiKey_Escape: c_uint = 526;
+pub const ImGuiKey_LeftCtrl: c_uint = 527;
+pub const ImGuiKey_LeftShift: c_uint = 528;
+pub const ImGuiKey_LeftAlt: c_uint = 529;
+pub const ImGuiKey_LeftSuper: c_uint = 530;
+pub const ImGuiKey_RightCtrl: c_uint = 531;
+pub const ImGuiKey_RightShift: c_uint = 532;
+pub const ImGuiKey_RightAlt: c_uint = 533;
+pub const ImGuiKey_RightSuper: c_uint = 534;
+pub const ImGuiKey_Menu: c_uint = 535;
+pub const ImGuiKey_0: c_uint = 536;
+pub const ImGuiKey_1: c_uint = 537;
+pub const ImGuiKey_2: c_uint = 538;
+pub const ImGuiKey_3: c_uint = 539;
+pub const ImGuiKey_4: c_uint = 540;
+pub const ImGuiKey_5: c_uint = 541;
+pub const ImGuiKey_6: c_uint = 542;
+pub const ImGuiKey_7: c_uint = 543;
+pub const ImGuiKey_8: c_uint = 544;
+pub const ImGuiKey_9: c_uint = 545;
+pub const ImGuiKey_A: c_uint = 546;
+pub const ImGuiKey_B: c_uint = 547;
+pub const ImGuiKey_C: c_uint = 548;
+pub const ImGuiKey_D: c_uint = 549;
+pub const ImGuiKey_E: c_uint = 550;
+pub const ImGuiKey_F: c_uint = 551;
+pub const ImGuiKey_G: c_uint = 552;
+pub const ImGuiKey_H: c_uint = 553;
+pub const ImGuiKey_I: c_uint = 554;
+pub const ImGuiKey_J: c_uint = 555;
+pub const ImGuiKey_K: c_uint = 556;
+pub const ImGuiKey_L: c_uint = 557;
+pub const ImGuiKey_M: c_uint = 558;
+pub const ImGuiKey_N: c_uint = 559;
+pub const ImGuiKey_O: c_uint = 560;
+pub const ImGuiKey_P: c_uint = 561;
+pub const ImGuiKey_Q: c_uint = 562;
+pub const ImGuiKey_R: c_uint = 563;
+pub const ImGuiKey_S: c_uint = 564;
+pub const ImGuiKey_T: c_uint = 565;
+pub const ImGuiKey_U: c_uint = 566;
+pub const ImGuiKey_V: c_uint = 567;
+pub const ImGuiKey_W: c_uint = 568;
+pub const ImGuiKey_X: c_uint = 569;
+pub const ImGuiKey_Y: c_uint = 570;
+pub const ImGuiKey_Z: c_uint = 571;
+pub const ImGuiKey_F1: c_uint = 572;
+pub const ImGuiKey_F2: c_uint = 573;
+pub const ImGuiKey_F3: c_uint = 574;
+pub const ImGuiKey_F4: c_uint = 575;
+pub const ImGuiKey_F5: c_uint = 576;
+pub const ImGuiKey_F6: c_uint = 577;
+pub const ImGuiKey_F7: c_uint = 578;
+pub const ImGuiKey_F8: c_uint = 579;
+pub const ImGuiKey_F9: c_uint = 580;
+pub const ImGuiKey_F10: c_uint = 581;
+pub const ImGuiKey_F11: c_uint = 582;
+pub const ImGuiKey_F12: c_uint = 583;
+pub const ImGuiKey_F13: c_uint = 584;
+pub const ImGuiKey_F14: c_uint = 585;
+pub const ImGuiKey_F15: c_uint = 586;
+pub const ImGuiKey_F16: c_uint = 587;
+pub const ImGuiKey_F17: c_uint = 588;
+pub const ImGuiKey_F18: c_uint = 589;
+pub const ImGuiKey_F19: c_uint = 590;
+pub const ImGuiKey_F20: c_uint = 591;
+pub const ImGuiKey_F21: c_uint = 592;
+pub const ImGuiKey_F22: c_uint = 593;
+pub const ImGuiKey_F23: c_uint = 594;
+pub const ImGuiKey_F24: c_uint = 595;
+pub const ImGuiKey_Apostrophe: c_uint = 596;
+pub const ImGuiKey_Comma: c_uint = 597;
+pub const ImGuiKey_Minus: c_uint = 598;
+pub const ImGuiKey_Period: c_uint = 599;
+pub const ImGuiKey_Slash: c_uint = 600;
+pub const ImGuiKey_Semicolon: c_uint = 601;
+pub const ImGuiKey_Equal: c_uint = 602;
+pub const ImGuiKey_LeftBracket: c_uint = 603;
+pub const ImGuiKey_Backslash: c_uint = 604;
+pub const ImGuiKey_RightBracket: c_uint = 605;
+pub const ImGuiKey_GraveAccent: c_uint = 606;
+pub const ImGuiKey_CapsLock: c_uint = 607;
+pub const ImGuiKey_ScrollLock: c_uint = 608;
+pub const ImGuiKey_NumLock: c_uint = 609;
+pub const ImGuiKey_PrintScreen: c_uint = 610;
+pub const ImGuiKey_Pause: c_uint = 611;
+pub const ImGuiKey_Keypad0: c_uint = 612;
+pub const ImGuiKey_Keypad1: c_uint = 613;
+pub const ImGuiKey_Keypad2: c_uint = 614;
+pub const ImGuiKey_Keypad3: c_uint = 615;
+pub const ImGuiKey_Keypad4: c_uint = 616;
+pub const ImGuiKey_Keypad5: c_uint = 617;
+pub const ImGuiKey_Keypad6: c_uint = 618;
+pub const ImGuiKey_Keypad7: c_uint = 619;
+pub const ImGuiKey_Keypad8: c_uint = 620;
+pub const ImGuiKey_Keypad9: c_uint = 621;
+pub const ImGuiKey_KeypadDecimal: c_uint = 622;
+pub const ImGuiKey_KeypadDivide: c_uint = 623;
+pub const ImGuiKey_KeypadMultiply: c_uint = 624;
+pub const ImGuiKey_KeypadSubtract: c_uint = 625;
+pub const ImGuiKey_KeypadAdd: c_uint = 626;
+pub const ImGuiKey_KeypadEnter: c_uint = 627;
+pub const ImGuiKey_KeypadEqual: c_uint = 628;
+pub const ImGuiKey_AppBack: c_uint = 629;
+pub const ImGuiKey_AppForward: c_uint = 630;
+pub const ImGuiKey_GamepadStart: c_uint = 631;
+pub const ImGuiKey_GamepadBack: c_uint = 632;
+pub const ImGuiKey_GamepadFaceLeft: c_uint = 633;
+pub const ImGuiKey_GamepadFaceRight: c_uint = 634;
+pub const ImGuiKey_GamepadFaceUp: c_uint = 635;
+pub const ImGuiKey_GamepadFaceDown: c_uint = 636;
+pub const ImGuiKey_GamepadDpadLeft: c_uint = 637;
+pub const ImGuiKey_GamepadDpadRight: c_uint = 638;
+pub const ImGuiKey_GamepadDpadUp: c_uint = 639;
+pub const ImGuiKey_GamepadDpadDown: c_uint = 640;
+pub const ImGuiKey_GamepadL1: c_uint = 641;
+pub const ImGuiKey_GamepadR1: c_uint = 642;
+pub const ImGuiKey_GamepadL2: c_uint = 643;
+pub const ImGuiKey_GamepadR2: c_uint = 644;
+pub const ImGuiKey_GamepadL3: c_uint = 645;
+pub const ImGuiKey_GamepadR3: c_uint = 646;
+pub const ImGuiKey_GamepadLStickLeft: c_uint = 647;
+pub const ImGuiKey_GamepadLStickRight: c_uint = 648;
+pub const ImGuiKey_GamepadLStickUp: c_uint = 649;
+pub const ImGuiKey_GamepadLStickDown: c_uint = 650;
+pub const ImGuiKey_GamepadRStickLeft: c_uint = 651;
+pub const ImGuiKey_GamepadRStickRight: c_uint = 652;
+pub const ImGuiKey_GamepadRStickUp: c_uint = 653;
+pub const ImGuiKey_GamepadRStickDown: c_uint = 654;
+pub const ImGuiKey_MouseLeft: c_uint = 655;
+pub const ImGuiKey_MouseRight: c_uint = 656;
+pub const ImGuiKey_MouseMiddle: c_uint = 657;
+pub const ImGuiKey_MouseX1: c_uint = 658;
+pub const ImGuiKey_MouseX2: c_uint = 659;
+pub const ImGuiKey_MouseWheelX: c_uint = 660;
+pub const ImGuiKey_MouseWheelY: c_uint = 661;
+pub const ImGuiKey_ReservedForModCtrl: c_uint = 662;
+pub const ImGuiKey_ReservedForModShift: c_uint = 663;
+pub const ImGuiKey_ReservedForModAlt: c_uint = 664;
+pub const ImGuiKey_ReservedForModSuper: c_uint = 665;
+pub const ImGuiKey_COUNT: c_uint = 666;
+pub const ImGuiMod_None: c_uint = 0;
+pub const ImGuiMod_Ctrl: c_uint = 4096;
+pub const ImGuiMod_Shift: c_uint = 8192;
+pub const ImGuiMod_Alt: c_uint = 16384;
+pub const ImGuiMod_Super: c_uint = 32768;
+pub const ImGuiMod_Shortcut: c_uint = 2048;
+pub const ImGuiMod_Mask_: c_uint = 63488;
 pub const ImGuiKey_NamedKey_BEGIN: c_int = 512;
-pub const ImGuiKey_NamedKey_END: c_int = 652;
-pub const ImGuiKey_NamedKey_COUNT: c_int = 140;
-pub const ImGuiKey_KeysData_SIZE: c_int = 652;
-pub const ImGuiKey_KeysData_OFFSET: c_int = 0;
+pub const ImGuiKey_NamedKey_END: c_int = 666;
+pub const ImGuiKey_NamedKey_COUNT: c_int = 154;
+pub const ImGuiKey_KeysData_SIZE: c_int = 154;
+pub const ImGuiKey_KeysData_OFFSET: c_int = 512;
 pub const ImGuiKey = c_uint;
-pub const ImGuiNavInput_Activate: c_int = 0;
-pub const ImGuiNavInput_Cancel: c_int = 1;
-pub const ImGuiNavInput_Input: c_int = 2;
-pub const ImGuiNavInput_Menu: c_int = 3;
-pub const ImGuiNavInput_DpadLeft: c_int = 4;
-pub const ImGuiNavInput_DpadRight: c_int = 5;
-pub const ImGuiNavInput_DpadUp: c_int = 6;
-pub const ImGuiNavInput_DpadDown: c_int = 7;
-pub const ImGuiNavInput_LStickLeft: c_int = 8;
-pub const ImGuiNavInput_LStickRight: c_int = 9;
-pub const ImGuiNavInput_LStickUp: c_int = 10;
-pub const ImGuiNavInput_LStickDown: c_int = 11;
-pub const ImGuiNavInput_FocusPrev: c_int = 12;
-pub const ImGuiNavInput_FocusNext: c_int = 13;
-pub const ImGuiNavInput_TweakSlow: c_int = 14;
-pub const ImGuiNavInput_TweakFast: c_int = 15;
-pub const ImGuiNavInput_COUNT: c_int = 16;
-pub const ImGuiNavInput = c_uint;
 pub const ImGuiConfigFlags_None: c_int = 0;
 pub const ImGuiConfigFlags_NavEnableKeyboard: c_int = 1;
 pub const ImGuiConfigFlags_NavEnableGamepad: c_int = 2;
@@ -2447,12 +2959,14 @@ pub const ImGuiStyleVar_ScrollbarRounding: c_int = 19;
 pub const ImGuiStyleVar_GrabMinSize: c_int = 20;
 pub const ImGuiStyleVar_GrabRounding: c_int = 21;
 pub const ImGuiStyleVar_TabRounding: c_int = 22;
-pub const ImGuiStyleVar_ButtonTextAlign: c_int = 23;
-pub const ImGuiStyleVar_SelectableTextAlign: c_int = 24;
-pub const ImGuiStyleVar_SeparatorTextBorderSize: c_int = 25;
-pub const ImGuiStyleVar_SeparatorTextAlign: c_int = 26;
-pub const ImGuiStyleVar_SeparatorTextPadding: c_int = 27;
-pub const ImGuiStyleVar_COUNT: c_int = 28;
+pub const ImGuiStyleVar_TabBarBorderSize: c_int = 23;
+pub const ImGuiStyleVar_ButtonTextAlign: c_int = 24;
+pub const ImGuiStyleVar_SelectableTextAlign: c_int = 25;
+pub const ImGuiStyleVar_SeparatorTextBorderSize: c_int = 26;
+pub const ImGuiStyleVar_SeparatorTextAlign: c_int = 27;
+pub const ImGuiStyleVar_SeparatorTextPadding: c_int = 28;
+pub const ImGuiStyleVar_DockingSeparatorSize: c_int = 29;
+pub const ImGuiStyleVar_COUNT: c_int = 30;
 pub const ImGuiStyleVar_ = c_uint;
 pub const ImGuiButtonFlags_None: c_int = 0;
 pub const ImGuiButtonFlags_MouseButtonLeft: c_int = 1;
@@ -2569,6 +3083,7 @@ pub const ImGuiViewportFlags_IsMinimized: c_int = 4096;
 pub const ImGuiViewportFlags_IsFocused: c_int = 8192;
 pub const ImGuiViewportFlags_ = c_uint;
 pub const ImGuiDataAuthority = c_int;
+pub const ImGuiFocusRequestFlags = c_int;
 pub const ImGuiInputFlags = c_int;
 pub const ImGuiNavHighlightFlags = c_int;
 pub const ImGuiSeparatorFlags = c_int;
@@ -2577,12 +3092,12 @@ pub const ImGuiTooltipFlags = c_int;
 pub const ImGuiErrorLogCallback = ?*const fn (?*anyopaque, [*c]const u8, ...) callconv(.C) void;
 pub extern var GImGui: [*c]ImGuiContext;
 pub const struct_StbTexteditRow = extern struct {
-    x0: f32,
-    x1: f32,
-    baseline_y_delta: f32,
-    ymin: f32,
-    ymax: f32,
-    num_chars: c_int,
+    x0: f32 = @import("std").mem.zeroes(f32),
+    x1: f32 = @import("std").mem.zeroes(f32),
+    baseline_y_delta: f32 = @import("std").mem.zeroes(f32),
+    ymin: f32 = @import("std").mem.zeroes(f32),
+    ymax: f32 = @import("std").mem.zeroes(f32),
+    num_chars: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const StbTexteditRow = struct_StbTexteditRow;
 pub const ImGuiItemFlags_None: c_int = 0;
@@ -2595,7 +3110,9 @@ pub const ImGuiItemFlags_SelectableDontClosePopup: c_int = 32;
 pub const ImGuiItemFlags_MixedValue: c_int = 64;
 pub const ImGuiItemFlags_ReadOnly: c_int = 128;
 pub const ImGuiItemFlags_NoWindowHoverableCheck: c_int = 256;
+pub const ImGuiItemFlags_AllowOverlap: c_int = 512;
 pub const ImGuiItemFlags_Inputable: c_int = 1024;
+pub const ImGuiItemFlags_HasSelectionUserData: c_int = 2048;
 pub const ImGuiItemFlags_ = c_uint;
 pub const ImGuiItemStatusFlags_None: c_int = 0;
 pub const ImGuiItemStatusFlags_HoveredRect: c_int = 1;
@@ -2609,6 +3126,10 @@ pub const ImGuiItemStatusFlags_HoveredWindow: c_int = 128;
 pub const ImGuiItemStatusFlags_FocusedByTabbing: c_int = 256;
 pub const ImGuiItemStatusFlags_Visible: c_int = 512;
 pub const ImGuiItemStatusFlags_ = c_uint;
+pub const ImGuiHoveredFlags_DelayMask_: c_int = 245760;
+pub const ImGuiHoveredFlags_AllowedMaskForIsWindowHovered: c_int = 12479;
+pub const ImGuiHoveredFlags_AllowedMaskForIsItemHovered: c_int = 262048;
+pub const ImGuiHoveredFlagsPrivate_ = c_uint;
 pub const ImGuiInputTextFlags_Multiline: c_int = 67108864;
 pub const ImGuiInputTextFlags_NoMarkEdited: c_int = 134217728;
 pub const ImGuiInputTextFlags_MergedItem: c_int = 268435456;
@@ -2621,7 +3142,7 @@ pub const ImGuiButtonFlags_PressedOnDoubleClick: c_int = 256;
 pub const ImGuiButtonFlags_PressedOnDragDropHold: c_int = 512;
 pub const ImGuiButtonFlags_Repeat: c_int = 1024;
 pub const ImGuiButtonFlags_FlattenChildren: c_int = 2048;
-pub const ImGuiButtonFlags_AllowItemOverlap: c_int = 4096;
+pub const ImGuiButtonFlags_AllowOverlap: c_int = 4096;
 pub const ImGuiButtonFlags_DontClosePopups: c_int = 8192;
 pub const ImGuiButtonFlags_AlignTextBaseLine: c_int = 32768;
 pub const ImGuiButtonFlags_NoKeyModifiers: c_int = 65536;
@@ -2648,17 +3169,22 @@ pub const ImGuiSelectableFlags_NoPadWithHalfSpacing: c_int = 67108864;
 pub const ImGuiSelectableFlags_NoSetKeyOwner: c_int = 134217728;
 pub const ImGuiSelectableFlagsPrivate_ = c_uint;
 pub const ImGuiTreeNodeFlags_ClipLabelForTrailingButton: c_int = 1048576;
+pub const ImGuiTreeNodeFlags_UpsideDownArrow: c_int = 2097152;
 pub const ImGuiTreeNodeFlagsPrivate_ = c_uint;
 pub const ImGuiSeparatorFlags_None: c_int = 0;
 pub const ImGuiSeparatorFlags_Horizontal: c_int = 1;
 pub const ImGuiSeparatorFlags_Vertical: c_int = 2;
 pub const ImGuiSeparatorFlags_SpanAllColumns: c_int = 4;
 pub const ImGuiSeparatorFlags_ = c_uint;
+pub const ImGuiFocusRequestFlags_None: c_int = 0;
+pub const ImGuiFocusRequestFlags_RestoreFocusedChild: c_int = 1;
+pub const ImGuiFocusRequestFlags_UnlessBelowModal: c_int = 2;
+pub const ImGuiFocusRequestFlags_ = c_uint;
 pub const ImGuiTextFlags_None: c_int = 0;
 pub const ImGuiTextFlags_NoWidthForLargeClippedText: c_int = 1;
 pub const ImGuiTextFlags_ = c_uint;
 pub const ImGuiTooltipFlags_None: c_int = 0;
-pub const ImGuiTooltipFlags_OverridePreviousTooltip: c_int = 1;
+pub const ImGuiTooltipFlags_OverridePrevious: c_int = 2;
 pub const ImGuiTooltipFlags_ = c_uint;
 pub const ImGuiLayoutType_Horizontal: c_int = 0;
 pub const ImGuiLayoutType_Vertical: c_int = 1;
@@ -2681,7 +3207,7 @@ pub const ImGuiPopupPositionPolicy_ComboBox: c_int = 1;
 pub const ImGuiPopupPositionPolicy_Tooltip: c_int = 2;
 pub const ImGuiPopupPositionPolicy = c_uint;
 pub const struct_ImGuiDataTypeTempStorage = extern struct {
-    Data: [8]ImU8,
+    Data: [8]ImU8 = @import("std").mem.zeroes([8]ImU8),
 };
 pub const ImGuiDataTypeTempStorage = struct_ImGuiDataTypeTempStorage;
 pub const ImGuiDataType_String: c_int = 11;
@@ -2697,16 +3223,17 @@ pub const ImGuiNextWindowDataFlags_HasSizeConstraint: c_int = 16;
 pub const ImGuiNextWindowDataFlags_HasFocus: c_int = 32;
 pub const ImGuiNextWindowDataFlags_HasBgAlpha: c_int = 64;
 pub const ImGuiNextWindowDataFlags_HasScroll: c_int = 128;
-pub const ImGuiNextWindowDataFlags_HasViewport: c_int = 256;
-pub const ImGuiNextWindowDataFlags_HasDock: c_int = 512;
-pub const ImGuiNextWindowDataFlags_HasWindowClass: c_int = 1024;
+pub const ImGuiNextWindowDataFlags_HasChildFlags: c_int = 256;
+pub const ImGuiNextWindowDataFlags_HasViewport: c_int = 512;
+pub const ImGuiNextWindowDataFlags_HasDock: c_int = 1024;
+pub const ImGuiNextWindowDataFlags_HasWindowClass: c_int = 2048;
 pub const ImGuiNextWindowDataFlags_ = c_uint;
 pub const ImGuiNextItemDataFlags_None: c_int = 0;
 pub const ImGuiNextItemDataFlags_HasWidth: c_int = 1;
 pub const ImGuiNextItemDataFlags_HasOpen: c_int = 2;
 pub const ImGuiNextItemDataFlags_ = c_uint;
 pub const struct_ImBitArray_ImGuiKey_NamedKey_COUNT__lessImGuiKey_NamedKey_BEGIN = extern struct {
-    Storage: [5]ImU32,
+    Storage: [5]ImU32 = @import("std").mem.zeroes([5]ImU32),
 };
 pub const ImBitArray_ImGuiKey_NamedKey_COUNT__lessImGuiKey_NamedKey_BEGIN = struct_ImBitArray_ImGuiKey_NamedKey_COUNT__lessImGuiKey_NamedKey_BEGIN;
 pub const ImBitArrayForNamedKeys = ImBitArray_ImGuiKey_NamedKey_COUNT__lessImGuiKey_NamedKey_BEGIN;
@@ -2779,20 +3306,27 @@ pub const ImGuiNavMoveFlags_LoopX: c_int = 1;
 pub const ImGuiNavMoveFlags_LoopY: c_int = 2;
 pub const ImGuiNavMoveFlags_WrapX: c_int = 4;
 pub const ImGuiNavMoveFlags_WrapY: c_int = 8;
+pub const ImGuiNavMoveFlags_WrapMask_: c_int = 15;
 pub const ImGuiNavMoveFlags_AllowCurrentNavId: c_int = 16;
 pub const ImGuiNavMoveFlags_AlsoScoreVisibleSet: c_int = 32;
 pub const ImGuiNavMoveFlags_ScrollToEdgeY: c_int = 64;
 pub const ImGuiNavMoveFlags_Forwarded: c_int = 128;
 pub const ImGuiNavMoveFlags_DebugNoResult: c_int = 256;
 pub const ImGuiNavMoveFlags_FocusApi: c_int = 512;
-pub const ImGuiNavMoveFlags_Tabbing: c_int = 1024;
-pub const ImGuiNavMoveFlags_Activate: c_int = 2048;
-pub const ImGuiNavMoveFlags_DontSetNavHighlight: c_int = 4096;
+pub const ImGuiNavMoveFlags_IsTabbing: c_int = 1024;
+pub const ImGuiNavMoveFlags_IsPageMove: c_int = 2048;
+pub const ImGuiNavMoveFlags_Activate: c_int = 4096;
+pub const ImGuiNavMoveFlags_NoSelect: c_int = 8192;
+pub const ImGuiNavMoveFlags_NoSetNavHighlight: c_int = 16384;
 pub const ImGuiNavMoveFlags_ = c_uint;
 pub const ImGuiNavLayer_Main: c_int = 0;
 pub const ImGuiNavLayer_Menu: c_int = 1;
 pub const ImGuiNavLayer_COUNT: c_int = 2;
 pub const ImGuiNavLayer = c_uint;
+pub const ImGuiTypingSelectFlags_None: c_int = 0;
+pub const ImGuiTypingSelectFlags_AllowBackspace: c_int = 1;
+pub const ImGuiTypingSelectFlags_AllowSingleCharMode: c_int = 2;
+pub const ImGuiTypingSelectFlags_ = c_uint;
 pub const ImGuiOldColumnFlags_None: c_int = 0;
 pub const ImGuiOldColumnFlags_NoBorder: c_int = 1;
 pub const ImGuiOldColumnFlags_NoResize: c_int = 2;
@@ -2806,19 +3340,17 @@ pub const ImGuiDockNodeFlags_NoTabBar: c_int = 4096;
 pub const ImGuiDockNodeFlags_HiddenTabBar: c_int = 8192;
 pub const ImGuiDockNodeFlags_NoWindowMenuButton: c_int = 16384;
 pub const ImGuiDockNodeFlags_NoCloseButton: c_int = 32768;
-pub const ImGuiDockNodeFlags_NoDocking: c_int = 65536;
-pub const ImGuiDockNodeFlags_NoDockingSplitMe: c_int = 131072;
-pub const ImGuiDockNodeFlags_NoDockingSplitOther: c_int = 262144;
-pub const ImGuiDockNodeFlags_NoDockingOverMe: c_int = 524288;
-pub const ImGuiDockNodeFlags_NoDockingOverOther: c_int = 1048576;
-pub const ImGuiDockNodeFlags_NoDockingOverEmpty: c_int = 2097152;
-pub const ImGuiDockNodeFlags_NoResizeX: c_int = 4194304;
-pub const ImGuiDockNodeFlags_NoResizeY: c_int = 8388608;
+pub const ImGuiDockNodeFlags_NoResizeX: c_int = 65536;
+pub const ImGuiDockNodeFlags_NoResizeY: c_int = 131072;
+pub const ImGuiDockNodeFlags_NoDockingSplitOther: c_int = 524288;
+pub const ImGuiDockNodeFlags_NoDockingOverMe: c_int = 1048576;
+pub const ImGuiDockNodeFlags_NoDockingOverOther: c_int = 2097152;
+pub const ImGuiDockNodeFlags_NoDockingOverEmpty: c_int = 4194304;
+pub const ImGuiDockNodeFlags_NoDocking: c_int = 7864336;
 pub const ImGuiDockNodeFlags_SharedFlagsInheritMask_: c_int = -1;
-pub const ImGuiDockNodeFlags_NoResizeFlagsMask_: c_int = 12582944;
-pub const ImGuiDockNodeFlags_LocalFlagsMask_: c_int = 12713072;
-pub const ImGuiDockNodeFlags_LocalFlagsTransferMask_: c_int = 12712048;
-pub const ImGuiDockNodeFlags_SavedFlagsMask_: c_int = 12712992;
+pub const ImGuiDockNodeFlags_NoResizeFlagsMask_: c_int = 196640;
+pub const ImGuiDockNodeFlags_LocalFlagsTransferMask_: c_int = 260208;
+pub const ImGuiDockNodeFlags_SavedFlagsMask_: c_int = 261152;
 pub const ImGuiDockNodeFlagsPrivate_ = c_int;
 pub const ImGuiDataAuthority_Auto: c_int = 0;
 pub const ImGuiDataAuthority_DockNode: c_int = 1;
@@ -2838,18 +3370,21 @@ pub const ImGuiWindowDockStyleCol_TabUnfocusedActive: c_int = 5;
 pub const ImGuiWindowDockStyleCol_COUNT: c_int = 6;
 pub const ImGuiWindowDockStyleCol = c_uint;
 pub const struct_ImGuiWindowDockStyle = extern struct {
-    Colors: [6]ImU32,
+    Colors: [6]ImU32 = @import("std").mem.zeroes([6]ImU32),
 };
 pub const ImGuiWindowDockStyle = struct_ImGuiWindowDockStyle;
-pub const ImGuiLocKey_TableSizeOne: c_int = 0;
-pub const ImGuiLocKey_TableSizeAllFit: c_int = 1;
-pub const ImGuiLocKey_TableSizeAllDefault: c_int = 2;
-pub const ImGuiLocKey_TableResetOrder: c_int = 3;
-pub const ImGuiLocKey_WindowingMainMenuBar: c_int = 4;
-pub const ImGuiLocKey_WindowingPopup: c_int = 5;
-pub const ImGuiLocKey_WindowingUntitled: c_int = 6;
-pub const ImGuiLocKey_DockingHideTabBar: c_int = 7;
-pub const ImGuiLocKey_COUNT: c_int = 8;
+pub const ImGuiLocKey_VersionStr: c_int = 0;
+pub const ImGuiLocKey_TableSizeOne: c_int = 1;
+pub const ImGuiLocKey_TableSizeAllFit: c_int = 2;
+pub const ImGuiLocKey_TableSizeAllDefault: c_int = 3;
+pub const ImGuiLocKey_TableResetOrder: c_int = 4;
+pub const ImGuiLocKey_WindowingMainMenuBar: c_int = 5;
+pub const ImGuiLocKey_WindowingPopup: c_int = 6;
+pub const ImGuiLocKey_WindowingUntitled: c_int = 7;
+pub const ImGuiLocKey_DockingHideTabBar: c_int = 8;
+pub const ImGuiLocKey_DockingHoldShiftToDock: c_int = 9;
+pub const ImGuiLocKey_DockingDragToUndockOrMoveNode: c_int = 10;
+pub const ImGuiLocKey_COUNT: c_int = 11;
 pub const ImGuiLocKey = c_uint;
 pub const ImGuiDebugLogFlags_None: c_int = 0;
 pub const ImGuiDebugLogFlags_EventActiveId: c_int = 1;
@@ -2863,6 +3398,7 @@ pub const ImGuiDebugLogFlags_EventDocking: c_int = 128;
 pub const ImGuiDebugLogFlags_EventViewport: c_int = 256;
 pub const ImGuiDebugLogFlags_EventMask_: c_int = 511;
 pub const ImGuiDebugLogFlags_OutputToTTY: c_int = 1024;
+pub const ImGuiDebugLogFlags_OutputToTestEngine: c_int = 2048;
 pub const ImGuiDebugLogFlags_ = c_uint;
 pub const ImGuiContextHookType_NewFramePre: c_int = 0;
 pub const ImGuiContextHookType_NewFramePost: c_int = 1;
@@ -2874,9 +3410,9 @@ pub const ImGuiContextHookType_Shutdown: c_int = 6;
 pub const ImGuiContextHookType_PendingRemoval_: c_int = 7;
 pub const ImGuiContextHookType = c_uint;
 pub const struct_ImVector_ImGuiOldColumns = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiOldColumns,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiOldColumns = @import("std").mem.zeroes([*c]ImGuiOldColumns),
 };
 pub const ImVector_ImGuiOldColumns = struct_ImVector_ImGuiOldColumns;
 pub const ImGuiTabBarFlags_DockNode: c_int = 1048576;
@@ -2887,20 +3423,19 @@ pub const ImGuiTabItemFlags_SectionMask_: c_int = 192;
 pub const ImGuiTabItemFlags_NoCloseButton: c_int = 1048576;
 pub const ImGuiTabItemFlags_Button: c_int = 2097152;
 pub const ImGuiTabItemFlags_Unsorted: c_int = 4194304;
-pub const ImGuiTabItemFlags_Preview: c_int = 8388608;
 pub const ImGuiTabItemFlagsPrivate_ = c_uint;
 pub const struct_ImVector_ImGuiTableInstanceData = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: [*c]ImGuiTableInstanceData,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: [*c]ImGuiTableInstanceData = @import("std").mem.zeroes([*c]ImGuiTableInstanceData),
 };
 pub const ImVector_ImGuiTableInstanceData = struct_ImVector_ImGuiTableInstanceData;
 pub const struct_ImVector_ImGuiTableColumnSortSpecs = extern struct {
-    Size: c_int,
-    Capacity: c_int,
-    Data: ?*ImGuiTableColumnSortSpecs,
+    Size: c_int = @import("std").mem.zeroes(c_int),
+    Capacity: c_int = @import("std").mem.zeroes(c_int),
+    Data: ?*ImGuiTableColumnSortSpecs = @import("std").mem.zeroes(?*ImGuiTableColumnSortSpecs),
 };
-pub const ImVector_ImGuiTableColumnSortSpecs = struct_ImVector_ImGuiTableColumnSortSpecs; // libs/cimgui/cimgui.h:3054:10: warning: struct demoted to opaque type - has bitfield
+pub const ImVector_ImGuiTableColumnSortSpecs = struct_ImVector_ImGuiTableColumnSortSpecs; // cimgui.h:3199:10: warning: struct demoted to opaque type - has bitfield
 pub const struct_ImGuiTableColumnSettings = opaque {};
 pub const ImGuiTableColumnSettings = struct_ImGuiTableColumnSettings;
 pub extern fn ImVec2_ImVec2_Nil() [*c]ImVec2;
@@ -2913,7 +3448,7 @@ pub extern fn igCreateContext(shared_font_atlas: [*c]ImFontAtlas) [*c]ImGuiConte
 pub extern fn igDestroyContext(ctx: [*c]ImGuiContext) void;
 pub extern fn igGetCurrentContext() [*c]ImGuiContext;
 pub extern fn igSetCurrentContext(ctx: [*c]ImGuiContext) void;
-pub extern fn igGetIO() [*c]ImGuiIO;
+pub extern fn igGetIO() *ImGuiIO;
 pub extern fn igGetStyle() [*c]ImGuiStyle;
 pub extern fn igNewFrame() void;
 pub extern fn igEndFrame() void;
@@ -2922,7 +3457,7 @@ pub extern fn igGetDrawData() [*c]ImDrawData;
 pub extern fn igShowDemoWindow(p_open: [*c]bool) void;
 pub extern fn igShowMetricsWindow(p_open: [*c]bool) void;
 pub extern fn igShowDebugLogWindow(p_open: [*c]bool) void;
-pub extern fn igShowStackToolWindow(p_open: [*c]bool) void;
+pub extern fn igShowIDStackToolWindow(p_open: [*c]bool) void;
 pub extern fn igShowAboutWindow(p_open: [*c]bool) void;
 pub extern fn igShowStyleEditor(ref: [*c]ImGuiStyle) void;
 pub extern fn igShowStyleSelector(label: [*c]const u8) bool;
@@ -2934,8 +3469,8 @@ pub extern fn igStyleColorsLight(dst: [*c]ImGuiStyle) void;
 pub extern fn igStyleColorsClassic(dst: [*c]ImGuiStyle) void;
 pub extern fn igBegin(name: [*c]const u8, p_open: [*c]bool, flags: ImGuiWindowFlags) bool;
 pub extern fn igEnd() void;
-pub extern fn igBeginChild_Str(str_id: [*c]const u8, size: ImVec2, border: bool, flags: ImGuiWindowFlags) bool;
-pub extern fn igBeginChild_ID(id: ImGuiID, size: ImVec2, border: bool, flags: ImGuiWindowFlags) bool;
+pub extern fn igBeginChild_Str(str_id: [*c]const u8, size: ImVec2, child_flags: ImGuiChildFlags, window_flags: ImGuiWindowFlags) bool;
+pub extern fn igBeginChild_ID(id: ImGuiID, size: ImVec2, child_flags: ImGuiChildFlags, window_flags: ImGuiWindowFlags) bool;
 pub extern fn igEndChild() void;
 pub extern fn igIsWindowAppearing() bool;
 pub extern fn igIsWindowCollapsed() bool;
@@ -3005,6 +3540,15 @@ pub extern fn igGetColorU32_Col(idx: ImGuiCol, alpha_mul: f32) ImU32;
 pub extern fn igGetColorU32_Vec4(col: ImVec4) ImU32;
 pub extern fn igGetColorU32_U32(col: ImU32) ImU32;
 pub extern fn igGetStyleColorVec4(idx: ImGuiCol) [*c]const ImVec4;
+pub extern fn igGetCursorScreenPos(pOut: [*c]ImVec2) void;
+pub extern fn igSetCursorScreenPos(pos: ImVec2) void;
+pub extern fn igGetCursorPos(pOut: [*c]ImVec2) void;
+pub extern fn igGetCursorPosX() f32;
+pub extern fn igGetCursorPosY() f32;
+pub extern fn igSetCursorPos(local_pos: ImVec2) void;
+pub extern fn igSetCursorPosX(local_x: f32) void;
+pub extern fn igSetCursorPosY(local_y: f32) void;
+pub extern fn igGetCursorStartPos(pOut: [*c]ImVec2) void;
 pub extern fn igSeparator() void;
 pub extern fn igSameLine(offset_from_start_x: f32, spacing: f32) void;
 pub extern fn igNewLine() void;
@@ -3014,15 +3558,6 @@ pub extern fn igIndent(indent_w: f32) void;
 pub extern fn igUnindent(indent_w: f32) void;
 pub extern fn igBeginGroup() void;
 pub extern fn igEndGroup() void;
-pub extern fn igGetCursorPos(pOut: [*c]ImVec2) void;
-pub extern fn igGetCursorPosX() f32;
-pub extern fn igGetCursorPosY() f32;
-pub extern fn igSetCursorPos(local_pos: ImVec2) void;
-pub extern fn igSetCursorPosX(local_x: f32) void;
-pub extern fn igSetCursorPosY(local_y: f32) void;
-pub extern fn igGetCursorStartPos(pOut: [*c]ImVec2) void;
-pub extern fn igGetCursorScreenPos(pOut: [*c]ImVec2) void;
-pub extern fn igSetCursorScreenPos(pos: ImVec2) void;
 pub extern fn igAlignTextToFramePadding() void;
 pub extern fn igGetTextLineHeight() f32;
 pub extern fn igGetTextLineHeightWithSpacing() f32;
@@ -3062,12 +3597,12 @@ pub extern fn igRadioButton_IntPtr(label: [*c]const u8, v: [*c]c_int, v_button: 
 pub extern fn igProgressBar(fraction: f32, size_arg: ImVec2, overlay: [*c]const u8) void;
 pub extern fn igBullet() void;
 pub extern fn igImage(user_texture_id: ImTextureID, size: ImVec2, uv0: ImVec2, uv1: ImVec2, tint_col: ImVec4, border_col: ImVec4) void;
-pub extern fn igImageButton(str_id: [*c]const u8, user_texture_id: ImTextureID, size: ImVec2, uv0: ImVec2, uv1: ImVec2, bg_col: ImVec4, tint_col: ImVec4) bool;
+pub extern fn igImageButton(str_id: [*c]const u8, user_texture_id: ImTextureID, image_size: ImVec2, uv0: ImVec2, uv1: ImVec2, bg_col: ImVec4, tint_col: ImVec4) bool;
 pub extern fn igBeginCombo(label: [*c]const u8, preview_value: [*c]const u8, flags: ImGuiComboFlags) bool;
 pub extern fn igEndCombo() void;
 pub extern fn igCombo_Str_arr(label: [*c]const u8, current_item: [*c]c_int, items: [*c]const [*c]const u8, items_count: c_int, popup_max_height_in_items: c_int) bool;
 pub extern fn igCombo_Str(label: [*c]const u8, current_item: [*c]c_int, items_separated_by_zeros: [*c]const u8, popup_max_height_in_items: c_int) bool;
-pub extern fn igCombo_FnBoolPtr(label: [*c]const u8, current_item: [*c]c_int, items_getter: ?*const fn (?*anyopaque, c_int, [*c][*c]const u8) callconv(.C) bool, data: ?*anyopaque, items_count: c_int, popup_max_height_in_items: c_int) bool;
+pub extern fn igCombo_FnStrPtr(label: [*c]const u8, current_item: [*c]c_int, getter: ?*const fn (?*anyopaque, c_int) callconv(.C) [*c]const u8, user_data: ?*anyopaque, items_count: c_int, popup_max_height_in_items: c_int) bool;
 pub extern fn igDragFloat(label: [*c]const u8, v: [*c]f32, v_speed: f32, v_min: f32, v_max: f32, format: [*c]const u8, flags: ImGuiSliderFlags) bool;
 pub extern fn igDragFloat2(label: [*c]const u8, v: [*c]f32, v_speed: f32, v_min: f32, v_max: f32, format: [*c]const u8, flags: ImGuiSliderFlags) bool;
 pub extern fn igDragFloat3(label: [*c]const u8, v: [*c]f32, v_speed: f32, v_min: f32, v_max: f32, format: [*c]const u8, flags: ImGuiSliderFlags) bool;
@@ -3136,7 +3671,7 @@ pub extern fn igSelectable_BoolPtr(label: [*c]const u8, p_selected: [*c]bool, fl
 pub extern fn igBeginListBox(label: [*c]const u8, size: ImVec2) bool;
 pub extern fn igEndListBox() void;
 pub extern fn igListBox_Str_arr(label: [*c]const u8, current_item: [*c]c_int, items: [*c]const [*c]const u8, items_count: c_int, height_in_items: c_int) bool;
-pub extern fn igListBox_FnBoolPtr(label: [*c]const u8, current_item: [*c]c_int, items_getter: ?*const fn (?*anyopaque, c_int, [*c][*c]const u8) callconv(.C) bool, data: ?*anyopaque, items_count: c_int, height_in_items: c_int) bool;
+pub extern fn igListBox_FnStrPtr(label: [*c]const u8, current_item: [*c]c_int, getter: ?*const fn (?*anyopaque, c_int) callconv(.C) [*c]const u8, user_data: ?*anyopaque, items_count: c_int, height_in_items: c_int) bool;
 pub extern fn igPlotLines_FloatPtr(label: [*c]const u8, values: [*c]const f32, values_count: c_int, values_offset: c_int, overlay_text: [*c]const u8, scale_min: f32, scale_max: f32, graph_size: ImVec2, stride: c_int) void;
 pub extern fn igPlotLines_FnFloatPtr(label: [*c]const u8, values_getter: ?*const fn (?*anyopaque, c_int) callconv(.C) f32, data: ?*anyopaque, values_count: c_int, values_offset: c_int, overlay_text: [*c]const u8, scale_min: f32, scale_max: f32, graph_size: ImVec2) void;
 pub extern fn igPlotHistogram_FloatPtr(label: [*c]const u8, values: [*c]const f32, values_count: c_int, values_offset: c_int, overlay_text: [*c]const u8, scale_min: f32, scale_max: f32, graph_size: ImVec2, stride: c_int) void;
@@ -3157,6 +3692,9 @@ pub extern fn igBeginTooltip() bool;
 pub extern fn igEndTooltip() void;
 pub extern fn igSetTooltip(fmt: [*c]const u8, ...) void;
 pub extern fn igSetTooltipV(fmt: [*c]const u8, args: va_list) void;
+pub extern fn igBeginItemTooltip() bool;
+pub extern fn igSetItemTooltip(fmt: [*c]const u8, ...) void;
+pub extern fn igSetItemTooltipV(fmt: [*c]const u8, args: va_list) void;
 pub extern fn igBeginPopup(str_id: [*c]const u8, flags: ImGuiWindowFlags) bool;
 pub extern fn igBeginPopupModal(name: [*c]const u8, p_open: [*c]bool, flags: ImGuiWindowFlags) bool;
 pub extern fn igEndPopup() void;
@@ -3175,8 +3713,9 @@ pub extern fn igTableNextColumn() bool;
 pub extern fn igTableSetColumnIndex(column_n: c_int) bool;
 pub extern fn igTableSetupColumn(label: [*c]const u8, flags: ImGuiTableColumnFlags, init_width_or_weight: f32, user_id: ImGuiID) void;
 pub extern fn igTableSetupScrollFreeze(cols: c_int, rows: c_int) void;
-pub extern fn igTableHeadersRow() void;
 pub extern fn igTableHeader(label: [*c]const u8) void;
+pub extern fn igTableHeadersRow() void;
+pub extern fn igTableAngledHeadersRow() void;
 pub extern fn igTableGetSortSpecs() [*c]ImGuiTableSortSpecs;
 pub extern fn igTableGetColumnCount() c_int;
 pub extern fn igTableGetColumnIndex() c_int;
@@ -3224,6 +3763,7 @@ pub extern fn igPushClipRect(clip_rect_min: ImVec2, clip_rect_max: ImVec2, inter
 pub extern fn igPopClipRect() void;
 pub extern fn igSetItemDefaultFocus() void;
 pub extern fn igSetKeyboardFocusHere(offset: c_int) void;
+pub extern fn igSetNextItemAllowOverlap() void;
 pub extern fn igIsItemHovered(flags: ImGuiHoveredFlags) bool;
 pub extern fn igIsItemActive() bool;
 pub extern fn igIsItemFocused() bool;
@@ -3241,7 +3781,6 @@ pub extern fn igGetItemID() ImGuiID;
 pub extern fn igGetItemRectMin(pOut: [*c]ImVec2) void;
 pub extern fn igGetItemRectMax(pOut: [*c]ImVec2) void;
 pub extern fn igGetItemRectSize(pOut: [*c]ImVec2) void;
-pub extern fn igSetItemAllowOverlap() void;
 pub extern fn igGetMainViewport() [*c]ImGuiViewport;
 pub extern fn igGetBackgroundDrawList_Nil() [*c]ImDrawList;
 pub extern fn igGetForegroundDrawList_Nil() [*c]ImDrawList;
@@ -3255,8 +3794,6 @@ pub extern fn igGetDrawListSharedData() [*c]ImDrawListSharedData;
 pub extern fn igGetStyleColorName(idx: ImGuiCol) [*c]const u8;
 pub extern fn igSetStateStorage(storage: [*c]ImGuiStorage) void;
 pub extern fn igGetStateStorage() [*c]ImGuiStorage;
-pub extern fn igBeginChildFrame(id: ImGuiID, size: ImVec2, flags: ImGuiWindowFlags) bool;
-pub extern fn igEndChildFrame() void;
 pub extern fn igCalcTextSize(pOut: [*c]ImVec2, text: [*c]const u8, text_end: [*c]const u8, hide_text_after_double_hash: bool, wrap_width: f32) void;
 pub extern fn igColorConvertU32ToFloat4(pOut: [*c]ImVec4, in: ImU32) void;
 pub extern fn igColorConvertFloat4ToU32(in: ImVec4) ImU32;
@@ -3265,13 +3802,14 @@ pub extern fn igColorConvertHSVtoRGB(h: f32, s: f32, v: f32, out_r: [*c]f32, out
 pub extern fn igIsKeyDown_Nil(key: ImGuiKey) bool;
 pub extern fn igIsKeyPressed_Bool(key: ImGuiKey, repeat: bool) bool;
 pub extern fn igIsKeyReleased_Nil(key: ImGuiKey) bool;
+pub extern fn igIsKeyChordPressed_Nil(key_chord: ImGuiKeyChord) bool;
 pub extern fn igGetKeyPressedAmount(key: ImGuiKey, repeat_delay: f32, rate: f32) c_int;
 pub extern fn igGetKeyName(key: ImGuiKey) [*c]const u8;
 pub extern fn igSetNextFrameWantCaptureKeyboard(want_capture_keyboard: bool) void;
 pub extern fn igIsMouseDown_Nil(button: ImGuiMouseButton) bool;
 pub extern fn igIsMouseClicked_Bool(button: ImGuiMouseButton, repeat: bool) bool;
 pub extern fn igIsMouseReleased_Nil(button: ImGuiMouseButton) bool;
-pub extern fn igIsMouseDoubleClicked(button: ImGuiMouseButton) bool;
+pub extern fn igIsMouseDoubleClicked_Nil(button: ImGuiMouseButton) bool;
 pub extern fn igGetMouseClickedCount(button: ImGuiMouseButton) c_int;
 pub extern fn igIsMouseHoveringRect(r_min: ImVec2, r_max: ImVec2, clip: bool) bool;
 pub extern fn igIsMousePosValid(mouse_pos: [*c]const ImVec2) bool;
@@ -3318,7 +3856,7 @@ pub extern fn ImGuiIO_AddInputCharacterUTF16(self: [*c]ImGuiIO, c: ImWchar16) vo
 pub extern fn ImGuiIO_AddInputCharactersUTF8(self: [*c]ImGuiIO, str: [*c]const u8) void;
 pub extern fn ImGuiIO_SetKeyEventNativeData(self: [*c]ImGuiIO, key: ImGuiKey, native_keycode: c_int, native_scancode: c_int, native_legacy_index: c_int) void;
 pub extern fn ImGuiIO_SetAppAcceptingEvents(self: [*c]ImGuiIO, accepting_events: bool) void;
-pub extern fn ImGuiIO_ClearInputCharacters(self: [*c]ImGuiIO) void;
+pub extern fn ImGuiIO_ClearEventsQueue(self: [*c]ImGuiIO) void;
 pub extern fn ImGuiIO_ClearInputKeys(self: [*c]ImGuiIO) void;
 pub extern fn ImGuiIO_ImGuiIO() [*c]ImGuiIO;
 pub extern fn ImGuiIO_destroy(self: [*c]ImGuiIO) void;
@@ -3366,10 +3904,10 @@ pub extern fn ImGuiTextBuffer_reserve(self: [*c]ImGuiTextBuffer, capacity: c_int
 pub extern fn ImGuiTextBuffer_c_str(self: [*c]ImGuiTextBuffer) [*c]const u8;
 pub extern fn ImGuiTextBuffer_append(self: [*c]ImGuiTextBuffer, str: [*c]const u8, str_end: [*c]const u8) void;
 pub extern fn ImGuiTextBuffer_appendfv(self: [*c]ImGuiTextBuffer, fmt: [*c]const u8, args: va_list) void;
-pub extern fn ImGuiStoragePair_ImGuiStoragePair_Int(_key: ImGuiID, _val_i: c_int) [*c]ImGuiStoragePair;
+pub extern fn ImGuiStoragePair_ImGuiStoragePair_Int(_key: ImGuiID, _val: c_int) [*c]ImGuiStoragePair;
 pub extern fn ImGuiStoragePair_destroy(self: [*c]ImGuiStoragePair) void;
-pub extern fn ImGuiStoragePair_ImGuiStoragePair_Float(_key: ImGuiID, _val_f: f32) [*c]ImGuiStoragePair;
-pub extern fn ImGuiStoragePair_ImGuiStoragePair_Ptr(_key: ImGuiID, _val_p: ?*anyopaque) [*c]ImGuiStoragePair;
+pub extern fn ImGuiStoragePair_ImGuiStoragePair_Float(_key: ImGuiID, _val: f32) [*c]ImGuiStoragePair;
+pub extern fn ImGuiStoragePair_ImGuiStoragePair_Ptr(_key: ImGuiID, _val: ?*anyopaque) [*c]ImGuiStoragePair;
 pub extern fn ImGuiStorage_Clear(self: [*c]ImGuiStorage) void;
 pub extern fn ImGuiStorage_GetInt(self: [*c]ImGuiStorage, key: ImGuiID, default_val: c_int) c_int;
 pub extern fn ImGuiStorage_SetInt(self: [*c]ImGuiStorage, key: ImGuiID, val: c_int) void;
@@ -3383,14 +3921,15 @@ pub extern fn ImGuiStorage_GetIntRef(self: [*c]ImGuiStorage, key: ImGuiID, defau
 pub extern fn ImGuiStorage_GetBoolRef(self: [*c]ImGuiStorage, key: ImGuiID, default_val: bool) [*c]bool;
 pub extern fn ImGuiStorage_GetFloatRef(self: [*c]ImGuiStorage, key: ImGuiID, default_val: f32) [*c]f32;
 pub extern fn ImGuiStorage_GetVoidPtrRef(self: [*c]ImGuiStorage, key: ImGuiID, default_val: ?*anyopaque) [*c]?*anyopaque;
-pub extern fn ImGuiStorage_SetAllInt(self: [*c]ImGuiStorage, val: c_int) void;
 pub extern fn ImGuiStorage_BuildSortByKey(self: [*c]ImGuiStorage) void;
+pub extern fn ImGuiStorage_SetAllInt(self: [*c]ImGuiStorage, val: c_int) void;
 pub extern fn ImGuiListClipper_ImGuiListClipper() [*c]ImGuiListClipper;
 pub extern fn ImGuiListClipper_destroy(self: [*c]ImGuiListClipper) void;
 pub extern fn ImGuiListClipper_Begin(self: [*c]ImGuiListClipper, items_count: c_int, items_height: f32) void;
 pub extern fn ImGuiListClipper_End(self: [*c]ImGuiListClipper) void;
 pub extern fn ImGuiListClipper_Step(self: [*c]ImGuiListClipper) bool;
-pub extern fn ImGuiListClipper_ForceDisplayRangeByIndices(self: [*c]ImGuiListClipper, item_min: c_int, item_max: c_int) void;
+pub extern fn ImGuiListClipper_IncludeItemByIndex(self: [*c]ImGuiListClipper, item_index: c_int) void;
+pub extern fn ImGuiListClipper_IncludeItemsByIndex(self: [*c]ImGuiListClipper, item_begin: c_int, item_end: c_int) void;
 pub extern fn ImColor_ImColor_Nil() [*c]ImColor;
 pub extern fn ImColor_destroy(self: [*c]ImColor) void;
 pub extern fn ImColor_ImColor_Float(r: f32, g: f32, b: f32, a: f32) [*c]ImColor;
@@ -3430,6 +3969,8 @@ pub extern fn ImDrawList_AddCircle(self: [*c]ImDrawList, center: ImVec2, radius:
 pub extern fn ImDrawList_AddCircleFilled(self: [*c]ImDrawList, center: ImVec2, radius: f32, col: ImU32, num_segments: c_int) void;
 pub extern fn ImDrawList_AddNgon(self: [*c]ImDrawList, center: ImVec2, radius: f32, col: ImU32, num_segments: c_int, thickness: f32) void;
 pub extern fn ImDrawList_AddNgonFilled(self: [*c]ImDrawList, center: ImVec2, radius: f32, col: ImU32, num_segments: c_int) void;
+pub extern fn ImDrawList_AddEllipse(self: [*c]ImDrawList, center: ImVec2, radius_x: f32, radius_y: f32, col: ImU32, rot: f32, num_segments: c_int, thickness: f32) void;
+pub extern fn ImDrawList_AddEllipseFilled(self: [*c]ImDrawList, center: ImVec2, radius_x: f32, radius_y: f32, col: ImU32, rot: f32, num_segments: c_int) void;
 pub extern fn ImDrawList_AddText_Vec2(self: [*c]ImDrawList, pos: ImVec2, col: ImU32, text_begin: [*c]const u8, text_end: [*c]const u8) void;
 pub extern fn ImDrawList_AddText_FontPtr(self: [*c]ImDrawList, font: [*c]const ImFont, font_size: f32, pos: ImVec2, col: ImU32, text_begin: [*c]const u8, text_end: [*c]const u8, wrap_width: f32, cpu_fine_clip_rect: [*c]const ImVec4) void;
 pub extern fn ImDrawList_AddPolyline(self: [*c]ImDrawList, points: [*c]const ImVec2, num_points: c_int, col: ImU32, flags: ImDrawFlags, thickness: f32) void;
@@ -3446,6 +3987,7 @@ pub extern fn ImDrawList_PathFillConvex(self: [*c]ImDrawList, col: ImU32) void;
 pub extern fn ImDrawList_PathStroke(self: [*c]ImDrawList, col: ImU32, flags: ImDrawFlags, thickness: f32) void;
 pub extern fn ImDrawList_PathArcTo(self: [*c]ImDrawList, center: ImVec2, radius: f32, a_min: f32, a_max: f32, num_segments: c_int) void;
 pub extern fn ImDrawList_PathArcToFast(self: [*c]ImDrawList, center: ImVec2, radius: f32, a_min_of_12: c_int, a_max_of_12: c_int) void;
+pub extern fn ImDrawList_PathEllipticalArcTo(self: [*c]ImDrawList, center: ImVec2, radius_x: f32, radius_y: f32, rot: f32, a_min: f32, a_max: f32, num_segments: c_int) void;
 pub extern fn ImDrawList_PathBezierCubicCurveTo(self: [*c]ImDrawList, p2: ImVec2, p3: ImVec2, p4: ImVec2, num_segments: c_int) void;
 pub extern fn ImDrawList_PathBezierQuadraticCurveTo(self: [*c]ImDrawList, p2: ImVec2, p3: ImVec2, num_segments: c_int) void;
 pub extern fn ImDrawList_PathRect(self: [*c]ImDrawList, rect_min: ImVec2, rect_max: ImVec2, rounding: f32, flags: ImDrawFlags) void;
@@ -3476,6 +4018,7 @@ pub extern fn ImDrawList__PathArcToN(self: [*c]ImDrawList, center: ImVec2, radiu
 pub extern fn ImDrawData_ImDrawData() [*c]ImDrawData;
 pub extern fn ImDrawData_destroy(self: [*c]ImDrawData) void;
 pub extern fn ImDrawData_Clear(self: [*c]ImDrawData) void;
+pub extern fn ImDrawData_AddDrawList(self: [*c]ImDrawData, draw_list: [*c]ImDrawList) void;
 pub extern fn ImDrawData_DeIndexAllBuffers(self: [*c]ImDrawData) void;
 pub extern fn ImDrawData_ScaleClipRects(self: [*c]ImDrawData, fb_scale: ImVec2) void;
 pub extern fn ImFontConfig_ImFontConfig() [*c]ImFontConfig;
@@ -3497,8 +4040,8 @@ pub extern fn ImFontAtlas_destroy(self: [*c]ImFontAtlas) void;
 pub extern fn ImFontAtlas_AddFont(self: [*c]ImFontAtlas, font_cfg: [*c]const ImFontConfig) [*c]ImFont;
 pub extern fn ImFontAtlas_AddFontDefault(self: [*c]ImFontAtlas, font_cfg: [*c]const ImFontConfig) [*c]ImFont;
 pub extern fn ImFontAtlas_AddFontFromFileTTF(self: [*c]ImFontAtlas, filename: [*c]const u8, size_pixels: f32, font_cfg: [*c]const ImFontConfig, glyph_ranges: [*c]const ImWchar) [*c]ImFont;
-pub extern fn ImFontAtlas_AddFontFromMemoryTTF(self: [*c]ImFontAtlas, font_data: ?*anyopaque, font_size: c_int, size_pixels: f32, font_cfg: [*c]const ImFontConfig, glyph_ranges: [*c]const ImWchar) [*c]ImFont;
-pub extern fn ImFontAtlas_AddFontFromMemoryCompressedTTF(self: [*c]ImFontAtlas, compressed_font_data: ?*const anyopaque, compressed_font_size: c_int, size_pixels: f32, font_cfg: [*c]const ImFontConfig, glyph_ranges: [*c]const ImWchar) [*c]ImFont;
+pub extern fn ImFontAtlas_AddFontFromMemoryTTF(self: [*c]ImFontAtlas, font_data: ?*anyopaque, font_data_size: c_int, size_pixels: f32, font_cfg: [*c]const ImFontConfig, glyph_ranges: [*c]const ImWchar) [*c]ImFont;
+pub extern fn ImFontAtlas_AddFontFromMemoryCompressedTTF(self: [*c]ImFontAtlas, compressed_font_data: ?*const anyopaque, compressed_font_data_size: c_int, size_pixels: f32, font_cfg: [*c]const ImFontConfig, glyph_ranges: [*c]const ImWchar) [*c]ImFont;
 pub extern fn ImFontAtlas_AddFontFromMemoryCompressedBase85TTF(self: [*c]ImFontAtlas, compressed_font_data_base85: [*c]const u8, size_pixels: f32, font_cfg: [*c]const ImFontConfig, glyph_ranges: [*c]const ImWchar) [*c]ImFont;
 pub extern fn ImFontAtlas_ClearInputData(self: [*c]ImFontAtlas) void;
 pub extern fn ImFontAtlas_ClearTexData(self: [*c]ImFontAtlas) void;
@@ -3565,12 +4108,12 @@ pub extern fn igImStrncpy(dst: [*c]u8, src: [*c]const u8, count: usize) void;
 pub extern fn igImStrdup(str: [*c]const u8) [*c]u8;
 pub extern fn igImStrdupcpy(dst: [*c]u8, p_dst_size: [*c]usize, str: [*c]const u8) [*c]u8;
 pub extern fn igImStrchrRange(str_begin: [*c]const u8, str_end: [*c]const u8, c: u8) [*c]const u8;
-pub extern fn igImStrlenW(str: [*c]const ImWchar) c_int;
 pub extern fn igImStreolRange(str: [*c]const u8, str_end: [*c]const u8) [*c]const u8;
-pub extern fn igImStrbolW(buf_mid_line: [*c]const ImWchar, buf_begin: [*c]const ImWchar) [*c]const ImWchar;
 pub extern fn igImStristr(haystack: [*c]const u8, haystack_end: [*c]const u8, needle: [*c]const u8, needle_end: [*c]const u8) [*c]const u8;
 pub extern fn igImStrTrimBlanks(str: [*c]u8) void;
 pub extern fn igImStrSkipBlank(str: [*c]const u8) [*c]const u8;
+pub extern fn igImStrlenW(str: [*c]const ImWchar) c_int;
+pub extern fn igImStrbolW(buf_mid_line: [*c]const ImWchar, buf_begin: [*c]const ImWchar) [*c]const ImWchar;
 pub extern fn igImToUpper(c: u8) u8;
 pub extern fn igImCharIsBlankA(c: u8) bool;
 pub extern fn igImCharIsBlankW(c: c_uint) bool;
@@ -3591,6 +4134,7 @@ pub extern fn igImTextStrFromUtf8(out_buf: [*c]ImWchar, out_buf_size: c_int, in_
 pub extern fn igImTextCountCharsFromUtf8(in_text: [*c]const u8, in_text_end: [*c]const u8) c_int;
 pub extern fn igImTextCountUtf8BytesFromChar(in_text: [*c]const u8, in_text_end: [*c]const u8) c_int;
 pub extern fn igImTextCountUtf8BytesFromStr(in_text: [*c]const ImWchar, in_text_end: [*c]const ImWchar) c_int;
+pub extern fn igImTextFindPreviousUtf8Codepoint(in_text_start: [*c]const u8, in_text_curr: [*c]const u8) [*c]const u8;
 pub extern fn igImFileOpen(filename: [*c]const u8, mode: [*c]const u8) ImFileHandle;
 pub extern fn igImFileClose(file: ImFileHandle) bool;
 pub extern fn igImFileGetSize(file: ImFileHandle) ImU64;
@@ -3618,10 +4162,10 @@ pub extern fn igImSaturate(f: f32) f32;
 pub extern fn igImLengthSqr_Vec2(lhs: ImVec2) f32;
 pub extern fn igImLengthSqr_Vec4(lhs: ImVec4) f32;
 pub extern fn igImInvLength(lhs: ImVec2, fail_value: f32) f32;
+pub extern fn igImTrunc_Float(f: f32) f32;
+pub extern fn igImTrunc_Vec2(pOut: [*c]ImVec2, v: ImVec2) void;
 pub extern fn igImFloor_Float(f: f32) f32;
-pub extern fn igImFloorSigned_Float(f: f32) f32;
 pub extern fn igImFloor_Vec2(pOut: [*c]ImVec2, v: ImVec2) void;
-pub extern fn igImFloorSigned_Vec2(pOut: [*c]ImVec2, v: ImVec2) void;
 pub extern fn igImModPositive(a: c_int, b: c_int) c_int;
 pub extern fn igImDot(a: ImVec2, b: ImVec2) f32;
 pub extern fn igImRotate(pOut: [*c]ImVec2, v: ImVec2, cos_a: f32, sin_a: f32) void;
@@ -3638,7 +4182,6 @@ pub extern fn igImTriangleContainsPoint(a: ImVec2, b: ImVec2, c: ImVec2, p: ImVe
 pub extern fn igImTriangleClosestPoint(pOut: [*c]ImVec2, a: ImVec2, b: ImVec2, c: ImVec2, p: ImVec2) void;
 pub extern fn igImTriangleBarycentricCoords(a: ImVec2, b: ImVec2, c: ImVec2, p: ImVec2, out_u: [*c]f32, out_v: [*c]f32, out_w: [*c]f32) void;
 pub extern fn igImTriangleArea(a: ImVec2, b: ImVec2, c: ImVec2) f32;
-pub extern fn igImGetDirQuadrantFromDelta(dx: f32, dy: f32) ImGuiDir;
 pub extern fn ImVec1_ImVec1_Nil() [*c]ImVec1;
 pub extern fn ImVec1_destroy(self: [*c]ImVec1) void;
 pub extern fn ImVec1_ImVec1_Float(_x: f32) [*c]ImVec1;
@@ -3662,6 +4205,7 @@ pub extern fn ImRect_GetBL(pOut: [*c]ImVec2, self: [*c]ImRect) void;
 pub extern fn ImRect_GetBR(pOut: [*c]ImVec2, self: [*c]ImRect) void;
 pub extern fn ImRect_Contains_Vec2(self: [*c]ImRect, p: ImVec2) bool;
 pub extern fn ImRect_Contains_Rect(self: [*c]ImRect, r: ImRect) bool;
+pub extern fn ImRect_ContainsWithPad(self: [*c]ImRect, p: ImVec2, pad: ImVec2) bool;
 pub extern fn ImRect_Overlaps(self: [*c]ImRect, r: ImRect) bool;
 pub extern fn ImRect_Add_Vec2(self: [*c]ImRect, p: ImVec2) void;
 pub extern fn ImRect_Add_Rect(self: [*c]ImRect, r: ImRect) void;
@@ -3694,10 +4238,8 @@ pub extern fn ImGuiTextIndex_append(self: [*c]ImGuiTextIndex, base: [*c]const u8
 pub extern fn ImDrawListSharedData_ImDrawListSharedData() [*c]ImDrawListSharedData;
 pub extern fn ImDrawListSharedData_destroy(self: [*c]ImDrawListSharedData) void;
 pub extern fn ImDrawListSharedData_SetCircleTessellationMaxError(self: [*c]ImDrawListSharedData, max_error: f32) void;
-pub extern fn ImDrawDataBuilder_Clear(self: [*c]ImDrawDataBuilder) void;
-pub extern fn ImDrawDataBuilder_ClearFreeMemory(self: [*c]ImDrawDataBuilder) void;
-pub extern fn ImDrawDataBuilder_GetDrawListCount(self: [*c]ImDrawDataBuilder) c_int;
-pub extern fn ImDrawDataBuilder_FlattenIntoSingleLayer(self: [*c]ImDrawDataBuilder) void;
+pub extern fn ImDrawDataBuilder_ImDrawDataBuilder() [*c]ImDrawDataBuilder;
+pub extern fn ImDrawDataBuilder_destroy(self: [*c]ImDrawDataBuilder) void;
 pub extern fn ImGuiDataVarInfo_GetVarPtr(self: [*c]ImGuiDataVarInfo, parent: ?*anyopaque) ?*anyopaque;
 pub extern fn ImGuiStyleMod_ImGuiStyleMod_Int(idx: ImGuiStyleVar, v: c_int) [*c]ImGuiStyleMod;
 pub extern fn ImGuiStyleMod_destroy(self: [*c]ImGuiStyleMod) void;
@@ -3762,6 +4304,9 @@ pub extern fn ImGuiListClipperData_Reset(self: [*c]ImGuiListClipperData, clipper
 pub extern fn ImGuiNavItemData_ImGuiNavItemData() [*c]ImGuiNavItemData;
 pub extern fn ImGuiNavItemData_destroy(self: [*c]ImGuiNavItemData) void;
 pub extern fn ImGuiNavItemData_Clear(self: [*c]ImGuiNavItemData) void;
+pub extern fn ImGuiTypingSelectState_ImGuiTypingSelectState() [*c]ImGuiTypingSelectState;
+pub extern fn ImGuiTypingSelectState_destroy(self: [*c]ImGuiTypingSelectState) void;
+pub extern fn ImGuiTypingSelectState_Clear(self: [*c]ImGuiTypingSelectState) void;
 pub extern fn ImGuiOldColumnData_ImGuiOldColumnData() [*c]ImGuiOldColumnData;
 pub extern fn ImGuiOldColumnData_destroy(self: [*c]ImGuiOldColumnData) void;
 pub extern fn ImGuiOldColumns_ImGuiOldColumns() [*c]ImGuiOldColumns;
@@ -3796,10 +4341,12 @@ pub extern fn ImGuiWindowSettings_destroy(self: [*c]ImGuiWindowSettings) void;
 pub extern fn ImGuiWindowSettings_GetName(self: [*c]ImGuiWindowSettings) [*c]u8;
 pub extern fn ImGuiSettingsHandler_ImGuiSettingsHandler() [*c]ImGuiSettingsHandler;
 pub extern fn ImGuiSettingsHandler_destroy(self: [*c]ImGuiSettingsHandler) void;
+pub extern fn ImGuiDebugAllocInfo_ImGuiDebugAllocInfo() [*c]ImGuiDebugAllocInfo;
+pub extern fn ImGuiDebugAllocInfo_destroy(self: [*c]ImGuiDebugAllocInfo) void;
 pub extern fn ImGuiStackLevelInfo_ImGuiStackLevelInfo() ?*ImGuiStackLevelInfo;
 pub extern fn ImGuiStackLevelInfo_destroy(self: ?*ImGuiStackLevelInfo) void;
-pub extern fn ImGuiStackTool_ImGuiStackTool() [*c]ImGuiStackTool;
-pub extern fn ImGuiStackTool_destroy(self: [*c]ImGuiStackTool) void;
+pub extern fn ImGuiIDStackTool_ImGuiIDStackTool() [*c]ImGuiIDStackTool;
+pub extern fn ImGuiIDStackTool_destroy(self: [*c]ImGuiIDStackTool) void;
 pub extern fn ImGuiContextHook_ImGuiContextHook() [*c]ImGuiContextHook;
 pub extern fn ImGuiContextHook_destroy(self: [*c]ImGuiContextHook) void;
 pub extern fn ImGuiContext_ImGuiContext(shared_font_atlas: [*c]ImFontAtlas) [*c]ImGuiContext;
@@ -3850,8 +4397,9 @@ pub extern fn igSetWindowHitTestHole(window: ?*ImGuiWindow, pos: ImVec2, size: I
 pub extern fn igSetWindowHiddendAndSkipItemsForCurrentFrame(window: ?*ImGuiWindow) void;
 pub extern fn igWindowRectAbsToRel(pOut: [*c]ImRect, window: ?*ImGuiWindow, r: ImRect) void;
 pub extern fn igWindowRectRelToAbs(pOut: [*c]ImRect, window: ?*ImGuiWindow, r: ImRect) void;
-pub extern fn igFocusWindow(window: ?*ImGuiWindow) void;
-pub extern fn igFocusTopMostWindowUnderOne(under_this_window: ?*ImGuiWindow, ignore_window: ?*ImGuiWindow, filter_viewport: [*c]ImGuiViewport) void;
+pub extern fn igWindowPosRelToAbs(pOut: [*c]ImVec2, window: ?*ImGuiWindow, p: ImVec2) void;
+pub extern fn igFocusWindow(window: ?*ImGuiWindow, flags: ImGuiFocusRequestFlags) void;
+pub extern fn igFocusTopMostWindowUnderOne(under_this_window: ?*ImGuiWindow, ignore_window: ?*ImGuiWindow, filter_viewport: [*c]ImGuiViewport, flags: ImGuiFocusRequestFlags) void;
 pub extern fn igBringWindowToFocusFront(window: ?*ImGuiWindow) void;
 pub extern fn igBringWindowToDisplayFront(window: ?*ImGuiWindow) void;
 pub extern fn igBringWindowToDisplayBack(window: ?*ImGuiWindow) void;
@@ -3861,12 +4409,13 @@ pub extern fn igFindBottomMostVisibleWindowWithinBeginStack(window: ?*ImGuiWindo
 pub extern fn igSetCurrentFont(font: [*c]ImFont) void;
 pub extern fn igGetDefaultFont() [*c]ImFont;
 pub extern fn igGetForegroundDrawList_WindowPtr(window: ?*ImGuiWindow) [*c]ImDrawList;
+pub extern fn igAddDrawListToDrawDataEx(draw_data: [*c]ImDrawData, out_list: [*c]ImVector_ImDrawListPtr, draw_list: [*c]ImDrawList) void;
 pub extern fn igInitialize() void;
 pub extern fn igShutdown() void;
 pub extern fn igUpdateInputEvents(trickle_fast_inputs: bool) void;
 pub extern fn igUpdateHoveredWindowAndCaptureFlags() void;
 pub extern fn igStartMouseMovingWindow(window: ?*ImGuiWindow) void;
-pub extern fn igStartMouseMovingWindowOrNode(window: ?*ImGuiWindow, node: ?*ImGuiDockNode, undock_floating_node: bool) void;
+pub extern fn igStartMouseMovingWindowOrNode(window: ?*ImGuiWindow, node: ?*ImGuiDockNode, undock: bool) void;
 pub extern fn igUpdateMouseMovingWindowNewFrame() void;
 pub extern fn igUpdateMouseMovingWindowEndFrame() void;
 pub extern fn igAddContextHook(context: [*c]ImGuiContext, hook: [*c]const ImGuiContextHook) ImGuiID;
@@ -3916,7 +4465,7 @@ pub extern fn igGetIDWithSeed_Int(n: c_int, seed: ImGuiID) ImGuiID;
 pub extern fn igItemSize_Vec2(size: ImVec2, text_baseline_y: f32) void;
 pub extern fn igItemSize_Rect(bb: ImRect, text_baseline_y: f32) void;
 pub extern fn igItemAdd(bb: ImRect, id: ImGuiID, nav_bb: [*c]const ImRect, extra_flags: ImGuiItemFlags) bool;
-pub extern fn igItemHoverable(bb: ImRect, id: ImGuiID) bool;
+pub extern fn igItemHoverable(bb: ImRect, id: ImGuiID, item_flags: ImGuiItemFlags) bool;
 pub extern fn igIsWindowContentHoverable(window: ?*ImGuiWindow, flags: ImGuiHoveredFlags) bool;
 pub extern fn igIsClippedEx(bb: ImRect, id: ImGuiID) bool;
 pub extern fn igSetLastItemData(item_id: ImGuiID, in_flags: ImGuiItemFlags, status_flags: ImGuiItemStatusFlags, item_rect: ImRect) void;
@@ -3933,7 +4482,7 @@ pub extern fn igLogBegin(@"type": ImGuiLogType, auto_open_depth: c_int) void;
 pub extern fn igLogToBuffer(auto_open_depth: c_int) void;
 pub extern fn igLogRenderedText(ref_pos: [*c]const ImVec2, text: [*c]const u8, text_end: [*c]const u8) void;
 pub extern fn igLogSetNextTextDecoration(prefix: [*c]const u8, suffix: [*c]const u8) void;
-pub extern fn igBeginChildEx(name: [*c]const u8, id: ImGuiID, size_arg: ImVec2, border: bool, flags: ImGuiWindowFlags) bool;
+pub extern fn igBeginChildEx(name: [*c]const u8, id: ImGuiID, size_arg: ImVec2, child_flags: ImGuiChildFlags, window_flags: ImGuiWindowFlags) bool;
 pub extern fn igOpenPopupEx(id: ImGuiID, popup_flags: ImGuiPopupFlags) void;
 pub extern fn igClosePopupToLevel(remaining: c_int, restore_focus_to_window_under_popup: bool) void;
 pub extern fn igClosePopupsOverWindow(ref_window: ?*ImGuiWindow, restore_focus_to_window_under_popup: bool) void;
@@ -3941,9 +4490,11 @@ pub extern fn igClosePopupsExceptModals() void;
 pub extern fn igIsPopupOpen_ID(id: ImGuiID, popup_flags: ImGuiPopupFlags) bool;
 pub extern fn igBeginPopupEx(id: ImGuiID, extra_flags: ImGuiWindowFlags) bool;
 pub extern fn igBeginTooltipEx(tooltip_flags: ImGuiTooltipFlags, extra_window_flags: ImGuiWindowFlags) bool;
+pub extern fn igBeginTooltipHidden() bool;
 pub extern fn igGetPopupAllowedExtentRect(pOut: [*c]ImRect, window: ?*ImGuiWindow) void;
 pub extern fn igGetTopMostPopupModal() ?*ImGuiWindow;
 pub extern fn igGetTopMostAndVisiblePopupModal() ?*ImGuiWindow;
+pub extern fn igFindBlockingModal(window: ?*ImGuiWindow) ?*ImGuiWindow;
 pub extern fn igFindBestWindowPosForPopup(pOut: [*c]ImVec2, window: ?*ImGuiWindow) void;
 pub extern fn igFindBestWindowPosForPopupEx(pOut: [*c]ImVec2, ref_pos: ImVec2, size: ImVec2, last_dir: [*c]ImGuiDir, r_outer: ImRect, r_avoid: ImRect, policy: ImGuiPopupPositionPolicy) void;
 pub extern fn igBeginViewportSideBar(name: [*c]const u8, viewport: [*c]ImGuiViewport, dir: ImGuiDir, size: f32, window_flags: ImGuiWindowFlags) bool;
@@ -3958,12 +4509,17 @@ pub extern fn igNavMoveRequestButNoResultYet() bool;
 pub extern fn igNavMoveRequestSubmit(move_dir: ImGuiDir, clip_dir: ImGuiDir, move_flags: ImGuiNavMoveFlags, scroll_flags: ImGuiScrollFlags) void;
 pub extern fn igNavMoveRequestForward(move_dir: ImGuiDir, clip_dir: ImGuiDir, move_flags: ImGuiNavMoveFlags, scroll_flags: ImGuiScrollFlags) void;
 pub extern fn igNavMoveRequestResolveWithLastItem(result: [*c]ImGuiNavItemData) void;
+pub extern fn igNavMoveRequestResolveWithPastTreeNode(result: [*c]ImGuiNavItemData, tree_node_data: [*c]ImGuiNavTreeNodeData) void;
 pub extern fn igNavMoveRequestCancel() void;
 pub extern fn igNavMoveRequestApplyResult() void;
 pub extern fn igNavMoveRequestTryWrapping(window: ?*ImGuiWindow, move_flags: ImGuiNavMoveFlags) void;
-pub extern fn igActivateItem(id: ImGuiID) void;
+pub extern fn igNavClearPreferredPosForAxis(axis: ImGuiAxis) void;
+pub extern fn igNavRestoreHighlightAfterMove() void;
+pub extern fn igNavUpdateCurrentWindowIsScrollPushableX() void;
 pub extern fn igSetNavWindow(window: ?*ImGuiWindow) void;
 pub extern fn igSetNavID(id: ImGuiID, nav_layer: ImGuiNavLayer, focus_scope_id: ImGuiID, rect_rel: ImRect) void;
+pub extern fn igFocusItem() void;
+pub extern fn igActivateItemByID(id: ImGuiID) void;
 pub extern fn igIsNamedKey(key: ImGuiKey) bool;
 pub extern fn igIsNamedKeyOrModKey(key: ImGuiKey) bool;
 pub extern fn igIsLegacyKey(key: ImGuiKey) bool;
@@ -3982,6 +4538,7 @@ pub extern fn igGetKeyMagnitude2d(pOut: [*c]ImVec2, key_left: ImGuiKey, key_righ
 pub extern fn igGetNavTweakPressedAmount(axis: ImGuiAxis) f32;
 pub extern fn igCalcTypematicRepeatAmount(t0: f32, t1: f32, repeat_delay: f32, repeat_rate: f32) c_int;
 pub extern fn igGetTypematicRepeatRate(flags: ImGuiInputFlags, repeat_delay: [*c]f32, repeat_rate: [*c]f32) void;
+pub extern fn igTeleportMousePos(pos: ImVec2) void;
 pub extern fn igSetActiveIdUsingAllKeyboardKeys() void;
 pub extern fn igIsActiveIdUsingNavDir(dir: ImGuiDir) bool;
 pub extern fn igGetKeyOwner(key: ImGuiKey) ImGuiID;
@@ -3996,6 +4553,8 @@ pub extern fn igIsKeyReleased_ID(key: ImGuiKey, owner_id: ImGuiID) bool;
 pub extern fn igIsMouseDown_ID(button: ImGuiMouseButton, owner_id: ImGuiID) bool;
 pub extern fn igIsMouseClicked_ID(button: ImGuiMouseButton, owner_id: ImGuiID, flags: ImGuiInputFlags) bool;
 pub extern fn igIsMouseReleased_ID(button: ImGuiMouseButton, owner_id: ImGuiID) bool;
+pub extern fn igIsMouseDoubleClicked_ID(button: ImGuiMouseButton, owner_id: ImGuiID) bool;
+pub extern fn igIsKeyChordPressed_ID(key_chord: ImGuiKeyChord, owner_id: ImGuiID, flags: ImGuiInputFlags) bool;
 pub extern fn igShortcut(key_chord: ImGuiKeyChord, owner_id: ImGuiID, flags: ImGuiInputFlags) bool;
 pub extern fn igSetShortcutRouting(key_chord: ImGuiKeyChord, owner_id: ImGuiID, flags: ImGuiInputFlags) bool;
 pub extern fn igTestShortcutRouting(key_chord: ImGuiKeyChord, owner_id: ImGuiID) bool;
@@ -4050,6 +4609,10 @@ pub extern fn igBeginDragDropTargetCustom(bb: ImRect, id: ImGuiID) bool;
 pub extern fn igClearDragDrop() void;
 pub extern fn igIsDragDropPayloadBeingAccepted() bool;
 pub extern fn igRenderDragDropTargetRect(bb: ImRect) void;
+pub extern fn igGetTypingSelectRequest(flags: ImGuiTypingSelectFlags) [*c]ImGuiTypingSelectRequest;
+pub extern fn igTypingSelectFindMatch(req: [*c]ImGuiTypingSelectRequest, items_count: c_int, get_item_name_func: ?*const fn (?*anyopaque, c_int) callconv(.C) [*c]const u8, user_data: ?*anyopaque, nav_item_idx: c_int) c_int;
+pub extern fn igTypingSelectFindNextSingleCharMatch(req: [*c]ImGuiTypingSelectRequest, items_count: c_int, get_item_name_func: ?*const fn (?*anyopaque, c_int) callconv(.C) [*c]const u8, user_data: ?*anyopaque, nav_item_idx: c_int) c_int;
+pub extern fn igTypingSelectFindBestLeadingMatch(req: [*c]ImGuiTypingSelectRequest, items_count: c_int, get_item_name_func: ?*const fn (?*anyopaque, c_int) callconv(.C) [*c]const u8, user_data: ?*anyopaque) c_int;
 pub extern fn igSetWindowClipRectBeforeSetChannel(window: ?*ImGuiWindow, clip_rect: ImRect) void;
 pub extern fn igBeginColumns(str_id: [*c]const u8, count: c_int, flags: ImGuiOldColumnFlags) void;
 pub extern fn igEndColumns() void;
@@ -4064,9 +4627,12 @@ pub extern fn igTableOpenContextMenu(column_n: c_int) void;
 pub extern fn igTableSetColumnWidth(column_n: c_int, width: f32) void;
 pub extern fn igTableSetColumnSortDirection(column_n: c_int, sort_direction: ImGuiSortDirection, append_to_sort_specs: bool) void;
 pub extern fn igTableGetHoveredColumn() c_int;
+pub extern fn igTableGetHoveredRow() c_int;
 pub extern fn igTableGetHeaderRowHeight() f32;
+pub extern fn igTableGetHeaderAngledMaxLabelWidth() f32;
 pub extern fn igTablePushBackgroundChannel() void;
 pub extern fn igTablePopBackgroundChannel() void;
+pub extern fn igTableAngledHeadersRowEx(angle: f32, label_width: f32) void;
 pub extern fn igGetCurrentTable() ?*ImGuiTable;
 pub extern fn igTableFindByID(id: ImGuiID) ?*ImGuiTable;
 pub extern fn igBeginTableEx(name: [*c]const u8, id: ImGuiID, columns_count: c_int, flags: ImGuiTableFlags, outer_size: ImVec2, inner_width: f32) bool;
@@ -4077,7 +4643,7 @@ pub extern fn igTableUpdateLayout(table: ?*ImGuiTable) void;
 pub extern fn igTableUpdateBorders(table: ?*ImGuiTable) void;
 pub extern fn igTableUpdateColumnsWeightFromWidth(table: ?*ImGuiTable) void;
 pub extern fn igTableDrawBorders(table: ?*ImGuiTable) void;
-pub extern fn igTableDrawContextMenu(table: ?*ImGuiTable) void;
+pub extern fn igTableDrawDefaultContextMenu(table: ?*ImGuiTable, flags_for_section_to_display: ImGuiTableFlags) void;
 pub extern fn igTableBeginContextMenuPopup(table: ?*ImGuiTable) bool;
 pub extern fn igTableMergeDrawChannels(table: ?*ImGuiTable) void;
 pub extern fn igTableGetInstanceData(table: ?*ImGuiTable, instance_no: c_int) [*c]ImGuiTableInstanceData;
@@ -4109,7 +4675,7 @@ pub extern fn igTableSettingsAddSettingsHandler() void;
 pub extern fn igTableSettingsCreate(id: ImGuiID, columns_count: c_int) [*c]ImGuiTableSettings;
 pub extern fn igTableSettingsFindByID(id: ImGuiID) [*c]ImGuiTableSettings;
 pub extern fn igGetCurrentTabBar() [*c]ImGuiTabBar;
-pub extern fn igBeginTabBarEx(tab_bar: [*c]ImGuiTabBar, bb: ImRect, flags: ImGuiTabBarFlags, dock_node: ?*ImGuiDockNode) bool;
+pub extern fn igBeginTabBarEx(tab_bar: [*c]ImGuiTabBar, bb: ImRect, flags: ImGuiTabBarFlags) bool;
 pub extern fn igTabBarFindTabByID(tab_bar: [*c]ImGuiTabBar, tab_id: ImGuiID) [*c]ImGuiTabItem;
 pub extern fn igTabBarFindTabByOrder(tab_bar: [*c]ImGuiTabBar, order: c_int) [*c]ImGuiTabItem;
 pub extern fn igTabBarFindMostRecentlySelectedTabForActiveWindow(tab_bar: [*c]ImGuiTabBar) [*c]ImGuiTabItem;
@@ -4150,8 +4716,8 @@ pub extern fn igCalcRoundingFlagsForRectInRect(r_in: ImRect, r_outer: ImRect, th
 pub extern fn igTextEx(text: [*c]const u8, text_end: [*c]const u8, flags: ImGuiTextFlags) void;
 pub extern fn igButtonEx(label: [*c]const u8, size_arg: ImVec2, flags: ImGuiButtonFlags) bool;
 pub extern fn igArrowButtonEx(str_id: [*c]const u8, dir: ImGuiDir, size_arg: ImVec2, flags: ImGuiButtonFlags) bool;
-pub extern fn igImageButtonEx(id: ImGuiID, texture_id: ImTextureID, size: ImVec2, uv0: ImVec2, uv1: ImVec2, bg_col: ImVec4, tint_col: ImVec4, flags: ImGuiButtonFlags) bool;
-pub extern fn igSeparatorEx(flags: ImGuiSeparatorFlags) void;
+pub extern fn igImageButtonEx(id: ImGuiID, texture_id: ImTextureID, image_size: ImVec2, uv0: ImVec2, uv1: ImVec2, bg_col: ImVec4, tint_col: ImVec4, flags: ImGuiButtonFlags) bool;
+pub extern fn igSeparatorEx(flags: ImGuiSeparatorFlags, thickness: f32) void;
 pub extern fn igSeparatorTextEx(id: ImGuiID, label: [*c]const u8, label_end: [*c]const u8, extra_width: f32) void;
 pub extern fn igCheckboxFlags_S64Ptr(label: [*c]const u8, flags: [*c]ImS64, flags_value: ImS64) bool;
 pub extern fn igCheckboxFlags_U64Ptr(label: [*c]const u8, flags: [*c]ImU64, flags_value: ImU64) bool;
@@ -4171,6 +4737,7 @@ pub extern fn igTreeNodeBehavior(id: ImGuiID, flags: ImGuiTreeNodeFlags, label: 
 pub extern fn igTreePushOverrideID(id: ImGuiID) void;
 pub extern fn igTreeNodeSetOpen(id: ImGuiID, open: bool) void;
 pub extern fn igTreeNodeUpdateNextOpen(id: ImGuiID, flags: ImGuiTreeNodeFlags) bool;
+pub extern fn igSetNextItemSelectionUserData(selection_user_data: ImGuiSelectionUserData) void;
 pub extern fn igDataTypeGetInfo(data_type: ImGuiDataType) [*c]const ImGuiDataTypeInfo;
 pub extern fn igDataTypeFormatString(buf: [*c]u8, buf_size: c_int, data_type: ImGuiDataType, p_data: ?*const anyopaque, format: [*c]const u8) c_int;
 pub extern fn igDataTypeApplyOp(data_type: ImGuiDataType, op: c_int, output: ?*anyopaque, arg_1: ?*const anyopaque, arg_2: ?*const anyopaque) void;
@@ -4189,18 +4756,22 @@ pub extern fn igColorPickerOptionsPopup(ref_col: [*c]const f32, flags: ImGuiColo
 pub extern fn igPlotEx(plot_type: ImGuiPlotType, label: [*c]const u8, values_getter: ?*const fn (?*anyopaque, c_int) callconv(.C) f32, data: ?*anyopaque, values_count: c_int, values_offset: c_int, overlay_text: [*c]const u8, scale_min: f32, scale_max: f32, size_arg: ImVec2) c_int;
 pub extern fn igShadeVertsLinearColorGradientKeepAlpha(draw_list: [*c]ImDrawList, vert_start_idx: c_int, vert_end_idx: c_int, gradient_p0: ImVec2, gradient_p1: ImVec2, col0: ImU32, col1: ImU32) void;
 pub extern fn igShadeVertsLinearUV(draw_list: [*c]ImDrawList, vert_start_idx: c_int, vert_end_idx: c_int, a: ImVec2, b: ImVec2, uv_a: ImVec2, uv_b: ImVec2, clamp: bool) void;
+pub extern fn igShadeVertsTransformPos(draw_list: [*c]ImDrawList, vert_start_idx: c_int, vert_end_idx: c_int, pivot_in: ImVec2, cos_a: f32, sin_a: f32, pivot_out: ImVec2) void;
 pub extern fn igGcCompactTransientMiscBuffers() void;
 pub extern fn igGcCompactTransientWindowBuffers(window: ?*ImGuiWindow) void;
 pub extern fn igGcAwakeTransientWindowBuffers(window: ?*ImGuiWindow) void;
 pub extern fn igDebugLog(fmt: [*c]const u8, ...) void;
 pub extern fn igDebugLogV(fmt: [*c]const u8, args: va_list) void;
+pub extern fn igDebugAllocHook(info: [*c]ImGuiDebugAllocInfo, frame_count: c_int, ptr: ?*anyopaque, size: usize) void;
 pub extern fn igErrorCheckEndFrameRecover(log_callback: ImGuiErrorLogCallback, user_data: ?*anyopaque) void;
 pub extern fn igErrorCheckEndWindowRecover(log_callback: ImGuiErrorLogCallback, user_data: ?*anyopaque) void;
 pub extern fn igErrorCheckUsingSetCursorPosToExtendParentBoundaries() void;
+pub extern fn igDebugDrawCursorPos(col: ImU32) void;
+pub extern fn igDebugDrawLineExtents(col: ImU32) void;
+pub extern fn igDebugDrawItemRect(col: ImU32) void;
 pub extern fn igDebugLocateItem(target_id: ImGuiID) void;
 pub extern fn igDebugLocateItemOnHover(target_id: ImGuiID) void;
 pub extern fn igDebugLocateItemResolveWithLastItem() void;
-pub extern fn igDebugDrawItemRect(col: ImU32) void;
 pub extern fn igDebugStartItemPicker() void;
 pub extern fn igShowFontAtlas(atlas: [*c]ImFontAtlas) void;
 pub extern fn igDebugHookIdInfo(id: ImGuiID, data_type: ImGuiDataType, data_id: ?*const anyopaque, data_id_end: ?*const anyopaque) void;
@@ -4215,6 +4786,7 @@ pub extern fn igDebugNodeTabBar(tab_bar: [*c]ImGuiTabBar, label: [*c]const u8) v
 pub extern fn igDebugNodeTable(table: ?*ImGuiTable) void;
 pub extern fn igDebugNodeTableSettings(settings: [*c]ImGuiTableSettings) void;
 pub extern fn igDebugNodeInputTextState(state: [*c]ImGuiInputTextState) void;
+pub extern fn igDebugNodeTypingSelectState(state: [*c]ImGuiTypingSelectState) void;
 pub extern fn igDebugNodeWindow(window: ?*ImGuiWindow, label: [*c]const u8) void;
 pub extern fn igDebugNodeWindowSettings(settings: [*c]ImGuiWindowSettings) void;
 pub extern fn igDebugNodeWindowsList(windows: [*c]ImVector_ImGuiWindowPtr, label: [*c]const u8) void;
@@ -4222,8 +4794,8 @@ pub extern fn igDebugNodeWindowsListByBeginStackParent(windows: [*c]?*ImGuiWindo
 pub extern fn igDebugNodeViewport(viewport: [*c]ImGuiViewportP) void;
 pub extern fn igDebugRenderKeyboardPreview(draw_list: [*c]ImDrawList) void;
 pub extern fn igDebugRenderViewportThumbnail(draw_list: [*c]ImDrawList, viewport: [*c]ImGuiViewportP, bb: ImRect) void;
-pub extern fn igIsKeyPressedMap(key: ImGuiKey, repeat: bool) bool;
 pub extern fn igImFontAtlasGetBuilderForStbTruetype() [*c]const ImFontBuilderIO;
+pub extern fn igImFontAtlasUpdateConfigDataPointers(atlas: [*c]ImFontAtlas) void;
 pub extern fn igImFontAtlasBuildInit(atlas: [*c]ImFontAtlas) void;
 pub extern fn igImFontAtlasBuildSetupFont(atlas: [*c]ImFontAtlas, font: [*c]ImFont, font_config: [*c]ImFontConfig, ascent: f32, descent: f32) void;
 pub extern fn igImFontAtlasBuildPackCustomRects(atlas: [*c]ImFontAtlas, stbrp_context_opaque: ?*anyopaque) void;
@@ -4240,36 +4812,120 @@ pub extern fn ImVector_ImWchar_create() [*c]ImVector_ImWchar;
 pub extern fn ImVector_ImWchar_destroy(self: [*c]ImVector_ImWchar) void;
 pub extern fn ImVector_ImWchar_Init(p: [*c]ImVector_ImWchar) void;
 pub extern fn ImVector_ImWchar_UnInit(p: [*c]ImVector_ImWchar) void;
-pub const __INTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `LL`"); // (no file):80:9
-pub const __UINTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `ULL`"); // (no file):86:9
-pub const __INT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `LL`"); // (no file):168:9
-pub const __UINT32_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `U`"); // (no file):190:9
-pub const __UINT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `ULL`"); // (no file):198:9
-pub const __restrict = @compileError("unable to translate C expr: unexpected token 'restrict'"); // /usr/local/lib/zig/lib/libc/include/generic-musl/features.h:20:9
-pub const __inline = @compileError("unable to translate C expr: unexpected token 'inline'"); // /usr/local/lib/zig/lib/libc/include/generic-musl/features.h:26:9
-pub const __REDIR = @compileError("unable to translate macro: undefined identifier `__typeof__`"); // /usr/local/lib/zig/lib/libc/include/generic-musl/features.h:38:9
-pub const __stdint_join3 = @compileError("unable to translate C expr: unexpected token '##'"); // /usr/local/lib/zig/lib/include/stdint.h:287:9
-pub const __int_c_join = @compileError("unable to translate C expr: unexpected token '##'"); // /usr/local/lib/zig/lib/include/stdint.h:324:9
-pub const __uint_c = @compileError("unable to translate macro: undefined identifier `U`"); // /usr/local/lib/zig/lib/include/stdint.h:326:9
-pub const __INTN_MIN = @compileError("unable to translate macro: undefined identifier `INT`"); // /usr/local/lib/zig/lib/include/stdint.h:894:10
-pub const __INTN_MAX = @compileError("unable to translate macro: undefined identifier `INT`"); // /usr/local/lib/zig/lib/include/stdint.h:895:10
-pub const __UINTN_MAX = @compileError("unable to translate macro: undefined identifier `UINT`"); // /usr/local/lib/zig/lib/include/stdint.h:896:9
-pub const __INTN_C = @compileError("unable to translate macro: undefined identifier `INT`"); // /usr/local/lib/zig/lib/include/stdint.h:897:10
-pub const __UINTN_C = @compileError("unable to translate macro: undefined identifier `UINT`"); // /usr/local/lib/zig/lib/include/stdint.h:898:9
-pub const API = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // libs/cimgui/cimgui.h:17:17
-pub const va_start = @compileError("unable to translate macro: undefined identifier `__builtin_va_start`"); // /usr/local/lib/zig/lib/include/stdarg.h:33:9
-pub const va_end = @compileError("unable to translate macro: undefined identifier `__builtin_va_end`"); // /usr/local/lib/zig/lib/include/stdarg.h:35:9
-pub const va_arg = @compileError("unable to translate macro: undefined identifier `__builtin_va_arg`"); // /usr/local/lib/zig/lib/include/stdarg.h:36:9
-pub const __va_copy = @compileError("unable to translate macro: undefined identifier `__builtin_va_copy`"); // /usr/local/lib/zig/lib/include/stdarg.h:41:9
-pub const va_copy = @compileError("unable to translate macro: undefined identifier `__builtin_va_copy`"); // /usr/local/lib/zig/lib/include/stdarg.h:46:9
-pub const EXTERN = @compileError("unable to translate C expr: unexpected token 'extern'"); // libs/cimgui/cimgui.h:28:13
-pub const CONST = @compileError("unable to translate C expr: unexpected token 'const'"); // libs/cimgui/cimgui.h:32:9
+pub const __INTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `LL`"); // (no file):89:9
+pub const __UINTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `ULL`"); // (no file):95:9
+pub const __INT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `LL`"); // (no file):193:9
+pub const __UINT32_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `U`"); // (no file):215:9
+pub const __UINT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `ULL`"); // (no file):223:9
+pub const __seg_gs = @compileError("unable to translate macro: undefined identifier `address_space`"); // (no file):351:9
+pub const __seg_fs = @compileError("unable to translate macro: undefined identifier `address_space`"); // (no file):352:9
+pub const __declspec = @compileError("unable to translate C expr: unexpected token '__attribute__'"); // (no file):423:9
+pub const _cdecl = @compileError("unable to translate macro: undefined identifier `__cdecl__`"); // (no file):424:9
+pub const __cdecl = @compileError("unable to translate macro: undefined identifier `__cdecl__`"); // (no file):425:9
+pub const _stdcall = @compileError("unable to translate macro: undefined identifier `__stdcall__`"); // (no file):426:9
+pub const __stdcall = @compileError("unable to translate macro: undefined identifier `__stdcall__`"); // (no file):427:9
+pub const _fastcall = @compileError("unable to translate macro: undefined identifier `__fastcall__`"); // (no file):428:9
+pub const __fastcall = @compileError("unable to translate macro: undefined identifier `__fastcall__`"); // (no file):429:9
+pub const _thiscall = @compileError("unable to translate macro: undefined identifier `__thiscall__`"); // (no file):430:9
+pub const __thiscall = @compileError("unable to translate macro: undefined identifier `__thiscall__`"); // (no file):431:9
+pub const _pascal = @compileError("unable to translate macro: undefined identifier `__pascal__`"); // (no file):432:9
+pub const __pascal = @compileError("unable to translate macro: undefined identifier `__pascal__`"); // (no file):433:9
+pub const __STRINGIFY = @compileError("unable to translate C expr: unexpected token '#'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:10:9
+pub const __MINGW64_VERSION_STR = @compileError("unable to translate C expr: unexpected token 'a string literal'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:26:9
+pub const __MINGW_IMP_SYMBOL = @compileError("unable to translate macro: undefined identifier `__imp_`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:119:11
+pub const __MINGW_IMP_LSYMBOL = @compileError("unable to translate macro: undefined identifier `__imp_`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:120:11
+pub const __MINGW_LSYMBOL = @compileError("unable to translate C expr: unexpected token '##'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:122:11
+pub const __MINGW_ASM_CALL = @compileError("unable to translate C expr: unexpected token '__asm__'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:130:9
+pub const __MINGW_ASM_CRT_CALL = @compileError("unable to translate C expr: unexpected token '__asm__'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:131:9
+pub const __MINGW_EXTENSION = @compileError("unable to translate C expr: unexpected token '__extension__'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:163:13
+pub const __MINGW_POISON_NAME = @compileError("unable to translate macro: undefined identifier `_layout_has_not_been_verified_and_its_declaration_is_most_likely_incorrect`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:203:11
+pub const __MINGW_ATTRIB_DEPRECATED_STR = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:247:11
+pub const __MINGW_MS_PRINTF = @compileError("unable to translate macro: undefined identifier `__format__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:270:9
+pub const __MINGW_MS_SCANF = @compileError("unable to translate macro: undefined identifier `__format__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:273:9
+pub const __MINGW_GNU_PRINTF = @compileError("unable to translate macro: undefined identifier `__format__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:276:9
+pub const __MINGW_GNU_SCANF = @compileError("unable to translate macro: undefined identifier `__format__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:279:9
+pub const __mingw_ovr = @compileError("unable to translate macro: undefined identifier `__unused__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:289:11
+pub const __MINGW_SELECTANY = @compileError("unable to translate macro: undefined identifier `__selectany__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_mac.h:304:9
+pub const __MINGW_CRT_NAME_CONCAT2 = @compileError("unable to translate macro: undefined identifier `_s`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_secapi.h:41:9
+pub const __CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_MEMORY_0_3_ = @compileError("unable to translate C expr: unexpected token 'an identifier'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw_secapi.h:69:9
+pub const __MINGW_IMPORT = @compileError("unable to translate macro: undefined identifier `__dllimport__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:51:12
+pub const _CRTIMP = @compileError("unable to translate macro: undefined identifier `__dllimport__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:59:15
+pub const _inline = @compileError("unable to translate C expr: unexpected token '__inline'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:81:9
+pub const __CRT_INLINE = @compileError("unable to translate macro: undefined identifier `__gnu_inline__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:90:11
+pub const __MINGW_INTRIN_INLINE = @compileError("unable to translate macro: undefined identifier `__always_inline__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:97:9
+pub const __UNUSED_PARAM = @compileError("unable to translate macro: undefined identifier `__unused__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:111:11
+pub const __restrict_arr = @compileError("unable to translate C expr: unexpected token '__restrict'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:126:10
+pub const __MINGW_ATTRIB_NORETURN = @compileError("unable to translate macro: undefined identifier `__noreturn__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:142:9
+pub const __MINGW_ATTRIB_CONST = @compileError("unable to translate C expr: unexpected token '__attribute__'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:143:9
+pub const __MINGW_ATTRIB_MALLOC = @compileError("unable to translate macro: undefined identifier `__malloc__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:153:9
+pub const __MINGW_ATTRIB_PURE = @compileError("unable to translate macro: undefined identifier `__pure__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:154:9
+pub const __MINGW_ATTRIB_NONNULL = @compileError("unable to translate macro: undefined identifier `__nonnull__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:167:9
+pub const __MINGW_ATTRIB_UNUSED = @compileError("unable to translate macro: undefined identifier `__unused__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:173:9
+pub const __MINGW_ATTRIB_USED = @compileError("unable to translate macro: undefined identifier `__used__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:179:9
+pub const __MINGW_ATTRIB_DEPRECATED = @compileError("unable to translate macro: undefined identifier `__deprecated__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:180:9
+pub const __MINGW_ATTRIB_DEPRECATED_MSG = @compileError("unable to translate macro: undefined identifier `__deprecated__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:182:9
+pub const __MINGW_NOTHROW = @compileError("unable to translate macro: undefined identifier `__nothrow__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:197:9
+pub const __MINGW_PRAGMA_PARAM = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:215:9
+pub const __MINGW_BROKEN_INTERFACE = @compileError("unable to translate macro: undefined identifier `message`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:218:9
+pub const __forceinline = @compileError("unable to translate macro: undefined identifier `__always_inline__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:273:9
+pub const _crt_va_start = @compileError("unable to translate macro: undefined identifier `__builtin_va_start`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/vadefs.h:48:9
+pub const _crt_va_arg = @compileError("unable to translate C expr: unexpected token 'an identifier'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/vadefs.h:49:9
+pub const _crt_va_end = @compileError("unable to translate macro: undefined identifier `__builtin_va_end`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/vadefs.h:50:9
+pub const _crt_va_copy = @compileError("unable to translate macro: undefined identifier `__builtin_va_copy`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/vadefs.h:51:9
+pub const __CRT_STRINGIZE = @compileError("unable to translate C expr: unexpected token '#'"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:292:9
+pub const __CRT_WIDE = @compileError("unable to translate macro: undefined identifier `L`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:297:9
+pub const _CRT_DEPRECATE_TEXT = @compileError("unable to translate macro: undefined identifier `deprecated`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:356:9
+pub const _CRT_INSECURE_DEPRECATE_MEMORY = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:359:9
+pub const _CRT_INSECURE_DEPRECATE_GLOBALS = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:363:9
+pub const _CRT_OBSOLETE = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:371:9
+pub const _CRT_ALIGN = @compileError("unable to translate macro: undefined identifier `__aligned__`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:398:9
+pub const _CRT_glob = @compileError("unable to translate macro: undefined identifier `_dowildcard`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:462:9
+pub const _UNION_NAME = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:482:9
+pub const _STRUCT_NAME = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:483:9
+pub const __CRT_UUID_DECL = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/_mingw.h:570:9
+pub const _CRT_SECURE_CPP_NOTHROW = @compileError("unable to translate macro: undefined identifier `throw`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:143:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_0 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:262:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:263:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:264:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_3 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:265:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_4 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:266:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_1 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:267:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_2 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:268:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_3 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:269:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_2_0 = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:270:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1_ARGLIST = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:271:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2_ARGLIST = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:272:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_SPLITPATH = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:273:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_0 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:277:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_1 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:279:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_2 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:281:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_3 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:283:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_4 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:285:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_0_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:422:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_1_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:423:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_2_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:424:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_3_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:425:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_4_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:426:9
+pub const __crt_typefix = @compileError("unable to translate C expr: unexpected token ''"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/corecrt.h:486:9
+pub const _fgetc_nolock = @compileError("TODO unary inc/dec expr"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1446:9
+pub const _fputc_nolock = @compileError("TODO unary inc/dec expr"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1447:9
+pub const _getwchar_nolock = @compileError("unable to translate macro: undefined identifier `_getwc_nolock`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1453:9
+pub const _putwchar_nolock = @compileError("unable to translate macro: undefined identifier `_putwc_nolock`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/stdio.h:1454:9
+pub const _SECIMP = @compileError("unable to translate macro: undefined identifier `dllimport`"); // C:\dev\bin\zig\lib\libc\include\any-windows-any/sec_api/stdio_s.h:16:9
+pub const API = @compileError("unable to translate macro: undefined identifier `dllexport`"); // cimgui.h:13:17
+pub const va_start = @compileError("unable to translate macro: undefined identifier `__builtin_va_start`"); // C:\dev\bin\zig\lib\include/stdarg.h:33:9
+pub const va_end = @compileError("unable to translate macro: undefined identifier `__builtin_va_end`"); // C:\dev\bin\zig\lib\include/stdarg.h:35:9
+pub const va_arg = @compileError("unable to translate C expr: unexpected token 'an identifier'"); // C:\dev\bin\zig\lib\include/stdarg.h:36:9
+pub const __va_copy = @compileError("unable to translate macro: undefined identifier `__builtin_va_copy`"); // C:\dev\bin\zig\lib\include/stdarg.h:41:9
+pub const va_copy = @compileError("unable to translate macro: undefined identifier `__builtin_va_copy`"); // C:\dev\bin\zig\lib\include/stdarg.h:46:9
+pub const EXTERN = @compileError("unable to translate C expr: unexpected token 'extern'"); // cimgui.h:28:13
+pub const CONST = @compileError("unable to translate C expr: unexpected token 'const'"); // cimgui.h:32:9
 pub const __llvm__ = @as(c_int, 1);
 pub const __clang__ = @as(c_int, 1);
-pub const __clang_major__ = @as(c_int, 16);
+pub const __clang_major__ = @as(c_int, 17);
 pub const __clang_minor__ = @as(c_int, 0);
-pub const __clang_patchlevel__ = @as(c_int, 1);
-pub const __clang_version__ = "16.0.1 (https://github.com/ziglang/zig-bootstrap 710c5d12660235bc4eac103a8c6677c61f0a9ded)";
+pub const __clang_patchlevel__ = @as(c_int, 3);
+pub const __clang_version__ = "17.0.3 (https://github.com/ziglang/zig-bootstrap 1dc1fa6a122996fcd030cc956385e055289e09d9)";
 pub const __GNUC__ = @as(c_int, 4);
 pub const __GNUC_MINOR__ = @as(c_int, 2);
 pub const __GNUC_PATCHLEVEL__ = @as(c_int, 1);
@@ -4285,59 +4941,68 @@ pub const __OPENCL_MEMORY_SCOPE_WORK_GROUP = @as(c_int, 1);
 pub const __OPENCL_MEMORY_SCOPE_DEVICE = @as(c_int, 2);
 pub const __OPENCL_MEMORY_SCOPE_ALL_SVM_DEVICES = @as(c_int, 3);
 pub const __OPENCL_MEMORY_SCOPE_SUB_GROUP = @as(c_int, 4);
+pub const __FPCLASS_SNAN = @as(c_int, 0x0001);
+pub const __FPCLASS_QNAN = @as(c_int, 0x0002);
+pub const __FPCLASS_NEGINF = @as(c_int, 0x0004);
+pub const __FPCLASS_NEGNORMAL = @as(c_int, 0x0008);
+pub const __FPCLASS_NEGSUBNORMAL = @as(c_int, 0x0010);
+pub const __FPCLASS_NEGZERO = @as(c_int, 0x0020);
+pub const __FPCLASS_POSZERO = @as(c_int, 0x0040);
+pub const __FPCLASS_POSSUBNORMAL = @as(c_int, 0x0080);
+pub const __FPCLASS_POSNORMAL = @as(c_int, 0x0100);
+pub const __FPCLASS_POSINF = @as(c_int, 0x0200);
 pub const __PRAGMA_REDEFINE_EXTNAME = @as(c_int, 1);
-pub const __VERSION__ = "Clang 16.0.1 (https://github.com/ziglang/zig-bootstrap 710c5d12660235bc4eac103a8c6677c61f0a9ded)";
+pub const __VERSION__ = "Clang 17.0.3 (https://github.com/ziglang/zig-bootstrap 1dc1fa6a122996fcd030cc956385e055289e09d9)";
 pub const __OBJC_BOOL_IS_BOOL = @as(c_int, 0);
 pub const __CONSTANT_CFSTRINGS__ = @as(c_int, 1);
+pub const __SEH__ = @as(c_int, 1);
 pub const __clang_literal_encoding__ = "UTF-8";
-pub const __clang_wide_literal_encoding__ = "UTF-32";
+pub const __clang_wide_literal_encoding__ = "UTF-16";
 pub const __ORDER_LITTLE_ENDIAN__ = @as(c_int, 1234);
 pub const __ORDER_BIG_ENDIAN__ = @as(c_int, 4321);
 pub const __ORDER_PDP_ENDIAN__ = @as(c_int, 3412);
 pub const __BYTE_ORDER__ = __ORDER_LITTLE_ENDIAN__;
 pub const __LITTLE_ENDIAN__ = @as(c_int, 1);
-pub const _ILP32 = @as(c_int, 1);
-pub const __ILP32__ = @as(c_int, 1);
 pub const __CHAR_BIT__ = @as(c_int, 8);
 pub const __BOOL_WIDTH__ = @as(c_int, 8);
 pub const __SHRT_WIDTH__ = @as(c_int, 16);
 pub const __INT_WIDTH__ = @as(c_int, 32);
 pub const __LONG_WIDTH__ = @as(c_int, 32);
 pub const __LLONG_WIDTH__ = @as(c_int, 64);
-pub const __BITINT_MAXWIDTH__ = @as(c_int, 128);
+pub const __BITINT_MAXWIDTH__ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 8388608, .decimal);
 pub const __SCHAR_MAX__ = @as(c_int, 127);
 pub const __SHRT_MAX__ = @as(c_int, 32767);
 pub const __INT_MAX__ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal);
 pub const __LONG_MAX__ = @as(c_long, 2147483647);
 pub const __LONG_LONG_MAX__ = @as(c_longlong, 9223372036854775807);
-pub const __WCHAR_MAX__ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal);
-pub const __WCHAR_WIDTH__ = @as(c_int, 32);
-pub const __WINT_MAX__ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal);
-pub const __WINT_WIDTH__ = @as(c_int, 32);
+pub const __WCHAR_MAX__ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 65535, .decimal);
+pub const __WCHAR_WIDTH__ = @as(c_int, 16);
+pub const __WINT_MAX__ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 65535, .decimal);
+pub const __WINT_WIDTH__ = @as(c_int, 16);
 pub const __INTMAX_MAX__ = @as(c_longlong, 9223372036854775807);
 pub const __INTMAX_WIDTH__ = @as(c_int, 64);
-pub const __SIZE_MAX__ = @as(c_ulong, 4294967295);
-pub const __SIZE_WIDTH__ = @as(c_int, 32);
+pub const __SIZE_MAX__ = @as(c_ulonglong, 18446744073709551615);
+pub const __SIZE_WIDTH__ = @as(c_int, 64);
 pub const __UINTMAX_MAX__ = @as(c_ulonglong, 18446744073709551615);
 pub const __UINTMAX_WIDTH__ = @as(c_int, 64);
-pub const __PTRDIFF_MAX__ = @as(c_long, 2147483647);
-pub const __PTRDIFF_WIDTH__ = @as(c_int, 32);
-pub const __INTPTR_MAX__ = @as(c_long, 2147483647);
-pub const __INTPTR_WIDTH__ = @as(c_int, 32);
-pub const __UINTPTR_MAX__ = @as(c_ulong, 4294967295);
-pub const __UINTPTR_WIDTH__ = @as(c_int, 32);
+pub const __PTRDIFF_MAX__ = @as(c_longlong, 9223372036854775807);
+pub const __PTRDIFF_WIDTH__ = @as(c_int, 64);
+pub const __INTPTR_MAX__ = @as(c_longlong, 9223372036854775807);
+pub const __INTPTR_WIDTH__ = @as(c_int, 64);
+pub const __UINTPTR_MAX__ = @as(c_ulonglong, 18446744073709551615);
+pub const __UINTPTR_WIDTH__ = @as(c_int, 64);
 pub const __SIZEOF_DOUBLE__ = @as(c_int, 8);
 pub const __SIZEOF_FLOAT__ = @as(c_int, 4);
 pub const __SIZEOF_INT__ = @as(c_int, 4);
 pub const __SIZEOF_LONG__ = @as(c_int, 4);
 pub const __SIZEOF_LONG_DOUBLE__ = @as(c_int, 16);
 pub const __SIZEOF_LONG_LONG__ = @as(c_int, 8);
-pub const __SIZEOF_POINTER__ = @as(c_int, 4);
+pub const __SIZEOF_POINTER__ = @as(c_int, 8);
 pub const __SIZEOF_SHORT__ = @as(c_int, 2);
-pub const __SIZEOF_PTRDIFF_T__ = @as(c_int, 4);
-pub const __SIZEOF_SIZE_T__ = @as(c_int, 4);
-pub const __SIZEOF_WCHAR_T__ = @as(c_int, 4);
-pub const __SIZEOF_WINT_T__ = @as(c_int, 4);
+pub const __SIZEOF_PTRDIFF_T__ = @as(c_int, 8);
+pub const __SIZEOF_SIZE_T__ = @as(c_int, 8);
+pub const __SIZEOF_WCHAR_T__ = @as(c_int, 2);
+pub const __SIZEOF_WINT_T__ = @as(c_int, 2);
 pub const __SIZEOF_INT128__ = @as(c_int, 16);
 pub const __INTMAX_TYPE__ = c_longlong;
 pub const __INTMAX_FMTd__ = "lld";
@@ -4347,28 +5012,42 @@ pub const __UINTMAX_FMTo__ = "llo";
 pub const __UINTMAX_FMTu__ = "llu";
 pub const __UINTMAX_FMTx__ = "llx";
 pub const __UINTMAX_FMTX__ = "llX";
-pub const __PTRDIFF_TYPE__ = c_long;
-pub const __PTRDIFF_FMTd__ = "ld";
-pub const __PTRDIFF_FMTi__ = "li";
-pub const __INTPTR_TYPE__ = c_long;
-pub const __INTPTR_FMTd__ = "ld";
-pub const __INTPTR_FMTi__ = "li";
-pub const __SIZE_TYPE__ = c_ulong;
-pub const __SIZE_FMTo__ = "lo";
-pub const __SIZE_FMTu__ = "lu";
-pub const __SIZE_FMTx__ = "lx";
-pub const __SIZE_FMTX__ = "lX";
-pub const __WCHAR_TYPE__ = c_int;
-pub const __WINT_TYPE__ = c_int;
-pub const __SIG_ATOMIC_MAX__ = @as(c_long, 2147483647);
+pub const __PTRDIFF_TYPE__ = c_longlong;
+pub const __PTRDIFF_FMTd__ = "lld";
+pub const __PTRDIFF_FMTi__ = "lli";
+pub const __INTPTR_TYPE__ = c_longlong;
+pub const __INTPTR_FMTd__ = "lld";
+pub const __INTPTR_FMTi__ = "lli";
+pub const __SIZE_TYPE__ = c_ulonglong;
+pub const __SIZE_FMTo__ = "llo";
+pub const __SIZE_FMTu__ = "llu";
+pub const __SIZE_FMTx__ = "llx";
+pub const __SIZE_FMTX__ = "llX";
+pub const __WCHAR_TYPE__ = c_ushort;
+pub const __WINT_TYPE__ = c_ushort;
+pub const __SIG_ATOMIC_MAX__ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal);
 pub const __SIG_ATOMIC_WIDTH__ = @as(c_int, 32);
 pub const __CHAR16_TYPE__ = c_ushort;
 pub const __CHAR32_TYPE__ = c_uint;
-pub const __UINTPTR_TYPE__ = c_ulong;
-pub const __UINTPTR_FMTo__ = "lo";
-pub const __UINTPTR_FMTu__ = "lu";
-pub const __UINTPTR_FMTx__ = "lx";
-pub const __UINTPTR_FMTX__ = "lX";
+pub const __UINTPTR_TYPE__ = c_ulonglong;
+pub const __UINTPTR_FMTo__ = "llo";
+pub const __UINTPTR_FMTu__ = "llu";
+pub const __UINTPTR_FMTx__ = "llx";
+pub const __UINTPTR_FMTX__ = "llX";
+pub const __FLT16_DENORM_MIN__ = @as(f16, 5.9604644775390625e-8);
+pub const __FLT16_HAS_DENORM__ = @as(c_int, 1);
+pub const __FLT16_DIG__ = @as(c_int, 3);
+pub const __FLT16_DECIMAL_DIG__ = @as(c_int, 5);
+pub const __FLT16_EPSILON__ = @as(f16, 9.765625e-4);
+pub const __FLT16_HAS_INFINITY__ = @as(c_int, 1);
+pub const __FLT16_HAS_QUIET_NAN__ = @as(c_int, 1);
+pub const __FLT16_MANT_DIG__ = @as(c_int, 11);
+pub const __FLT16_MAX_10_EXP__ = @as(c_int, 4);
+pub const __FLT16_MAX_EXP__ = @as(c_int, 16);
+pub const __FLT16_MAX__ = @as(f16, 6.5504e+4);
+pub const __FLT16_MIN_10_EXP__ = -@as(c_int, 4);
+pub const __FLT16_MIN_EXP__ = -@as(c_int, 13);
+pub const __FLT16_MIN__ = @as(f16, 6.103515625e-5);
 pub const __FLT_DENORM_MIN__ = @as(f32, 1.40129846e-45);
 pub const __FLT_HAS_DENORM__ = @as(c_int, 1);
 pub const __FLT_DIG__ = @as(c_int, 6);
@@ -4397,22 +5076,24 @@ pub const __DBL_MAX__ = @as(f64, 1.7976931348623157e+308);
 pub const __DBL_MIN_10_EXP__ = -@as(c_int, 307);
 pub const __DBL_MIN_EXP__ = -@as(c_int, 1021);
 pub const __DBL_MIN__ = @as(f64, 2.2250738585072014e-308);
-pub const __LDBL_DENORM_MIN__ = @as(c_longdouble, 6.47517511943802511092443895822764655e-4966);
+pub const __LDBL_DENORM_MIN__ = @as(c_longdouble, 3.64519953188247460253e-4951);
 pub const __LDBL_HAS_DENORM__ = @as(c_int, 1);
-pub const __LDBL_DIG__ = @as(c_int, 33);
-pub const __LDBL_DECIMAL_DIG__ = @as(c_int, 36);
-pub const __LDBL_EPSILON__ = @as(c_longdouble, 1.92592994438723585305597794258492732e-34);
+pub const __LDBL_DIG__ = @as(c_int, 18);
+pub const __LDBL_DECIMAL_DIG__ = @as(c_int, 21);
+pub const __LDBL_EPSILON__ = @as(c_longdouble, 1.08420217248550443401e-19);
 pub const __LDBL_HAS_INFINITY__ = @as(c_int, 1);
 pub const __LDBL_HAS_QUIET_NAN__ = @as(c_int, 1);
-pub const __LDBL_MANT_DIG__ = @as(c_int, 113);
+pub const __LDBL_MANT_DIG__ = @as(c_int, 64);
 pub const __LDBL_MAX_10_EXP__ = @as(c_int, 4932);
 pub const __LDBL_MAX_EXP__ = @as(c_int, 16384);
-pub const __LDBL_MAX__ = @as(c_longdouble, 1.18973149535723176508575932662800702e+4932);
+pub const __LDBL_MAX__ = @as(c_longdouble, 1.18973149535723176502e+4932);
 pub const __LDBL_MIN_10_EXP__ = -@as(c_int, 4931);
 pub const __LDBL_MIN_EXP__ = -@as(c_int, 16381);
-pub const __LDBL_MIN__ = @as(c_longdouble, 3.36210314311209350626267781732175260e-4932);
-pub const __POINTER_WIDTH__ = @as(c_int, 32);
+pub const __LDBL_MIN__ = @as(c_longdouble, 3.36210314311209350626e-4932);
+pub const __POINTER_WIDTH__ = @as(c_int, 64);
 pub const __BIGGEST_ALIGNMENT__ = @as(c_int, 16);
+pub const __WCHAR_UNSIGNED__ = @as(c_int, 1);
+pub const __WINT_UNSIGNED__ = @as(c_int, 1);
 pub const __INT8_TYPE__ = i8;
 pub const __INT8_FMTd__ = "hhd";
 pub const __INT8_FMTi__ = "hhi";
@@ -4547,7 +5228,6 @@ pub const __UINT_FAST64_FMTu__ = "llu";
 pub const __UINT_FAST64_FMTx__ = "llx";
 pub const __UINT_FAST64_FMTX__ = "llX";
 pub const __USER_LABEL_PREFIX__ = "";
-pub const __NO_MATH_ERRNO__ = @as(c_int, 1);
 pub const __FINITE_MATH_ONLY__ = @as(c_int, 0);
 pub const __GNUC_STDC_INLINE__ = @as(c_int, 1);
 pub const __GCC_ATOMIC_TEST_AND_SET_TRUEVAL = @as(c_int, 1);
@@ -4572,178 +5252,460 @@ pub const __GCC_ATOMIC_LONG_LOCK_FREE = @as(c_int, 2);
 pub const __GCC_ATOMIC_LLONG_LOCK_FREE = @as(c_int, 2);
 pub const __GCC_ATOMIC_POINTER_LOCK_FREE = @as(c_int, 2);
 pub const __NO_INLINE__ = @as(c_int, 1);
+pub const __PIC__ = @as(c_int, 2);
+pub const __pic__ = @as(c_int, 2);
 pub const __FLT_RADIX__ = @as(c_int, 2);
 pub const __DECIMAL_DIG__ = __LDBL_DECIMAL_DIG__;
-pub const __SSP_STRONG__ = @as(c_int, 2);
-pub const __wasm = @as(c_int, 1);
-pub const __wasm__ = @as(c_int, 1);
-pub const __wasm_sign_ext__ = @as(c_int, 1);
-pub const __wasm_mutable_globals__ = @as(c_int, 1);
+pub const __GCC_ASM_FLAG_OUTPUTS__ = @as(c_int, 1);
+pub const __code_model_small__ = @as(c_int, 1);
+pub const __amd64__ = @as(c_int, 1);
+pub const __amd64 = @as(c_int, 1);
+pub const __x86_64 = @as(c_int, 1);
+pub const __x86_64__ = @as(c_int, 1);
+pub const __SEG_GS = @as(c_int, 1);
+pub const __SEG_FS = @as(c_int, 1);
+pub const __znver3 = @as(c_int, 1);
+pub const __znver3__ = @as(c_int, 1);
+pub const __tune_znver3__ = @as(c_int, 1);
+pub const __REGISTER_PREFIX__ = "";
+pub const __NO_MATH_INLINES = @as(c_int, 1);
+pub const __AES__ = @as(c_int, 1);
+pub const __VAES__ = @as(c_int, 1);
+pub const __PCLMUL__ = @as(c_int, 1);
+pub const __VPCLMULQDQ__ = @as(c_int, 1);
+pub const __LAHF_SAHF__ = @as(c_int, 1);
+pub const __LZCNT__ = @as(c_int, 1);
+pub const __RDRND__ = @as(c_int, 1);
+pub const __FSGSBASE__ = @as(c_int, 1);
+pub const __BMI__ = @as(c_int, 1);
+pub const __BMI2__ = @as(c_int, 1);
+pub const __POPCNT__ = @as(c_int, 1);
+pub const __PRFCHW__ = @as(c_int, 1);
+pub const __RDSEED__ = @as(c_int, 1);
+pub const __ADX__ = @as(c_int, 1);
+pub const __MWAITX__ = @as(c_int, 1);
+pub const __MOVBE__ = @as(c_int, 1);
+pub const __SSE4A__ = @as(c_int, 1);
+pub const __FMA__ = @as(c_int, 1);
+pub const __F16C__ = @as(c_int, 1);
+pub const __SHA__ = @as(c_int, 1);
+pub const __FXSR__ = @as(c_int, 1);
+pub const __XSAVE__ = @as(c_int, 1);
+pub const __XSAVEOPT__ = @as(c_int, 1);
+pub const __XSAVEC__ = @as(c_int, 1);
+pub const __XSAVES__ = @as(c_int, 1);
+pub const __CLFLUSHOPT__ = @as(c_int, 1);
+pub const __CLWB__ = @as(c_int, 1);
+pub const __WBNOINVD__ = @as(c_int, 1);
+pub const __SHSTK__ = @as(c_int, 1);
+pub const __CLZERO__ = @as(c_int, 1);
+pub const __RDPID__ = @as(c_int, 1);
+pub const __RDPRU__ = @as(c_int, 1);
+pub const __INVPCID__ = @as(c_int, 1);
+pub const __CRC32__ = @as(c_int, 1);
+pub const __AVX2__ = @as(c_int, 1);
+pub const __AVX__ = @as(c_int, 1);
+pub const __SSE4_2__ = @as(c_int, 1);
+pub const __SSE4_1__ = @as(c_int, 1);
+pub const __SSSE3__ = @as(c_int, 1);
+pub const __SSE3__ = @as(c_int, 1);
+pub const __SSE2__ = @as(c_int, 1);
+pub const __SSE2_MATH__ = @as(c_int, 1);
+pub const __SSE__ = @as(c_int, 1);
+pub const __SSE_MATH__ = @as(c_int, 1);
+pub const __MMX__ = @as(c_int, 1);
 pub const __GCC_HAVE_SYNC_COMPARE_AND_SWAP_1 = @as(c_int, 1);
 pub const __GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 = @as(c_int, 1);
 pub const __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 = @as(c_int, 1);
 pub const __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8 = @as(c_int, 1);
-pub const __wasm32 = @as(c_int, 1);
-pub const __wasm32__ = @as(c_int, 1);
-pub const __FLOAT128__ = @as(c_int, 1);
+pub const __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16 = @as(c_int, 1);
+pub const __SIZEOF_FLOAT128__ = @as(c_int, 16);
+pub const _WIN32 = @as(c_int, 1);
+pub const _WIN64 = @as(c_int, 1);
+pub const WIN32 = @as(c_int, 1);
+pub const __WIN32 = @as(c_int, 1);
+pub const __WIN32__ = @as(c_int, 1);
+pub const WINNT = @as(c_int, 1);
+pub const __WINNT = @as(c_int, 1);
+pub const __WINNT__ = @as(c_int, 1);
+pub const WIN64 = @as(c_int, 1);
+pub const __WIN64 = @as(c_int, 1);
+pub const __WIN64__ = @as(c_int, 1);
+pub const __MINGW64__ = @as(c_int, 1);
+pub const __MSVCRT__ = @as(c_int, 1);
+pub const __MINGW32__ = @as(c_int, 1);
 pub const __STDC__ = @as(c_int, 1);
-pub const __STDC_HOSTED__ = @as(c_int, 0);
+pub const __STDC_HOSTED__ = @as(c_int, 1);
 pub const __STDC_VERSION__ = @as(c_long, 201710);
 pub const __STDC_UTF_16__ = @as(c_int, 1);
 pub const __STDC_UTF_32__ = @as(c_int, 1);
+pub const _WIN32_WINNT = @as(c_int, 0x0a00);
 pub const _DEBUG = @as(c_int, 1);
 pub const CIMGUI_DEFINE_ENUMS_AND_STRUCTS = @as(c_int, 1);
 pub const CIMGUI_INCLUDED = "";
-pub const _STDIO_H = "";
-pub const _FEATURES_H = "";
-pub const _BSD_SOURCE = @as(c_int, 1);
-pub const _XOPEN_SOURCE = @as(c_int, 700);
-pub const __NEED_FILE = "";
-pub const __NEED___isoc_va_list = "";
-pub const __NEED_size_t = "";
-pub const __NEED_ssize_t = "";
-pub const __NEED_off_t = "";
-pub const __NEED_va_list = "";
-pub const _Addr = c_long;
-pub const _Int64 = c_longlong;
-pub const _Reg = c_long;
-pub const __DEFINED_va_list = "";
-pub const __DEFINED___isoc_va_list = "";
-pub const __DEFINED_size_t = "";
-pub const __DEFINED_ssize_t = "";
-pub const __DEFINED_off_t = "";
-pub const __DEFINED_FILE = "";
-pub const NULL = @import("std").zig.c_translation.cast(?*anyopaque, @as(c_int, 0));
+pub const _INC_STDIO = "";
+pub const _STDIO_CONFIG_DEFINED = "";
+pub const _INC_CORECRT = "";
+pub const _INC__MINGW_H = "";
+pub const _INC_CRTDEFS_MACRO = "";
+pub inline fn __MINGW64_STRINGIFY(x: anytype) @TypeOf(__STRINGIFY(x)) {
+    _ = &x;
+    return __STRINGIFY(x);
+}
+pub const __MINGW64_VERSION_MAJOR = @as(c_int, 10);
+pub const __MINGW64_VERSION_MINOR = @as(c_int, 0);
+pub const __MINGW64_VERSION_BUGFIX = @as(c_int, 0);
+pub const __MINGW64_VERSION_RC = @as(c_int, 0);
+pub const __MINGW64_VERSION_STATE = "alpha";
+pub const __MINGW32_MAJOR_VERSION = @as(c_int, 3);
+pub const __MINGW32_MINOR_VERSION = @as(c_int, 11);
+pub const _M_AMD64 = @as(c_int, 100);
+pub const _M_X64 = @as(c_int, 100);
+pub const @"_" = @as(c_int, 1);
+pub const __MINGW_USE_UNDERSCORE_PREFIX = @as(c_int, 0);
+pub inline fn __MINGW_USYMBOL(sym: anytype) @TypeOf(sym) {
+    _ = &sym;
+    return sym;
+}
+pub const __C89_NAMELESS = __MINGW_EXTENSION;
+pub const __C89_NAMELESSSTRUCTNAME = "";
+pub const __C89_NAMELESSSTRUCTNAME1 = "";
+pub const __C89_NAMELESSSTRUCTNAME2 = "";
+pub const __C89_NAMELESSSTRUCTNAME3 = "";
+pub const __C89_NAMELESSSTRUCTNAME4 = "";
+pub const __C89_NAMELESSSTRUCTNAME5 = "";
+pub const __C89_NAMELESSUNIONNAME = "";
+pub const __C89_NAMELESSUNIONNAME1 = "";
+pub const __C89_NAMELESSUNIONNAME2 = "";
+pub const __C89_NAMELESSUNIONNAME3 = "";
+pub const __C89_NAMELESSUNIONNAME4 = "";
+pub const __C89_NAMELESSUNIONNAME5 = "";
+pub const __C89_NAMELESSUNIONNAME6 = "";
+pub const __C89_NAMELESSUNIONNAME7 = "";
+pub const __C89_NAMELESSUNIONNAME8 = "";
+pub const __GNU_EXTENSION = __MINGW_EXTENSION;
+pub const __MINGW_HAVE_ANSI_C99_PRINTF = @as(c_int, 1);
+pub const __MINGW_HAVE_WIDE_C99_PRINTF = @as(c_int, 1);
+pub const __MINGW_HAVE_ANSI_C99_SCANF = @as(c_int, 1);
+pub const __MINGW_HAVE_WIDE_C99_SCANF = @as(c_int, 1);
+pub const __MSABI_LONG = @import("std").zig.c_translation.Macros.L_SUFFIX;
+pub const __MINGW_GCC_VERSION = ((__GNUC__ * @as(c_int, 10000)) + (__GNUC_MINOR__ * @as(c_int, 100))) + __GNUC_PATCHLEVEL__;
+pub inline fn __MINGW_GNUC_PREREQ(major: anytype, minor: anytype) @TypeOf((__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor))) {
+    _ = &major;
+    _ = &minor;
+    return (__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor));
+}
+pub inline fn __MINGW_MSC_PREREQ(major: anytype, minor: anytype) @TypeOf(@as(c_int, 0)) {
+    _ = &major;
+    _ = &minor;
+    return @as(c_int, 0);
+}
+pub const __MINGW_SEC_WARN_STR = "This function or variable may be unsafe, use _CRT_SECURE_NO_WARNINGS to disable deprecation";
+pub const __MINGW_MSVC2005_DEPREC_STR = "This POSIX function is deprecated beginning in Visual C++ 2005, use _CRT_NONSTDC_NO_DEPRECATE to disable deprecation";
+pub const __MINGW_ATTRIB_DEPRECATED_MSVC2005 = __MINGW_ATTRIB_DEPRECATED_STR(__MINGW_MSVC2005_DEPREC_STR);
+pub const __MINGW_ATTRIB_DEPRECATED_SEC_WARN = __MINGW_ATTRIB_DEPRECATED_STR(__MINGW_SEC_WARN_STR);
+pub const __mingw_static_ovr = __mingw_ovr;
+pub const __mingw_attribute_artificial = "";
+pub const __MINGW_FORTIFY_LEVEL = @as(c_int, 0);
+pub const __mingw_bos_ovr = __mingw_ovr;
+pub const __MINGW_FORTIFY_VA_ARG = @as(c_int, 0);
+pub const _INC_MINGW_SECAPI = "";
+pub const _CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES = @as(c_int, 0);
+pub const _CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES_MEMORY = @as(c_int, 0);
+pub const _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES = @as(c_int, 0);
+pub const _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT = @as(c_int, 0);
+pub const _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_MEMORY = @as(c_int, 0);
+pub const __LONG32 = c_long;
+pub const __USE_CRTIMP = @as(c_int, 1);
+pub const __DECLSPEC_SUPPORTED = "";
+pub const USE___UUIDOF = @as(c_int, 0);
+pub const __CRT__NO_INLINE = @as(c_int, 1);
+pub const __MINGW_ATTRIB_NO_OPTIMIZE = "";
+pub const __MSVCRT_VERSION__ = @as(c_int, 0x700);
+pub const _INT128_DEFINED = "";
+pub const __int8 = u8;
+pub const __int16 = c_short;
+pub const __int32 = c_int;
+pub const __int64 = c_longlong;
+pub const __ptr32 = "";
+pub const __ptr64 = "";
+pub const __unaligned = "";
+pub const __w64 = "";
+pub const __nothrow = "";
+pub const _INC_VADEFS = "";
+pub const MINGW_SDK_INIT = "";
+pub const MINGW_HAS_SECURE_API = @as(c_int, 1);
+pub const __STDC_SECURE_LIB__ = @as(c_long, 200411);
+pub const __GOT_SECURE_LIB__ = __STDC_SECURE_LIB__;
+pub const MINGW_DDK_H = "";
+pub const MINGW_HAS_DDK_H = @as(c_int, 1);
+pub const _CRT_PACKING = @as(c_int, 8);
+pub const __GNUC_VA_LIST = "";
+pub const _VA_LIST_DEFINED = "";
+pub inline fn _ADDRESSOF(v: anytype) @TypeOf(&v) {
+    _ = &v;
+    return &v;
+}
+pub inline fn _CRT_STRINGIZE(_Value: anytype) @TypeOf(__CRT_STRINGIZE(_Value)) {
+    _ = &_Value;
+    return __CRT_STRINGIZE(_Value);
+}
+pub inline fn _CRT_WIDE(_String: anytype) @TypeOf(__CRT_WIDE(_String)) {
+    _ = &_String;
+    return __CRT_WIDE(_String);
+}
+pub const _W64 = "";
+pub const _CRTIMP_NOIA64 = _CRTIMP;
+pub const _CRTIMP2 = _CRTIMP;
+pub const _CRTIMP_ALTERNATIVE = _CRTIMP;
+pub const _CRT_ALTERNATIVE_IMPORTED = "";
+pub const _MRTIMP2 = _CRTIMP;
+pub const _DLL = "";
+pub const _MT = "";
+pub const _MCRTIMP = _CRTIMP;
+pub const _CRTIMP_PURE = _CRTIMP;
+pub const _PGLOBAL = "";
+pub const _AGLOBAL = "";
+pub const _SECURECRT_FILL_BUFFER_PATTERN = @as(c_int, 0xFD);
+pub const _CRT_MANAGED_HEAP_DEPRECATE = "";
+pub const _CONST_RETURN = "";
+pub const UNALIGNED = "";
+pub const __CRTDECL = __cdecl;
+pub const _ARGMAX = @as(c_int, 100);
+pub const _TRUNCATE = @import("std").zig.c_translation.cast(usize, -@as(c_int, 1));
+pub inline fn _CRT_UNUSED(x: anytype) anyopaque {
+    _ = &x;
+    return @import("std").zig.c_translation.cast(anyopaque, x);
+}
+pub const __USE_MINGW_ANSI_STDIO = @as(c_int, 1);
+pub const __ANONYMOUS_DEFINED = "";
+pub const _ANONYMOUS_UNION = __MINGW_EXTENSION;
+pub const _ANONYMOUS_STRUCT = __MINGW_EXTENSION;
+pub const DUMMYUNIONNAME = "";
+pub const DUMMYUNIONNAME1 = "";
+pub const DUMMYUNIONNAME2 = "";
+pub const DUMMYUNIONNAME3 = "";
+pub const DUMMYUNIONNAME4 = "";
+pub const DUMMYUNIONNAME5 = "";
+pub const DUMMYUNIONNAME6 = "";
+pub const DUMMYUNIONNAME7 = "";
+pub const DUMMYUNIONNAME8 = "";
+pub const DUMMYUNIONNAME9 = "";
+pub const DUMMYSTRUCTNAME = "";
+pub const DUMMYSTRUCTNAME1 = "";
+pub const DUMMYSTRUCTNAME2 = "";
+pub const DUMMYSTRUCTNAME3 = "";
+pub const DUMMYSTRUCTNAME4 = "";
+pub const DUMMYSTRUCTNAME5 = "";
+pub const __MINGW_DEBUGBREAK_IMPL = !(__has_builtin(__debugbreak) != 0);
+pub const _CRTNOALIAS = "";
+pub const _CRTRESTRICT = "";
+pub const _SIZE_T_DEFINED = "";
+pub const _SSIZE_T_DEFINED = "";
+pub const _RSIZE_T_DEFINED = "";
+pub const _INTPTR_T_DEFINED = "";
+pub const __intptr_t_defined = "";
+pub const _UINTPTR_T_DEFINED = "";
+pub const __uintptr_t_defined = "";
+pub const _PTRDIFF_T_DEFINED = "";
+pub const _PTRDIFF_T_ = "";
+pub const _WCHAR_T_DEFINED = "";
+pub const _WCTYPE_T_DEFINED = "";
+pub const _WINT_T = "";
+pub const _ERRCODE_DEFINED = "";
+pub const _TIME32_T_DEFINED = "";
+pub const _TIME64_T_DEFINED = "";
+pub const _TIME_T_DEFINED = "";
+pub const _TAGLC_ID_DEFINED = "";
+pub const _THREADLOCALEINFO = "";
+pub const _CRT_USE_WINAPI_FAMILY_DESKTOP_APP = "";
+pub const _CRT_INTERNAL_PRINTF_LEGACY_VSPRINTF_NULL_TERMINATION = @as(c_ulonglong, 0x0001);
+pub const _CRT_INTERNAL_PRINTF_STANDARD_SNPRINTF_BEHAVIOR = @as(c_ulonglong, 0x0002);
+pub const _CRT_INTERNAL_PRINTF_LEGACY_WIDE_SPECIFIERS = @as(c_ulonglong, 0x0004);
+pub const _CRT_INTERNAL_PRINTF_LEGACY_MSVCRT_COMPATIBILITY = @as(c_ulonglong, 0x0008);
+pub const _CRT_INTERNAL_PRINTF_LEGACY_THREE_DIGIT_EXPONENTS = @as(c_ulonglong, 0x0010);
+pub const _CRT_INTERNAL_SCANF_SECURECRT = @as(c_ulonglong, 0x0001);
+pub const _CRT_INTERNAL_SCANF_LEGACY_WIDE_SPECIFIERS = @as(c_ulonglong, 0x0002);
+pub const _CRT_INTERNAL_SCANF_LEGACY_MSVCRT_COMPATIBILITY = @as(c_ulonglong, 0x0004);
+pub const _CRT_INTERNAL_LOCAL_PRINTF_OPTIONS = _CRT_INTERNAL_PRINTF_LEGACY_WIDE_SPECIFIERS;
+pub const _CRT_INTERNAL_LOCAL_SCANF_OPTIONS = _CRT_INTERNAL_SCANF_LEGACY_WIDE_SPECIFIERS;
+pub const BUFSIZ = @as(c_int, 512);
+pub const _NFILE = _NSTREAM_;
+pub const _NSTREAM_ = @as(c_int, 512);
+pub const _IOB_ENTRIES = @as(c_int, 20);
 pub const EOF = -@as(c_int, 1);
-pub const SEEK_SET = @as(c_int, 0);
+pub const _FILE_DEFINED = "";
+pub const _P_tmpdir = "\\";
+pub const _wP_tmpdir = "\\";
+pub const L_tmpnam = @import("std").zig.c_translation.sizeof(_P_tmpdir) + @as(c_int, 12);
 pub const SEEK_CUR = @as(c_int, 1);
 pub const SEEK_END = @as(c_int, 2);
-pub const _IOFBF = @as(c_int, 0);
-pub const _IOLBF = @as(c_int, 1);
-pub const _IONBF = @as(c_int, 2);
-pub const BUFSIZ = @as(c_int, 1024);
-pub const FILENAME_MAX = @as(c_int, 4096);
-pub const FOPEN_MAX = @as(c_int, 1000);
-pub const TMP_MAX = @as(c_int, 10000);
-pub const L_tmpnam = @as(c_int, 20);
-pub const L_ctermid = @as(c_int, 20);
-pub const P_tmpdir = "/tmp";
-pub const L_cuserid = @as(c_int, 20);
+pub const SEEK_SET = @as(c_int, 0);
+pub const STDIN_FILENO = @as(c_int, 0);
+pub const STDOUT_FILENO = @as(c_int, 1);
+pub const STDERR_FILENO = @as(c_int, 2);
+pub const FILENAME_MAX = @as(c_int, 260);
+pub const FOPEN_MAX = @as(c_int, 20);
+pub const _SYS_OPEN = @as(c_int, 20);
+pub const TMP_MAX = @as(c_int, 32767);
+pub const NULL = @import("std").zig.c_translation.cast(?*anyopaque, @as(c_int, 0));
+pub const _OFF_T_DEFINED = "";
+pub const _OFF_T_ = "";
+pub const _OFF64_T_DEFINED = "";
+pub const _FILE_OFFSET_BITS_SET_OFFT = "";
+pub const _iob = __iob_func();
+pub const _FPOS_T_DEFINED = "";
+pub inline fn _FPOSOFF(fp: anytype) c_long {
+    _ = &fp;
+    return @import("std").zig.c_translation.cast(c_long, fp);
+}
+pub const _STDSTREAM_DEFINED = "";
+pub const stdin = __acrt_iob_func(@as(c_int, 0));
+pub const stdout = __acrt_iob_func(@as(c_int, 1));
+pub const stderr = __acrt_iob_func(@as(c_int, 2));
+pub const _IOFBF = @as(c_int, 0x0000);
+pub const _IOLBF = @as(c_int, 0x0040);
+pub const _IONBF = @as(c_int, 0x0004);
+pub const _IOREAD = @as(c_int, 0x0001);
+pub const _IOWRT = @as(c_int, 0x0002);
+pub const _IOMYBUF = @as(c_int, 0x0008);
+pub const _IOEOF = @as(c_int, 0x0010);
+pub const _IOERR = @as(c_int, 0x0020);
+pub const _IOSTRG = @as(c_int, 0x0040);
+pub const _IORW = @as(c_int, 0x0080);
+pub const _TWO_DIGIT_EXPONENT = @as(c_int, 0x1);
+pub const __MINGW_PRINTF_FORMAT = printf;
+pub const __MINGW_SCANF_FORMAT = scanf;
+pub const __builtin_vsnprintf = __mingw_vsnprintf;
+pub const __builtin_vsprintf = __mingw_vsprintf;
+pub const _FILE_OFFSET_BITS_SET_FSEEKO = "";
+pub const _FILE_OFFSET_BITS_SET_FTELLO = "";
+pub const _CRT_PERROR_DEFINED = "";
+pub const popen = _popen;
+pub const pclose = _pclose;
+pub const _CRT_DIRECTORY_DEFINED = "";
+pub const _WSTDIO_DEFINED = "";
+pub const WEOF = @import("std").zig.c_translation.cast(wint_t, @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xFFFF, .hex));
+pub const _INC_SWPRINTF_INL = "";
+pub const _CRT_WPERROR_DEFINED = "";
+pub const wpopen = _wpopen;
+pub const _STDIO_DEFINED = "";
+pub inline fn _getc_nolock(_stream: anytype) @TypeOf(_fgetc_nolock(_stream)) {
+    _ = &_stream;
+    return _fgetc_nolock(_stream);
+}
+pub inline fn _putc_nolock(_c: anytype, _stream: anytype) @TypeOf(_fputc_nolock(_c, _stream)) {
+    _ = &_c;
+    _ = &_stream;
+    return _fputc_nolock(_c, _stream);
+}
+pub inline fn _getchar_nolock() @TypeOf(_getc_nolock(stdin)) {
+    return _getc_nolock(stdin);
+}
+pub inline fn _putchar_nolock(_c: anytype) @TypeOf(_putc_nolock(_c, stdout)) {
+    _ = &_c;
+    return _putc_nolock(_c, stdout);
+}
+pub const P_tmpdir = _P_tmpdir;
+pub const SYS_OPEN = _SYS_OPEN;
+pub const __MINGW_MBWC_CONVERT_DEFINED = "";
+pub const _WSPAWN_DEFINED = "";
+pub const _P_WAIT = @as(c_int, 0);
+pub const _P_NOWAIT = @as(c_int, 1);
+pub const _OLD_P_OVERLAY = @as(c_int, 2);
+pub const _P_NOWAITO = @as(c_int, 3);
+pub const _P_DETACH = @as(c_int, 4);
+pub const _P_OVERLAY = @as(c_int, 2);
+pub const _WAIT_CHILD = @as(c_int, 0);
+pub const _WAIT_GRANDCHILD = @as(c_int, 1);
+pub const _SPAWNV_DEFINED = "";
+pub const _INC_STDIO_S = "";
+pub const _STDIO_S_DEFINED = "";
+pub const L_tmpnam_s = L_tmpnam;
+pub const TMP_MAX_S = TMP_MAX;
+pub const _WSTDIO_S_DEFINED = "";
 pub const __CLANG_STDINT_H = "";
-pub const __int_least64_t = i64;
-pub const __uint_least64_t = u64;
-pub const __int_least32_t = i64;
-pub const __uint_least32_t = u64;
-pub const __int_least16_t = i64;
-pub const __uint_least16_t = u64;
-pub const __int_least8_t = i64;
-pub const __uint_least8_t = u64;
-pub const __uint32_t_defined = "";
-pub const __int8_t_defined = "";
-pub const __intptr_t_defined = "";
-pub const _INTPTR_T = "";
-pub const _UINTPTR_T = "";
-pub inline fn __int_c(v: anytype, suffix: anytype) @TypeOf(__int_c_join(v, suffix)) {
-    return __int_c_join(v, suffix);
+pub const _STDINT_H = "";
+pub const _INC_CRTDEFS = "";
+pub const __need_wint_t = "";
+pub const __need_wchar_t = "";
+pub const _WCHAR_T = "";
+pub const INT8_MIN = -@as(c_int, 128);
+pub const INT16_MIN = -@import("std").zig.c_translation.promoteIntLiteral(c_int, 32768, .decimal);
+pub const INT32_MIN = -@import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal) - @as(c_int, 1);
+pub const INT64_MIN = -@as(c_longlong, 9223372036854775807) - @as(c_int, 1);
+pub const INT8_MAX = @as(c_int, 127);
+pub const INT16_MAX = @as(c_int, 32767);
+pub const INT32_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal);
+pub const INT64_MAX = @as(c_longlong, 9223372036854775807);
+pub const UINT8_MAX = @as(c_int, 255);
+pub const UINT16_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_int, 65535, .decimal);
+pub const UINT32_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_uint, 0xffffffff, .hex);
+pub const UINT64_MAX = @as(c_ulonglong, 0xffffffffffffffff);
+pub const INT_LEAST8_MIN = INT8_MIN;
+pub const INT_LEAST16_MIN = INT16_MIN;
+pub const INT_LEAST32_MIN = INT32_MIN;
+pub const INT_LEAST64_MIN = INT64_MIN;
+pub const INT_LEAST8_MAX = INT8_MAX;
+pub const INT_LEAST16_MAX = INT16_MAX;
+pub const INT_LEAST32_MAX = INT32_MAX;
+pub const INT_LEAST64_MAX = INT64_MAX;
+pub const UINT_LEAST8_MAX = UINT8_MAX;
+pub const UINT_LEAST16_MAX = UINT16_MAX;
+pub const UINT_LEAST32_MAX = UINT32_MAX;
+pub const UINT_LEAST64_MAX = UINT64_MAX;
+pub const INT_FAST8_MIN = INT8_MIN;
+pub const INT_FAST16_MIN = INT16_MIN;
+pub const INT_FAST32_MIN = INT32_MIN;
+pub const INT_FAST64_MIN = INT64_MIN;
+pub const INT_FAST8_MAX = INT8_MAX;
+pub const INT_FAST16_MAX = INT16_MAX;
+pub const INT_FAST32_MAX = INT32_MAX;
+pub const INT_FAST64_MAX = INT64_MAX;
+pub const UINT_FAST8_MAX = UINT8_MAX;
+pub const UINT_FAST16_MAX = UINT16_MAX;
+pub const UINT_FAST32_MAX = UINT32_MAX;
+pub const UINT_FAST64_MAX = UINT64_MAX;
+pub const INTPTR_MIN = INT64_MIN;
+pub const INTPTR_MAX = INT64_MAX;
+pub const UINTPTR_MAX = UINT64_MAX;
+pub const INTMAX_MIN = INT64_MIN;
+pub const INTMAX_MAX = INT64_MAX;
+pub const UINTMAX_MAX = UINT64_MAX;
+pub const PTRDIFF_MIN = INT64_MIN;
+pub const PTRDIFF_MAX = INT64_MAX;
+pub const SIG_ATOMIC_MIN = INT32_MIN;
+pub const SIG_ATOMIC_MAX = INT32_MAX;
+pub const SIZE_MAX = UINT64_MAX;
+pub const WCHAR_MIN = @as(c_uint, 0);
+pub const WCHAR_MAX = @as(c_uint, 0xffff);
+pub const WINT_MIN = @as(c_uint, 0);
+pub const WINT_MAX = @as(c_uint, 0xffff);
+pub inline fn INT8_C(val: anytype) @TypeOf((INT_LEAST8_MAX - INT_LEAST8_MAX) + val) {
+    _ = &val;
+    return (INT_LEAST8_MAX - INT_LEAST8_MAX) + val;
 }
-pub const __int64_c_suffix = __INT64_C_SUFFIX__;
-pub const __int32_c_suffix = __INT64_C_SUFFIX__;
-pub const __int16_c_suffix = __INT64_C_SUFFIX__;
-pub const __int8_c_suffix = __INT64_C_SUFFIX__;
-pub inline fn INT64_C(v: anytype) @TypeOf(__int_c(v, __int64_c_suffix)) {
-    return __int_c(v, __int64_c_suffix);
+pub inline fn INT16_C(val: anytype) @TypeOf((INT_LEAST16_MAX - INT_LEAST16_MAX) + val) {
+    _ = &val;
+    return (INT_LEAST16_MAX - INT_LEAST16_MAX) + val;
 }
-pub inline fn UINT64_C(v: anytype) @TypeOf(__uint_c(v, __int64_c_suffix)) {
-    return __uint_c(v, __int64_c_suffix);
+pub inline fn INT32_C(val: anytype) @TypeOf((INT_LEAST32_MAX - INT_LEAST32_MAX) + val) {
+    _ = &val;
+    return (INT_LEAST32_MAX - INT_LEAST32_MAX) + val;
 }
-pub inline fn INT32_C(v: anytype) @TypeOf(__int_c(v, __int32_c_suffix)) {
-    return __int_c(v, __int32_c_suffix);
+pub const INT64_C = @import("std").zig.c_translation.Macros.LL_SUFFIX;
+pub inline fn UINT8_C(val: anytype) @TypeOf(val) {
+    _ = &val;
+    return val;
 }
-pub inline fn UINT32_C(v: anytype) @TypeOf(__uint_c(v, __int32_c_suffix)) {
-    return __uint_c(v, __int32_c_suffix);
+pub inline fn UINT16_C(val: anytype) @TypeOf(val) {
+    _ = &val;
+    return val;
 }
-pub inline fn INT16_C(v: anytype) @TypeOf(__int_c(v, __int16_c_suffix)) {
-    return __int_c(v, __int16_c_suffix);
-}
-pub inline fn UINT16_C(v: anytype) @TypeOf(__uint_c(v, __int16_c_suffix)) {
-    return __uint_c(v, __int16_c_suffix);
-}
-pub inline fn INT8_C(v: anytype) @TypeOf(__int_c(v, __int8_c_suffix)) {
-    return __int_c(v, __int8_c_suffix);
-}
-pub inline fn UINT8_C(v: anytype) @TypeOf(__uint_c(v, __int8_c_suffix)) {
-    return __uint_c(v, __int8_c_suffix);
-}
-pub const INT64_MAX = INT64_C(@import("std").zig.c_translation.promoteIntLiteral(c_int, 9223372036854775807, .decimal));
-pub const INT64_MIN = -INT64_C(@import("std").zig.c_translation.promoteIntLiteral(c_int, 9223372036854775807, .decimal)) - @as(c_int, 1);
-pub const UINT64_MAX = UINT64_C(@import("std").zig.c_translation.promoteIntLiteral(c_int, 18446744073709551615, .decimal));
-pub const __INT_LEAST64_MIN = INT64_MIN;
-pub const __INT_LEAST64_MAX = INT64_MAX;
-pub const __UINT_LEAST64_MAX = UINT64_MAX;
-pub const __INT_LEAST32_MIN = INT64_MIN;
-pub const __INT_LEAST32_MAX = INT64_MAX;
-pub const __UINT_LEAST32_MAX = UINT64_MAX;
-pub const __INT_LEAST16_MIN = INT64_MIN;
-pub const __INT_LEAST16_MAX = INT64_MAX;
-pub const __UINT_LEAST16_MAX = UINT64_MAX;
-pub const __INT_LEAST8_MIN = INT64_MIN;
-pub const __INT_LEAST8_MAX = INT64_MAX;
-pub const __UINT_LEAST8_MAX = UINT64_MAX;
-pub const INT_LEAST64_MIN = __INT_LEAST64_MIN;
-pub const INT_LEAST64_MAX = __INT_LEAST64_MAX;
-pub const UINT_LEAST64_MAX = __UINT_LEAST64_MAX;
-pub const INT_FAST64_MIN = __INT_LEAST64_MIN;
-pub const INT_FAST64_MAX = __INT_LEAST64_MAX;
-pub const UINT_FAST64_MAX = __UINT_LEAST64_MAX;
-pub const INT32_MAX = INT32_C(@import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal));
-pub const INT32_MIN = -INT32_C(@import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal)) - @as(c_int, 1);
-pub const UINT32_MAX = UINT32_C(@import("std").zig.c_translation.promoteIntLiteral(c_int, 4294967295, .decimal));
-pub const INT_LEAST32_MIN = __INT_LEAST32_MIN;
-pub const INT_LEAST32_MAX = __INT_LEAST32_MAX;
-pub const UINT_LEAST32_MAX = __UINT_LEAST32_MAX;
-pub const INT_FAST32_MIN = __INT_LEAST32_MIN;
-pub const INT_FAST32_MAX = __INT_LEAST32_MAX;
-pub const UINT_FAST32_MAX = __UINT_LEAST32_MAX;
-pub const INT16_MAX = INT16_C(@as(c_int, 32767));
-pub const INT16_MIN = -INT16_C(@as(c_int, 32767)) - @as(c_int, 1);
-pub const UINT16_MAX = UINT16_C(@import("std").zig.c_translation.promoteIntLiteral(c_int, 65535, .decimal));
-pub const INT_LEAST16_MIN = __INT_LEAST16_MIN;
-pub const INT_LEAST16_MAX = __INT_LEAST16_MAX;
-pub const UINT_LEAST16_MAX = __UINT_LEAST16_MAX;
-pub const INT_FAST16_MIN = __INT_LEAST16_MIN;
-pub const INT_FAST16_MAX = __INT_LEAST16_MAX;
-pub const UINT_FAST16_MAX = __UINT_LEAST16_MAX;
-pub const INT8_MAX = INT8_C(@as(c_int, 127));
-pub const INT8_MIN = -INT8_C(@as(c_int, 127)) - @as(c_int, 1);
-pub const UINT8_MAX = UINT8_C(@as(c_int, 255));
-pub const INT_LEAST8_MIN = __INT_LEAST8_MIN;
-pub const INT_LEAST8_MAX = __INT_LEAST8_MAX;
-pub const UINT_LEAST8_MAX = __UINT_LEAST8_MAX;
-pub const INT_FAST8_MIN = __INT_LEAST8_MIN;
-pub const INT_FAST8_MAX = __INT_LEAST8_MAX;
-pub const UINT_FAST8_MAX = __UINT_LEAST8_MAX;
-pub const INTPTR_MIN = -__INTPTR_MAX__ - @as(c_int, 1);
-pub const INTPTR_MAX = __INTPTR_MAX__;
-pub const UINTPTR_MAX = __UINTPTR_MAX__;
-pub const PTRDIFF_MIN = -__PTRDIFF_MAX__ - @as(c_int, 1);
-pub const PTRDIFF_MAX = __PTRDIFF_MAX__;
-pub const SIZE_MAX = __SIZE_MAX__;
-pub const INTMAX_MIN = -__INTMAX_MAX__ - @as(c_int, 1);
-pub const INTMAX_MAX = __INTMAX_MAX__;
-pub const UINTMAX_MAX = __UINTMAX_MAX__;
-pub const SIG_ATOMIC_MIN = __INTN_MIN(__SIG_ATOMIC_WIDTH__);
-pub const SIG_ATOMIC_MAX = __INTN_MAX(__SIG_ATOMIC_WIDTH__);
-pub const WINT_MIN = __INTN_MIN(__WINT_WIDTH__);
-pub const WINT_MAX = __INTN_MAX(__WINT_WIDTH__);
-pub const WCHAR_MAX = __WCHAR_MAX__;
-pub const WCHAR_MIN = __INTN_MIN(__WCHAR_WIDTH__);
-pub inline fn INTMAX_C(v: anytype) @TypeOf(__int_c(v, __INTMAX_C_SUFFIX__)) {
-    return __int_c(v, __INTMAX_C_SUFFIX__);
-}
-pub inline fn UINTMAX_C(v: anytype) @TypeOf(__int_c(v, __UINTMAX_C_SUFFIX__)) {
-    return __int_c(v, __UINTMAX_C_SUFFIX__);
-}
-pub const __GNUC_VA_LIST = "";
+pub const UINT32_C = @import("std").zig.c_translation.Macros.U_SUFFIX;
+pub const UINT64_C = @import("std").zig.c_translation.Macros.ULL_SUFFIX;
+pub const INTMAX_C = @import("std").zig.c_translation.Macros.LL_SUFFIX;
+pub const UINTMAX_C = @import("std").zig.c_translation.Macros.ULL_SUFFIX;
 pub const __STDARG_H = "";
 pub const _VA_LIST = "";
 pub const __STDBOOL_H = "";
@@ -4753,5 +5715,9 @@ pub const @"true" = @as(c_int, 1);
 pub const @"false" = @as(c_int, 0);
 pub const CIMGUI_API = EXTERN ++ API;
 pub const IMGUI_HAS_DOCK = @as(c_int, 1);
-pub const _IO_FILE = struct__IO_FILE;
-pub const _G_fpos64_t = union__G_fpos64_t;
+pub const tagLC_ID = struct_tagLC_ID;
+pub const __lc_time_data = struct___lc_time_data;
+pub const threadlocaleinfostruct = struct_threadlocaleinfostruct;
+pub const threadmbcinfostruct = struct_threadmbcinfostruct;
+pub const localeinfo_struct = struct_localeinfo_struct;
+pub const _iobuf = struct__iobuf;
