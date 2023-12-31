@@ -18,6 +18,7 @@ pub fn Update(self: @This()) void {
 pub const DemoContext = struct {
     context: *zt.App.Context,
     sheet: zt.Texture,
-    renderer: zt.Renderer,
     camera_position: zt.math.Vec2,
+    camera_zoom: f32,
+    camera_rotation: f32,
 };

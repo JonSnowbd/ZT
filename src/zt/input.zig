@@ -294,8 +294,7 @@ pub const Button = enum(u8) {
     GamepadHome,
 
     pub fn pressed(self: Button) bool {
-        _ = self;
-        return false;
+        return value[@intFromEnum(self)].value.active() == true and prev_value[@intFromEnum(self)].value.active() == false;
     }
     /// Returns true once, on the frame the held duration passes the threshold.
     pub fn pressedForDuration(self: Button, duration: f32) bool {
@@ -304,8 +303,7 @@ pub const Button = enum(u8) {
         return false;
     }
     pub fn released(self: Button) bool {
-        _ = self;
-        return false;
+        return value[@intFromEnum(self)].value.active() == false and prev_value[@intFromEnum(self)].value.active() == true;
     }
     pub fn down(self: Button) bool {
         return value[@intFromEnum(self)].value.active() == true;
@@ -332,9 +330,16 @@ pub const Button = enum(u8) {
     /// Pretends negative/positive are an axis. When negative is down, return -1.0, when positive is down, return 1.0.
     /// when both or neither are held, return 0.0.
     pub fn asAxis(negative: Button, positive: Button) f32 {
-        var axis = 0.0;
+        var axis: f32 = 0.0;
         if (negative.down()) axis -= 1.0;
         if (positive.down()) axis += 1.0;
+        return axis;
+    }
+    /// Pretends negative/positive are an axis. When negative is pressed, return -1.0, when positive is pressed, return 1.0.
+    pub fn asAxisStep(negative: Button, positive: Button) f32 {
+        var axis: f32 = 0.0;
+        if (negative.pressed()) axis -= 1.0;
+        if (positive.pressed()) axis += 1.0;
         return axis;
     }
     /// Simulates a WASD style input, same as asAxis but for a stick value.
@@ -1169,8 +1174,12 @@ pub const Axis = enum(u8) {
     GamepadL2,
     GamepadR2,
 
-    pub fn value(self: Axis) f32 {
-        _ = self;
+    pub fn read(self: Axis) f32 {
+        switch (self) {
+            else => {
+                return value[@intFromEnum(self)].value.axis;
+            },
+        }
         return 0.0;
     }
     /// returns true if the axis is positive.
@@ -1226,7 +1235,7 @@ pub const Stick = enum(u8) {
     pub fn read(self: Stick) zt.math.Vec2 {
         switch (self) {
             .MouseDelta => {
-                return previous_mouse.sub(current_mouse);
+                return current_mouse.sub(previous_mouse);
             },
             .MousePosition => {
                 return current_mouse;
@@ -1286,6 +1295,8 @@ pub fn process_update(app: *zt.App.Context) void {
     std.mem.copyForwards(InputData, prev_value, value);
     previous_mouse = current_mouse;
 
+    // Manually reset mouse wheel per frame.
+    value[@intFromEnum(Axis.MouseWheel)].value = InputDataType{ .axis = 0.0 };
     for (app.input.items) |item| {
         switch (item) {
             .keyboard => |kb| {

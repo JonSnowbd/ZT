@@ -852,3 +852,9 @@ pub fn toDegrees(rad: anytype) @TypeOf(rad) {
 }
 
 pub usingnamespace specializeOn(f32);
+
+// Extras from ZT:
+
+pub fn dampTowards(current: f32, target: f32, lambda: f32, dt: f32) f32 {
+    return std.math.lerp(current, target, 1.0 - std.math.exp(-lambda * dt));
+}

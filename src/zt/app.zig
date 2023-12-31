@@ -58,6 +58,11 @@ pub const Context = struct {
     time: TimeManager = undefined,
     open: bool = false,
 
+    /// Width of the window in pixels
+    width: f32 = 0.0,
+    /// Height of the window in pixels
+    height: f32 = 0.0,
+
     pub fn deinit(self: *Context) void {
         self.input.deinit();
         ImGuiImplementation.Shutdown();
@@ -245,6 +250,10 @@ pub fn begin(applicationAllocator: std.mem.Allocator) !*Context {
     var y_size: c_int = 0;
     glfw.glfwGetWindowSize(self.window, &x_size, &y_size);
     gl.glViewport(0, 0, x_size, y_size);
+
+    self.width = @floatFromInt(x_size);
+    self.height = @floatFromInt(y_size);
+
     const io = ig.igGetIO();
     io.ConfigFlags |= ig.ImGuiConfigFlags_DockingEnable;
     io.DisplaySize = .{ .x = @as(f32, @floatFromInt(x_size)), .y = @as(f32, @floatFromInt(y_size)) };
@@ -257,10 +266,13 @@ pub fn begin(applicationAllocator: std.mem.Allocator) !*Context {
 
 // Callbacks
 fn windowSizeChanged(win: ?*glfw.GLFWwindow, newWidth: c_int, newHeight: c_int) callconv(.C) void {
-    _ = win;
+    const context: *Context = @ptrCast(@alignCast(glfw.glfwGetWindowUserPointer(win).?));
     gl.glViewport(0, 0, newWidth, newHeight);
     const io = ig.igGetIO();
     io.DisplaySize = .{ .x = @as(f32, @floatFromInt(newWidth)), .y = @as(f32, @floatFromInt(newHeight)) };
+
+    context.width = @floatFromInt(newWidth);
+    context.height = @floatFromInt(newHeight);
 }
 fn windowMaximizeChanged(win: ?*glfw.GLFWwindow, maximized: c_int) callconv(.C) void {
     _ = maximized;
