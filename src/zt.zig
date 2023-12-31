@@ -31,7 +31,7 @@ pub const GenerateBuffer = @import("zt/generateBuffer.zig").GenerateBuffer;
 
 /// Finds the folder of the binary, and sets the operating system's working directory
 /// to it. Useful to keep relative file loading working properly(especially using `zig build run`)
-/// when ran from any location.
+/// when ran from any location, if thats your intended application behaviour.
 pub fn makeCwd() !void {
     const folder = (try known_folders.getPath(std.heap.c_allocator, known_folders.KnownFolder.executable_dir)).?;
     try std.os.chdir(folder);

@@ -8,11 +8,30 @@ pub const InputDataType = union(enum) {
     button: bool,
     axis: f32,
     stick: zt.math.Vec2,
+
+    pub fn active(self: InputDataType) bool {
+        switch (self) {
+            .button => |btn| {
+                return btn;
+            },
+            .axis => |axs| {
+                return axs > Axis.epsilon or axs < -Axis.epsilon;
+            },
+            .stick => |stck| {
+                return (stck.x > Stick.epsilon or stck.x < -Stick.epsilon) or (stck.y > Stick.epsilon or stck.y < -Stick.epsilon);
+            },
+        }
+    }
 };
 pub const InputData = struct {
     value: InputDataType,
     active_time: f32,
-    threshold: f32,
+};
+
+pub const UniversalInput = union(enum) {
+    button: Button,
+    axis: Axis,
+    stick: Stick,
 };
 
 pub const GLFWKeys = [_]i32{
@@ -141,6 +160,7 @@ pub const GLFWKeys = [_]i32{
 pub const Button = enum(u8) {
     var blockOnImGuiConsume: bool = true;
 
+    Unknown,
     A,
     B,
     C,
@@ -288,34 +308,43 @@ pub const Button = enum(u8) {
         return false;
     }
     pub fn down(self: Button) bool {
-        _ = self;
+        return value[@intFromEnum(self)].value.active() == true;
+    }
+    /// Returns true every frame when its been held for longer than duration.
+    pub fn downForDuration(self: Button, duration: f32) bool {
+        if (down(self) and heldDuration(self) > duration) {
+            return true;
+        }
         return false;
     }
-    /// Returns true every frame when its been held for longer than duration..
-    pub fn downForDuration(self: Button, duration: f32) bool {
-        _ = self;
-        _ = duration;
-        return false;
+    /// Returns how long the button has been active, returns -1 if it is not held.
+    pub fn heldDuration(self: Button) f32 {
+        return value[@intFromEnum(self)].active_time;
     }
     /// Returns true if the button is not being held this frame.
     pub fn up(self: Button) bool {
-        _ = self;
-        return false;
+        return value[@intFromEnum(self)].value.active() == false;
+    }
+    /// Returns true if the button state has changed. Equal to `(btn.pressed() or btn.released())`
+    pub fn changed(self: Button) bool {
+        return self.pressed() or self.released();
     }
     /// Pretends negative/positive are an axis. When negative is down, return -1.0, when positive is down, return 1.0.
     /// when both or neither are held, return 0.0.
     pub fn asAxis(negative: Button, positive: Button) f32 {
-        _ = negative;
-        _ = positive;
-        return 0.0;
+        var axis = 0.0;
+        if (negative.down()) axis -= 1.0;
+        if (positive.down()) axis += 1.0;
+        return axis;
     }
     /// Simulates a WASD style input, same as asAxis but for a stick value.
     pub fn asStick(y_negative: Button, y_positive: Button, x_negative: Button, x_positive: Button) zt.math.Vec2 {
-        _ = x_negative;
-        _ = x_positive;
-        _ = y_negative;
-        _ = y_positive;
-        return zt.math.Vec2.zero;
+        var val = zt.math.vec2(0.0, 0.0);
+        if (x_positive.down()) val.x += 1;
+        if (x_negative.down()) val.x -= 1;
+        if (y_positive.down()) val.y += 1;
+        if (y_negative.down()) val.y -= 1;
+        return val;
     }
     /// Pretends negative/positive are an axis, and outputs magnitude on press, and then repeats
     /// that magnitude at a rate decided by interval, after `initial_wait`. For example holding A when given
@@ -332,8 +361,414 @@ pub const Button = enum(u8) {
         return false;
     }
 
-    pub fn to_glfw_key(self: Button) c_int {
+    /// This specifically only translates keyboard keys
+    pub fn fromGlfwKeyboardKey(key: c_int) Button {
+        switch (key) {
+            glfw.GLFW_KEY_A => {
+                return .A;
+            },
+            glfw.GLFW_KEY_B => {
+                return .B;
+            },
+            glfw.GLFW_KEY_C => {
+                return .C;
+            },
+            glfw.GLFW_KEY_D => {
+                return .D;
+            },
+            glfw.GLFW_KEY_E => {
+                return .E;
+            },
+            glfw.GLFW_KEY_F => {
+                return .F;
+            },
+            glfw.GLFW_KEY_G => {
+                return .G;
+            },
+            glfw.GLFW_KEY_H => {
+                return .H;
+            },
+            glfw.GLFW_KEY_I => {
+                return .I;
+            },
+            glfw.GLFW_KEY_J => {
+                return .J;
+            },
+            glfw.GLFW_KEY_K => {
+                return .K;
+            },
+            glfw.GLFW_KEY_L => {
+                return .L;
+            },
+            glfw.GLFW_KEY_M => {
+                return .M;
+            },
+            glfw.GLFW_KEY_N => {
+                return .N;
+            },
+            glfw.GLFW_KEY_O => {
+                return .O;
+            },
+            glfw.GLFW_KEY_P => {
+                return .P;
+            },
+            glfw.GLFW_KEY_Q => {
+                return .Q;
+            },
+            glfw.GLFW_KEY_R => {
+                return .R;
+            },
+            glfw.GLFW_KEY_S => {
+                return .S;
+            },
+            glfw.GLFW_KEY_T => {
+                return .T;
+            },
+            glfw.GLFW_KEY_U => {
+                return .U;
+            },
+            glfw.GLFW_KEY_V => {
+                return .V;
+            },
+            glfw.GLFW_KEY_W => {
+                return .W;
+            },
+            glfw.GLFW_KEY_X => {
+                return .X;
+            },
+            glfw.GLFW_KEY_Y => {
+                return .Y;
+            },
+            glfw.GLFW_KEY_Z => {
+                return .Z;
+            },
+            glfw.GLFW_KEY_1 => {
+                return .K1;
+            },
+            glfw.GLFW_KEY_2 => {
+                return .K2;
+            },
+            glfw.GLFW_KEY_3 => {
+                return .K3;
+            },
+            glfw.GLFW_KEY_4 => {
+                return .K4;
+            },
+            glfw.GLFW_KEY_5 => {
+                return .K5;
+            },
+            glfw.GLFW_KEY_6 => {
+                return .K6;
+            },
+            glfw.GLFW_KEY_7 => {
+                return .K7;
+            },
+            glfw.GLFW_KEY_8 => {
+                return .K8;
+            },
+            glfw.GLFW_KEY_9 => {
+                return .K9;
+            },
+            glfw.GLFW_KEY_0 => {
+                return .K0;
+            },
+            glfw.GLFW_KEY_F1 => {
+                return .F1;
+            },
+            glfw.GLFW_KEY_F2 => {
+                return .F2;
+            },
+            glfw.GLFW_KEY_F3 => {
+                return .F3;
+            },
+            glfw.GLFW_KEY_F4 => {
+                return .F4;
+            },
+            glfw.GLFW_KEY_F5 => {
+                return .F5;
+            },
+            glfw.GLFW_KEY_F6 => {
+                return .F6;
+            },
+            glfw.GLFW_KEY_F7 => {
+                return .F7;
+            },
+            glfw.GLFW_KEY_F8 => {
+                return .F8;
+            },
+            glfw.GLFW_KEY_F9 => {
+                return .F9;
+            },
+            glfw.GLFW_KEY_F10 => {
+                return .F10;
+            },
+            glfw.GLFW_KEY_F11 => {
+                return .F11;
+            },
+            glfw.GLFW_KEY_F12 => {
+                return .F12;
+            },
+            glfw.GLFW_KEY_F13 => {
+                return .F13;
+            },
+            glfw.GLFW_KEY_F14 => {
+                return .F14;
+            },
+            glfw.GLFW_KEY_F15 => {
+                return .F15;
+            },
+            glfw.GLFW_KEY_F16 => {
+                return .F16;
+            },
+            glfw.GLFW_KEY_F17 => {
+                return .F17;
+            },
+            glfw.GLFW_KEY_F18 => {
+                return .F18;
+            },
+            glfw.GLFW_KEY_F19 => {
+                return .F19;
+            },
+            glfw.GLFW_KEY_F20 => {
+                return .F20;
+            },
+            glfw.GLFW_KEY_F21 => {
+                return .F21;
+            },
+            glfw.GLFW_KEY_F22 => {
+                return .F22;
+            },
+            glfw.GLFW_KEY_F23 => {
+                return .F23;
+            },
+            glfw.GLFW_KEY_F24 => {
+                return .F24;
+            },
+            glfw.GLFW_KEY_F25 => {
+                return .F25;
+            },
+            glfw.GLFW_KEY_ENTER => {
+                return .Enter;
+            },
+            glfw.GLFW_KEY_LEFT_CONTROL => {
+                return .LControl;
+            },
+            glfw.GLFW_KEY_LEFT_SHIFT => {
+                return .LShift;
+            },
+            glfw.GLFW_KEY_LEFT_ALT => {
+                return .LAlt;
+            },
+            glfw.GLFW_KEY_RIGHT_CONTROL => {
+                return .RControl;
+            },
+            glfw.GLFW_KEY_RIGHT_SHIFT => {
+                return .RShift;
+            },
+            glfw.GLFW_KEY_RIGHT_ALT => {
+                return .RAlt;
+            },
+            glfw.GLFW_KEY_TAB => {
+                return .Tab;
+            },
+            glfw.GLFW_KEY_SPACE => {
+                return .Space;
+            },
+            glfw.GLFW_KEY_UP => {
+                return .Up;
+            },
+            glfw.GLFW_KEY_DOWN => {
+                return .Down;
+            },
+            glfw.GLFW_KEY_LEFT => {
+                return .Left;
+            },
+            glfw.GLFW_KEY_RIGHT => {
+                return .Right;
+            },
+            glfw.GLFW_KEY_GRAVE_ACCENT => {
+                return .Grave;
+            },
+            glfw.GLFW_KEY_CAPS_LOCK => {
+                return .CapsLock;
+            },
+            glfw.GLFW_KEY_BACKSPACE => {
+                return .Backspace;
+            },
+            glfw.GLFW_KEY_ESCAPE => {
+                return .Escape;
+            },
+            glfw.GLFW_KEY_INSERT => {
+                return .Insert;
+            },
+            glfw.GLFW_KEY_HOME => {
+                return .Home;
+            },
+            glfw.GLFW_KEY_PAGE_UP => {
+                return .PageUp;
+            },
+            glfw.GLFW_KEY_PAGE_DOWN => {
+                return .PageDown;
+            },
+            glfw.GLFW_KEY_DELETE => {
+                return .Delete;
+            },
+            glfw.GLFW_KEY_END => {
+                return .End;
+            },
+            glfw.GLFW_KEY_KP_DIVIDE => {
+                return .NPDivide;
+            },
+            glfw.GLFW_KEY_KP_MULTIPLY => {
+                return .NPMultiply;
+            },
+            glfw.GLFW_KEY_KP_SUBTRACT => {
+                return .NPSubtract;
+            },
+            glfw.GLFW_KEY_KP_ADD => {
+                return .NPAdd;
+            },
+            glfw.GLFW_KEY_KP_ENTER => {
+                return .NPEnter;
+            },
+            glfw.GLFW_KEY_KP_DECIMAL => {
+                return .NPDelete;
+            },
+            glfw.GLFW_KEY_KP_1 => {
+                return .NP1;
+            },
+            glfw.GLFW_KEY_KP_2 => {
+                return .NP2;
+            },
+            glfw.GLFW_KEY_KP_3 => {
+                return .NP3;
+            },
+            glfw.GLFW_KEY_KP_4 => {
+                return .NP4;
+            },
+            glfw.GLFW_KEY_KP_5 => {
+                return .NP5;
+            },
+            glfw.GLFW_KEY_KP_6 => {
+                return .NP6;
+            },
+            glfw.GLFW_KEY_KP_7 => {
+                return .NP7;
+            },
+            glfw.GLFW_KEY_KP_8 => {
+                return .NP8;
+            },
+            glfw.GLFW_KEY_KP_9 => {
+                return .NP9;
+            },
+            glfw.GLFW_KEY_KP_0 => {
+                return .NP0;
+            },
+            glfw.GLFW_KEY_PRINT_SCREEN => {
+                return .PrintScreen;
+            },
+            glfw.GLFW_KEY_PAUSE => {
+                return .Pause;
+            },
+            glfw.GLFW_KEY_BACKSLASH => {
+                return .BackSlash;
+            },
+            glfw.GLFW_KEY_SLASH => {
+                return .ForwardSlash;
+            },
+            else => {
+                return .Unknown;
+            },
+        }
+    }
+    pub fn fromGlfwMouseButton(glfw_button: c_int) Button {
+        switch (glfw_button) {
+            glfw.GLFW_MOUSE_BUTTON_LEFT => {
+                return .MouseLeftClick;
+            },
+            glfw.GLFW_MOUSE_BUTTON_RIGHT => {
+                return .MouseRightClick;
+            },
+            glfw.GLFW_MOUSE_BUTTON_MIDDLE => {
+                return .MouseMiddleClick;
+            },
+            glfw.GLFW_MOUSE_BUTTON_4 => {
+                return .MouseThumbButton1;
+            },
+            glfw.GLFW_MOUSE_BUTTON_5 => {
+                return .MouseThumbButton2;
+            },
+            glfw.GLFW_MOUSE_BUTTON_6 => {
+                return .MouseThumbButton3;
+            },
+            else => {
+                return .Unknown;
+            },
+        }
+    }
+    pub fn fromGlfwGamepadButton(glfw_button: c_int) Button {
+        switch (glfw_button) {
+            glfw.GLFW_GAMEPAD_BUTTON_DPAD_UP => {
+                return .GamepadHatUp;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_DPAD_DOWN => {
+                return .GamepadHatDown;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_DPAD_LEFT => {
+                return .GamepadHatLeft;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT => {
+                return .GamepadHatRight;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER => {
+                return .GamepadL1;
+            },
+            glfw.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER => {
+                return .GamepadL2;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_LEFT_THUMB => {
+                return .GamepadL3;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER => {
+                return .GamepadR1;
+            },
+            glfw.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER => {
+                return .GamepadR2;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB => {
+                return .GamepadR3;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_A => {
+                return .GamepadSouthButton;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_B => {
+                return .GamepadEastButton;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_Y => {
+                return .GamepadNorthButton;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_X => {
+                return .GamepadWestButton;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_START => {
+                return .GamepadStart;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_TRIANGLE => {
+                return .GamepadSelect;
+            },
+            glfw.GLFW_GAMEPAD_BUTTON_GUIDE => {
+                return .GamepadHome;
+            },
+            else => {
+                return .Unknown;
+            },
+        }
+    }
+    pub fn toGlfwKey(self: Button) c_int {
         switch (self) {
+            .Unknown => {
+                return glfw.GLFW_KEY_UNKNOWN;
+            },
             .A => {
                 return glfw.GLFW_KEY_A;
             },
@@ -656,13 +1091,13 @@ pub const Button = enum(u8) {
                 return glfw.GLFW_MOUSE_BUTTON_MIDDLE;
             },
             .MouseThumbButton1 => {
-                return glfw.GLFW_MOUSE_BUTTON_1;
+                return glfw.GLFW_MOUSE_BUTTON_4;
             },
             .MouseThumbButton2 => {
-                return glfw.GLFW_MOUSE_BUTTON_2;
+                return glfw.GLFW_MOUSE_BUTTON_5;
             },
             .MouseThumbButton3 => {
-                return glfw.GLFW_MOUSE_BUTTON_3;
+                return glfw.GLFW_MOUSE_BUTTON_6;
             },
             .GamepadHatUp => {
                 return glfw.GLFW_GAMEPAD_BUTTON_DPAD_UP;
@@ -722,10 +1157,11 @@ pub const Button = enum(u8) {
 pub const Axis = enum(u8) {
     var blockOnImGuiConsume: bool = true;
     /// A deadzone for active/inactive/value.
-    pub var epsilon = 0.05;
+    pub var epsilon: f32 = 0.05;
 
     MouseX = @intFromEnum(Button.GamepadSelect) + 1,
     MouseY,
+    MouseWheel,
     GamepadLeftStickX,
     GamepadLeftStickY,
     GamepadRightStickX,
@@ -757,9 +1193,14 @@ pub const Axis = enum(u8) {
         _ = self;
         return false;
     }
+    /// Returns true if the axis was changed between now and the previous frame
+    pub fn changed(self: Axis) bool {
+        _ = self;
+        return false;
+    }
     /// Is true on initial press, then repeats true while held every `interval`, after the `initial_wait`
     /// period.
-    pub fn stepped_hold(self: Axis, initial_wait: f32, interval: f32) bool {
+    pub fn steppedHold(self: Axis, initial_wait: f32, interval: f32) bool {
         _ = self;
         _ = initial_wait;
         _ = interval;
@@ -770,7 +1211,7 @@ pub const Axis = enum(u8) {
 pub const Stick = enum(u8) {
     var blockOnImGuiConsume: bool = true;
     /// A deadzone for active/inactive/value
-    pub var epsilon = 0.05;
+    pub var epsilon: f32 = 0.05;
 
     MouseDelta = @intFromEnum(Axis.GamepadR2) + 1,
     MousePosition,
@@ -782,8 +1223,18 @@ pub const Stick = enum(u8) {
         return false;
     }
 
-    pub fn value(self: Stick) zt.math.Vec2 {
-        _ = self;
+    pub fn read(self: Stick) zt.math.Vec2 {
+        switch (self) {
+            .MouseDelta => {
+                return previous_mouse.sub(current_mouse);
+            },
+            .MousePosition => {
+                return current_mouse;
+            },
+            else => {
+                return value[@intFromEnum(self)].value.stick;
+            },
+        }
         return zt.math.Vec2.zero;
     }
 };
@@ -792,16 +1243,76 @@ pub const Stick = enum(u8) {
 var stop_mouse: bool = false;
 var stop_kb: bool = false;
 
+var prev_value: []InputData = undefined;
 var value: []InputData = undefined;
+
+var previous_mouse: zt.math.Vec2 = zt.math.Vec2.zero;
+var current_mouse: zt.math.Vec2 = zt.math.Vec2.zero;
 
 // To be bullet proof to future index changes, we create the associative maps
 // dynamically, in an array to be accessed with key values as the index.
 // This is a little bit memory inefficient, but nice and fast so I'll take it.
 pub fn init_input() void {
-    value = std.heap.c_allocator.alloc(InputData, @intFromEnum(Stick.GamepadRightStick)) catch unreachable;
+    prev_value = std.heap.c_allocator.alloc(InputData, @intFromEnum(Stick.GamepadRightStick) + 1) catch unreachable;
+    value = std.heap.c_allocator.alloc(InputData, @intFromEnum(Stick.GamepadRightStick) + 1) catch unreachable;
+    for (0..@intFromEnum(Button.GamepadHome) + 1) |i| {
+        const button: Button = @enumFromInt(i);
+        std.log.info("Putting together info for button #{any} named {s}", .{ i, @tagName(button) });
+        value[i] = InputData{
+            .value = InputDataType{ .button = false },
+            .active_time = -1.0,
+        };
+    }
+
+    for (@intFromEnum(Axis.MouseX)..@intFromEnum(Axis.GamepadR2) + 1) |i| {
+        const axis: Axis = @enumFromInt(i);
+        std.log.info("Putting together info for axis #{any} named {s}", .{ i, @tagName(axis) });
+        value[i] = InputData{
+            .value = InputDataType{ .axis = 0.0 },
+            .active_time = -1.0,
+        };
+    }
+
+    for (@intFromEnum(Stick.MouseDelta)..@intFromEnum(Stick.GamepadRightStick) + 1) |i| {
+        const stick: Stick = @enumFromInt(i);
+        std.log.info("Putting together info for stick #{any} named {s}", .{ i, @tagName(stick) });
+        value[i] = InputData{
+            .value = InputDataType{ .stick = zt.math.vec2(0.0, 0.0) },
+            .active_time = -1.0,
+        };
+    }
 }
 pub fn process_update(app: *zt.App.Context) void {
+    std.mem.copyForwards(InputData, prev_value, value);
+    previous_mouse = current_mouse;
+
     for (app.input.items) |item| {
-        _ = item;
+        switch (item) {
+            .keyboard => |kb| {
+                if (kb.action == glfw.GLFW_PRESS or kb.action == glfw.GLFW_RELEASE) {
+                    const btn = Button.fromGlfwKeyboardKey(kb.key);
+                    if (btn != Button.Unknown) {
+                        const pressed = kb.action == glfw.GLFW_PRESS;
+                        value[@intFromEnum(btn)].value = InputDataType{ .button = pressed };
+                    }
+                }
+            },
+            .mouseButton => |mb| {
+                if (mb.action == glfw.GLFW_PRESS or mb.action == glfw.GLFW_RELEASE) {
+                    const btn = Button.fromGlfwMouseButton(mb.key);
+                    if (btn != Button.Unknown) {
+                        const pressed = mb.action == glfw.GLFW_PRESS;
+                        value[@intFromEnum(btn)].value = InputDataType{ .button = pressed };
+                    }
+                }
+            },
+            .mousePosition => |mp| {
+                current_mouse = zt.math.vec2(@floatCast(mp.x), @floatCast(mp.y));
+            },
+            .mouseWheel => |whl| {
+                value[@intFromEnum(Axis.MouseWheel)].value = InputDataType{ .axis = @floatCast(whl.y) };
+            },
+            else => {},
+        }
     }
 }

@@ -21,7 +21,7 @@ pub fn createShader(fragment: [*:0]const u8) zt.Shader {
     return zt.Shader.init(VertShaderSource, fragment);
 }
 
-pub fn init() @This() {
+pub fn init() Self {
     var renderer = Self{
         .defaultShader = zt.Shader.init(VertShaderSource, FragShaderSource),
         .projectionMatrix = zt.math.Mat4.createOrthogonal(0, 1280, 720, 0, -128, 128),
