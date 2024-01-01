@@ -758,11 +758,8 @@ pub const Button = enum(u8) {
             glfw.GLFW_GAMEPAD_BUTTON_START => {
                 return .GamepadStart;
             },
-            glfw.GLFW_GAMEPAD_BUTTON_TRIANGLE => {
-                return .GamepadSelect;
-            },
             glfw.GLFW_GAMEPAD_BUTTON_GUIDE => {
-                return .GamepadHome;
+                return .GamepadSelect;
             },
             else => {
                 return .Unknown;
@@ -1150,7 +1147,7 @@ pub const Button = enum(u8) {
                 return glfw.GLFW_GAMEPAD_BUTTON_START;
             },
             .GamepadSelect => {
-                return glfw.GLFW_GAMEPAD_BUTTON_TRIANGLE;
+                return glfw.GLFW_GAMEPAD_BUTTON_BACK;
             },
             .GamepadHome => {
                 return glfw.GLFW_GAMEPAD_BUTTON_GUIDE;
@@ -1166,6 +1163,8 @@ pub const Axis = enum(u8) {
 
     MouseX = @intFromEnum(Button.GamepadSelect) + 1,
     MouseY,
+    MouseDeltaX,
+    MouseDeltaY,
     MouseWheel,
     GamepadLeftStickX,
     GamepadLeftStickY,
@@ -1246,6 +1245,24 @@ pub const Stick = enum(u8) {
         }
         return zt.math.Vec2.zero;
     }
+    pub fn readDeadzone(self: Stick, deadzone: f32) zt.math.Vec2 {
+        switch (self) {
+            .MouseDelta => {
+                return current_mouse.sub(previous_mouse);
+            },
+            .MousePosition => {
+                return current_mouse;
+            },
+            else => {
+                const val = value[@intFromEnum(self)].value.stick;
+                if (val.length() < deadzone) {
+                    return zt.math.Vec2.zero;
+                }
+                return val;
+            },
+        }
+        return zt.math.Vec2.zero;
+    }
 };
 
 // State.
@@ -1297,6 +1314,9 @@ pub fn process_update(app: *zt.App.Context) void {
 
     // Manually reset mouse wheel per frame.
     value[@intFromEnum(Axis.MouseWheel)].value = InputDataType{ .axis = 0.0 };
+
+    manualGamepad();
+
     for (app.input.items) |item| {
         switch (item) {
             .keyboard => |kb| {
@@ -1326,4 +1346,52 @@ pub fn process_update(app: *zt.App.Context) void {
             else => {},
         }
     }
+}
+
+// GLFW doesnt have a callback like keyboard event for gamepad, so filling it in
+// will be our job.
+fn manualGamepad() void {
+    var state: glfw.GLFWgamepadstate = undefined;
+    const success = glfw.glfwGetGamepadState(glfw.GLFW_JOYSTICK_1, &state);
+    if (success == glfw.GLFW_FALSE) {
+        return;
+    }
+    value[@intFromEnum(Button.GamepadHatUp)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_DPAD_UP] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadHatDown)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_DPAD_DOWN] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadHatLeft)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_DPAD_LEFT] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadHatRight)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT] == glfw.GLFW_PRESS };
+
+    value[@intFromEnum(Button.GamepadNorthButton)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_TRIANGLE] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadEastButton)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_CIRCLE] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadSouthButton)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_CROSS] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadWestButton)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_SQUARE] == glfw.GLFW_PRESS };
+
+    value[@intFromEnum(Button.GamepadL1)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadL3)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_LEFT_THUMB] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadR1)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadR3)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB] == glfw.GLFW_PRESS };
+
+    value[@intFromEnum(Button.GamepadStart)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_START] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadSelect)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_BACK] == glfw.GLFW_PRESS };
+    value[@intFromEnum(Button.GamepadHome)].value = InputDataType{ .button = state.buttons[glfw.GLFW_GAMEPAD_BUTTON_GUIDE] == glfw.GLFW_PRESS };
+
+    value[@intFromEnum(Axis.GamepadL2)].value = InputDataType{ .axis = state.axes[glfw.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] };
+    value[@intFromEnum(Axis.GamepadR2)].value = InputDataType{ .axis = state.axes[glfw.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER] };
+
+    value[@intFromEnum(Axis.GamepadLeftStickX)].value = InputDataType{ .axis = state.axes[glfw.GLFW_GAMEPAD_AXIS_LEFT_X] };
+    value[@intFromEnum(Axis.GamepadLeftStickY)].value = InputDataType{ .axis = state.axes[glfw.GLFW_GAMEPAD_AXIS_LEFT_Y] };
+    value[@intFromEnum(Axis.GamepadRightStickX)].value = InputDataType{ .axis = state.axes[glfw.GLFW_GAMEPAD_AXIS_RIGHT_X] };
+    value[@intFromEnum(Axis.GamepadRightStickY)].value = InputDataType{ .axis = state.axes[glfw.GLFW_GAMEPAD_AXIS_RIGHT_Y] };
+
+    const ls = zt.math.vec2(
+        value[@intFromEnum(Axis.GamepadLeftStickX)].value.axis,
+        value[@intFromEnum(Axis.GamepadLeftStickY)].value.axis,
+    );
+    const rs = zt.math.vec2(
+        value[@intFromEnum(Axis.GamepadRightStickX)].value.axis,
+        value[@intFromEnum(Axis.GamepadRightStickY)].value.axis,
+    );
+
+    value[@intFromEnum(Stick.GamepadLeftStick)].value = InputDataType{ .stick = ls };
+    value[@intFromEnum(Stick.GamepadRightStick)].value = InputDataType{ .stick = rs };
 }

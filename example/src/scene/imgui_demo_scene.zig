@@ -34,5 +34,5 @@ fn update(ptr: *anyopaque) void {
 }
 fn side(ptr: *anyopaque) void {
     const self: *State = @ptrCast(@alignCast(ptr));
-    _ = ig.igCheckbox("Open Demo", &self.open);
+    _ = zg.edit("Open Demo", &self.open, .{});
 }

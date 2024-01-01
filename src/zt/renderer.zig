@@ -285,10 +285,17 @@ pub fn flush(self: *Self) void {
     self.currentTexture.?.unbind();
 }
 
-pub fn worldToScreen(self: *Self, point: zt.math.Vec2) zt.math.Vec2 {
+pub fn worldToScreen(self: Self, point: zt.math.Vec2) zt.math.Vec2 {
     return point.transform4(self.viewMatrix);
 }
 
-pub fn screenToWorld(self: *Self, point: zt.math.Vec2) zt.math.Vec2 {
+pub fn screenToWorld(self: Self, point: zt.math.Vec2) zt.math.Vec2 {
     return point.transform4(self.inverseViewMatrix);
+}
+
+/// Takes a vector thats oriented to the screen (eg mouse delta)
+/// and translates it into camera oriented direction
+pub fn screenOrientedVecToCamera(self: Self) zt.math.Vec2 {
+    _ = self; // autofix
+
 }

@@ -51,12 +51,13 @@ pub fn main() !void {
 
         // Scale
         target_zoom = std.math.clamp(target_zoom + (zt.Axis.MouseWheel.read() * 0.25), 0.25, 5.0);
-        demoContext.camera_zoom = zt.math.dampTowards(demoContext.camera_zoom, target_zoom, 8.0, context.time.dt);
+        demoContext.camera_zoom = zt.math.dampTowardsSnap(demoContext.camera_zoom, target_zoom, 8.0, context.time.dt, 0.005);
 
         // Position
         // zt.Button.asStick is a treats the buttons provided like a vec2, like WASD
         const cameraMovement = zt.Button
             .asStick(zt.Button.W, zt.Button.S, zt.Button.A, zt.Button.D)
+            .add(zt.Stick.GamepadRightStick.readDeadzone(0.125))
             .normalize()
             .scale(600.0 * context.time.dt);
 
@@ -64,11 +65,12 @@ pub fn main() !void {
         if (zt.Button.MouseRightClick.down()) {
             dragCameraMovement = zt.Stick.MouseDelta.read().scaleDiv(demoContext.camera_zoom);
         }
+
         demoContext.camera_position = demoContext.camera_position.sub(cameraMovement).add(dragCameraMovement);
 
         // Rotation
         target_rotation = std.math.clamp(target_rotation + (zt.Button.asAxisStep(zt.Button.Q, zt.Button.E) * 0.785398), -6.28319, 6.28319);
-        demoContext.camera_rotation = zt.math.dampTowards(demoContext.camera_rotation, target_rotation, 13.0, context.time.dt);
+        demoContext.camera_rotation = zt.math.dampTowardsSnap(demoContext.camera_rotation, target_rotation, 13.0, context.time.dt, 0.05);
 
         // ==============================================
         // ImGui Stuff
@@ -90,6 +92,7 @@ pub fn main() !void {
 fn inspector(ctx: *zt.App.Context) void {
     if (ig.igBegin("Demo Controller", null, 0)) {
         ig.igText("Scenes");
+        zg.pushFullWidth();
         if (ig.igBeginListBox("##Listbox", .{})) {
             var i: usize = 0;
             while (i < scenes.items.len) : (i += 1) {
@@ -101,9 +104,10 @@ fn inspector(ctx: *zt.App.Context) void {
             ig.igEndListBox();
         }
         ig.igSeparator();
+        zg.popFullWidth();
 
         ig.igText("Settings");
-        _ = zg.edit("Energy Saving", &ctx.settings.energySaving);
+        _ = zg.edit("Energy Saving", &ctx.settings.energySaving, .{});
         if (ig.igCheckbox("V Sync", &ctx.settings.vsync)) {
             // The vsync setting is only a getter, setting it does nothing.
             // So on change, we follow through with the real call that changes it.

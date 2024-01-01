@@ -31,9 +31,9 @@ pub fn init(context: *SceneInterface.DemoContext) SceneInterface {
     instance.demo = context;
     instance.renderer = zt.Renderer.init();
     instance.gravity = 981.0;
-    instance.upBounce = 850.0;
+    instance.upBounce = 760.0;
     instance.dudeSize = 32.0;
-    instance.bounds = 500.0;
+    instance.bounds = 300.0;
     instance.dudes = std.ArrayList(Dude).init(std.heap.c_allocator);
     return SceneInterface{
         .ptr = instance,
@@ -63,11 +63,12 @@ fn update(ptr: *anyopaque) void {
 
     const io = ig.igGetIO();
 
-    if (!io.WantCaptureMouse and zt.Button.MouseLeftClick.down()) {
-        for (0..5) |_| {
+    if (!io.WantCaptureMouse and (zt.Button.MouseLeftClick.down() or zt.Button.GamepadSouthButton.down())) {
+        const worldMousePosition = self.renderer.screenToWorld(zt.Stick.MousePosition.read());
+        for (0..10) |_| {
             const d = Dude{
                 .color = zt.math.vec4(random.float(f32), random.float(f32), random.float(f32), 1.0),
-                .position = zt.math.vec2(std.math.sin(self.demo.context.time.lifetime) * (self.bounds * 0.5), -200.0),
+                .position = worldMousePosition,
                 .velocity = zt.math.vec2(random.float(f32) * 300.0, 0.0),
             };
             self.dudes.append(d) catch unreachable;
@@ -109,10 +110,13 @@ fn update(ptr: *anyopaque) void {
 }
 fn side(ptr: *anyopaque) void {
     const self: *State = @ptrCast(@alignCast(ptr));
-    _ = zg.edit("Gravity", &self.gravity);
-    _ = zg.editDrag("Bounds", 1.0, &self.bounds);
-    _ = zg.editDrag("Upbounce", 1.0, &self.upBounce);
-    _ = zg.editDrag("DudeSize", 1.0, &self.dudeSize);
+
+    ig.igTextWrapped("Hold LMB/A to spawn many dudes, this is a simple rendering benchmark.");
+
+    _ = zg.edit("Gravity", &self.gravity, .{});
+    _ = zg.edit("Bounds", &self.bounds, .{ .drag = true });
+    _ = zg.edit("Upbounce", &self.upBounce, .{ .drag = true });
+    _ = zg.edit("DudeSize", &self.dudeSize, .{ .drag = true });
 
     zg.text("{any} dudes", .{self.dudes.items.len});
     zg.text("{any} draw calls", .{self.renderer.drawCalls});

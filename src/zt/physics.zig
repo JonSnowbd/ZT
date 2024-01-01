@@ -134,12 +134,7 @@ inline fn pointInCircle(point: Shape, pointPos: math.Vec2, circle: Shape, circle
     assert(point == .Point);
     return isPointInCircle(point.Point.add(pointPos), circlePos, circle.Circle.radius);
 }
-inline fn pointInPoint(
-    point: Shape,
-    pointPos: math.Vec2,
-    point2: Shape,
-    point2Pos: math.Vec2,
-) bool {
+inline fn pointInPoint(point: Shape, pointPos: math.Vec2, point2: Shape, point2Pos: math.Vec2) bool {
     assert(point2 == .Point);
     assert(point == .Point);
 

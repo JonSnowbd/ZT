@@ -56,7 +56,7 @@ fn update(ptr: *anyopaque) void {
         x = -4;
     }
 
-    // And a lil guy on the z level chosen by the user
+    // And a lil guy
     const minion_source = zt.math.rect(384, 0, 16, 16);
     self.renderer.sprite(self.demo.sheet, self.minion_pos, 0, zt.math.vec2(tileSize, tileSize), zt.math.vec4(1.0, 0.0, 0.0, 1.0), zt.math.vec2(0.5, 0.5), minion_source);
 
@@ -66,5 +66,5 @@ fn update(ptr: *anyopaque) void {
 }
 fn side(ptr: *anyopaque) void {
     const self: *State = @ptrCast(@alignCast(ptr));
-    _ = zg.editDrag("Minion position", 0.5, &self.minion_pos);
+    _ = zg.edit("Minion position", &self.minion_pos, .{ .drag = true });
 }

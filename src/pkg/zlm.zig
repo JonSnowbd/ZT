@@ -853,6 +853,8 @@ pub fn toDegrees(rad: anytype) @TypeOf(rad) {
 
 pub usingnamespace specializeOn(f32);
 
+const math = @This();
+
 /// Moves from current to target smoothly, lambda controls how fast. Start with a lambda of ~11.5 and go from there,
 /// higher is faster.
 pub fn dampTowards(current: f32, target: f32, lambda: f32, dt: f32) f32 {
@@ -861,8 +863,22 @@ pub fn dampTowards(current: f32, target: f32, lambda: f32, dt: f32) f32 {
 /// Moves from current to target smoothly, lambda controls how fast. Start with a lambda of ~11.5 and go from there,
 /// higher is faster. This version will snap to target when within the epsilon.
 pub fn dampTowardsSnap(current: f32, target: f32, lambda: f32, dt: f32, epsilon: f32) f32 {
-    if (std.math.abs(current - target) < epsilon) {
+    if (@abs(current - target) < epsilon) {
         return target;
     }
     return std.math.lerp(current, target, 1.0 - std.math.exp(-lambda * dt));
+}
+
+/// Moves from current to target smoothly, lambda controls how fast. Start with a lambda of ~11.5 and go from there,
+/// higher is faster.
+pub fn dampVec2Towards(current: math.Vec2, target: math.Vec2, lambda: f32, dt: f32) math.Vec2 {
+    return math.Vec2.lerp(current, target, 1.0 - std.math.exp(-lambda * dt));
+}
+/// Moves from current to target smoothly, lambda controls how fast. Start with a lambda of ~11.5 and go from there,
+/// higher is faster. This version will snap to target when within the epsilon.
+pub fn dampVec2TowardsSnap(current: math.Vec2, target: math.Vec2, lambda: f32, dt: f32, epsilon: f32) math.Vec2 {
+    if (current.distanceTo(target) < epsilon) {
+        return target;
+    }
+    return math.Vec2.lerp(current, target, 1.0 - std.math.exp(-lambda * dt));
 }
