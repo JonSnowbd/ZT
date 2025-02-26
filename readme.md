@@ -2,6 +2,24 @@
   <img width="200" height="100" src="/example/assets/texture/logo.png">
 </p>
 
+## DISCONTINUED
+
+I had hoped to come back to this when Zig was a bit more mature to actively maintain ZT,
+but the decision to remove LLVM from the zig toolchain has killed any advantage I viewed
+as a benefit for the language, having a universal consistent toolchain for C that I could
+rely on existing for everyone who would use Zig was an immeasurable benefit. 
+
+The need for an external package, or a self installed version of C turned my interest in
+a consistent and powerful language built to turn C code into amazing Zig companions, into
+the mess I didn't want to come back to from other languages that try to do what Zig did.
+
+The toolchain that made me confident that replication was perfectly stable is now (im pretty sure? I'd love to be wrong about this) back to
+hoping end users have the right toolchain installed next to zig, installation instructions, "try it on clang/msvc/llvm instead" that I wanted
+to avoid from other languages. Sorry, loved the time I spent with it, maybe check out Mach and adding your own imgui layer in that, if it doesnt
+have one already.
+
+## Old readme
+
 A zig-contained library for Windows and Ubuntu that automatically compiles and
 links ImGui, OpenGL, stb_image, and GLFW into typed packages.
 
